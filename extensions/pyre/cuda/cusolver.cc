@@ -151,6 +151,70 @@ pyre::py::cuda::cusolver::__init__(py::module & m) -> void
         "handle"_a, "uplo"_a, "n"_a, "A"_a, "lda"_a, "workspace"_a, "lwork"_a, "devInfo"_a,
         "invert the n x n {float64} grid {A} in place, given its cholesky factor in the "
         "{uplo} triangle; only that triangle of the result is written");
+
+    // the {float32} counterparts; {workspace} must be {float32} too, since {Lwork} counts
+    // elements of the precision the factorization runs at
+    cusolver.def(
+        "spotrf_buffer_size",
+        [](std::uintptr_t handle, cublasFillMode_t uplo, int n, grid::AnyGrid & A, int lda) -> int {
+            int lwork = 0;
+            checkStatus(
+                cusolverDnSpotrf_bufferSize(
+                    toHandle<cusolverDnHandle_t>(handle), uplo, n,
+                    static_cast<float *>(data(A, 'f', "spotrf_buffer_size")), lda, &lwork),
+                "spotrf_buffer_size");
+            return lwork;
+        },
+        "handle"_a, "uplo"_a, "n"_a, "A"_a, "lda"_a,
+        "the workspace size, in elements, {spotrf} needs for an n x n {float32} grid");
+
+    cusolver.def(
+        "spotrf",
+        [](std::uintptr_t handle, cublasFillMode_t uplo, int n, grid::AnyGrid & A, int lda,
+           grid::AnyGrid & workspace, int lwork, grid::AnyGrid & devInfo) -> void {
+            checkStatus(
+                cusolverDnSpotrf(
+                    toHandle<cusolverDnHandle_t>(handle), uplo, n,
+                    static_cast<float *>(data(A, 'f', "spotrf")), lda,
+                    static_cast<float *>(data(workspace, 'f', "spotrf")), lwork,
+                    static_cast<int *>(data(devInfo, 'i', "spotrf"))),
+                "spotrf");
+            checkInfo(devInfo, "spotrf");
+        },
+        "handle"_a, "uplo"_a, "n"_a, "A"_a, "lda"_a, "workspace"_a, "lwork"_a, "devInfo"_a,
+        "factor the {uplo} triangle of the n x n {float32} grid {A} in place, A = L L^T (or "
+        "U^T U)");
+
+    cusolver.def(
+        "spotri_buffer_size",
+        [](std::uintptr_t handle, cublasFillMode_t uplo, int n, grid::AnyGrid & A, int lda) -> int {
+            int lwork = 0;
+            checkStatus(
+                cusolverDnSpotri_bufferSize(
+                    toHandle<cusolverDnHandle_t>(handle), uplo, n,
+                    static_cast<float *>(data(A, 'f', "spotri_buffer_size")), lda, &lwork),
+                "spotri_buffer_size");
+            return lwork;
+        },
+        "handle"_a, "uplo"_a, "n"_a, "A"_a, "lda"_a,
+        "the workspace size, in elements, {spotri} needs for an n x n {float32} grid");
+
+    cusolver.def(
+        "spotri",
+        [](std::uintptr_t handle, cublasFillMode_t uplo, int n, grid::AnyGrid & A, int lda,
+           grid::AnyGrid & workspace, int lwork, grid::AnyGrid & devInfo) -> void {
+            checkStatus(
+                cusolverDnSpotri(
+                    toHandle<cusolverDnHandle_t>(handle), uplo, n,
+                    static_cast<float *>(data(A, 'f', "spotri")), lda,
+                    static_cast<float *>(data(workspace, 'f', "spotri")), lwork,
+                    static_cast<int *>(data(devInfo, 'i', "spotri"))),
+                "spotri");
+            checkInfo(devInfo, "spotri");
+        },
+        "handle"_a, "uplo"_a, "n"_a, "A"_a, "lda"_a, "workspace"_a, "lwork"_a, "devInfo"_a,
+        "invert the n x n {float32} grid {A} in place, given its cholesky factor in the "
+        "{uplo} triangle; only that triangle of the result is written");
 }
 
 

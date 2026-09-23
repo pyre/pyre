@@ -108,6 +108,35 @@ pyre::py::cuda::curand::__init__(py::module & m) -> void
         "handle"_a, "out"_a, "n"_a, "mean"_a, "stddev"_a,
         "fill the first {n} cells of {out} with draws from N(mean, stddev^2), {float64} "
         "cells; curand requires {n} to be even");
+
+    // the {float32} counterparts
+    curand.def(
+        "generate_uniform",
+        [](std::uintptr_t handle, grid::AnyGrid & out, std::size_t n) -> void {
+            checkStatus(
+                curandGenerateUniform(
+                    toHandle<curandGenerator_t>(handle),
+                    static_cast<float *>(data(out, 'f', "generate_uniform")), n),
+                "generate_uniform");
+            synchronize("generate_uniform");
+        },
+        "handle"_a, "out"_a, "n"_a,
+        "fill the first {n} cells of {out} with draws from U(0, 1], {float32} cells");
+
+    curand.def(
+        "generate_normal",
+        [](std::uintptr_t handle, grid::AnyGrid & out, std::size_t n, float mean,
+           float stddev) -> void {
+            checkStatus(
+                curandGenerateNormal(
+                    toHandle<curandGenerator_t>(handle),
+                    static_cast<float *>(data(out, 'f', "generate_normal")), n, mean, stddev),
+                "generate_normal");
+            synchronize("generate_normal");
+        },
+        "handle"_a, "out"_a, "n"_a, "mean"_a, "stddev"_a,
+        "fill the first {n} cells of {out} with draws from N(mean, stddev^2), {float32} "
+        "cells; curand requires {n} to be even");
 }
 
 
