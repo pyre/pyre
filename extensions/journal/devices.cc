@@ -99,6 +99,68 @@ pyre::journal::py::devices(py::module & m)
         // done
         ;
 
+    // splitters
+    py::class_<splitter_t, splitter_t::pointer_type, device_t>(m, "Splitter")
+        // constructor
+        .def(
+            // the implementation
+            py::init<const splitter_t::name_type &>(),
+            // the signature
+            "name"_a = "splitter",
+            // the docstring
+            "a device that forwards every entry to each of the devices attached to it")
+        // attach a device
+        .def(
+            // the name
+            "attach",
+            // the implementation
+            [](splitter_t & self, device_t::pointer_type device) -> splitter_t & {
+                // add it
+                return self.attach(device);
+            },
+            // the signature
+            "device"_a,
+            // the docstring
+            "add {device} to the set i forward to")
+        // the attached devices
+        .def_property_readonly(
+            // the name
+            "outputs",
+            // the implementation
+            [](const splitter_t & self) -> const splitter_t::outputs_type & {
+                // easy enough
+                return self.outputs();
+            },
+            // the docstring
+            "the devices i forward to")
+        // done
+        ;
+
+    // tees
+    py::class_<tee_t, tee_t::pointer_type, splitter_t>(m, "Tee")
+        // constructor
+        .def(
+            // the implementation; the paths arrive as any iterable of strings, since the
+            // vector of strings is bound as the opaque {Page} and a python list does not
+            // convert to it
+            py::init([](py::iterable paths, const tee_t::name_type & name) {
+                // the paths, as the tee wants them
+                tee_t::paths_type files;
+                // go through the iterable
+                for (auto path : paths) {
+                    // and convert each entry
+                    files.push_back(path.cast<tee_t::path_type>());
+                }
+                // build the tee
+                return std::make_shared<tee_t>(files, name);
+            }),
+            // the signature
+            "paths"_a = py::tuple(), "name"_a = "tee",
+            // the docstring
+            "a splitter that writes every entry to the console and to a file at each of {paths}")
+        // done
+        ;
+
     // couriers
     py::class_<courier_t, courier_t::pointer_type, device_t>(m, "Courier")
         // constructor
