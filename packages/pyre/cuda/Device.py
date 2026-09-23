@@ -36,6 +36,72 @@ class Device:
     maxGrid = ()
     maxThreadBlock = ()
 
+    # the cublas/cusolver/curand handles bound to this device, allocated once and reused for
+    # as long as the process runs; a simulation that calls into cublas every step would
+    # otherwise pay for a fresh handle on every call, which is wasted work against the same
+    # device for the same duration
+    _cublasHandle = None
+    _cusolverHandle = None
+    _curandGenerator = None
+
+    # handles
+    @property
+    def cublasHandle(self):
+        """
+        The cublas handle bound to this device, created on first use and cached from then on
+        """
+        # if this is the first request
+        if self._cublasHandle is None:
+            # make sure the handle binds to this device, not whichever one happened to be
+            # current
+            self._activate()
+            # pull in the bindings lazily, so importing this module doesn't require cuda
+            import pyre.cuda
+
+            # make the handle
+            self._cublasHandle = pyre.cuda.cublas.create()
+        # hand it back
+        return self._cublasHandle
+
+    @property
+    def cusolverHandle(self):
+        """
+        The cusolverDn handle bound to this device, created on first use and cached from then
+        on
+        """
+        if self._cusolverHandle is None:
+            self._activate()
+            import pyre.cuda
+
+            self._cusolverHandle = pyre.cuda.cusolver.create()
+        return self._cusolverHandle
+
+    def curandGenerator(self, rngType=None):
+        """
+        The curand generator bound to this device, created on first use and cached from then
+        on; {rngType} only matters the first time this is called, since later calls hand back
+        the same generator regardless
+        """
+        if self._curandGenerator is None:
+            self._activate()
+            import pyre.cuda
+
+            rngType = pyre.cuda.curand.RngType.DEFAULT if rngType is None else rngType
+            self._curandGenerator = pyre.cuda.curand.create_generator(rngType)
+        return self._curandGenerator
+
+    # implementation details
+    def _activate(self):
+        """
+        Make this the current device, so a handle allocated against it binds to the right one
+        """
+        # pull in {cuda.core} lazily, for the same reason as above
+        import cuda.core
+
+        cuda.core.Device(self.id).set_current()
+        # all done
+        return
+
     # debugging
     def dump(self, indent=""):
         """

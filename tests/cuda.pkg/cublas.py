@@ -161,10 +161,41 @@ def check(precision):
     return
 
 
+def checkCachedHandles():
+    """
+    A simulation calls into cublas/cusolver/curand every step, so the device caches one
+    handle/generator of each and hands back the same one every time, rather than paying for a
+    fresh allocation on every call
+    """
+    import numpy
+    import pyre.cuda
+    import pyre.grid
+
+    device = pyre.cuda.manager.devices[0]
+
+    # the same handle comes back every time
+    assert device.cublasHandle == device.cublasHandle
+    assert device.cusolverHandle == device.cusolverHandle
+    assert device.curandGenerator() == device.curandGenerator()
+
+    # and it actually works
+    x = pyre.grid.managed(shape=(4,), cell="float64")
+    y = pyre.grid.managed(shape=(4,), cell="float64")
+    numpy.asarray(x)[:] = [1.0, 2.0, 3.0, 4.0]
+    numpy.asarray(y)[:] = 0.0
+    pyre.cuda.cublas.daxpy(device.cublasHandle, 4, 2.0, x, 1, y, 1)
+    assert numpy.allclose(numpy.asarray(y), [2.0, 4.0, 6.0, 8.0])
+
+    # all done
+    return
+
+
 def test():
     # check both precisions altar cares about
     check("float64")
     check("float32")
+    # the per-device handle cache
+    checkCachedHandles()
     # all done
     return
 
