@@ -46,6 +46,11 @@ class Package(Named):
         # the prefix is the root of the package installation; in {pyre} standard form, that's
         # two levels up from {home}: {prefix}/packages/{home}/{file}
         prefix = home.parent.parent
+        # a package installed by pip or conda lives in the interpreter's site-packages, which
+        # sits three levels below the prefix: {prefix}/lib/pythonX.Y/site-packages/{home}
+        if home.parent.name == "site-packages":
+            # so look two more levels up
+            prefix = prefix.parent.parent
         # hopefully, it also exists
         if prefix.isDirectory():
             # in which case, here is the location of the package configuration files
