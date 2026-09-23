@@ -13,7 +13,7 @@ Sanity check: verify that the device manager is accessible
 
 def test():
     # access the cuda module
-    import cuda
+    import pyre.cuda as cuda
 
     # show me
     # print(cuda.manager)

@@ -5,43 +5,38 @@
 # (c) 1998-2026 all rights reserved
 
 
-# attempt to
-try:
-    # load the extension module
-    from . import cuda
-# if this fails
-except ImportError:
-    # not much to do...
-    msg = "could not find 'cuda' support"
-    # complain
-    import journal
+# my meta-data
+from . import meta
 
-    journal.warning("cuda").log(msg)
-    # re-raise the exception so clients can cope
-    raise
-
-
-# otherwise, all is well;
-# pull in the administrivia
-version = cuda.version
-copyright = cuda.copyright
+# the administrivia
+version = meta.version
+copyright = meta.copyright
 
 
 def license():
-    print(cuda.license())
+    print(meta.license)
 
 
 # get the exceptions
-from . import exceptions
+from .exceptions import Error
 
-# register the exceptions with the extension module
-cuda.registerExceptions(exceptions)
+# build the device manager; nvidia's own cuda-python bindings raise if there is no cuda
+# capable hardware or driver on this machine, exactly as the old hand rolled extension used to
+# fail to load, so degrade to no devices rather than making the whole package unusable
+try:
+    # attempt to
+    from .DeviceManager import DeviceManager
 
+    manager = DeviceManager()
+# if anything about that failed
+except Exception as error:
+    # not much to do...
+    import journal
 
-# build the device manager
-from .DeviceManager import DeviceManager
-
-manager = DeviceManager()
+    journal.warning("cuda").log(f"could not find 'cuda' support: {error}")
+    # leave the manager unusable but importable
+    DeviceManager = None
+    manager = None
 
 
 # end of file

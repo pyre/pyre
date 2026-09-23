@@ -6,7 +6,6 @@
 # cuda
 # sanity
 pyre_test_python_testcase(tests/cuda.pkg/sanity.py)
-pyre_test_python_testcase(tests/cuda.pkg/extension.py)
 pyre_test_python_testcase(tests/cuda.pkg/manager.py)
 
 

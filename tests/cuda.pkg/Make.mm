@@ -17,7 +17,6 @@ test: sanity
 
 sanity:
 	${PYTHON} ./sanity.py
-	${PYTHON} ./extension.py
 	${PYTHON} ./manager.py
 
 
