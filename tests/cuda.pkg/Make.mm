@@ -18,6 +18,7 @@ test: sanity
 sanity:
 	${PYTHON} ./sanity.py
 	${PYTHON} ./manager.py
+	${PYTHON} ./cublas.py
 
 
 # end of file

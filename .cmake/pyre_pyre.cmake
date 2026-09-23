@@ -170,10 +170,11 @@ function(pyre_pyreModule)
   # set the libraries to link against
   target_link_libraries(pyremodule PRIVATE pyre journal pybind11::module)
   # if the user requested cuda support, the grid submodule grows a {managed} factory over
-  # cuda managed memory; it needs the runtime headers/library, and the compile-time flag
-  # {extensions/pyre/grid/__init__.cc} gates that code behind
+  # cuda managed memory, and a {cuda} submodule appears with thin bindings for cublas,
+  # cusolver, and curand; both need the toolkit, and the compile-time flag
+  # {extensions/pyre/grid/__init__.cc} and {extensions/pyre/cuda/} gate that code behind
   if(WITH_CUDA)
-    target_link_libraries(pyremodule PRIVATE CUDA::cudart)
+    target_link_libraries(pyremodule PRIVATE CUDA::cudart CUDA::cublas CUDA::cusolver CUDA::curand)
     target_compile_definitions(pyremodule PRIVATE WITH_CUDA)
   endif()
   # add the sources
@@ -198,6 +199,15 @@ function(pyre_pyreModule)
     extensions/pyre/chroma/color.cc
     extensions/pyre/chroma/rgb.cc
   )
+  # cublas/cusolver/curand, only when built with cuda support
+  if(WITH_CUDA)
+    target_sources(pyremodule PRIVATE
+      extensions/pyre/cuda/__init__.cc
+      extensions/pyre/cuda/cublas.cc
+      extensions/pyre/cuda/cusolver.cc
+      extensions/pyre/cuda/curand.cc
+    )
+  endif()
 
   # host
   Python_add_library(hostmodule MODULE WITH_SOABI)
