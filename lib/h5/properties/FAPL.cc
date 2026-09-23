@@ -7,12 +7,21 @@
 
 // my declarations
 #include "FAPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 // for populating the ros3 driver parameter struct
 #include <cstring>
 
 
 // make a fresh file access property list
-pyre::h5::properties::FAPL::FAPL() : List(H5Pcreate(H5P_FILE_ACCESS)) {}
+pyre::h5::properties::FAPL::FAPL() : List(H5Pcreate(H5P_FILE_ACCESS))
+{
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.fapl", "creating a file access property list");
+    }
+}
 
 
 // adopt an existing raw handle
@@ -37,8 +46,13 @@ pyre::h5::properties::FAPL::metadataBlockSize() const -> hsize_t
     // make room for the answer
     hsize_t size = 0;
     // ask the library
-    H5Pget_meta_block_size(id(), &size);
-    // and report
+    if (H5Pget_meta_block_size(id(), &size) < 0) {
+        // complain if it refused
+        complain("pyre.h5.fapl", "retrieving the metadata block size");
+        // and report nothing
+        return 0;
+    }
+    // otherwise, report
     return size;
 }
 
@@ -48,7 +62,10 @@ auto
 pyre::h5::properties::FAPL::metadataBlockSize(hsize_t size) -> void
 {
     // hand it to the library
-    H5Pset_meta_block_size(id(), size);
+    if (H5Pset_meta_block_size(id(), size) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.fapl", "setting the metadata block size");
+    }
     // all done
     return;
 }
@@ -63,8 +80,13 @@ pyre::h5::properties::FAPL::pageBufferSize() const -> PageBuffer
     unsigned int meta = 0;
     unsigned int raw = 0;
     // ask the library
-    H5Pget_page_buffer_size(id(), &buffer, &meta, &raw);
-    // pack and ship
+    if (H5Pget_page_buffer_size(id(), &buffer, &meta, &raw) < 0) {
+        // complain if it refused
+        complain("pyre.h5.fapl", "retrieving the page buffer settings");
+        // and report an empty buffer
+        return PageBuffer(0, 0, 0);
+    }
+    // otherwise, pack and ship
     return PageBuffer(buffer, meta, raw);
 }
 
@@ -74,7 +96,10 @@ auto
 pyre::h5::properties::FAPL::pageBufferSize(const PageBuffer & buffer) -> void
 {
     // hand them to the library
-    H5Pset_page_buffer_size(id(), buffer.bytes, buffer.metadata, buffer.raw);
+    if (H5Pset_page_buffer_size(id(), buffer.bytes, buffer.metadata, buffer.raw) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.fapl", "setting the page buffer");
+    }
     // all done
     return;
 }
@@ -100,22 +125,20 @@ pyre::h5::properties::FAPL::ros3(
 #endif
     // send to the {ros3} driver; this includes runtime validation, so no extra checks are needed
     if (H5Pset_fapl_ros3(this->id(), &p) < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5.fapl");
-        // and complain
-        channel
-            // what
-            << "failed to populate a file access property list with ros3 parameters"
-            // where
-            << pyre::journal::endl(__HERE__);
+        // complain if the library refused
+        complain("pyre.h5.fapl", "populating a file access property list with ros3 parameters");
+        // and leave the list as it was
+        return *this;
     }
     // attach the security token for temporary credentials
-    H5Pset_fapl_ros3_token(this->id(), token.data());
+    if (H5Pset_fapl_ros3_token(this->id(), token.data()) < 0) {
+        // and complain if the library refused it
+        complain("pyre.h5.fapl", "attaching the ros3 session token");
+    }
     // hand off a reference to me
     return *this;
 }
 #endif
-
 
 
 // the alignment of objects in the file
@@ -126,8 +149,13 @@ pyre::h5::properties::FAPL::alignment() const -> Alignment
     hsize_t threshold = 0;
     hsize_t alignment = 0;
     // ask the library
-    H5Pget_alignment(id(), &threshold, &alignment);
-    // pack and ship
+    if (H5Pget_alignment(id(), &threshold, &alignment) < 0) {
+        // complain if it refused
+        complain("pyre.h5.fapl", "retrieving the object alignment");
+        // and report no alignment
+        return Alignment(0, 0);
+    }
+    // otherwise, pack and ship
     return Alignment(threshold, alignment);
 }
 
@@ -137,7 +165,10 @@ auto
 pyre::h5::properties::FAPL::alignment(const Alignment & alignment) -> void
 {
     // hand them to the library
-    H5Pset_alignment(id(), alignment.threshold, alignment.boundary);
+    if (H5Pset_alignment(id(), alignment.threshold, alignment.boundary) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.fapl", "setting the object alignment");
+    }
     // all done
     return;
 }
@@ -150,8 +181,13 @@ pyre::h5::properties::FAPL::sieveBufferSize() const -> std::size_t
     // make room for the answer
     std::size_t size = 0;
     // ask the library
-    H5Pget_sieve_buf_size(id(), &size);
-    // and report
+    if (H5Pget_sieve_buf_size(id(), &size) < 0) {
+        // complain if it refused
+        complain("pyre.h5.fapl", "retrieving the sieve buffer size");
+        // and report nothing
+        return 0;
+    }
+    // otherwise, report
     return size;
 }
 
@@ -161,7 +197,10 @@ auto
 pyre::h5::properties::FAPL::sieveBufferSize(std::size_t size) -> void
 {
     // hand it to the library
-    H5Pset_sieve_buf_size(id(), size);
+    if (H5Pset_sieve_buf_size(id(), size) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.fapl", "setting the sieve buffer size");
+    }
     // all done
     return;
 }
@@ -174,8 +213,13 @@ pyre::h5::properties::FAPL::closeDegree() const -> H5F_close_degree_t
     // make room for the answer
     H5F_close_degree_t degree = H5F_CLOSE_DEFAULT;
     // ask the library
-    H5Pget_fclose_degree(id(), &degree);
-    // and report
+    if (H5Pget_fclose_degree(id(), &degree) < 0) {
+        // complain if it refused
+        complain("pyre.h5.fapl", "retrieving the file close degree");
+        // and report the library default
+        return H5F_CLOSE_DEFAULT;
+    }
+    // otherwise, report
     return degree;
 }
 
@@ -185,7 +229,10 @@ auto
 pyre::h5::properties::FAPL::closeDegree(H5F_close_degree_t degree) -> void
 {
     // hand it to the library
-    H5Pset_fclose_degree(id(), degree);
+    if (H5Pset_fclose_degree(id(), degree) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.fapl", "setting the file close degree");
+    }
     // all done
     return;
 }
@@ -201,8 +248,13 @@ pyre::h5::properties::FAPL::cache() const -> Cache
     std::size_t bytes = 0;
     double w0 = 0;
     // ask the library
-    H5Pget_cache(id(), &elements, &slots, &bytes, &w0);
-    // pack and ship
+    if (H5Pget_cache(id(), &elements, &slots, &bytes, &w0) < 0) {
+        // complain if it refused
+        complain("pyre.h5.fapl", "retrieving the cache settings");
+        // and report an empty cache
+        return Cache(0, 0, 0, 0);
+    }
+    // otherwise, pack and ship
     return Cache(elements, slots, bytes, w0);
 }
 
@@ -212,7 +264,11 @@ auto
 pyre::h5::properties::FAPL::cache(const Cache & cache) -> void
 {
     // hand them to the library
-    H5Pset_cache(id(), cache.metadataElements, cache.slots, cache.bytes, cache.preemption);
+    if (H5Pset_cache(id(), cache.metadataElements, cache.slots, cache.bytes, cache.preemption)
+        < 0) {
+        // and complain if it refused
+        complain("pyre.h5.fapl", "setting the caches");
+    }
     // all done
     return;
 }
@@ -226,8 +282,13 @@ pyre::h5::properties::FAPL::libverBounds() const -> VersionBounds
     H5F_libver_t low = H5F_LIBVER_EARLIEST;
     H5F_libver_t high = H5F_LIBVER_LATEST;
     // ask the library
-    H5Pget_libver_bounds(id(), &low, &high);
-    // pack and ship
+    if (H5Pget_libver_bounds(id(), &low, &high) < 0) {
+        // complain if it refused
+        complain("pyre.h5.fapl", "retrieving the file format version bounds");
+        // and report the widest bounds
+        return VersionBounds(H5F_LIBVER_EARLIEST, H5F_LIBVER_LATEST);
+    }
+    // otherwise, pack and ship
     return VersionBounds(low, high);
 }
 
@@ -237,7 +298,10 @@ auto
 pyre::h5::properties::FAPL::libverBounds(const VersionBounds & bounds) -> void
 {
     // hand them to the library
-    H5Pset_libver_bounds(id(), bounds.low, bounds.high);
+    if (H5Pset_libver_bounds(id(), bounds.low, bounds.high) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.fapl", "setting the file format version bounds");
+    }
     // all done
     return;
 }

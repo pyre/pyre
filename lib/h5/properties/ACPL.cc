@@ -7,10 +7,19 @@
 
 // my declarations
 #include "ACPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // make a fresh attribute creation property list
-pyre::h5::properties::ACPL::ACPL() : STRCPL(H5Pcreate(H5P_ATTRIBUTE_CREATE)) {}
+pyre::h5::properties::ACPL::ACPL() : STRCPL(H5Pcreate(H5P_ATTRIBUTE_CREATE))
+{
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.acpl", "creating an attribute creation property list");
+    }
+}
 
 
 // adopt an existing raw handle

@@ -7,10 +7,19 @@
 
 // my declarations
 #include "LCPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // make a fresh link creation property list
-pyre::h5::properties::LCPL::LCPL() : STRCPL(H5Pcreate(H5P_LINK_CREATE)) {}
+pyre::h5::properties::LCPL::LCPL() : STRCPL(H5Pcreate(H5P_LINK_CREATE))
+{
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.lcpl", "creating a link creation property list");
+    }
+}
 
 
 // adopt an existing raw handle
@@ -35,8 +44,13 @@ pyre::h5::properties::LCPL::intermediateGroupCreation() const -> bool
     // make room for the answer
     unsigned int create = 0;
     // ask the library
-    H5Pget_create_intermediate_group(id(), &create);
-    // and report
+    if (H5Pget_create_intermediate_group(id(), &create) < 0) {
+        // complain if it refused
+        complain("pyre.h5.lcpl", "retrieving the intermediate group creation setting");
+        // and report that none are created
+        return false;
+    }
+    // otherwise, report
     return create != 0;
 }
 
@@ -46,7 +60,10 @@ auto
 pyre::h5::properties::LCPL::intermediateGroupCreation(bool create) -> void
 {
     // hand it to the library
-    H5Pset_create_intermediate_group(id(), create ? 1 : 0);
+    if (H5Pset_create_intermediate_group(id(), create ? 1 : 0) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.lcpl", "setting the intermediate group creation");
+    }
     // all done
     return;
 }

@@ -7,6 +7,8 @@
 
 // my declarations
 #include "Group.h"
+// the reporting of library refusals
+#include "diagnostics.h"
 // the members i hand back, and the types my interface mentions
 #include "DataSet.h"
 #include "DataSpace.h"
@@ -44,11 +46,23 @@ pyre::h5::Group::memberName(unsigned int index) const -> string_t
     // find out how long the name is
     auto len =
         H5Lget_name_by_idx(id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, nullptr, 0, H5P_DEFAULT);
+    // a member the library will not name, e.g. one past the end or one asked of a group that
+    // never opened, has no name
+    if (len < 0) {
+        // so say so
+        return "";
+    }
     // make room for it, plus the terminating null
     string_t buffer(len + 1, '\0');
-    // retrieve it
-    H5Lget_name_by_idx(
-        id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, buffer.data(), len + 1, H5P_DEFAULT);
+    // retrieve it; the library will not change its mind between the two calls
+    if (H5Lget_name_by_idx(
+            id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, buffer.data(), len + 1, H5P_DEFAULT)
+        < 0) {
+        // unless something is badly wrong
+        complain("pyre.h5.group", "retrieving the name of member " + std::to_string(index));
+        // in which case there is no name
+        return "";
+    }
     // trim the terminator and report
     buffer.resize(len);
     return buffer;
@@ -85,7 +99,8 @@ pyre::h5::Group::childType(const string_t & name) const -> object_type
 auto
 pyre::h5::Group::objectId(const string_t & name) const -> id_type
 {
-    // open it; the library hands back a fresh handle the caller takes ownership of
+    // open it; the library hands back a fresh handle the caller takes ownership of, or an
+    // invalid one when there is no such member, which is the caller's answer
     return static_cast<id_type>(H5Oopen(id(), name.data(), H5P_DEFAULT));
 }
 
@@ -94,7 +109,8 @@ pyre::h5::Group::objectId(const string_t & name) const -> id_type
 auto
 pyre::h5::Group::openGroup(const string_t & path) const -> Group
 {
-    // open it; the library hands back a fresh handle the wrapper adopts
+    // open it; the library hands back a fresh handle the wrapper adopts, or an invalid one
+    // when there is no such group, which is the caller's answer
     return Group(static_cast<id_type>(H5Gopen2(id(), path.data(), H5P_DEFAULT)));
 }
 
@@ -115,7 +131,8 @@ pyre::h5::Group::openDataSet(const string_t & path, const properties::DAPL & dap
     // open it; the access properties are the caller's chance to say how the dataset should
     // be reached, and the chunk cache is the one that matters: it is a per dataset budget of
     // decompressed chunks, and a reader that revisits a chunk gets it back for the price of
-    // a copy instead of an inflation. adopt the fresh handle
+    // a copy instead of an inflation. adopt the fresh handle, or the invalid one that says
+    // there is no such dataset, which is the caller's answer
     return DataSet(static_cast<id_type>(H5Dopen2(id(), path.data(), dapl.id())));
 }
 
@@ -136,9 +153,15 @@ pyre::h5::Group::createGroup(
     -> Group
 {
     // make it; the group access property list has no properties of its own, so it stays
-    // the library default until hdf5 gives it something to say; adopt the fresh handle
-    return Group(
-        static_cast<id_type>(H5Gcreate2(id(), path.data(), lcpl.id(), gcpl.id(), H5P_DEFAULT)));
+    // the library default until hdf5 gives it something to say
+    auto hid = H5Gcreate2(id(), path.data(), lcpl.id(), gcpl.id(), H5P_DEFAULT);
+    // if the library refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.group", "creating the group '" + path + "'");
+    }
+    // adopt the fresh handle, empty if the library refused
+    return Group(static_cast<id_type>(hid));
 }
 
 
@@ -160,10 +183,16 @@ pyre::h5::Group::createDataSet(
     const properties::LCPL & lcpl, const properties::DCPL & dcpl,
     const properties::DAPL & dapl) const -> DataSet
 {
-    // make it; adopt the fresh handle
-    return DataSet(
-        static_cast<id_type>(
-            H5Dcreate2(id(), path.data(), type.id(), space.id(), lcpl.id(), dcpl.id(), dapl.id())));
+    // make it
+    auto hid =
+        H5Dcreate2(id(), path.data(), type.id(), space.id(), lcpl.id(), dcpl.id(), dapl.id());
+    // if the library refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.group", "creating the dataset '" + path + "'");
+    }
+    // adopt the fresh handle, empty if the library refused
+    return DataSet(static_cast<id_type>(hid));
 }
 
 

@@ -7,6 +7,8 @@
 
 // my declarations
 #include "File.h"
+// the reporting of library refusals
+#include "diagnostics.h"
 // the property lists i hand back
 #include "properties/FCPL.h"
 #include "properties/FAPL.h"
@@ -37,7 +39,14 @@ auto
 pyre::h5::File::fcpl() const -> properties::FCPL
 {
     // {H5Fget_create_plist} hands back a fresh handle the wrapper adopts
-    return properties::FCPL(static_cast<id_type>(H5Fget_create_plist(id())));
+    auto hid = H5Fget_create_plist(id());
+    // if the library refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.file", "retrieving the creation property list of a file");
+    }
+    // hand off the list, empty if the library refused
+    return properties::FCPL(static_cast<id_type>(hid));
 }
 
 
@@ -46,7 +55,14 @@ auto
 pyre::h5::File::fapl() const -> properties::FAPL
 {
     // {H5Fget_access_plist} hands back a fresh handle the wrapper adopts
-    return properties::FAPL(static_cast<id_type>(H5Fget_access_plist(id())));
+    auto hid = H5Fget_access_plist(id());
+    // if the library refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.file", "retrieving the access property list of a file");
+    }
+    // hand off the list, empty if the library refused
+    return properties::FAPL(static_cast<id_type>(hid));
 }
 
 

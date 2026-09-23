@@ -24,7 +24,14 @@ pyre::h5::Identifier::id() const -> id_type
 inline auto
 pyre::h5::Identifier::valid() const -> bool
 {
-    // ask the library; a positive answer means the handle is live
+    // a negative handle is the library's own way of saying there is no object; answer
+    // without asking, since every call into the library clears its error stack, and the
+    // reasons for a failed open must survive the temporaries that carry the empty handle
+    if (_id < 0) {
+        // so it is not live
+        return false;
+    }
+    // otherwise, ask the library; a positive answer means the handle is live
     return H5Iis_valid(_id) > 0;
 }
 
@@ -34,7 +41,15 @@ inline auto
 pyre::h5::Identifier::refcount() const -> int
 {
     // a dead handle has no references
-    return valid() ? H5Iget_ref(_id) : 0;
+    if (!valid()) {
+        // so say so
+        return 0;
+    }
+    // ask the library; a handle it will not count has no references either, so a refusal is
+    // the caller's answer
+    auto count = H5Iget_ref(_id);
+    // report it, clamped so a refusal never reads as a count
+    return count < 0 ? 0 : count;
 }
 
 
@@ -57,7 +72,19 @@ pyre::h5::Identifier::_retain() const -> void
         return;
     }
     // otherwise, increment the library's reference count
-    H5Iinc_ref(_id);
+    if (H5Iinc_ref(_id) < 0) {
+        // a failure here means the handle bookkeeping is inconsistent: a bug
+        auto channel = pyre::journal::firewall_t("pyre.h5.identifier");
+        // so complain
+        channel
+            // mark
+            << pyre::journal::at()
+            // what
+            << "failed to retain the hdf5 handle "
+            << _id
+            // flush
+            << pyre::journal::endl;
+    }
     // all done
     return;
 }

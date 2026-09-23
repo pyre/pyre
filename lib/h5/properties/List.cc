@@ -7,6 +7,8 @@
 
 // my declarations
 #include "List.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // the default property list, a handle to the library-wide defaults
@@ -24,8 +26,13 @@ pyre::h5::properties::List::propertyCount() const -> std::size_t
     // make room for the answer
     std::size_t count = 0;
     // ask the library
-    H5Pget_nprops(id(), &count);
-    // and report
+    if (H5Pget_nprops(id(), &count) < 0) {
+        // complain if it refused
+        complain("pyre.h5.properties", "counting the properties of a list");
+        // and report nothing
+        return 0;
+    }
+    // otherwise, report
     return count;
 }
 
@@ -46,8 +53,13 @@ pyre::h5::properties::List::propertySize(const string_t & name) const -> std::si
     // make room for the answer
     std::size_t size = 0;
     // ask the library
-    H5Pget_size(id(), name.data(), &size);
-    // and report
+    if (H5Pget_size(id(), name.data(), &size) < 0) {
+        // complain if it refused
+        complain("pyre.h5.properties", "retrieving the size of the property '" + name + "'");
+        // and report nothing
+        return 0;
+    }
+    // otherwise, report
     return size;
 }
 
@@ -61,8 +73,13 @@ pyre::h5::properties::List::property(const string_t & name) const -> string_t
     // make a buffer to hold it
     string_t value(size, '\0');
     // pull the raw bytes
-    H5Pget(id(), name.data(), value.data());
-    // and report
+    if (H5Pget(id(), name.data(), value.data()) < 0) {
+        // complain if the library refused
+        complain("pyre.h5.properties", "retrieving the property '" + name + "'");
+        // and report nothing
+        return "";
+    }
+    // otherwise, report
     return value;
 }
 
@@ -72,7 +89,10 @@ auto
 pyre::h5::properties::List::property(const string_t & name, const string_t & value) -> void
 {
     // hand the raw bytes to the library
-    H5Pset(id(), name.data(), value.data());
+    if (H5Pset(id(), name.data(), value.data()) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.properties", "setting the property '" + name + "'");
+    }
     // all done
     return;
 }
@@ -83,7 +103,10 @@ auto
 pyre::h5::properties::List::removeProperty(const string_t & name) -> void
 {
     // ask the library to drop it
-    H5Premove(id(), name.data());
+    if (H5Premove(id(), name.data()) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.properties", "removing the property '" + name + "'");
+    }
     // all done
     return;
 }

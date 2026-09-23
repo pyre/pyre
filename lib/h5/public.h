@@ -17,6 +17,8 @@
 // this is the file you are looking for
 #include "api.h"
 
+// the reporting of library refusals
+#include "diagnostics.h"
 // the pyre-owned wrappers over the hdf5 c api
 #include "Identifier.h"
 #include "DataSpace.h"

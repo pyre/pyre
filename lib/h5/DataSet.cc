@@ -7,6 +7,8 @@
 
 // my declarations
 #include "DataSet.h"
+// the reporting of library refusals
+#include "diagnostics.h"
 // the wrappers i hand back
 #include "types/Datatype.h"
 #include "Chunk.h"
@@ -25,10 +27,21 @@ pyre::h5::DataSet::name() const -> string_t
 {
     // find out how long my name is
     auto len = H5Iget_name(id(), nullptr, 0);
+    // a handle the library will not name, e.g. one that never opened, has no name; this is
+    // the caller's answer, and it stays quiet since my name is what complaints are built with
+    if (len < 0) {
+        // so say so
+        return "";
+    }
     // make room for it, plus the terminating null
     string_t buffer(len + 1, '\0');
-    // retrieve it
-    H5Iget_name(id(), buffer.data(), len + 1);
+    // retrieve it; the library will not change its mind between the two calls
+    if (H5Iget_name(id(), buffer.data(), len + 1) < 0) {
+        // unless something is badly wrong
+        complain("pyre.h5.dataset", "retrieving the name of a dataset");
+        // in which case there is no name
+        return "";
+    }
     // trim the terminator and report
     buffer.resize(len);
     return buffer;
@@ -39,7 +52,8 @@ pyre::h5::DataSet::name() const -> string_t
 auto
 pyre::h5::DataSet::offset() const -> haddr_t
 {
-    // ask the library
+    // ask the library; it answers {HADDR_UNDEF} both when it refuses and when i am not
+    // stored contiguously, so the undefined address is the answer, passed through as is
     return H5Dget_offset(id());
 }
 
@@ -50,10 +64,32 @@ pyre::h5::DataSet::cell() const -> class_type
 {
     // grab my datatype
     auto type = H5Dget_type(id());
+    // if the library refused
+    if (type < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "retrieving the datatype of '" + name() + "'", reason);
+        // and report that there is no class to speak of
+        return H5T_NO_CLASS;
+    }
     // read its class
     auto cls = H5Tget_class(type);
+    // if the library refused
+    if (cls == H5T_NO_CLASS) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "retrieving the class of the datatype of '" + name() + "'", reason);
+    }
     // give the temporary type back
-    H5Tclose(type);
+    if (H5Tclose(type) < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+    }
     // and report
     return cls;
 }
@@ -64,7 +100,16 @@ auto
 pyre::h5::DataSet::datatype() const -> types::Datatype
 {
     // {H5Dget_type} hands back a fresh handle the wrapper adopts
-    return types::Datatype(static_cast<id_type>(H5Dget_type(id())));
+    auto hid = H5Dget_type(id());
+    // if the library refused
+    if (hid < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "retrieving the datatype of '" + name() + "'", reason);
+    }
+    // hand off the datatype, empty if the library refused
+    return types::Datatype(static_cast<id_type>(hid));
 }
 
 
@@ -73,7 +118,16 @@ auto
 pyre::h5::DataSet::dataspace() const -> DataSpace
 {
     // {H5Dget_space} hands back a fresh handle the wrapper adopts
-    return DataSpace(static_cast<id_type>(H5Dget_space(id())));
+    auto hid = H5Dget_space(id());
+    // if the library refused
+    if (hid < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "retrieving the dataspace of '" + name() + "'", reason);
+    }
+    // hand off the dataspace, empty if the library refused
+    return DataSpace(static_cast<id_type>(hid));
 }
 
 
@@ -182,7 +236,8 @@ pyre::h5::DataSet::tiling() const -> tiling_t
 auto
 pyre::h5::DataSet::storageSize() const -> hsize_t
 {
-    // ask the library
+    // ask the library; it answers zero both when it refuses and when nothing has been
+    // written, so zero is the answer, passed through as is
     return H5Dget_storage_size(id());
 }
 
@@ -193,12 +248,60 @@ pyre::h5::DataSet::memorySize() const -> std::size_t
 {
     // my number of elements comes from my dataspace
     auto space = H5Dget_space(id());
+    // if the library refused
+    if (space < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "retrieving the dataspace of '" + name() + "'", reason);
+        // and report that i occupy nothing
+        return 0;
+    }
+    // count the elements
     auto points = H5Sget_simple_extent_npoints(space);
-    H5Sclose(space);
+    // if the library refused
+    if (points < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "counting the cells of '" + name() + "'", reason);
+        // and there is nothing to count
+        points = 0;
+    }
+    // give the temporary space back
+    if (H5Sclose(space) < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "releasing the dataspace of '" + name() + "'", reason);
+    }
     // the size of each comes from my datatype
     auto type = H5Dget_type(id());
+    // if the library refused
+    if (type < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "retrieving the datatype of '" + name() + "'", reason);
+        // and report that i occupy nothing
+        return 0;
+    }
+    // measure a cell; the library answers zero when it refuses, and no cell is that small
     auto size = H5Tget_size(type);
-    H5Tclose(type);
+    // so zero means it refused
+    if (size == 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "measuring the cells of '" + name() + "'", reason);
+    }
+    // give the temporary type back
+    if (H5Tclose(type) < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+    }
     // the total is the product
     return static_cast<std::size_t>(points) * size;
 }
@@ -221,11 +324,10 @@ pyre::h5::DataSet::chunks() const -> std::optional<hsize_t>
     auto status = H5Dget_num_chunks(id(), H5S_ALL, &count);
     // if the library balked
     if (status < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5");
-        // complain
-        channel << "while counting the chunks of '" << name() << "'" << pyre::journal::newline
-                << "the library refused" << pyre::journal::endl(__HERE__);
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "counting the chunks of '" + name() + "'", reason);
         // and decline to answer
         return {};
     }
@@ -269,11 +371,12 @@ pyre::h5::DataSet::chunk(hsize_t index) const -> std::optional<Chunk>
         H5Dget_chunk_info(id(), H5S_ALL, index, origin.data(), &filterMask, &address, &bytes);
     // if the library balked
     if (status < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5");
-        // complain
-        channel << "while looking up chunk " << index << " of '" << name() << "'"
-                << pyre::journal::newline << "the library refused" << pyre::journal::endl(__HERE__);
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "looking up chunk " + std::to_string(index) + " of '" + name() + "'",
+            reason);
         // and decline to answer
         return {};
     }
@@ -353,11 +456,11 @@ pyre::h5::DataSet::chunkAt(const index_t & origin) const -> std::optional<Chunk>
     auto status = H5Dget_chunk_info_by_coord(id(), corner->data(), &filterMask, &address, &bytes);
     // if the library balked
     if (status < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5");
-        // complain
-        channel << "while looking for the chunk of '" << name() << "' at a given cell"
-                << pyre::journal::newline << "the library refused" << pyre::journal::endl(__HERE__);
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "looking for the chunk of '" + name() + "' at a given cell", reason);
         // and decline to answer
         return {};
     }
@@ -407,11 +510,11 @@ pyre::h5::DataSet::readChunk(const index_t & origin, bytes_t & buffer) const
 #endif
     // if the library balked
     if (status < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5");
-        // complain
-        channel << "while reading a chunk of '" << name() << "' in its stored form"
-                << pyre::journal::newline << "the library refused" << pyre::journal::endl(__HERE__);
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "reading a chunk of '" + name() + "' in its stored form", reason);
         // leave nothing misleading behind
         buffer.clear();
         // and decline to answer
@@ -442,11 +545,11 @@ pyre::h5::DataSet::writeChunk(
         H5Dwrite_chunk(id(), H5P_DEFAULT, filterMask, corner->data(), buffer.size(), buffer.data());
     // if the library balked
     if (status < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5");
-        // complain
-        channel << "while writing a chunk of '" << name() << "' in its stored form"
-                << pyre::journal::newline << "the library refused" << pyre::journal::endl(__HERE__);
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "writing a chunk of '" + name() + "' in its stored form", reason);
         // and bail
         return;
     }
@@ -460,7 +563,17 @@ auto
 pyre::h5::DataSet::dapl() const -> properties::DAPL
 {
     // {H5Dget_access_plist} hands back a fresh handle the wrapper adopts
-    return properties::DAPL(static_cast<id_type>(H5Dget_access_plist(id())));
+    auto hid = H5Dget_access_plist(id());
+    // if the library refused
+    if (hid < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "retrieving the access property list of '" + name() + "'", reason);
+    }
+    // hand off the list, empty if the library refused
+    return properties::DAPL(static_cast<id_type>(hid));
 }
 
 
@@ -469,7 +582,17 @@ auto
 pyre::h5::DataSet::dcpl() const -> properties::DCPL
 {
     // {H5Dget_create_plist} hands back a fresh handle the wrapper adopts
-    return properties::DCPL(static_cast<id_type>(H5Dget_create_plist(id())));
+    auto hid = H5Dget_create_plist(id());
+    // if the library refused
+    if (hid < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "retrieving the creation property list of '" + name() + "'", reason);
+    }
+    // hand off the list, empty if the library refused
+    return properties::DCPL(static_cast<id_type>(hid));
 }
 
 
@@ -480,7 +603,13 @@ pyre::h5::DataSet::read(
 {
     // hand it to the library, along with whatever the caller wants done to the cells in
     // flight; {dxpl} is the only place a data transform or a transfer buffer can be named
-    H5Dread(id(), memtype, memspace, filespace, dxpl, buffer);
+    if (H5Dread(id(), memtype, memspace, filespace, dxpl, buffer) < 0) {
+        // and complain if it refused
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "reading the selected region of '" + name() + "'", reason);
+    }
     // all done
     return;
 }
@@ -494,7 +623,13 @@ pyre::h5::DataSet::write(
 {
     // hand it to the library, along with whatever the caller wants done to the cells in
     // flight; {dxpl} is the only place a data transform or a transfer buffer can be named
-    H5Dwrite(id(), memtype, memspace, filespace, dxpl, buffer);
+    if (H5Dwrite(id(), memtype, memspace, filespace, dxpl, buffer) < 0) {
+        // and complain if it refused
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "writing the selected region of '" + name() + "'", reason);
+    }
     // all done
     return;
 }
@@ -506,30 +641,100 @@ pyre::h5::DataSet::readString(id_type memspace, id_type filespace) const -> stri
 {
     // grab my datatype
     auto type = H5Dget_type(id());
+    // if the library refused
+    if (type < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "retrieving the datatype of '" + name() + "'", reason);
+        // and there is no string to read
+        return "";
+    }
+    // find out whether i hold variable length strings
+    auto variable = H5Tis_variable_str(type);
+    // if the library would not say
+    if (variable < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "inspecting the string type of '" + name() + "'", reason);
+        // give the temporary type back
+        if (H5Tclose(type) < 0) {
+            // the library's reasons, before asking it for my name disturbs them
+            auto reason = explanation();
+            // and complain
+            complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+        }
+        // and there is no string to read
+        return "";
+    }
     // variable length strings come back as a library-allocated pointer
-    if (H5Tis_variable_str(type) > 0) {
+    if (variable > 0) {
         // make room for the pointer
         char * raw = nullptr;
         // read it
-        H5Dread(id(), type, memspace, filespace, H5P_DEFAULT, &raw);
+        if (H5Dread(id(), type, memspace, filespace, H5P_DEFAULT, &raw) < 0) {
+            // complaining if the library refused; the pointer stays null and the string empty
+            // the library's reasons, before asking it for my name disturbs them
+            auto reason = explanation();
+            // and complain
+            complain("pyre.h5.dataset", "reading the string in '" + name() + "'", reason);
+        }
         // copy it into a managed string
         string_t value(raw ? raw : "");
         // give the library's buffer back
-        H5free_memory(raw);
+        if (H5free_memory(raw) < 0) {
+            // the library's reasons, before asking it for my name disturbs them
+            auto reason = explanation();
+            // and complain
+            complain("pyre.h5.dataset", "releasing the string buffer of '" + name() + "'", reason);
+        }
         // release the temporary type
-        H5Tclose(type);
+        if (H5Tclose(type) < 0) {
+            // the library's reasons, before asking it for my name disturbs them
+            auto reason = explanation();
+            // and complain
+            complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+        }
         // and report; variable length strings carry no padding to trim
         return value;
     }
     // fixed length strings come back inline; remember how they are padded
     auto pad = H5Tget_strpad(type);
-    // make a buffer the right size
+    // if the library would not say
+    if (pad == H5T_STR_ERROR) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain(
+            "pyre.h5.dataset", "retrieving the padding of the strings in '" + name() + "'", reason);
+    }
+    // measure the stored string; the library answers zero when it refuses
     auto size = H5Tget_size(type);
+    // so zero means it refused
+    if (size == 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "measuring the strings in '" + name() + "'", reason);
+    }
+    // make a buffer the right size
     string_t value(size, '\0');
     // read into it
-    H5Dread(id(), type, memspace, filespace, H5P_DEFAULT, value.data());
+    if (H5Dread(id(), type, memspace, filespace, H5P_DEFAULT, value.data()) < 0) {
+        // complaining if the library refused; the buffer stays blank
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "reading the string in '" + name() + "'", reason);
+    }
     // release the temporary type
-    H5Tclose(type);
+    if (H5Tclose(type) < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+    }
     // trim the padding and report
     _trim(value, pad);
     return value;
@@ -543,24 +748,82 @@ pyre::h5::DataSet::writeString(const string_t & value, id_type memspace, id_type
 {
     // grab my datatype
     auto type = H5Dget_type(id());
+    // if the library refused
+    if (type < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "retrieving the datatype of '" + name() + "'", reason);
+        // and there is nowhere to write
+        return;
+    }
+    // find out whether i hold variable length strings
+    auto variable = H5Tis_variable_str(type);
+    // if the library would not say
+    if (variable < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "inspecting the string type of '" + name() + "'", reason);
+        // give the temporary type back
+        if (H5Tclose(type) < 0) {
+            // the library's reasons, before asking it for my name disturbs them
+            auto reason = explanation();
+            // and complain
+            complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+        }
+        // and there is nowhere to write
+        return;
+    }
     // variable length strings go out as a pointer to the contents
-    if (H5Tis_variable_str(type) > 0) {
+    if (variable > 0) {
         // the library copies from the address i hand it
         const char * raw = value.data();
-        H5Dwrite(id(), type, memspace, filespace, H5P_DEFAULT, &raw);
+        // write it
+        if (H5Dwrite(id(), type, memspace, filespace, H5P_DEFAULT, &raw) < 0) {
+            // complaining if the library refused
+            // the library's reasons, before asking it for my name disturbs them
+            auto reason = explanation();
+            // and complain
+            complain("pyre.h5.dataset", "writing the string in '" + name() + "'", reason);
+        }
         // release the temporary type
-        H5Tclose(type);
+        if (H5Tclose(type) < 0) {
+            // the library's reasons, before asking it for my name disturbs them
+            auto reason = explanation();
+            // and complain
+            complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+        }
         // all done
         return;
     }
-    // fixed length strings go out inline; pad the value out to the stored size
+    // measure the stored string; the library answers zero when it refuses
     auto size = H5Tget_size(type);
+    // so zero means it refused
+    if (size == 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "measuring the strings in '" + name() + "'", reason);
+    }
+    // fixed length strings go out inline; pad the value out to the stored size
     string_t buffer = value;
     buffer.resize(size, '\0');
     // write it
-    H5Dwrite(id(), type, memspace, filespace, H5P_DEFAULT, buffer.data());
+    if (H5Dwrite(id(), type, memspace, filespace, H5P_DEFAULT, buffer.data()) < 0) {
+        // complaining if the library refused
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "writing the string in '" + name() + "'", reason);
+    }
     // release the temporary type
-    H5Tclose(type);
+    if (H5Tclose(type) < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "releasing the datatype of '" + name() + "'", reason);
+    }
     // all done
     return;
 }
