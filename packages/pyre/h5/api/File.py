@@ -42,6 +42,8 @@ class File(Group):
         super().__init__(at=at, layout=layout, **kwds)
         # initially, i'm not attached to a particular file
         self._pyre_uri = None
+        # what the library had to say the last time an open failed
+        self._pyre_reason = ""
         # all done
         return
 
@@ -152,8 +154,8 @@ class File(Group):
         # that is missing or unreadable, one that is not h5 at all, or, for a product in a
         # bucket, credentials that are wrong or no longer current
         if not self._pyre_live():
-            # so name the file rather than the path
-            return exceptions.OpenError(uri=self._pyre_uri)
+            # so name the file rather than the path, and pass along what the library said
+            return exceptions.OpenError(uri=self._pyre_uri, reason=self._pyre_reason)
         # otherwise i am attached to a real file that holds nothing there
         return exceptions.PathError(uri=self._pyre_uri, path=path)
 
@@ -207,6 +209,11 @@ class File(Group):
             fapl = libh5.properties.fapl.default
         # open the file
         self._pyre_id = libh5.File(uri=str(uri), fcpl=fcpl, fapl=fapl, **kwds)
+        # if the library refused, its reasons sit on its error stack only until the next call
+        # into it, and asking whether the handle is live is such a call; so collect them first
+        reason = libh5.explanation()
+        # and keep them only if the open is what failed
+        self._pyre_reason = "" if self._pyre_live() else reason
         # all done
         return self
 

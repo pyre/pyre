@@ -30,11 +30,13 @@ class OpenError(APIError):
     description = "could not open '{0.uri}': the h5 library handed back an empty handle"
 
     # metamethods
-    def __init__(self, uri, **kwds):
+    def __init__(self, uri, reason="", **kwds):
         # chain up
         super().__init__(**kwds)
         # save the error information
         self.uri = uri
+        # and what the library said about it, if anything
+        self.reason = reason
         # all done
         return
 
@@ -45,8 +47,11 @@ class OpenError(APIError):
         """
         # chain up to prime the report
         yield from super()._pyre_report()
-        # the library says nothing beyond the stack it prints on its own, so name the
-        # things it could have been
+        # if the library said why
+        if self.reason:
+            # pass it along
+            yield f"the library says: {self.reason}"
+        # either way, name the things it could have been
         yield "the product may be missing, unreadable, or not an h5 file at all"
         yield "one that lives in a bucket also needs credentials that are current"
         # all done

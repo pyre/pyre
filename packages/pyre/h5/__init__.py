@@ -14,6 +14,8 @@ from ..extensions import libh5
 
 # if they exist
 if libh5 is not None:
+    # initialize the runtime: refusals are reported through journal, not on stderr
+    libh5.init()
     # pull in the subpackages
     from . import disktypes
     from . import memtypes
