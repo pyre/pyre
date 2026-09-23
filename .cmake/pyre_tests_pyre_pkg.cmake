@@ -709,6 +709,7 @@ pyre_test_python_testcase(tests/pyre.pkg/nexus/staff_unborn.py)
 #
 pyre_test_python_testcase(tests/pyre.pkg/platforms/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/platforms/host.py)
+pyre_test_python_testcase(tests/pyre.pkg/platforms/host_fqdn.py)
 pyre_test_python_testcase(tests/pyre.pkg/platforms/library_pattern.py)
 pyre_test_python_testcase(tests/pyre.pkg/platforms/binaries/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/platforms/binaries/host_image.py)
