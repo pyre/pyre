@@ -41,6 +41,8 @@ namespace pyre::journal {
     using cout_t = Console;
     using cerr_t = ErrorConsole;
     using courier_t = Courier;
+    using splitter_t = Splitter;
+    using tee_t = Tee;
 
     // manipulators
     using at = Locator;

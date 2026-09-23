@@ -81,6 +81,8 @@ function(pyre_journalLib)
     lib/journal/Renderer.cc
     lib/journal/Stream.cc
     lib/journal/Trash.cc
+    lib/journal/Splitter.cc
+    lib/journal/Tee.cc
     lib/journal/Warning.cc
     lib/journal/debuginfo.cc
     lib/journal/firewalls.cc

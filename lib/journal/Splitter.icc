@@ -1,0 +1,46 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+#pragma once
+
+// my declarations
+#include "Splitter.h"
+
+
+// metamethods
+// an empty splitter
+pyre::journal::Splitter::Splitter(const name_type & name) : super_type(name), _outputs {} {}
+
+
+// a splitter over a given set of devices
+pyre::journal::Splitter::Splitter(outputs_type outputs, const name_type & name) :
+    super_type(name),
+    _outputs { std::move(outputs) }
+{}
+
+
+// interface
+// the devices i forward to
+auto
+pyre::journal::Splitter::outputs() const -> const outputs_type &
+{
+    // easy enough
+    return _outputs;
+}
+
+
+// add a device to the set
+auto
+pyre::journal::Splitter::attach(output_type output) -> Splitter &
+{
+    // add it to the pile
+    _outputs.push_back(std::move(output));
+    // and enable chaining
+    return *this;
+}
+
+
+// end of file

@@ -58,6 +58,8 @@ namespace pyre::journal {
     class Console;
     class ErrorConsole;
     class Courier;
+    class Splitter;
+    class Tee;
 
     // the null channel; used when developer facing channels are turned off at compile time
     class Null;
