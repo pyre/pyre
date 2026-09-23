@@ -22,6 +22,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
         with:
+          # the whole history, so {setuptools_scm} can see the tag that names the version
+          fetch-depth: 0
           ref: ${{ github.event.inputs.ref }}
 
       - name: set up python

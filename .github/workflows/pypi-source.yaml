@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+        with:
+          # the whole history, so {setuptools_scm} can see the tag that names the version
+          fetch-depth: 0
 
       - name: set up python
         uses: actions/setup-python@v5
