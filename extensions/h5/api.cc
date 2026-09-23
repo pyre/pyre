@@ -21,13 +21,33 @@ pyre::h5::py::api(py::module & m)
         "init",
         // the handler
         []() -> void {
-            // a hook for runtime initialization, e.g. silencing the native diagnostics in favor
-            // of pyre journal messages, via {H5Eset_auto2}
+            // the library prints its error stack on stderr every time it refuses a call; the
+            // wrappers report refusals through journal, with the library's explanation, so the
+            // print is noise nobody can silence. turn it off, so journal is the one voice
+            if (H5Eset_auto2(H5E_DEFAULT, nullptr, nullptr) < 0) {
+                // a refusal here is a bug in the runtime setup
+                auto channel = pyre::journal::firewall_t("pyre.h5.init");
+                // so complain
+                channel << pyre::journal::at() << "failed to silence the hdf5 error stack"
+                        << pyre::journal::endl;
+            }
             // all done
             return;
         },
         // the docstring
-        "initialize the hdf5 runtime");
+        "initialize the hdf5 runtime: refusals are reported through journal, not on stderr");
+
+    // the library's explanation of its latest refusal
+    m.def(
+        // the name
+        "explanation",
+        // the handler
+        []() -> std::string {
+            // ask the wrappers
+            return pyre::h5::explanation();
+        },
+        // the docstring
+        "the library's explanation of its latest refusal, or an empty string when it has none");
 
     // get the version
     m.def(
