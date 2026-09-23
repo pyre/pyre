@@ -7,6 +7,8 @@
 
 // my declarations
 #include "STRCPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // adopt an existing raw handle
@@ -20,8 +22,13 @@ pyre::h5::properties::STRCPL::charEncoding() const -> H5T_cset_t
     // make room for the answer
     H5T_cset_t encoding = H5T_CSET_ASCII;
     // ask the library
-    H5Pget_char_encoding(id(), &encoding);
-    // and report
+    if (H5Pget_char_encoding(id(), &encoding) < 0) {
+        // complain if it refused
+        complain("pyre.h5.strcpl", "retrieving the character encoding");
+        // and report the library default
+        return H5T_CSET_ASCII;
+    }
+    // otherwise, report
     return encoding;
 }
 
@@ -31,7 +38,10 @@ auto
 pyre::h5::properties::STRCPL::charEncoding(H5T_cset_t encoding) -> void
 {
     // hand it to the library
-    H5Pset_char_encoding(id(), encoding);
+    if (H5Pset_char_encoding(id(), encoding) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.strcpl", "setting the character encoding");
+    }
     // all done
     return;
 }

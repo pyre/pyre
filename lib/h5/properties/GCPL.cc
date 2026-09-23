@@ -7,10 +7,19 @@
 
 // my declarations
 #include "GCPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // make a fresh group creation property list
-pyre::h5::properties::GCPL::GCPL() : OCPL(H5Pcreate(H5P_GROUP_CREATE)) {}
+pyre::h5::properties::GCPL::GCPL() : OCPL(H5Pcreate(H5P_GROUP_CREATE))
+{
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.gcpl", "creating a group creation property list");
+    }
+}
 
 
 // adopt an existing raw handle
@@ -36,8 +45,13 @@ pyre::h5::properties::GCPL::linkPhaseChange() const -> PhaseChange
     unsigned int maxCompact = 0;
     unsigned int minDense = 0;
     // ask the library
-    H5Pget_link_phase_change(id(), &maxCompact, &minDense);
-    // pack and ship
+    if (H5Pget_link_phase_change(id(), &maxCompact, &minDense) < 0) {
+        // complain if it refused
+        complain("pyre.h5.gcpl", "retrieving the link storage thresholds");
+        // and report empty thresholds
+        return PhaseChange(0, 0);
+    }
+    // otherwise, pack and ship
     return PhaseChange(maxCompact, minDense);
 }
 
@@ -47,7 +61,10 @@ auto
 pyre::h5::properties::GCPL::linkPhaseChange(const PhaseChange & thresholds) -> void
 {
     // hand them to the library
-    H5Pset_link_phase_change(id(), thresholds.maxCompact, thresholds.minDense);
+    if (H5Pset_link_phase_change(id(), thresholds.maxCompact, thresholds.minDense) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.gcpl", "setting the link storage thresholds");
+    }
     // all done
     return;
 }
@@ -60,8 +77,13 @@ pyre::h5::properties::GCPL::linkCreationOrder() const -> CreationOrder
     // make room for the answer
     unsigned int flags = 0;
     // ask the library
-    H5Pget_link_creation_order(id(), &flags);
-    // and report it in our own vocabulary
+    if (H5Pget_link_creation_order(id(), &flags) < 0) {
+        // complain if it refused
+        complain("pyre.h5.gcpl", "retrieving the link creation order flags");
+        // and report that nothing is tracked
+        return static_cast<CreationOrder>(0);
+    }
+    // otherwise, report it in our own vocabulary
     return static_cast<CreationOrder>(flags);
 }
 
@@ -71,7 +93,10 @@ auto
 pyre::h5::properties::GCPL::linkCreationOrder(CreationOrder flags) -> void
 {
     // hand them to the library
-    H5Pset_link_creation_order(id(), static_cast<unsigned int>(flags));
+    if (H5Pset_link_creation_order(id(), static_cast<unsigned int>(flags)) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.gcpl", "setting the link creation order flags");
+    }
     // all done
     return;
 }
@@ -85,8 +110,13 @@ pyre::h5::properties::GCPL::estimatedLinkInfo() const -> LinkEstimate
     unsigned int links = 0;
     unsigned int nameLength = 0;
     // ask the library
-    H5Pget_est_link_info(id(), &links, &nameLength);
-    // pack and ship
+    if (H5Pget_est_link_info(id(), &links, &nameLength) < 0) {
+        // complain if it refused
+        complain("pyre.h5.gcpl", "retrieving the link estimates");
+        // and report an empty estimate
+        return LinkEstimate(0, 0);
+    }
+    // otherwise, pack and ship
     return LinkEstimate(links, nameLength);
 }
 
@@ -96,7 +126,10 @@ auto
 pyre::h5::properties::GCPL::estimatedLinkInfo(const LinkEstimate & estimate) -> void
 {
     // hand them to the library
-    H5Pset_est_link_info(id(), estimate.links, estimate.nameLength);
+    if (H5Pset_est_link_info(id(), estimate.links, estimate.nameLength) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.gcpl", "setting the link estimates");
+    }
     // all done
     return;
 }

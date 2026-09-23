@@ -7,10 +7,19 @@
 
 // my declarations
 #include "DAPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // make a fresh dataset access property list
-pyre::h5::properties::DAPL::DAPL() : List(H5Pcreate(H5P_DATASET_ACCESS)) {}
+pyre::h5::properties::DAPL::DAPL() : List(H5Pcreate(H5P_DATASET_ACCESS))
+{
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.dapl", "creating a dataset access property list");
+    }
+}
 
 
 // adopt an existing raw handle
@@ -37,8 +46,13 @@ pyre::h5::properties::DAPL::chunkCache() const -> ChunkCache
     std::size_t bytes = 0;
     double preemption = 0;
     // ask the library
-    H5Pget_chunk_cache(id(), &slots, &bytes, &preemption);
-    // and hand it back as something that says what each number is
+    if (H5Pget_chunk_cache(id(), &slots, &bytes, &preemption) < 0) {
+        // complain if it refused
+        complain("pyre.h5.dapl", "retrieving the chunk cache settings");
+        // and report an empty cache
+        return ChunkCache(0, 0, 0);
+    }
+    // otherwise, hand it back as something that says what each number is
     return ChunkCache(slots, bytes, preemption);
 }
 
@@ -48,7 +62,10 @@ auto
 pyre::h5::properties::DAPL::chunkCache(const ChunkCache & cache) -> void
 {
     // take the description apart for the library
-    H5Pset_chunk_cache(id(), cache.slots, cache.bytes, cache.preemption);
+    if (H5Pset_chunk_cache(id(), cache.slots, cache.bytes, cache.preemption) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.dapl", "setting the chunk cache");
+    }
     // all done
     return;
 }

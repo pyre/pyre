@@ -7,6 +7,8 @@
 
 // my declarations
 #include "Datatype.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 // my predefined-type sibling, so i can copy one
 #include "Predefined.h"
 
@@ -18,15 +20,30 @@ pyre::h5::types::Datatype::Datatype(id_type id) : Location(id) {}
 // make an independent copy of a predefined type
 pyre::h5::types::Datatype::Datatype(const Predefined & type) :
     Location(static_cast<id_type>(H5Tcopy(type.id())))
-{}
+{
+    // if the library refused
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.types", "copying a predefined datatype");
+    }
+}
 
 
 // whether i describe the same datatype as {other}
 auto
 pyre::h5::types::Datatype::operator==(const Datatype & other) const -> bool
 {
-    // ask the library; a positive answer means the two types are equal
-    return H5Tequal(id(), other.id()) > 0;
+    // ask the library
+    auto answer = H5Tequal(id(), other.id());
+    // if it refused to compare them
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.types", "comparing two datatypes");
+        // and call them different
+        return false;
+    }
+    // otherwise, a positive answer means the two types are equal
+    return answer > 0;
 }
 
 
@@ -53,7 +70,16 @@ auto
 pyre::h5::types::Datatype::cell() const -> class_type
 {
     // ask the library
-    return H5Tget_class(id());
+    auto answer = H5Tget_class(id());
+    // if it refused
+    if (answer == H5T_NO_CLASS) {
+        // complain
+        complain("pyre.h5.types", "retrieving the class of a datatype");
+        // and hand back nothing
+        return H5T_NO_CLASS;
+    }
+    // otherwise, report
+    return answer;
 }
 
 
@@ -62,7 +88,16 @@ auto
 pyre::h5::types::Datatype::bytes() const -> std::size_t
 {
     // ask the library
-    return H5Tget_size(id());
+    auto answer = H5Tget_size(id());
+    // if it refused
+    if (answer == 0) {
+        // complain
+        complain("pyre.h5.types", "retrieving the size of a datatype");
+        // and hand back nothing
+        return 0;
+    }
+    // otherwise, report
+    return answer;
 }
 
 
@@ -71,7 +106,10 @@ auto
 pyre::h5::types::Datatype::setBytes(std::size_t size) -> void
 {
     // hand it to the library
-    H5Tset_size(id(), size);
+    if (H5Tset_size(id(), size) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.types", "resizing a datatype");
+    }
     // all done
     return;
 }
@@ -81,8 +119,15 @@ pyre::h5::types::Datatype::setBytes(std::size_t size) -> void
 auto
 pyre::h5::types::Datatype::super() const -> Datatype
 {
-    // ask the library for the base type, which hands back a fresh handle, and adopt it
-    return Datatype(static_cast<id_type>(H5Tget_super(id())));
+    // ask the library for the base type, which hands back a fresh handle
+    auto hid = H5Tget_super(id());
+    // if it refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.types", "retrieving the base type of a datatype");
+    }
+    // adopt the fresh handle, empty if the library refused
+    return Datatype(static_cast<id_type>(hid));
 }
 
 
@@ -90,8 +135,17 @@ pyre::h5::types::Datatype::super() const -> Datatype
 auto
 pyre::h5::types::Datatype::isA(class_type cls) const -> bool
 {
-    // ask the library; a positive answer means a match
-    return H5Tdetect_class(id(), cls) > 0;
+    // ask the library
+    auto answer = H5Tdetect_class(id(), cls);
+    // if it refused to look
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.types", "looking for a class within a datatype");
+        // and report no match
+        return false;
+    }
+    // otherwise, a positive answer means a match
+    return answer > 0;
 }
 
 
@@ -101,11 +155,22 @@ pyre::h5::types::Datatype::encode() const -> string_t
 {
     // find out how big the description is
     std::size_t size = 0;
-    H5Tencode(id(), nullptr, &size);
+    // a datatype the library will not describe has no description
+    if (H5Tencode(id(), nullptr, &size) < 0) {
+        // so complain
+        complain("pyre.h5.types", "sizing the binary description of a datatype");
+        // and hand back nothing
+        return "";
+    }
     // make a buffer to hold it
     string_t buffer(size, '\0');
-    // fill it
-    H5Tencode(id(), buffer.data(), &size);
+    // fill it; the library will not change its mind between the two calls
+    if (H5Tencode(id(), buffer.data(), &size) < 0) {
+        // unless something is badly wrong
+        complain("pyre.h5.types", "encoding a datatype");
+        // in which case there is no description
+        return "";
+    }
     // and report
     return buffer;
 }
@@ -115,15 +180,22 @@ pyre::h5::types::Datatype::encode() const -> string_t
 auto
 pyre::h5::types::Datatype::decode(const string_t & buffer) const -> Datatype
 {
-    // ask the library to reconstitute the type, which hands back a fresh handle, and adopt it
+    // ask the library to reconstitute the type, which hands back a fresh handle
 #if H5_VERSION_GE(2, 0, 0)
     // {H5Tdecode2} first appears in 2.0.0; it wants the buffer size, so out-of-bounds reads can be
     // caught
-    return Datatype(static_cast<id_type>(H5Tdecode2(buffer.data(), buffer.size())));
+    auto hid = H5Tdecode2(buffer.data(), buffer.size());
 #else
     // older releases trust the buffer to be well formed
-    return Datatype(static_cast<id_type>(H5Tdecode(buffer.data())));
+    auto hid = H5Tdecode(buffer.data());
 #endif
+    // if the library refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.types", "decoding a datatype from its binary description");
+    }
+    // adopt the fresh handle, empty if the library refused
+    return Datatype(static_cast<id_type>(hid));
 }
 
 

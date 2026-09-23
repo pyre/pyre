@@ -11,6 +11,8 @@
 #include "DCPL.h"
 // the map from a c++ type to the hdf5 type that describes it
 #include "../datatypes.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // declare the value that stands in for cells nobody writes
@@ -22,7 +24,10 @@ pyre::h5::properties::DCPL::fillValue(const valueT & value) -> void
     // asking the caller to name it
     auto type = pyre::h5::datatype<valueT>();
     // and hand both to the library
-    H5Pset_fill_value(id(), type.id(), &value);
+    if (H5Pset_fill_value(id(), type.id(), &value) < 0) {
+        // complaining if it refused
+        complain("pyre.h5.dcpl", "setting the fill value");
+    }
     // all done
     return;
 }

@@ -7,17 +7,36 @@
 
 // my declarations
 #include "DXPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // make a fresh dataset memory transfer property list
-pyre::h5::properties::DXPL::DXPL() : List(H5Pcreate(H5P_DATASET_XFER)) {}
+pyre::h5::properties::DXPL::DXPL() : List(H5Pcreate(H5P_DATASET_XFER))
+{
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.dxpl", "creating a dataset transfer property list");
+    }
+}
 
 
 // make one that applies the given data transform {expression}
 pyre::h5::properties::DXPL::DXPL(const string_t & expression) : List(H5Pcreate(H5P_DATASET_XFER))
 {
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.dxpl", "creating a dataset transfer property list");
+        // and leave it empty
+        return;
+    }
     // install the transform
-    H5Pset_data_transform(id(), expression.data());
+    if (H5Pset_data_transform(id(), expression.data()) < 0) {
+        // and complain if the library refused it
+        complain("pyre.h5.dxpl", "installing the data transform '" + expression + "'");
+    }
 }
 
 

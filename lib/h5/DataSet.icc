@@ -9,6 +9,8 @@
 
 // my declarations
 #include "DataSet.h"
+// the reporting of library refusals
+#include "diagnostics.h"
 // the types the fill value reader hands back and compares against
 #include "properties/DCPL.h"
 #include "types/Datatype.h"
@@ -190,7 +192,6 @@ pyre::h5::DataSet::_assemble(const tiling_t & layout) const -> mosaic_t<cellT>
 }
 
 
-
 // the value that stands in for my cells nobody ever wrote
 template <class valueT>
 auto
@@ -222,7 +223,15 @@ pyre::h5::DataSet::fillValue() const -> std::optional<valueT>
     // make room for the answer
     valueT value {};
     // ask the library to convert it into my terms
-    H5Pget_fill_value(properties.id(), expected.id(), &value);
+    if (H5Pget_fill_value(properties.id(), expected.id(), &value) < 0) {
+        // complaining if it refused
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset.fill", "retrieving the fill value of '" + name() + "'", reason);
+        // and declining to answer, in case errors are not fatal
+        return {};
+    }
     // and hand it off
     return value;
 }

@@ -7,6 +7,8 @@
 
 // my declarations
 #include "DataSpace.h"
+// the reporting of library refusals
+#include "diagnostics.h"
 
 
 // make a dataspace of the given {type}
@@ -14,15 +16,10 @@ pyre::h5::DataSpace::DataSpace(class_type type) : Identifier(H5Screate(type))
 {
     // if the library refused to make it
     if (!valid()) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5.dataspace");
-        // and complain
-        channel
-            // what
-            << "failed to create a dataspace of type "
-            << type
-            // where
-            << pyre::journal::endl(__HERE__);
+        // complain
+        complain(
+            "pyre.h5.dataspace",
+            "creating a dataspace of type " + std::to_string(static_cast<int>(type)));
     }
 }
 
@@ -33,15 +30,10 @@ pyre::h5::DataSpace::DataSpace(const shape_t & shape) :
 {
     // if the library refused to make it
     if (!valid()) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5.dataspace");
-        // and complain
-        channel
-            // what
-            << "failed to create a simple dataspace of rank "
-            << shape.size()
-            // where
-            << pyre::journal::endl(__HERE__);
+        // complain
+        complain(
+            "pyre.h5.dataspace",
+            "creating a simple dataspace of rank " + std::to_string(shape.size()));
     }
 }
 
@@ -67,7 +59,16 @@ auto
 pyre::h5::DataSpace::simple() const -> bool
 {
     // ask the library
-    return H5Sis_simple(id()) > 0;
+    auto answer = H5Sis_simple(id());
+    // if it would not say
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "checking whether a dataspace has a simple extent");
+        // and it is not simple
+        return false;
+    }
+    // interpret the verdict
+    return answer > 0;
 }
 
 
@@ -76,7 +77,14 @@ auto
 pyre::h5::DataSpace::rank() const -> int
 {
     // ask the library
-    return H5Sget_simple_extent_ndims(id());
+    auto answer = H5Sget_simple_extent_ndims(id());
+    // if it would not say
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "retrieving the rank of a dataspace");
+    }
+    // hand off the answer, negative when the library refused
+    return answer;
 }
 
 
@@ -94,7 +102,12 @@ pyre::h5::DataSpace::shape() const -> shape_t
     // make a correctly sized container
     shape_t extent(r);
     // populate it
-    H5Sget_simple_extent_dims(id(), extent.data(), nullptr);
+    if (H5Sget_simple_extent_dims(id(), extent.data(), nullptr) < 0) {
+        // complaining if the library refused
+        complain("pyre.h5.dataspace", "retrieving the extent of a dataspace");
+        // in which case there is no shape to report
+        return {};
+    }
     // and return it
     return extent;
 }
@@ -127,11 +140,8 @@ pyre::h5::DataSpace::sameExtent(const DataSpace & other) const -> bool
     auto status = H5Sextent_equal(id(), other.id());
     // if the comparison itself failed
     if (status < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5.dataspace");
-        // and complain
-        channel << pyre::journal::at() << "failed to compare dataspace extents"
-                << pyre::journal::endl;
+        // complain
+        complain("pyre.h5.dataspace", "comparing the extents of two dataspaces");
         // failure to compare is not agreement
         return false;
     }
@@ -146,15 +156,9 @@ pyre::h5::DataSpace::reshape(const shape_t & shape) -> void
 {
     // resize me
     if (H5Sset_extent_simple(id(), shape.size(), shape.data(), nullptr) < 0) {
-        // make a channel
-        auto channel = pyre::journal::error_t("pyre.h5.dataspace");
-        // and complain
-        channel
-            // what
-            << "failed to reshape a dataspace to rank "
-            << shape.size()
-            // where
-            << pyre::journal::endl(__HERE__);
+        // complaining if the library refused
+        complain(
+            "pyre.h5.dataspace", "reshaping a dataspace to rank " + std::to_string(shape.size()));
     }
     // all done
     return;
@@ -166,7 +170,16 @@ auto
 pyre::h5::DataSpace::cells() const -> hssize_t
 {
     // ask the library
-    return H5Sget_simple_extent_npoints(id());
+    auto answer = H5Sget_simple_extent_npoints(id());
+    // if it would not count
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "counting the cells of a dataspace");
+        // and there are none
+        return 0;
+    }
+    // hand off the count
+    return answer;
 }
 
 
@@ -174,8 +187,15 @@ pyre::h5::DataSpace::cells() const -> hssize_t
 auto
 pyre::h5::DataSpace::type() const -> class_type
 {
-    // ask the library
-    return H5Sget_simple_extent_type(id());
+    // ask the library; it answers with {H5S_NO_CLASS} when it cannot tell
+    auto answer = H5Sget_simple_extent_type(id());
+    // if it could not
+    if (answer == H5S_NO_CLASS) {
+        // complain
+        complain("pyre.h5.dataspace", "retrieving the kind of a dataspace");
+    }
+    // hand off the answer
+    return answer;
 }
 
 
@@ -184,7 +204,10 @@ auto
 pyre::h5::DataSpace::clear() -> void
 {
     // empty my extent
-    H5Sset_extent_none(id());
+    if (H5Sset_extent_none(id()) < 0) {
+        // complaining if the library refused
+        complain("pyre.h5.dataspace", "discarding the extent of a dataspace");
+    }
     // all done
     return;
 }
@@ -194,8 +217,15 @@ pyre::h5::DataSpace::clear() -> void
 auto
 pyre::h5::DataSpace::clone() const -> DataSpace
 {
-    // copying yields a fresh, owned handle, so the result adopts it
-    return DataSpace(static_cast<id_type>(H5Scopy(id())));
+    // copying yields a fresh, owned handle
+    auto hid = H5Scopy(id());
+    // if the library refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "copying a dataspace");
+    }
+    // the result adopts the handle, empty if the library refused
+    return DataSpace(static_cast<id_type>(hid));
 }
 
 
@@ -215,7 +245,16 @@ auto
 pyre::h5::DataSpace::validSelection() const -> bool
 {
     // ask the library
-    return H5Sselect_valid(id()) > 0;
+    auto answer = H5Sselect_valid(id());
+    // if it would not say
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "checking the selection of a dataspace");
+        // and the selection is not valid
+        return false;
+    }
+    // interpret the verdict
+    return answer > 0;
 }
 
 
@@ -229,7 +268,12 @@ pyre::h5::DataSpace::selectionBounds() const -> slab_t
     shape_t begin(r < 0 ? 0 : r);
     shape_t end(r < 0 ? 0 : r);
     // hand them to the calculator
-    H5Sget_select_bounds(id(), begin.data(), end.data());
+    if (H5Sget_select_bounds(id(), begin.data(), end.data()) < 0) {
+        // complaining if the library refused
+        complain("pyre.h5.dataspace", "retrieving the bounds of a selection");
+        // in which case there are no corners to report
+        return { {}, {} };
+    }
     // and return the pair
     return { begin, end };
 }
@@ -240,7 +284,16 @@ auto
 pyre::h5::DataSpace::selectedCells() const -> hssize_t
 {
     // ask the library
-    return H5Sget_select_npoints(id());
+    auto answer = H5Sget_select_npoints(id());
+    // if it would not count
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "counting the selected cells of a dataspace");
+        // and there are none
+        return 0;
+    }
+    // hand off the count
+    return answer;
 }
 
 
@@ -249,7 +302,16 @@ auto
 pyre::h5::DataSpace::selectedElements() const -> hssize_t
 {
     // ask the library
-    return H5Sget_select_elem_npoints(id());
+    auto answer = H5Sget_select_elem_npoints(id());
+    // if it would not count
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "counting the selected elements of a dataspace");
+        // and there are none
+        return 0;
+    }
+    // hand off the count
+    return answer;
 }
 
 
@@ -258,7 +320,16 @@ auto
 pyre::h5::DataSpace::selectedSlabs() const -> hssize_t
 {
     // ask the library
-    return H5Sget_select_hyper_nblocks(id());
+    auto answer = H5Sget_select_hyper_nblocks(id());
+    // if it would not count
+    if (answer < 0) {
+        // complain
+        complain("pyre.h5.dataspace", "counting the selected hyperslabs of a dataspace");
+        // and there are none
+        return 0;
+    }
+    // hand off the count
+    return answer;
 }
 
 
@@ -267,7 +338,10 @@ auto
 pyre::h5::DataSpace::selectAll() -> void
 {
     // ask the library
-    H5Sselect_all(id());
+    if (H5Sselect_all(id()) < 0) {
+        // complaining if it refused
+        complain("pyre.h5.dataspace", "selecting the whole extent of a dataspace");
+    }
     // all done
     return;
 }
@@ -278,7 +352,10 @@ auto
 pyre::h5::DataSpace::selectNone() -> void
 {
     // ask the library
-    H5Sselect_none(id());
+    if (H5Sselect_none(id()) < 0) {
+        // complaining if it refused
+        complain("pyre.h5.dataspace", "clearing the selection of a dataspace");
+    }
     // all done
     return;
 }
@@ -289,7 +366,10 @@ auto
 pyre::h5::DataSpace::offset(const offsets_t & delta) -> void
 {
     // ask the library
-    H5Soffset_simple(id(), delta.data());
+    if (H5Soffset_simple(id(), delta.data()) < 0) {
+        // complaining if it refused
+        complain("pyre.h5.dataspace", "shifting the selection of a dataspace");
+    }
     // all done
     return;
 }
@@ -320,7 +400,11 @@ pyre::h5::DataSpace::selectElements(selection_type op, const points_t & elements
         }
     }
     // combine them with the current selection
-    H5Sselect_elements(id(), op, count, flat.data());
+    if (H5Sselect_elements(id(), op, count, flat.data()) < 0) {
+        // complaining if the library refused
+        complain(
+            "pyre.h5.dataspace", "selecting " + std::to_string(count) + " elements of a dataspace");
+    }
     // all done
     return;
 }
@@ -333,7 +417,7 @@ pyre::h5::DataSpace::selectedElementList(int start) const -> points_t
     // get my rank
     auto r = rank();
     // and the number of selected elements
-    auto len = H5Sget_select_elem_npoints(id());
+    auto len = selectedElements();
     // if there is nothing to report
     if (r <= 0 || len <= 0) {
         // hand back an empty table
@@ -342,7 +426,12 @@ pyre::h5::DataSpace::selectedElementList(int start) const -> points_t
     // pull the whole flat coordinate list
     shape_t flat(len * r);
     // populate it
-    H5Sget_select_elem_pointlist(id(), 0, len, flat.data());
+    if (H5Sget_select_elem_pointlist(id(), 0, len, flat.data()) < 0) {
+        // complaining if the library refused
+        complain("pyre.h5.dataspace", "retrieving the selected elements of a dataspace");
+        // in which case there is nothing to report
+        return {};
+    }
     // build the coordinate table
     points_t points;
     // go through the requested points
@@ -378,7 +467,10 @@ pyre::h5::DataSpace::slab(selection_type op, const index_t & origin, const shape
     // we want exactly one block per dimension
     shape_t count(shape.size(), 1);
     // each of size {shape}, anchored at {origin}, with no stride
-    H5Sselect_hyperslab(id(), op, origin.data(), nullptr, count.data(), shape.data());
+    if (H5Sselect_hyperslab(id(), op, origin.data(), nullptr, count.data(), shape.data()) < 0) {
+        // complaining if the library refused
+        complain("pyre.h5.dataspace", "selecting a slab of a dataspace");
+    }
     // all done
     return;
 }
@@ -391,7 +483,11 @@ pyre::h5::DataSpace::slab(
     const shape_t & count) -> void
 {
     // {shape} gives the per-dimension block size; everything else is passed through
-    H5Sselect_hyperslab(id(), op, origin.data(), stride.data(), count.data(), shape.data());
+    if (H5Sselect_hyperslab(id(), op, origin.data(), stride.data(), count.data(), shape.data())
+        < 0) {
+        // complaining if the library refused
+        complain("pyre.h5.dataspace", "selecting a strided slab of a dataspace");
+    }
     // all done
     return;
 }
@@ -404,7 +500,7 @@ pyre::h5::DataSpace::selectedSlabList(int start) const -> slabs_t
     // get my rank
     auto r = rank();
     // and the number of selected slabs
-    auto len = H5Sget_select_hyper_nblocks(id());
+    auto len = selectedSlabs();
     // figure out how many we will extract
     auto blocks = len - start;
     // if there is nothing to report
@@ -415,7 +511,12 @@ pyre::h5::DataSpace::selectedSlabList(int start) const -> slabs_t
     // each block is stored as a (begin, end) corner pair, so two corners of {r} coordinates
     shape_t flat(2 * r * blocks);
     // populate the buffer, starting at the requested block
-    H5Sget_select_hyper_blocklist(id(), start, blocks, flat.data());
+    if (H5Sget_select_hyper_blocklist(id(), start, blocks, flat.data()) < 0) {
+        // complaining if the library refused
+        complain("pyre.h5.dataspace", "retrieving the selected hyperslabs of a dataspace");
+        // in which case there is nothing to report
+        return {};
+    }
     // build the result
     slabs_t slabs;
     // go through the blocks

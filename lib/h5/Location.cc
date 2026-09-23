@@ -7,6 +7,8 @@
 
 // my declarations
 #include "Location.h"
+// the reporting of library refusals
+#include "diagnostics.h"
 // the types my interface mentions
 #include "Attribute.h"
 #include "DataSpace.h"
@@ -38,7 +40,8 @@ pyre::h5::Location::attributeCount() const -> int
 auto
 pyre::h5::Location::openAttribute(unsigned int index) const -> Attribute
 {
-    // open the attribute by its position; the library hands back a fresh handle the wrapper adopts
+    // open the attribute by its position; the library hands back a fresh handle the wrapper
+    // adopts, or an invalid one when there is no such attribute, which is the caller's answer
     return Attribute(
         static_cast<id_type>(H5Aopen_by_idx(
             id(), ".", H5_INDEX_NAME, H5_ITER_INC, index, H5P_DEFAULT, H5P_DEFAULT)));
@@ -49,7 +52,8 @@ pyre::h5::Location::openAttribute(unsigned int index) const -> Attribute
 auto
 pyre::h5::Location::openAttribute(const string_t & name) const -> Attribute
 {
-    // open the attribute by name; the library hands back a fresh handle the wrapper adopts
+    // open the attribute by name; the library hands back a fresh handle the wrapper adopts, or
+    // an invalid one when there is no such attribute, which is the caller's answer
     return Attribute(static_cast<id_type>(H5Aopen(id(), name.data(), H5P_DEFAULT)));
 }
 
@@ -70,9 +74,14 @@ pyre::h5::Location::createAttribute(
     const properties::ACPL & acpl) const -> Attribute
 {
     // make the attribute; the library hands back a fresh handle the wrapper adopts
-    return Attribute(
-        static_cast<id_type>(
-            H5Acreate2(id(), name.data(), type.id(), space.id(), acpl.id(), H5P_DEFAULT)));
+    auto hid = H5Acreate2(id(), name.data(), type.id(), space.id(), acpl.id(), H5P_DEFAULT);
+    // if the library refused
+    if (hid < 0) {
+        // complain
+        complain("pyre.h5.location", "creating the attribute '" + name + "'");
+    }
+    // hand off the attribute, empty if the library refused
+    return Attribute(static_cast<id_type>(hid));
 }
 
 
@@ -82,7 +91,11 @@ pyre::h5::Location::renameAttribute(const string_t & oldName, const string_t & n
     -> void
 {
     // hand it to the library
-    H5Arename(id(), oldName.data(), newName.data());
+    if (H5Arename(id(), oldName.data(), newName.data()) < 0) {
+        // and complain if it refused
+        complain(
+            "pyre.h5.location", "renaming the attribute '" + oldName + "' to '" + newName + "'");
+    }
     // all done
     return;
 }
@@ -93,7 +106,10 @@ auto
 pyre::h5::Location::removeAttribute(const string_t & name) const -> void
 {
     // hand it to the library
-    H5Adelete(id(), name.data());
+    if (H5Adelete(id(), name.data()) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.location", "removing the attribute '" + name + "'");
+    }
     // all done
     return;
 }

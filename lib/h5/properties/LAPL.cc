@@ -7,10 +7,19 @@
 
 // my declarations
 #include "LAPL.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // make a fresh link access property list
-pyre::h5::properties::LAPL::LAPL() : List(H5Pcreate(H5P_LINK_ACCESS)) {}
+pyre::h5::properties::LAPL::LAPL() : List(H5Pcreate(H5P_LINK_ACCESS))
+{
+    // if the library refused to make it
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.lapl", "creating a link access property list");
+    }
+}
 
 
 // adopt an existing raw handle
@@ -35,8 +44,13 @@ pyre::h5::properties::LAPL::traversalLimit() const -> std::size_t
     // make room for the answer
     std::size_t links = 0;
     // ask the library
-    H5Pget_nlinks(id(), &links);
-    // and report
+    if (H5Pget_nlinks(id(), &links) < 0) {
+        // complain if it refused
+        complain("pyre.h5.lapl", "retrieving the link traversal limit");
+        // and report that no traversals are allowed
+        return 0;
+    }
+    // otherwise, report
     return links;
 }
 
@@ -46,11 +60,13 @@ auto
 pyre::h5::properties::LAPL::traversalLimit(std::size_t links) -> void
 {
     // hand it to the library
-    H5Pset_nlinks(id(), links);
+    if (H5Pset_nlinks(id(), links) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.lapl", "setting the link traversal limit");
+    }
     // all done
     return;
 }
-
 
 
 // the prefix prepended to the filename an external link names
@@ -59,15 +75,27 @@ pyre::h5::properties::LAPL::externalPrefix() const -> string_t
 {
     // find out how long the prefix is
     auto len = H5Pget_elink_prefix(id(), nullptr, 0);
+    // if the library refused to say
+    if (len < 0) {
+        // complain
+        complain("pyre.h5.lapl", "retrieving the external link prefix");
+        // and report nothing
+        return {};
+    }
     // if there is none
-    if (len <= 0) {
+    if (len == 0) {
         // there is nothing to report
         return {};
     }
     // make room for it, plus the terminating null
     string_t buffer(len + 1, '\0');
-    // retrieve it
-    H5Pget_elink_prefix(id(), buffer.data(), len + 1);
+    // retrieve it; the library will not change its mind between the two calls
+    if (H5Pget_elink_prefix(id(), buffer.data(), len + 1) < 0) {
+        // unless something is badly wrong
+        complain("pyre.h5.lapl", "retrieving the external link prefix");
+        // in which case there is nothing to report
+        return {};
+    }
     // trim the terminator and report
     buffer.resize(len);
     return buffer;
@@ -79,7 +107,10 @@ auto
 pyre::h5::properties::LAPL::externalPrefix(const string_t & prefix) -> void
 {
     // hand it to the library
-    H5Pset_elink_prefix(id(), prefix.data());
+    if (H5Pset_elink_prefix(id(), prefix.data()) < 0) {
+        // and complain if it refused
+        complain("pyre.h5.lapl", "setting the external link prefix");
+    }
     // all done
     return;
 }

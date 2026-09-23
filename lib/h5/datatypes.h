@@ -11,6 +11,8 @@
 #include "external.h"
 // forward declarations
 #include "forward.h"
+// the reporting of library refusals
+#include "diagnostics.h"
 // the types i build
 #include "types/Datatype.h"
 #include "types/Compound.h"
@@ -21,8 +23,15 @@ namespace pyre::h5 {
     // wrap a fresh, owned copy of a predefined native type
     inline auto nativeDatatype(hid_t native) -> datatype_t
     {
-        // copy the library constant into a transient i own, and adopt the handle
-        return datatype_t(static_cast<hid_t>(H5Tcopy(native)));
+        // copy the library constant into a transient i own
+        auto hid = H5Tcopy(native);
+        // if the library refused
+        if (hid < 0) {
+            // complain
+            complain("pyre.h5.datatype", "copying a native datatype");
+        }
+        // adopt the handle, empty if the library refused
+        return datatype_t(static_cast<hid_t>(hid));
     }
 
     // build a compound {(r, i)} type over the given native base type

@@ -7,6 +7,8 @@
 
 // my declarations
 #include "Array.h"
+// the reporting of library refusals
+#include "../diagnostics.h"
 
 
 // adopt an existing raw handle
@@ -16,7 +18,13 @@ pyre::h5::types::Array::Array(id_type id) : Datatype(id) {}
 // make an array of the given {cell} type and {shape}
 pyre::h5::types::Array::Array(const Datatype & cell, const shape_t & shape) :
     Datatype(static_cast<id_type>(H5Tarray_create2(cell.id(), shape.size(), shape.data())))
-{}
+{
+    // if the library refused
+    if (!valid()) {
+        // complain
+        complain("pyre.h5.types", "creating an array datatype");
+    }
+}
 
 
 // end of file
