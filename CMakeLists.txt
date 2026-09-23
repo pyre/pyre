@@ -124,7 +124,7 @@ endif()
 find_package(PostgreSQL)
 
 # python
-find_package(Python 3.7
+find_package(Python 3.11
     COMPONENTS Interpreter Development.Module
     OPTIONAL_COMPONENTS Development.Embed)
 

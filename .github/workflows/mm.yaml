@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-26.04]
         target: [debug, opt]
-        python: ["3.12", "3.13", "3.14"]
+        python: ["3.11", "3.12", "3.13", "3.14"]
         compiler: [
           "gcc-15",
           "clang-21"
