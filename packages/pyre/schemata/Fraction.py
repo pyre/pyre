@@ -19,7 +19,7 @@ class Fraction(Number):
 
     # constants
     typename = "fraction"  # the name of my type
-    complaint = "could not coerce {0.value!r) into a fraction"
+    complaint = "could not coerce {0.value!r} into a fraction"
 
     # interface
     def coerce(self, value, **kwds):
@@ -33,7 +33,7 @@ class Fraction(Number):
         # if anything goes wrong
         except Exception as error:
             # complain
-            raise self.CastingError(value=value, description=self.complaint)
+            raise self.CastingError(value=value, description=self.complaint, error=error)
 
     def json(self, value):
         """

@@ -48,7 +48,7 @@ class Cell(Schema):
             # lookup failures
             except Exception as error:
                 # get reported as casting errors
-                raise self.CastingError(description=self.complaint, value=value)
+                raise self.CastingError(description=self.complaint, value=value, error=error)
         # all other types are incompatible, for now
         raise self.CastingError(description=self.complaint, value=value)
 

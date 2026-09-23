@@ -21,7 +21,7 @@ class Timestamp(Schema):
     # constants
     format = "%Y-%m-%d %H:%M:%S"  # the default format
     typename = "timestamp"  # the name of my type
-    complaint = "could not coerce {0.value!r} into a time"
+    complaint = "could not coerce {0.value!r} into a timestamp"
 
     # interface
     def coerce(self, value, **kwds):
@@ -50,10 +50,10 @@ class Timestamp(Schema):
         try:
             # assume it is a string; strip it and covert it
             return datetime.datetime.strptime(value, self.format)
-        # if anything goes wrong
-        except Exception as error:
-            # complain
-            raise self.CastingError(value=value, description=self.complaint)
+        # if the parser refuses
+        except (TypeError, ValueError) as error:
+            # complain, passing along the parser's reason
+            raise self.CastingError(value=value, description=self.complaint, error=error)
 
     def string(self, value):
         """

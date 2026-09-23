@@ -21,6 +21,7 @@ class Date(Schema):
     # constants
     format = "%Y-%m-%d"  # the default date format
     typename = "date"  # the name of my type
+    complaint = "could not coerce {0.value!r} into a date"  # the error message
 
     # interface
     def coerce(self, value, **kwds):
@@ -58,10 +59,10 @@ class Date(Schema):
         try:
             # cast it into a date
             return datetime.datetime.strptime(value, self.format).date()
-        # if this fails
+        # if the parser refuses
         except (AttributeError, TypeError, ValueError) as error:
-            # complain
-            raise self.CastingError(value=value, description=str(error))
+            # complain, passing along the parser's reason
+            raise self.CastingError(value=value, description=self.complaint, error=error)
 
     def string(self, value):
         """

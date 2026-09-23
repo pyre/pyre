@@ -35,7 +35,7 @@ class Boolean(Number):
         # if anything goes wrong
         except Exception as error:
             # it is an error
-            raise self.CastingError(description=self.complaint, value=value)
+            raise self.CastingError(description=self.complaint, value=value, error=error)
 
     # meta-methods
     def __init__(self, default=True, **kwds):
