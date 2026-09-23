@@ -25,6 +25,12 @@ class ProjectTemplate(pyre.component, implements=Project):
     name = pyre.properties.str(default="project")
     name.doc = "the name of the project"
 
+    capname = pyre.properties.str(default=None)
+    capname.doc = "the name of the project, capitalized; derived from the name unless set"
+
+    github = pyre.properties.str(default="[ replace with the github repository ]")
+    github.doc = "the github repository of the project, as {owner}/{name}"
+
     authors = pyre.properties.str(default="[ replace with the list of authors ]")
     authors.doc = "the list of project authors"
 

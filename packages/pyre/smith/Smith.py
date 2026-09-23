@@ -36,8 +36,9 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
         """
         Return the location of the project template directory
         """
-        # build and  return the absolute path to the model template
-        return pyre.prefix / "templates" / self.project.template
+        # the templates live with the other platform independent runtime files of the package,
+        # under {share/pyre}; every builder puts them there
+        return pyre.prefix / "share" / "pyre" / "templates" / self.project.template
 
     # application obligations
     @pyre.export
@@ -50,6 +51,10 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
 
         # get the name of the project
         project = self.project.name
+        # the templates also want the capitalized name; unless the user chose one
+        if self.project.capname is None:
+            # derive it from the name
+            self.project.capname = project.capitalize()
         # get the nameserver
         nameserver = self.pyre_nameserver
         # make a local filesystem rooted at the model template directory
