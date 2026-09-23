@@ -30,7 +30,7 @@ class Launcher(Script, family="mpi.shells.mpirun"):
     tasks.default = pyre.executive.host.cpus.cores
     tasks.doc = "the number of mpi tasks per host; defaults to the number of cores"
 
-    hostfile = pyre.properties.path()
+    hostfile = pyre.properties.path(default=None)
     hostfile.doc = "the name of the file that describes the machine"
 
     auto = pyre.properties.bool(default=True)
