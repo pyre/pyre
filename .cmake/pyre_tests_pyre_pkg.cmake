@@ -499,10 +499,17 @@ pyre_test_python_testcase(tests/pyre.pkg/config/persist.py)
 
 
 #
+# pyre/smith
+#
+pyre_test_python_testcase(tests/pyre.pkg/smith/smith_basic.py)
+
+
+#
 # pyre/framework
 #
 pyre_test_python_testcase(tests/pyre.pkg/framework/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/exceptions.py)
+pyre_test_python_testcase(tests/pyre.pkg/framework/package_layout.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/slot.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/slot_instance.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/slot_algebra.py)
