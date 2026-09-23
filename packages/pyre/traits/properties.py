@@ -35,7 +35,7 @@ timestamp = property.timestamp
 uri = property.uri
 
 # containers
-# array needs a patch; see below
+array = property.array
 list = property.list
 set = property.set
 tuple = property.tuple
@@ -54,16 +54,6 @@ from .Dict import Dict as dict
 
 # the decorators
 from ..descriptors import converter, normalizer, validator
-
-
-# patch array so it can get a workable default schema
-class array(property.array):
-    # metamethods
-    def __init__(self, schema=float, **kwds):
-        # chain up
-        super().__init__(schema=schema, **kwds)
-        # all done
-        return
 
 
 # common meta-descriptors
