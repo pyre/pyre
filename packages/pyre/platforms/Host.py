@@ -28,9 +28,9 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
 
     # public data
     # host
-    fqdn = socket.getfqdn()  # the fully qualifies domain name, if available
     hostname = platform.node()  # the name of the host on which this process is running
     nickname = None  # the short name assigned to this host by the user
+
     # os
     platform = None  # the OS type on which this process is running
     release = None  # the OS release
@@ -50,6 +50,32 @@ class Host(pyre.component, family="pyre.platforms.generic", implements=Platform)
     # every platform we support prefixes its libraries the same way; the specific hosts
     # restate this alongside their own extensions, where it reads better
     prefix_library = "lib"
+
+    # host names that cost something to find out
+    class _DomainName:
+        """
+        A descriptor that resolves the fully qualified domain name of the host on first use
+
+        The reverse lookup blocks for the resolver timeout on a host whose name does not
+        resolve, several seconds on some networks, and most processes never ask for the name;
+        so it is not resolved at import, and it is resolved once
+        """
+
+        def __get__(self, instance, owner):
+            """
+            Resolve the name, whether asked through the platform class or an instance of it
+            """
+            # if nobody has asked yet
+            if owner._fqdn is None:
+                # ask the resolver
+                owner._fqdn = socket.getfqdn()
+            # hand it off
+            return owner._fqdn
+
+    # the fully qualified domain name, if available
+    fqdn = _DomainName()
+    # where the descriptor keeps it, once resolved
+    _fqdn = None
 
     @property
     def cpus(self):
