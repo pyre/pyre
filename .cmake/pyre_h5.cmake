@@ -27,6 +27,8 @@ function(pyre_h5Lib)
 
     # the pyre-owned wrappers over the hdf5 c api
     target_sources(pyre PRIVATE
+      # the reporting of library refusals
+      lib/h5/diagnostics.cc
       lib/h5/Identifier.cc
       lib/h5/DataSpace.cc
       lib/h5/Location.cc
