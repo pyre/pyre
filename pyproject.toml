@@ -51,8 +51,11 @@ editing = ["ruamel.yaml"]
 [tool.black]
 line-length = 100
 
-# versioning: derive the version from the most recent git tag
+# versioning: derive the version from the most recent git tag; an untagged commit yields
+# {X.Y.Z.devN} without the local {+gHASH} suffix, which the package indices refuse, so a dry
+# run from a branch can be uploaded to TestPyPI
 [tool.setuptools_scm]
+local_scheme = "no-local-version"
 
 # package discovery
 [tool.setuptools.packages.find]

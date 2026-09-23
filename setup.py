@@ -20,7 +20,7 @@ def version() -> str:
     metadata when the build happens outside a git checkout.
     """
     try:
-        return get_version(root=".", relative_to=__file__)
+        return get_version(root=".", relative_to=__file__, local_scheme="no-local-version")
     except LookupError:
         # no .git here: we are building from an sdist, where setuptools_scm has
         # already recorded the version in PKG-INFO
