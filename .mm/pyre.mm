@@ -55,8 +55,10 @@ pyre.ext.lib.c++.defines += $(pyre.lib.c++.defines)
 pyre.ext.lib.prerequisites += chroma.lib journal.lib # pyre.lib is added automatically
 
 
-# the templates
+# the templates; they land with the rest of the platform independent runtime files, under
+# {share/pyre}, so that every builder puts them in the same place
 pyre.templates.root := templates/
+pyre.templates.staging := $(builder.dest.share)pyre/templates/
 
 
 # get the docker image definitions
