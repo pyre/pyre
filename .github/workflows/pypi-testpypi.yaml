@@ -21,14 +21,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # the whole history, so {setuptools_scm} can see the tag that names the version
           fetch-depth: 0
           ref: ${{ github.event.inputs.ref }}
 
       - name: set up python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.x"
 
@@ -36,7 +36,7 @@ jobs:
         run: pipx run build --sdist
 
       - name: archive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pyre-testpypi-source
           path: dist/
@@ -50,7 +50,7 @@ jobs:
       id-token: write
     steps:
       - name: unpack
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: pyre-testpypi-source
           path: dist

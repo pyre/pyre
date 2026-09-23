@@ -27,19 +27,19 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # the whole history, so {setuptools_scm} can see the tag that names the version
           fetch-depth: 0
 
       - name: build wheels
-        uses: pypa/cibuildwheel@v4.1.0
+        uses: pypa/cibuildwheel@v4.2.1
         env:
           CIBW_BUILD: ${{ matrix.python }}-${{ matrix.platforms[1] }}
           CIBW_SKIP: pp*
 
       - name: archive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           # one artifact per matrix cell; v4 rejects duplicate names
           name: pyre-wheels-${{ matrix.python }}-${{ matrix.platforms[1] }}
@@ -57,7 +57,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - name: download
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           # collect every per-cell artifact into a single wheelhouse/
           pattern: pyre-wheels-*

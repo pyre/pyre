@@ -43,7 +43,7 @@ jobs:
           sudo apt install -y cmake openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
       - name: python ${{matrix.python}} setup
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{matrix.python}}
 
@@ -106,7 +106,7 @@ jobs:
           pythonVersion: ${{matrix.python}}
 
       - name: checkout pyre
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           path: 'pyre'
@@ -175,7 +175,7 @@ jobs:
           sudo apt install -y cmake openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
       - name: python setup
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.14"
 
@@ -185,7 +185,7 @@ jobs:
           pip3 install pybind11 PyYAML ruamel.yaml numpy
 
       - name: checkout pyre
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           path: 'pyre'

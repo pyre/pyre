@@ -18,13 +18,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # the whole history, so {setuptools_scm} can see the tag that names the version
           fetch-depth: 0
 
       - name: set up python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.x"
 
@@ -32,7 +32,7 @@ jobs:
         run: pipx run build --sdist
 
       - name: archive
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: pyre-source
           path: dist/
@@ -48,7 +48,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - name: unpack
-        uses: actions/download-artifact@v4.1.7
+        uses: actions/download-artifact@v8
         with:
           # unpacks default artifact into dist/
           # if `name: artifact` is omitted, the action will create extra parent dir

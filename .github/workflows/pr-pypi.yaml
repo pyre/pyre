@@ -22,18 +22,18 @@ jobs:
         python: [cp311]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # the whole history, so {setuptools_scm} can see the tag that names the version
           fetch-depth: 0
 
       - name: build wheels
-        uses: pypa/cibuildwheel@v4.1.0
+        uses: pypa/cibuildwheel@v4.2.1
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
           CIBW_SKIP: pp*
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           # v4 rejects duplicate names across matrix cells
           name: pr-wheels-${{ matrix.os }}-${{ matrix.python }}
@@ -43,7 +43,7 @@ jobs:
     name: build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # the whole history, so {setuptools_scm} can see the tag that names the version
           fetch-depth: 0
@@ -51,7 +51,7 @@ jobs:
       - name: build sdist
         run: pipx run build --sdist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: pr-sdist
           path: dist/*.tar.gz
