@@ -18,11 +18,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-13]
+        os: [ubuntu-latest, macos-15]
         python: [cp311]
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # the whole history, so {setuptools_scm} can see the tag that names the version
+          fetch-depth: 0
 
       - name: build wheels
         uses: pypa/cibuildwheel@v4.1.0
@@ -41,6 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # the whole history, so {setuptools_scm} can see the tag that names the version
+          fetch-depth: 0
 
       - name: build sdist
         run: pipx run build --sdist
