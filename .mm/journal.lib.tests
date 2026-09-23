@@ -90,5 +90,7 @@ tests.journal.lib.error_file_mode.clean += error_file_mode.log
 tests.journal.lib.info_file_mode.clean += info_file_mode.log
 tests.journal.lib.warning_file_mode.clean += warning_file_mode.log
 tests.journal.lib.help_file_mode.clean += help_file_mode.log
+# the {tee_sanity} test case must clean up the file it creates
+tests.journal.lib.tee_sanity.clean += tee_sanity.log
 
 # end of file
