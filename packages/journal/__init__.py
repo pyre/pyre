@@ -54,6 +54,8 @@ if without_libjournal:
     from .File import File as file
     from .Console import Console as cout
     from .ErrorConsole import ErrorConsole as cerr
+    from .Splitter import Splitter as splitter
+    from .Tee import Tee as tee
 
     # channels
     # developer facing
@@ -156,6 +158,8 @@ else:
     trash = libjournal.Trash
     file = libjournal.File
     cout = libjournal.Console
+    splitter = libjournal.Splitter
+    tee = libjournal.Tee
     cerr = libjournal.ErrorConsole
 
     # the developer facing channels
