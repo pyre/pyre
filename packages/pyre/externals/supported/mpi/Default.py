@@ -32,5 +32,16 @@ class Default(
     launcher = pyre.properties.str(default="mpirun")
     launcher.doc = "the name of the launcher of parallel jobs"
 
+    # interface
+    @pyre.export
+    def machinefile(self, path):
+        """
+        Build the command line arguments that hand {path}, a file that describes the machine,
+        to my launcher
+        """
+        # the flavor is unknown, so use the spelling that both the hydra launchers of mpich and
+        # intel mpi and the launcher of openmpi accept
+        return ["-machinefile", str(path)]
+
 
 # end of file
