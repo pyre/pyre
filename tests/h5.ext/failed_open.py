@@ -26,7 +26,9 @@ def test():
         junk.write(b"this is not an h5 file" * 64)
     # attempt to open it; the failure leaves the file holding an empty handle
     f = libh5.File(uri=uri, mode="r")
-    # which the library will not vouch for
+    # and the library's reasons on its error stack, which name a file routine
+    assert "H5F" in libh5.explanation()
+    # the handle is one the library will not vouch for
     assert not libh5.valid(f.hid)
     # ask for the root, many times, so a stale answer on the stack gets its chance
     for _ in range(64):
