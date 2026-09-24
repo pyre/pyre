@@ -62,6 +62,14 @@ order it must happen, with the reason for each step and how to check it.
    - `python -m build --sdist` from a clean checkout produces `dist/pyre-*.tar.gz`
    - `pip wheel --no-deps dist/pyre-*.tar.gz` builds a wheel from that sdist, which is what pip
      does on a host without a matching wheel
+   - **the repaired wheel installs and imports.** Run the repair tool `cibuildwheel` runs,
+     `delocate-wheel` on macOS or `auditwheel repair` on Linux, on that wheel; install the
+     result into a fresh environment that has no pyre; and import `pyre`, `journal`, and
+     `pyre.h5`, checking that `pyre.libpyre`, `journal.libjournal`, and `pyre.h5.libh5` are
+     not `None`. The repair tools rewrite the paths from the extension modules to the bundled
+     shared libraries against the wheel's layout, and a wheel whose layout misleads them
+     imports the pure python package and fails at the first extension, which is what every
+     v1.13.0 wheel did; nothing short of installing the repaired wheel catches it
    - the `pypi-testpypi` workflow (`workflow_dispatch`, `ref: main`) uploads an sdist to
      TestPyPI; this is the only exercise of the trusted publishing path before the real one
 
@@ -147,9 +155,13 @@ order it must happen, with the reason for each step and how to check it.
     ```
 
     Then confirm that `https://pypi.org/project/pyre/` shows the version and the expected
-    files, and that `pip install pyre==X.Y.Z` resolves in a fresh environment. A wheel cell
-    that fails leaves the others in place; fix the cell and rerun the workflow by hand
-    (`workflow_dispatch`); the uploads skip files already present.
+    files, and that `pip install pyre==X.Y.Z` in a fresh environment installs a wheel that
+    imports with its extensions loaded, on at least one platform. A wheel cell that fails
+    leaves the others in place; fix the cell and rerun the workflow by hand
+    (`workflow_dispatch`); the uploads skip files already present. A wheel that uploaded but
+    does not work cannot be replaced under its name: delete the file on pypi.org (each file
+    has its own delete, under the release's file list), keep the sdist, and cut a patch
+    release.
 
 13. **conda-forge.** The feedstock at `github.com/conda-forge/pyre-feedstock` builds from
     the GitHub tag tarball. The bot opens a version bump pull request within hours of the
