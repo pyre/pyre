@@ -38,7 +38,9 @@ order it must happen, with the reason for each step and how to check it.
 
    Both must name the tag about to be created. The pin cannot be verified until the release
    exists, so this is the one place a version is written ahead of the tag. The README's
-   release tarball link (`archive/refs/tags/vX.Y.Z.tar.gz`) is the third.
+   release tarball link (`archive/refs/tags/vX.Y.Z.tar.gz`) is the third. A patch release
+   walks this item too: the pins name the previous release, which was set moments ago and
+   looks current.
 
 4. **The declared python floor matches what is tested.** `requires-python` and the
    classifiers in `pyproject.toml`, `find_package(Python ...)` in `CMakeLists.txt`, and the
