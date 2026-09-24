@@ -8,8 +8,8 @@
 # external
 import os
 import pybind11
+import setuptools
 import skbuild
-import sys
 
 from setuptools_scm import get_version
 
@@ -37,15 +37,32 @@ pyreVersion = version()
 # cmake's project(VERSION ...) wants a bare X.Y.Z, not 1.12.7.dev161+g0123abc
 cmakeVersion = pyreVersion.split("+")[0].split(".dev")[0]
 
-# get the python version
-major, minor, *_ = sys.version_info
-# tell cmake where to install pyre packages
-packageDir = f"lib/python{major}.{minor}/site-packages"
+# where cmake installs the python packages, relative to its prefix: the same {packages}
+# folder the sources live in and mm installs to. scikit-build matches what cmake installs
+# against the source folder of each declared package, and merges a match into the package at
+# the root of the wheel, which pip installs into {site-packages}; anything else goes to the
+# wheel's data tree. the extension modules must be merged this way, because the wheel repair
+# tools, {delocate} and {auditwheel}, compute the paths from the extensions to the shared
+# libraries they bundle against the wheel's own layout: spelled as
+# {lib/pythonX.Y/site-packages}, the packages sat seven levels down in the data tree, and the
+# installed extensions looked for their libraries seven levels above {site-packages}
+packageDir = "packages"
+
+# the python packages, as the {[tool.setuptools.packages.find]} table in {pyproject.toml}
+# declares them; scikit-build classifies what cmake installs by this list, not by the table:
+# a cmake-installed file that falls inside one of these packages joins it at the root of the
+# wheel, and anything else goes to the wheel's data tree
+packages = setuptools.find_packages(
+    where="packages", include=["pyre*", "journal*", "merlin*", "mpi*", "gsl*", "survey*", "cuda*"]
+)
 
 # invoke
 skbuild.setup(
     # the version derived from the git tag
     version=pyreVersion,
+    # the python packages, and where their sources are
+    packages=packages,
+    package_dir={"": "packages"},
     # for cmake
     cmake_args=[
         # pybind11
