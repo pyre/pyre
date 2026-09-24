@@ -1201,13 +1201,14 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
 
     def relaunchArguments(self):
         """
-        Yield the command-line arguments a recursively launched {mm} needs to reproduce this
-        invocation's build-product locations (e.g. so the pkgdb rebuild lands where the parent
-        expects it). The candidate set is an allowlist of the traits that shape {bldroot} and
-        {prefix} — so an action like {--setup} can never be forwarded — and within it only the
-        traits the user actually set on the command line are emitted
+        Generate the command line arguments that a child {mm} needs in order to place its build
+        products where this instance expects them, e.g. when rebuilding the package database.
+        Only traits that were set on the command line are forwarded; the child recovers
+        everything else from the configuration files and the environment on its own.
         """
-        # the path-determining traits; this set has been stable for years and is cheap to extend
+        # the traits that determine where the build products go, and the location of the
+        # portinfo headers, without which the child refuses to start on a tree that has never
+        # been installed; actions like {--setup} are deliberately not on this list
         for name in (
             "mode",
             "bldroot",
@@ -1216,6 +1217,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             "environment",
             "compilers",
             "target",
+            "portinfo",
         ):
             # the child reconstructs config-file, environment, and default values by itself
             if not self._fromCommandLine(name):
@@ -1240,8 +1242,12 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         Configure the engine
         """
         # record how mm was invoked, including the arguments a recursive launch needs to land
-        # its build products — and the pkgdb — in the same place as this invocation
-        yield "mm=" + " ".join([sys.executable, __file__, *self.relaunchArguments()])
+        # its build products — and the pkgdb — in the same place as this invocation; the driver
+        # is whatever script started this process, not this module: when the shell is imported
+        # from the boot bundle, this file lives inside a zip archive, and asking python to run
+        # it runs the archive's entry point instead
+        driver = os.path.abspath(sys.argv[0])
+        yield "mm=" + " ".join([sys.executable, driver, *self.relaunchArguments()])
         # the version
         yield f"mm.version={self._version}"
         # the directory that holds the make engine, so {mm.home}/make is the engine root
