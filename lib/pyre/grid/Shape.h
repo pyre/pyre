@@ -75,8 +75,8 @@ public:
     static consteval auto rank() noexcept -> size_type;
 
     // element access
-    constexpr auto operator[](size_type idx) noexcept -> reference;
-    constexpr auto operator[](size_type idx) const noexcept -> const_reference;
+    PYRE_HOST_DEVICE constexpr auto operator[](size_type idx) noexcept -> reference;
+    PYRE_HOST_DEVICE constexpr auto operator[](size_type idx) const noexcept -> const_reference;
 
     // bounds-checked element access; throws {std::out_of_range}
     constexpr auto at(size_type idx) -> reference;

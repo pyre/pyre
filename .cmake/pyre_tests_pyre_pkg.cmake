@@ -63,6 +63,8 @@ pyre_test_python_testcase(tests/pyre.pkg/patterns/unique_split.py)
 #
 pyre_test_python_testcase(tests/pyre.pkg/grid/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/grid/heap.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/dlpack.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/inplace.py)
 
 
 #

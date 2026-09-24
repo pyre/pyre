@@ -6,7 +6,7 @@
 
 # the cuda package testsuite
 pyre-cuda.pkg.tests.stem := cuda.pkg
-pyre-cuda.pkg.tests.prerequisites := pyre-cuda.pkg pyre.pkg pyre-cuda.ext
+pyre-cuda.pkg.tests.prerequisites := pyre-cuda.pkg pyre.pkg pyre.ext
 
 
 # end of file

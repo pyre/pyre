@@ -29,6 +29,9 @@ pyre.pkg.stem := pyre
 pyre.pkg.drivers := pyre pyre-config pyre-externals smith.pyre
 pyre.pkg.config := pyre
 pyre.pkg.ext := extensions/
+# the {cuda} subpackage carries its own meta-data, so it is staged as a package of its own,
+# and only when cuda is available; see {pyre-cuda.mm}
+pyre.pkg.directories.exclude += cuda
 
 
 # the pyre library meta-data

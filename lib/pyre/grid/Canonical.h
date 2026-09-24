@@ -60,17 +60,17 @@ public:
     // accessors
 public:
     // the extent of the index box along each axis
-    [[nodiscard]] constexpr auto shape() const noexcept -> shape_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto shape() const noexcept -> shape_type;
     // the smallest addressable index
-    [[nodiscard]] constexpr auto origin() const noexcept -> index_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto origin() const noexcept -> index_type;
     // the permutation of the axes that says which one varies fastest in memory
     [[nodiscard]] constexpr auto order() const noexcept -> order_type;
     // the distance in memory between consecutive cells along each axis
-    [[nodiscard]] constexpr auto strides() const noexcept -> strides_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto strides() const noexcept -> strides_type;
     // the correction that places {origin} at the beginning of the memory block
-    [[nodiscard]] constexpr auto nudge() const noexcept -> difference_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto nudge() const noexcept -> difference_type;
     // the number of addressable cells
-    [[nodiscard]] constexpr auto cells() const noexcept -> difference_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto cells() const noexcept -> difference_type;
     // my rank, as a compile time constant
     static consteval auto rank() noexcept -> size_type;
 
@@ -82,12 +82,12 @@ public:
     // packing isomorphism
 public:
     // the offset in memory of the cell at the given index
-    [[nodiscard]] constexpr auto offset(const index_type &) const noexcept -> difference_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto offset(const index_type &) const noexcept -> difference_type;
     // the inverse map: the index of the cell that lives at the given offset
-    [[nodiscard]] constexpr auto index(difference_type) const noexcept -> index_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto index(difference_type) const noexcept -> index_type;
     // syntactic sugar
-    [[nodiscard]] constexpr auto operator[](const index_type &) const noexcept -> difference_type;
-    [[nodiscard]] constexpr auto operator[](difference_type) const noexcept -> index_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto operator[](const index_type &) const noexcept -> difference_type;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto operator[](difference_type) const noexcept -> index_type;
 
     // iteration: visit every index in the box in packing order
 public:

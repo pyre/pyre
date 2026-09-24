@@ -9,6 +9,8 @@ pyre_test_python_testcase(tests/cuda.pkg/sanity.py)
 pyre_test_python_testcase(tests/cuda.pkg/manager.py)
 # the thin cublas/cusolver/curand bindings, over grids of cuda managed memory
 pyre_test_python_testcase(tests/cuda.pkg/cublas.py)
+pyre_test_python_testcase(tests/cuda.pkg/grid_interface.py)
+pyre_test_python_testcase(tests/cuda.pkg/grid_inplace.py)
 
 
 # end of file

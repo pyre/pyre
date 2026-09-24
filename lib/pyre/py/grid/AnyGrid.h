@@ -53,15 +53,21 @@ public:
     auto writable() const -> bool;
     // which storage strategy backs me, kept for clients that care how my cells are held
     auto strategy() const -> const string_t &;
+    // the address of my first cell, for handing to code that takes raw pointers
+    auto address() const -> std::uintptr_t;
 
     // dlpack support: any consumer that speaks the protocol -- numpy, pytorch, jax, cupy,
     // cuda.core -- can share my cells with no copy, on cpu or cuda alike
 public:
     // the {(device_type, device_id)} pair {__dlpack_device__} reports
     auto dlpackDevice() const -> std::pair<std::int32_t, std::int32_t>;
-    // a {DLManagedTensorVersioned} capsule describing my cells, named per the protocol so
-    // {__dlpack__}'s caller can hand it straight to {PyCapsule_New}'s counterpart
-    auto dlpack() const -> py::capsule;
+    // a dlpack capsule describing my cells, named per the protocol so {__dlpack__}'s caller
+    // can hand it straight to its importer: a {DLManagedTensorVersioned} by default, or the
+    // legacy {DLManagedTensor} for consumers that predate versioning
+    auto dlpack(bool versioned = true) const -> py::capsule;
+    // the {__cuda_array_interface__} description of my cells, for consumers such as numba and
+    // cupy that speak it; only grids whose cells cuda can reach have one
+    auto cudaArrayInterface() const -> py::dict;
 
     // item access
 public:

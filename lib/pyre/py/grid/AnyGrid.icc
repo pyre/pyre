@@ -189,6 +189,15 @@ pyre::py::grid::AnyGrid::strategy() const -> const string_t &
 }
 
 
+// the address of my first cell
+inline auto
+pyre::py::grid::AnyGrid::address() const -> std::uintptr_t
+{
+    // as an integer, the way python passes pointers around
+    return reinterpret_cast<std::uintptr_t>(_data);
+}
+
+
 // turn a python index into the offset and residual layout it selects
 inline auto
 pyre::py::grid::AnyGrid::resolve(const py::object & key) const -> resolved
@@ -321,7 +330,20 @@ pyre::py::grid::AnyGrid::setitem(const py::object & key, const py::object & valu
 {
     // resolve the index against my layout
     const auto r = resolve(key);
-    // only a full integer index, naming a single cell, may be assigned this way
+    // an augmented assignment on a sub-grid, {g[i:j] += v}, finishes by assigning back the very
+    // sub-grid it read, which already holds the result; there is nothing left to write
+    if (!r.scalar && py::isinstance<AnyGrid>(value)) {
+        // get the sub-grid
+        const auto & other = value.cast<const AnyGrid &>();
+        // the address of the first cell {key} selects
+        auto * first = static_cast<char *>(_data) + r.offset * static_cast<size_type>(_itemsize);
+        // if it is the same view of my cells
+        if (other._data == first && other._shape == r.shape && other._strides == r.strides) {
+            // all done
+            return;
+        }
+    }
+    // otherwise, only a full integer index, naming a single cell, may be assigned this way
     if (!r.scalar) {
         // a slice target would need array assignment; steer the caller to a view instead
         throw py::index_error(
@@ -446,6 +468,39 @@ namespace pyre::py::grid {
             // all done
             return;
         }
+
+        // the legacy, unversioned counterparts, for consumers that call {__dlpack__} without
+        // asking for a {max_version}, as the protocol has them do when they predate versioning
+        inline auto
+        dlpackLegacyDeleter(DLManagedTensor * self) -> void
+        {
+            // reclaim the context this tensor's {manager_ctx} was keeping alive
+            delete static_cast<DLPackContext *>(self->manager_ctx);
+            // and the tensor struct itself
+            delete self;
+            // all done
+            return;
+        }
+
+        inline auto
+        dlpackLegacyCapsuleDestructor(PyObject * capsule) -> void
+        {
+            // an importer that already renamed the capsule owns the tensor now
+            if (PyCapsule_IsValid(capsule, "used_dltensor")) {
+                // nothing left for me to do
+                return;
+            }
+            // otherwise, nobody imported this capsule; reclaim the tensor myself
+            auto * tensor =
+                static_cast<DLManagedTensor *>(PyCapsule_GetPointer(capsule, "dltensor"));
+            // a null pointer here would mean the capsule was already invalid; guard anyway
+            if (tensor != nullptr) {
+                // invoke its own deleter
+                dlpackLegacyDeleter(tensor);
+            }
+            // all done
+            return;
+        }
     } // namespace
 } // namespace pyre::py::grid
 
@@ -460,9 +515,9 @@ pyre::py::grid::AnyGrid::dlpackDevice() const -> std::pair<std::int32_t, std::in
 }
 
 
-// a {DLManagedTensorVersioned} capsule describing my cells
+// a dlpack capsule describing my cells
 inline auto
-pyre::py::grid::AnyGrid::dlpack() const -> py::capsule
+pyre::py::grid::AnyGrid::dlpack(bool versioned) const -> py::capsule
 {
     // build the context that keeps my cells (and the arrays below) alive for as long as the
     // capsule survives
@@ -476,24 +531,79 @@ pyre::py::grid::AnyGrid::dlpack() const -> py::capsule
         std::vector<int64_t>(_strides.begin(), _strides.end()),
     };
 
-    // the tensor itself
+    // the description of my cells, the same in both flavors of the protocol
+    auto [deviceType, deviceId] = dlpackDevice();
+    auto describe = [&](DLTensor & dl, auto * ctx) {
+        dl.data = _data;
+        dl.device = { static_cast<DLDeviceType>(deviceType), deviceId };
+        dl.ndim = static_cast<std::int32_t>(ctx->shape.size());
+        dl.dtype = dlpackDType(_format);
+        dl.shape = ctx->shape.data();
+        dl.strides = ctx->strides.data();
+        dl.byte_offset = 0;
+    };
+
+    // a consumer that predates versioning gets the legacy tensor, which has no room for my
+    // version or my read-only flag
+    if (!versioned) {
+        auto * tensor = new DLManagedTensor {};
+        tensor->manager_ctx = context;
+        tensor->deleter = dlpackLegacyDeleter;
+        describe(tensor->dl_tensor, context);
+        // named per the legacy protocol
+        return py::capsule(tensor, "dltensor", dlpackLegacyCapsuleDestructor);
+    }
+
+    // otherwise, the versioned tensor
     auto * tensor = new DLManagedTensorVersioned {};
     tensor->version = { DLPACK_MAJOR_VERSION, DLPACK_MINOR_VERSION };
     tensor->manager_ctx = context;
     tensor->deleter = dlpackDeleter;
     tensor->flags = _writable ? 0 : DLPACK_FLAG_BITMASK_READ_ONLY;
-    tensor->dl_tensor.data = _data;
-    auto [deviceType, deviceId] = dlpackDevice();
-    tensor->dl_tensor.device = { static_cast<DLDeviceType>(deviceType), deviceId };
-    tensor->dl_tensor.ndim = static_cast<std::int32_t>(context->shape.size());
-    tensor->dl_tensor.dtype = dlpackDType(_format);
-    tensor->dl_tensor.shape = context->shape.data();
-    tensor->dl_tensor.strides = context->strides.data();
-    tensor->dl_tensor.byte_offset = 0;
+    describe(tensor->dl_tensor, context);
 
     // wrap it in a capsule named per the protocol, so the consumer's own {from_dlpack} finds
     // it, with a destructor that only cleans up if nobody actually imported it
     return py::capsule(tensor, "dltensor_versioned", dlpackCapsuleDestructor);
+}
+
+
+// the {__cuda_array_interface__} description of my cells
+inline auto
+pyre::py::grid::AnyGrid::cudaArrayInterface() const -> py::dict
+{
+    // the interface promises a pointer cuda can dereference, which only my cuda strategies
+    // provide; raising {AttributeError} keeps {hasattr} honest for the host-only ones
+    if (dlpackDeviceType(_strategy) == kDLCPU) {
+        throw py::attribute_error(
+            "a grid on '" + _strategy + "' storage has no __cuda_array_interface__");
+    }
+    // borrow the dlpack translation of my cell type, so the two protocols never disagree
+    auto dtype = dlpackDType(_format);
+    // and spell it the way the interface does: byte order, kind, width in bytes
+    char kind = dtype.code == kDLInt   ? 'i'
+              : dtype.code == kDLUInt  ? 'u'
+              : dtype.code == kDLFloat ? 'f'
+                                       : 'c';
+    const char * order = std::endian::native == std::endian::little ? "<" : ">";
+    auto typestr = order + std::string(1, kind) + std::to_string(dtype.bits / 8);
+
+    // the interface measures strides in bytes; mine are in cells
+    py::tuple strides(_strides.size());
+    for (std::size_t axis = 0; axis < _strides.size(); ++axis) {
+        strides[axis] = _strides[axis] * static_cast<size_type>(_itemsize);
+    }
+
+    // assemble the description; the interface carries no ownership, so consumers keep me
+    // alive by holding on to me, which is how numba and cupy use it
+    py::dict cai;
+    cai["shape"] = py::tuple(py::cast(_shape));
+    cai["typestr"] = typestr;
+    cai["data"] = py::make_tuple(address(), !_writable);
+    cai["strides"] = strides;
+    cai["version"] = 3;
+    // all done
+    return cai;
 }
 
 

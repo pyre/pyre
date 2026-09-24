@@ -60,4 +60,18 @@ else:
     managed = getattr(pyre.libpyre.grid, "managed", None)
 
 
+# in-place arithmetic on grids on cuda storage is queued on the device; this waits for it, and
+# is a no-op without cuda support, since then nothing is ever queued
+def synchronize():
+    """
+    Wait for the device to finish the work queued on grids on cuda storage
+    """
+    # if the bindings can wait for the device
+    if pyre.libpyre is not None and hasattr(pyre.libpyre.grid, "synchronize"):
+        # do so
+        pyre.libpyre.grid.synchronize()
+    # all done
+    return
+
+
 # end of file

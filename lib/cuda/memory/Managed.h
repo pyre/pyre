@@ -42,29 +42,34 @@ public:
     // accessors
 public:
     // the number of cells
-    inline auto cells() const -> cell_count_type;
+    PYRE_HOST_DEVICE inline auto cells() const -> cell_count_type;
     // the memory footprint of the block
-    inline auto bytes() const -> size_type;
+    PYRE_HOST_DEVICE inline auto bytes() const -> size_type;
     // access to the raw data pointer
-    inline auto data() const -> pointer;
+    PYRE_HOST_DEVICE inline auto data() const -> pointer;
     // the shared pointer
     inline auto handle() const -> handle_type;
+    // a non-owning view of my cells, cheap enough to copy into device code
+    inline auto view() const -> pyre::memory::View<T, isConst>;
 
     // iterator support
 public:
-    inline auto begin() const -> pointer;
-    inline auto end() const -> pointer;
+    PYRE_HOST_DEVICE inline auto begin() const -> pointer;
+    PYRE_HOST_DEVICE inline auto end() const -> pointer;
 
     // data access
 public:
     // with bounds checking
     inline auto at(difference_type) const -> reference;
     // without bounds checking
-    inline auto operator[](difference_type) const -> reference;
+    PYRE_HOST_DEVICE inline auto operator[](difference_type) const -> reference;
 
     // implementation details: data
 private:
     handle_type _data;
+    // the raw address, kept alongside the owner so device code can reach my cells
+    // without touching the host-only {shared_ptr}
+    pointer _raw;
     const cell_count_type _cells;
 
     // default metamethods

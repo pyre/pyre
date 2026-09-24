@@ -182,6 +182,7 @@ function(pyre_pyreModule)
     extensions/pyre/__init__.cc
     extensions/pyre/api.cc
     extensions/pyre/grid/__init__.cc
+    extensions/pyre/grid/arithmetic_host.cc
     extensions/pyre/memory/__init__.cc
     extensions/pyre/memory/cells.cc
     extensions/pyre/memory/buffers.cc
@@ -199,6 +200,12 @@ function(pyre_pyreModule)
     extensions/pyre/chroma/color.cc
     extensions/pyre/chroma/rgb.cc
   )
+  # the device half of in-place grid arithmetic, for grids on cuda storage
+  if(WITH_CUDA)
+    target_sources(pyremodule PRIVATE
+      extensions/pyre/grid/arithmetic_device.cu
+    )
+  endif()
   # cublas/cusolver/curand, only when built with cuda support
   if(WITH_CUDA)
     target_sources(pyremodule PRIVATE

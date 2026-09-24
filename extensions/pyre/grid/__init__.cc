@@ -15,6 +15,8 @@
 #include <pyre/py/grid/AnyGrid.h>
 // and the type-erased mosaic, its out-of-core sibling
 #include <pyre/py/grid/AnyMosaic.h>
+// in-place elementwise arithmetic
+#include "arithmetic.h"
 
 // the cuda storage strategies, when built with cuda support
 #ifdef WITH_CUDA
@@ -349,6 +351,273 @@ namespace pyre::py::grid {
         // dispatch on the cell type
         return dispatchCell(cell, [&]<class T>() { return makeMosaic<T>(shape, tileShape, cell); });
     }
+
+
+    // in-place arithmetic: translate python operands into descriptions the elementwise engine
+    // understands, and send them to the half that can reach the target's cells
+    namespace inplace {
+        // the engine
+        namespace arith = pyre::py::grid::arithmetic;
+
+        // the engine's name for a cell type, from its buffer protocol format
+        inline auto cell(string_t format) -> arith::cell_t
+        {
+            // a byte order marker only makes sense for the host's own order
+            if (!format.empty() && (format.front() == '<' || format.front() == '>')) {
+                // the order the host spells
+                const char native = std::endian::native == std::endian::big ? '>' : '<';
+                // a foreign order would need byte swapping
+                if (format.front() != native) {
+                    throw py::type_error("grid arithmetic: cells in foreign byte order");
+                }
+                // otherwise, drop the marker
+                format.erase(0, 1);
+            }
+            if (format == "b") return arith::cell_t::int8;
+            if (format == "h") return arith::cell_t::int16;
+            if (format == "i") return arith::cell_t::int32;
+            if (format == "q" || format == "l") return arith::cell_t::int64;
+            if (format == "B") return arith::cell_t::uint8;
+            if (format == "H") return arith::cell_t::uint16;
+            if (format == "I") return arith::cell_t::uint32;
+            if (format == "Q" || format == "L") return arith::cell_t::uint64;
+            if (format == "f") return arith::cell_t::float32;
+            if (format == "d") return arith::cell_t::float64;
+            if (format == "Zf") return arith::cell_t::complex64;
+            if (format == "Zd") return arith::cell_t::complex128;
+            throw py::type_error("grid arithmetic: unsupported cell format '" + format + "'");
+        }
+
+        // the three families of cell types
+        inline auto isInteger(arith::cell_t c) -> bool { return c <= arith::cell_t::uint64; }
+        inline auto isComplex(arith::cell_t c) -> bool { return c >= arith::cell_t::complex64; }
+
+        // describe a grid's cells as a layout
+        inline auto layout(const py::buffer_info & info) -> arith::layout_t
+        {
+            // make sure the engine can hold the rank
+            if (info.ndim > arith::maxRank) {
+                throw py::value_error(
+                    "grid arithmetic: at most " + std::to_string(arith::maxRank) + " axes");
+            }
+            // fill in the description
+            auto result = arith::layout_t {};
+            result.data = info.ptr;
+            result.rank = static_cast<int>(info.ndim);
+            result.cells = 1;
+            result.contiguous = true;
+            // the stride a packed row major layout would have, walking from the fastest axis
+            std::int64_t packed = 1;
+            for (auto axis = info.ndim; axis-- > 0;) {
+                result.shape[axis] = info.shape[axis];
+                // the buffer protocol measures strides in bytes; the engine, in cells
+                result.strides[axis] = info.strides[axis] / info.itemsize;
+                result.cells *= info.shape[axis];
+                // an axis of extent one doesn't care about its stride
+                if (info.shape[axis] > 1 && result.strides[axis] != packed) {
+                    result.contiguous = false;
+                }
+                packed *= info.shape[axis];
+            }
+            return result;
+        }
+
+        // whether cuda can reach a grid's cells
+        inline auto onDevice(const AnyGrid & grid) -> bool
+        {
+            return grid.strategy() == "managed" || grid.strategy() == "pinned";
+        }
+
+        // whether two layouts reach any of the same bytes without describing the same cells;
+        // elementwise work over such a pair would read cells another thread has already written
+        inline auto overlap(
+            const arith::layout_t & a, const arith::layout_t & b, std::int64_t itemsize) -> bool
+        {
+            // empty grids reach nothing
+            if (a.cells == 0 || b.cells == 0) {
+                return false;
+            }
+            // the same view of the same cells is fine: each cell only ever meets itself
+            bool same = a.data == b.data;
+            for (int axis = 0; same && axis < a.rank; ++axis) {
+                same = a.strides[axis] == b.strides[axis];
+            }
+            if (same) {
+                return false;
+            }
+            // the range of bytes a layout reaches
+            auto span = [itemsize](const arith::layout_t & l) {
+                auto lo = static_cast<const char *>(l.data);
+                auto hi = lo;
+                for (int axis = 0; axis < l.rank; ++axis) {
+                    auto reach = (l.shape[axis] - 1) * l.strides[axis] * itemsize;
+                    (reach < 0 ? lo : hi) += reach;
+                }
+                return std::pair { lo, hi + itemsize };
+            };
+            auto [alo, ahi] = span(a);
+            auto [blo, bhi] = span(b);
+            return alo < bhi && blo < ahi;
+        }
+
+        // the range of an integer cell type, as python integers so the comparison is exact
+        inline auto bounds(arith::cell_t c) -> std::pair<py::int_, py::int_>
+        {
+            // the unsigned types start at zero
+            using ull = unsigned long long;
+            switch (c) {
+                case arith::cell_t::int8: return { py::int_(INT8_MIN), py::int_(INT8_MAX) };
+                case arith::cell_t::int16: return { py::int_(INT16_MIN), py::int_(INT16_MAX) };
+                case arith::cell_t::int32: return { py::int_(INT32_MIN), py::int_(INT32_MAX) };
+                case arith::cell_t::int64: return { py::int_(INT64_MIN), py::int_(INT64_MAX) };
+                case arith::cell_t::uint8: return { py::int_(0), py::int_(ull { UINT8_MAX }) };
+                case arith::cell_t::uint16: return { py::int_(0), py::int_(ull { UINT16_MAX }) };
+                case arith::cell_t::uint32: return { py::int_(0), py::int_(ull { UINT32_MAX }) };
+                default: return { py::int_(0), py::int_(ull { UINT64_MAX }) };
+            }
+        }
+
+        // translate a python scalar for a target of cell type {c}; {false} if it isn't a scalar
+        // this knows about, in which case python gets to try something else
+        inline auto scalar(const py::handle & value, arith::cell_t c, arith::scalar_t & result)
+            -> bool
+        {
+            // complex numbers fit complex cells only
+            if (PyComplex_Check(value.ptr())) {
+                if (!isComplex(c)) {
+                    throw py::type_error(
+                        "grid arithmetic: a complex scalar needs a grid of complex cells");
+                }
+                result.re = PyComplex_RealAsDouble(value.ptr());
+                result.im = PyComplex_ImagAsDouble(value.ptr());
+                return true;
+            }
+            // floats fit floating point and complex cells
+            if (PyFloat_Check(value.ptr())) {
+                if (isInteger(c)) {
+                    throw py::type_error(
+                        "grid arithmetic: a float scalar would lose its fraction in a grid of "
+                        "integer cells");
+                }
+                result.re = PyFloat_AsDouble(value.ptr());
+                return true;
+            }
+            // integers, including anything that behaves like one, fit every cell type
+            if (PyIndex_Check(value.ptr())) {
+                auto number = py::reinterpret_steal<py::int_>(PyNumber_Index(value.ptr()));
+                if (!isInteger(c)) {
+                    result.re = PyLong_AsDouble(number.ptr());
+                    return true;
+                }
+                // as long as they are in range, like numpy has them be
+                auto [lo, hi] = bounds(c);
+                if (number < lo || number > hi) {
+                    throw py::value_error(
+                        "grid arithmetic: " + py::str(number).cast<string_t>()
+                        + " is out of range for the grid's cells");
+                }
+                // store both spellings; the engine picks the one the cell type wants
+                if (number < py::int_(0)) {
+                    result.i = number.cast<long long>();
+                    result.u = static_cast<std::uint64_t>(result.i);
+                } else {
+                    result.u = number.cast<unsigned long long>();
+                    result.i = static_cast<std::int64_t>(result.u);
+                }
+                return true;
+            }
+            // anything else is not mine to handle
+            return false;
+        }
+
+        // {self op= other}
+        inline auto apply(py::object self, py::object other, arith::op_t op) -> py::object
+        {
+            // the target
+            auto & target = self.cast<AnyGrid &>();
+            // must be writable
+            if (!target.writable()) {
+                throw py::value_error("grid arithmetic: this grid is read-only");
+            }
+            // describe it
+            auto info = target.view();
+            auto c = cell(info.format);
+            auto a = layout(info);
+            // integer cells can't hold a quotient
+            if (op == arith::op_t::div && isInteger(c)) {
+                throw py::type_error(
+                    "grid arithmetic: in-place division would lose the fraction in a grid of "
+                    "integer cells");
+            }
+            // where the work happens is decided by where the target's cells live
+            bool device = onDevice(target);
+
+            // a grid on the right
+            if (py::isinstance<AnyGrid>(other)) {
+                auto & source = other.cast<AnyGrid &>();
+                auto sinfo = source.view();
+                // must hold the same kind of cells
+                if (cell(sinfo.format) != c) {
+                    throw py::type_error(
+                        "grid arithmetic: the grids hold different cell types, '" + info.format
+                        + "' and '" + sinfo.format + "'");
+                }
+                auto b = layout(sinfo);
+                // in the same shape
+                bool shaped = a.rank == b.rank;
+                for (int axis = 0; shaped && axis < a.rank; ++axis) {
+                    shaped = a.shape[axis] == b.shape[axis];
+                }
+                if (!shaped) {
+                    throw py::value_error("grid arithmetic: the grids have different shapes");
+                }
+                // without stepping on each other
+                if (overlap(a, b, info.itemsize)) {
+                    throw py::value_error(
+                        "grid arithmetic: the grids share cells in different places; copy one "
+                        "of them first");
+                }
+                // the device can't reach host-only cells
+                if (device && !onDevice(source)) {
+                    throw py::type_error(
+                        "grid arithmetic: a grid on '" + target.strategy()
+                        + "' storage can't take a grid on '" + source.strategy()
+                        + "' storage, whose cells the device can't reach");
+                }
+#ifdef WITH_CUDA
+                // on the device, without waiting
+                if (device) {
+                    arith::device(op, c, a, b);
+                    return self;
+                }
+                // the host is about to read cells the device may still be writing
+                if (onDevice(source)) {
+                    arith::synchronize();
+                }
+#endif
+                // on the host
+                arith::host(op, c, a, b);
+                return self;
+            }
+
+            // a scalar on the right
+            auto s = arith::scalar_t {};
+            if (!scalar(other, c, s)) {
+                // not something i know how to combine with a grid
+                return py::reinterpret_borrow<py::object>(Py_NotImplemented);
+            }
+#ifdef WITH_CUDA
+            // on the device, without waiting
+            if (device) {
+                arith::device(op, c, a, s);
+                return self;
+            }
+#endif
+            // on the host
+            arith::host(op, c, a, s);
+            return self;
+        }
+    } // namespace inplace
 } // namespace pyre::py::grid
 
 
@@ -423,6 +692,25 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "the storage strategy that holds my cells");
 
+    // the address of my first cell
+    cls.def_property_readonly(
+        // the name
+        "address",
+        // the getter
+        &AnyGrid::address,
+        // the docstring
+        "the address of my first cell, as an integer, for code that takes raw pointers");
+
+    // the cuda array interface, for consumers such as numba and cupy
+    cls.def_property_readonly(
+        // the name
+        "__cuda_array_interface__",
+        // the getter
+        &AnyGrid::cudaArrayInterface,
+        // the docstring
+        "the version 3 cuda array interface description of my cells; only grids on cuda "
+        "storage have one");
+
     // dlpack support: the device i live on, as the {(device_type, device_id)} pair the
     // protocol specifies
     cls.def(
@@ -437,10 +725,22 @@ pyre::py::grid::__init__(py::module & m) -> void
     cls.def(
         // the name
         "__dlpack__",
-        // the implementation; {stream}/{max_version}/{dl_device}/{copy} are accepted, as the
-        // protocol requires, but not yet acted on -- i always hand back my own memory, on my
-        // own device, describing the current version i produce
-        [](const AnyGrid & self, py::kwargs) { return self.dlpack(); },
+        // the implementation; {stream}/{dl_device}/{copy} are accepted, as the protocol
+        // requires, but not yet acted on -- i always hand back my own memory, on my own device;
+        // {max_version} picks the flavor: consumers that ask for 1.0 or later get the versioned
+        // tensor, and those that don't ask get the legacy one, per the protocol
+        [](const AnyGrid & self, py::kwargs kwds) {
+            // assume a consumer that predates versioning
+            bool versioned = false;
+            // unless it says otherwise
+            if (kwds.contains("max_version") && !kwds["max_version"].is_none()) {
+                // a {(major, minor)} pair; the versioned tensor is dlpack 1.0 and later
+                auto version = kwds["max_version"].cast<py::tuple>();
+                versioned = version.size() > 0 && version[0].cast<int>() >= 1;
+            }
+            // build the capsule
+            return self.dlpack(versioned);
+        },
         // the docstring
         "a dlpack capsule describing my cells, importable with no copy by numpy, pytorch, "
         "jax, cupy, or cuda.core alike");
@@ -466,6 +766,39 @@ pyre::py::grid::__init__(py::module & m) -> void
         "index"_a, "value"_a,
         // the docstring
         "write {value} into the cell at a full integer {index}");
+
+    // in-place arithmetic, with a grid of the same shape and cell type or a scalar on the right;
+    // grids on cuda storage do the work on the device, without waiting for it, and the rest on
+    // the host
+    using op_t = arithmetic::op_t;
+    for (auto [name, op] : std::initializer_list<std::pair<const char *, op_t>> {
+             { "__iadd__", op_t::add },
+             { "__isub__", op_t::sub },
+             { "__imul__", op_t::mul },
+             { "__itruediv__", op_t::div },
+         }) {
+        cls.def(
+            // the name
+            name,
+            // the implementation
+            [op](py::object self, py::object other) { return inplace::apply(self, other, op); },
+            // the signature
+            "other"_a,
+            // the docstring
+            "combine {other}, a grid of my shape and cell type or a scalar, into my cells; on "
+            "cuda storage the work is queued on the device, so synchronize before reading");
+    }
+
+#ifdef WITH_CUDA
+    // wait for the device work in-place arithmetic has queued
+    grid.def(
+        // the name
+        "synchronize",
+        // the implementation
+        &arithmetic::synchronize,
+        // the docstring
+        "wait for the device to finish the work queued on grids on cuda storage");
+#endif
 
     // the type-erased mosaic: an out-of-core grid whose cells live on demand-materialized
     // pages, one per tile, reached tile by tile through zero-copy panes
