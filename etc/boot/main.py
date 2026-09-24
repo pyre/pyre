@@ -533,6 +533,11 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             f"--portinfo={portinfo}",
             *args,
         ]
+        # a release tarball carries no git history for {mm} to derive the version from, so
+        # tell it the version outright, as {major.minor.micro}, the way the tag spells it
+        if self.channel == "release":
+            # splice it in ahead of the targets
+            command.insert(4, f"--version={self.tag.lstrip('v')}")
         # run it from the tree root, where {mm} finds the local {.mm} configuration
         return subprocess.run(
             command,
