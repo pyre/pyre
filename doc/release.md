@@ -141,9 +141,28 @@ order it must happen, with the reason for each step and how to check it.
     attached in the same command rather than uploaded afterwards. The `mm` bootstrap fetches
     `releases/download/vX.Y.Z/pyre-boot.zip`, so the asset name is fixed.
 
-11. **Verify the bootstrap.** On a host without `pyre`, or in a fresh environment, `mm` from the
-    `mm` repository downloads the bundle and runs. `python pyre-boot.zip` offers the new
-    release in its menu.
+11. **Verify the bootstrap, both ways.** On a host without `pyre`, or in a fresh environment,
+    `mm` from the `mm` repository downloads the bundle and runs; that exercises only the
+    `sys.path` bootstrap. The installer is a separate path: in a fresh conda environment with
+    the compilers installed and no `pyre` importable, run the downloaded asset to completion
+
+    ```
+    timeout 1800 python pyre-boot.zip --interactive=no --channel=release --tag=vX.Y.Z \
+        --target=<dir> --mode=conda
+    ```
+
+    and confirm that the bootstrapper's banner appears exactly once, that the build gets past
+    the package database, and that the installed package imports with its extensions loaded
+    and `pyre.meta.version` naming the release. Run it under `timeout`, since the failure mode
+    of a broken relaunch is unbounded recursion, and stop it by pid, never by a pattern, on a
+    machine other people build on.
+
+    A bundle that turns out broken is replaced in place: fix on `main`, rebuild with
+    `mm pyre.boot`, and `gh release upload vX.Y.Z pyre-boot.zip --clobber`; the tag does not
+    move, both bootstrap paths download by URL, and the release body records the commit the
+    replacement was built from. A rebuilt bundle carries the python packages only; the `mm`
+    engine under `share/mm` that a release build uses comes from the tarball, so an engine
+    fix reaches release builds with the next tag.
 
 ## The distributions
 
@@ -171,10 +190,16 @@ order it must happen, with the reason for each step and how to check it.
     `sha256` of `https://github.com/pyre/pyre/archive/vX.Y.Z.tar.gz`, and `build: number: 0`.
     Review the recipe against the release: floors that moved (compilers, hdf5, python) belong
     in the requirements; tests that need packages the recipe does not list are excluded from
-    the `ctest` invocation or the packages are added under `test: requires`. The recipe has
-    listed neither `pyyaml` nor `ruamel.yaml` there, so the yaml codec tests are excluded and
-    the editor tests skip themselves. Merge when the CI matrix is green, then confirm
-    `conda search -c conda-forge pyre` lists the version.
+    the test phase or the packages are added under `test: requires`. The recipe's test phase
+    imports `pyre`, `journal` and `pyre.h5` and asserts the extensions loaded, allocates
+    through `pyre.memory`, opens a journal channel, and checks the templates under
+    `pyre.prefix`; the `ctest` it once ran found no tests and passed vacuously for years.
+    The Azure macOS runners lose legs to `conda.anaconda.org` timeouts; a comment of
+    `@conda-forge-admin, please restart ci` reruns the matrix. Merge when it is green; the
+    packages appear on `api.anaconda.org` within the hour and on the CDN some time after.
+    `micromamba search` answers from a cache that `--repodata-ttl 0` does not refresh, so read
+    `https://conda.anaconda.org/conda-forge/<subdir>/repodata.json` directly. Then install the
+    version into a fresh environment and repeat the recipe's checks by hand.
 
 ## After the release
 
