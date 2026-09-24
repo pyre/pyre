@@ -58,10 +58,13 @@ line-length = 100
 local_scheme = "no-local-version"
 
 # package discovery
+# every package cmake installs is declared here, so that scikit-build places them at the root
+# of the wheel and merges the extension modules cmake builds into them; a package that is not
+# declared lands in the wheel's data tree instead, where the repair tools that bundle the
+# shared libraries miscompute the paths from the extensions to the libraries
 [tool.setuptools.packages.find]
 where = ["packages"]
-include = ["journal*"]
-# include = ["cuda", "gsl", "journal", "merlin", "mpi", "pyre"]
+include = ["pyre*", "journal*", "merlin*", "mpi*", "gsl*", "survey*", "cuda*"]
 namespaces = false
 
 # end of file
