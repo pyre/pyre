@@ -35,7 +35,9 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
     # compute branch-keyed build paths and print shell export statements
     mode = pyre.properties.str()
     mode.default = "dev"
-    mode.validators = pyre.constraints.isMember("dev", "release", "conda", "macports", "ubuntu", "fedora")
+    mode.validators = pyre.constraints.isMember(
+        "dev", "release", "conda", "macports", "ubuntu", "fedora"
+    )
     mode.doc = "the strategy for generating locations for the build products"
 
     assertions = pyre.properties.bool()
@@ -2245,17 +2247,13 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     print(f"hdf5.parallel ?= {flavor}", file=f)
                     # a parallel build must link against the same mpi that mm selects;
                     # find the port the mpi entry resolves to, in candidate priority order
-                    mpi = next(
-                        (c for c in ("openmpi", "mpich") if c in installed), None
-                    )
+                    mpi = next((c for c in ("openmpi", "mpich") if c in installed), None)
                     # if hdf5 is mpi aware but bound to the other implementation
                     if flavor != "serial" and mpi is not None and mpi != flavor:
                         # the link line would mix mpi flavors; warn
                         warning = journal.warning("mm.pkgdb")
                         # what happened
-                        warning.line(
-                            f"hdf5 is built against {flavor} but mpi resolves to {mpi}"
-                        )
+                        warning.line(f"hdf5 is built against {flavor} but mpi resolves to {mpi}")
                         # the consequence
                         warning.line("parallel builds will mix mpi implementations")
                         # what to do about it
@@ -2489,9 +2487,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                         (p for p in files if p.name == "mpi.h" and "/include/" in str(p)),
                         None,
                     )
-                    library = next(
-                        (p for p in files if p.name == "libmpi.so"), None
-                    )
+                    library = next((p for p in files if p.name == "libmpi.so"), None)
                     # point the include path at wherever {mpi.h} really lives
                     if header:
                         print(
@@ -2543,9 +2539,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     files = self._dpkgFiles(dpkg, candidate)
                     # locate the umbrella header and the dev-symlink library
                     header = next((path for path in files if path.name == "hdf5.h"), None)
-                    library = next(
-                        (path for path in files if path.name == "libhdf5.so"), None
-                    )
+                    library = next((path for path in files if path.name == "libhdf5.so"), None)
                     # point the include path at wherever {hdf5.h} really lives
                     if header:
                         print(
@@ -2859,9 +2853,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                         pybind11Root = pyre.primitives.path(includePath).parent
                         try:
                             relativePath = pybind11Root.relativeTo(prefix)
-                            print(
-                                f"pybind11.dir ?= $(rpm.prefix)/{relativePath}", file=f
-                            )
+                            print(f"pybind11.dir ?= $(rpm.prefix)/{relativePath}", file=f)
                         except ValueError:
                             print(f"pybind11.dir ?= {pybind11Root}", file=f)
                     else:
@@ -2929,11 +2921,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     files = self._rpmFiles(rpm, candidate)
                     # locate a shared library dev symlink, if the package carries one
                     library = next(
-                        (
-                            p
-                            for p in files
-                            if p.name.startswith("lib") and p.name.endswith(".so")
-                        ),
+                        (p for p in files if p.name.startswith("lib") and p.name.endswith(".so")),
                         None,
                     )
                     # if there is one and it is not in the canonical {lib}
@@ -2963,9 +2951,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         if result.returncode != 0:
             return []
         # each non-empty line is an absolute path owned by the package
-        return [
-            pyre.primitives.path(line) for line in result.stdout.splitlines() if line
-        ]
+        return [pyre.primitives.path(line) for line in result.stdout.splitlines() if line]
 
     def _rpmAnchor(self, path, prefix):
         """
