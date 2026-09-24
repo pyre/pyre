@@ -11,8 +11,9 @@ platform.compilers = gcc python cython node
 #     platform.clean {stem}
 platform.clean = $(1).dSYM
 
-# the location of the system headers
-platform.isysroot := /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+# the location of the system headers: the SDK the environment names, e.g. the one a conda
+# compiler was built against, and otherwise the one the command line tools currently point to
+platform.isysroot := $(or $(SDKROOT),/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
 
 # c
 platform.c.flags = -arch x86_64 $($(compiler.c).compile.isysroot) $(platform.isysroot)
