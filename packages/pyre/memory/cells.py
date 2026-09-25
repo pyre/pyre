@@ -121,6 +121,10 @@ if cells:
     # complex
     complexFloatLEConst = cells.ComplexFloatLEConst
     complexDoubleLEConst = cells.ComplexDoubleLEConst
+# otherwise
+else:
+    # publish a placeholder for the sentinel, so annotations that mention it still resolve
+    cell = object
 
 
 # end of file
