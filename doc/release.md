@@ -129,6 +129,20 @@ order it must happen, with the reason for each step and how to check it.
    staging directory. Check that `unzip -l` lists `__main__.py` and the four packages, and that
    `python pyre-boot.zip --help` runs.
 
+   Test the bundle before it is uploaded, whether for a new release or as a replacement. With
+   every supported python, in an environment where `pyre` is not otherwise importable and from
+   a directory outside any source tree, import the four packages from the archive
+
+   ```
+   env -i PATH=/usr/bin:/bin HOME=$PWD PYTHONPATH=$PWD/pyre-boot.zip \
+       python3.X -B -c "import pyre, journal, merlin, survey; print(pyre.__file__)"
+   ```
+
+   and confirm that the path printed is inside `pyre-boot.zip`. The bundle carries no
+   bindings, so this is what catches code that assumes them at import time; python 3.14 defers
+   the evaluation of annotations, so a bundle that passes there can still fail on the older
+   versions.
+
 ## The GitHub release
 
 10. **Create the release on the tag**, with the title, the notes, and the boot bundle attached.
