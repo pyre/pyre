@@ -33,7 +33,7 @@ pyre::viz::iterators::colormaps::HSB<hueSourceT, saturationSourceT, brightnessSo
     auto saturation = *_saturation;
     auto brightness = *_brightness;
 
-    // covert to {rgb} and return
+    // convert to {rgb} and return
     return pyre::chroma::rgb::hsb(hue, saturation, brightness);
 }
 

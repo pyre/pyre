@@ -14,7 +14,7 @@ export Main from './main'
 // sandboxes
 export {{ GiQL }} from './graphiql'
 
-// a blank view that jsut shows its size
+// a blank view that just shows its size
 export Blank from './blank'
 // not yet implemented
 export {{ NYI }} from './nyi'

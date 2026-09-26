@@ -39,7 +39,7 @@ const Documentation = () => (
                     science.  When designing a user experience, be it the name of your
                     application, the layout of your configuration files, or a graphical
                     interface, it is important to see things from their perspective. You should
-                    build user stereotypes with differet skill sets and attitudes towards your
+                    build user stereotypes with different skill sets and attitudes towards your
                     code, and make sure you understand who and why is included as the target
                     audience of a feature.
                 </Paragraph>

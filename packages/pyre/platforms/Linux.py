@@ -233,7 +233,7 @@ class Linux(POSIX, family="pyre.platforms.linux"):
         info.sockets = sockets
         info.cores = sockets * coresPerSocket
         info.cpus = info.cores * threadsPerCore
-        # and retur it
+        # and return it
         return info
 
     @classmethod

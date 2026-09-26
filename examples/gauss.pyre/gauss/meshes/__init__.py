@@ -6,7 +6,7 @@
 
 
 """
-Package that contains the implemenations of point clouds
+Package that contains the implementations of point clouds
 """
 
 # the interfaces

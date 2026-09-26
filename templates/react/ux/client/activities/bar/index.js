@@ -16,7 +16,7 @@ import {{ Toolbar, Spacer }} from '~/widgets'
 import styles from './styles'
 
 
-// teh activity bar
+// the activity bar
 const bar = () => {{
     const rem = window.screen.width > 2048 ? 1.2 : 1.0
     // convert to pixels

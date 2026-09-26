@@ -74,7 +74,7 @@ export default {{
         // occupy all available space
         width: "100%",
         height: "100%",
-        // let me strech, initially
+        // let me stretch, initially
         // flex: "4 1 auto",
 
         // shift me a bit

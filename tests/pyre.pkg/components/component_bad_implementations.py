@@ -10,7 +10,7 @@
 Verify that the framework detects components that do not implement their obligations correctly
 """
 
-# acccess to the parts
+# access to the parts
 import pyre
 
 

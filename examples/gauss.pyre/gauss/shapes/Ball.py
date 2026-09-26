@@ -15,7 +15,7 @@ from .Shape import Shape
 # declaration
 class Ball(pyre.component, family="gauss.shapes.ball", implements=Shape):
     """
-    A representation of the interior of a spere in $d$ dimensions
+    A representation of the interior of a sphere in $d$ dimensions
     """
 
     # public state

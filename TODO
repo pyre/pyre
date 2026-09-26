@@ -134,7 +134,7 @@
 
   - is it part of {help}?
 
-    - temporary invalid assignments that get later overriden by valid ones are not fatal
+    - temporary invalid assignments that get later overridden by valid ones are not fatal
       errors; they could get reported by {help}
 
     - is the last valid assignment the one that wins? is it fatal if the last assignment
@@ -245,7 +245,7 @@
   - pivots
 
     - {chart}: related to {SELECT} and {GROUP BY} from SQL: given a table, a chart can
-      aswer quickly questions like "produce the set of records that have <measure>=<value>", or
+      answer quickly questions like "produce the set of records that have <measure>=<value>", or
       even "<measure> in the neighborhood of <value>" by controlling the binning strategy
 
     - implement using {chart}, i.e. the binning strategy that specifies the dimensions, and

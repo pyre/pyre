@@ -8,7 +8,7 @@
 
 def test():
     """
-    Verify te channel state
+    Verify the channel state
     """
     # get the channel
     from journal.Warning import Warning as warning

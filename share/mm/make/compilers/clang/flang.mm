@@ -10,7 +10,7 @@ compiler.fortran := flang
 # the name of the executable
 flang.driver ?= flang
 
-# prefices for specific categories
+# prefixes for specific categories
 flang.prefix.flags :=
 flang.prefix.defines := -D
 flang.prefix.incpath := -I

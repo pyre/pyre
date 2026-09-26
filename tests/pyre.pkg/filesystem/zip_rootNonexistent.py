@@ -23,7 +23,7 @@ def test():
         assert False
     # if it fails as expected
     except pyre.filesystem.MountPointError as error:
-        # check that the error message is corerct
+        # check that the error message is correct
         assert str(error) == "error while mounting '/@': mount point not found"
 
     return

@@ -10,7 +10,7 @@ compiler.fortran := gfortran
 # the name of the executable
 gfortran.driver ?= gfortran
 
-# prefices for specific categories
+# prefixes for specific categories
 gfortran.prefix.flags :=
 gfortran.prefix.defines := -D
 gfortran.prefix.incpath := -I

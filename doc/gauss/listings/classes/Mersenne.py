@@ -20,7 +20,7 @@ class Mersenne(PointCloud):
         """
         Generate a random point in the interior of {box}
         """
-        # build the point p by caling random the right number of times
+        # build the point p by calling random the right number of times
         p = [random.uniform(left, right) for left, right in box]  # @\label{line:mt:list}@
         # and return it
         return p

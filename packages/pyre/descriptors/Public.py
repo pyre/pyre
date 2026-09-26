@@ -18,7 +18,7 @@ class Public:
     # documentation support
     tip = ""  # short description of my purpose
 
-    # wire doc to __doc__ so the bultin help can decorate the attributes properly
+    # wire doc to __doc__ so the builtin help can decorate the attributes properly
     @property
     def doc(self):
         """

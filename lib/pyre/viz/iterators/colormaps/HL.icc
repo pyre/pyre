@@ -33,7 +33,7 @@ pyre::viz::iterators::colormaps::HL<hueSourceT, luminositySourceT>::operator*() 
     auto hue = *_hue;
     auto luminosity = *_luminosity;
 
-    // covert to {rgb} and return
+    // convert to {rgb} and return
     return pyre::chroma::rgb::hl(hue, luminosity, _threshold);
 }
 

@@ -34,7 +34,7 @@ class Chart(metaclass=Surveyor):
     # interface
     def pyre_filter(self, **kwds):
         """
-        Create an iterable over those facts that statisfy the criteria specified in {kwds},
+        Create an iterable over those facts that satisfy the criteria specified in {kwds},
         which is assumed to be a value specification for each dimension that is to be used to
         restrict the data set
         """

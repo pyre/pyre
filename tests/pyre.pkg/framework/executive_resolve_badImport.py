@@ -18,7 +18,7 @@ def test():
 
     # attempt to retrieve a non-existent component descriptor from the python path
     try:
-        (unkown,) = executive.resolve(uri="import:not-there/unknown")
+        (unknown,) = executive.resolve(uri="import:not-there/unknown")
         assert False
     except ValueError:
         pass

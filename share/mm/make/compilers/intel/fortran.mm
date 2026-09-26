@@ -10,7 +10,7 @@ compiler.fortran := ifx
 # the name of the executable
 ifx.driver ?= ifx
 
-# prefices for specific categories
+# prefixes for specific categories
 ifx.prefix.flags :=
 ifx.prefix.defines := -D
 ifx.prefix.incpath := -I

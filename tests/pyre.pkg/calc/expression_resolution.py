@@ -40,7 +40,7 @@ def test():
     # make a change
     p = 100.0
     model["production"] = p
-    # chek again
+    # check again
     assert model["production"] == p
     assert model["price"] == 2 * p
 
@@ -48,7 +48,7 @@ def test():
     m = 60
     model["materials"] = m
     model["production"] = model.expression(value="2*{materials}")
-    # chek again
+    # check again
     assert model["materials"] == m
     assert model["production"] == 2 * m
     assert model["price"] == 4 * m

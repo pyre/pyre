@@ -7,7 +7,7 @@
 
 // externals
 #include "external.h"
-// the package globla declarations
+// the package global declarations
 #include "../__init__.h"
 // the local declarations
 #include "__init__.h"

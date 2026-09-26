@@ -40,7 +40,7 @@ def test():
             attributes["traits"] = traits
             return super().__new__(cls, name, bases, attributes)
 
-    # declare the containg class
+    # declare the containing class
     class base(metaclass=meta):
 
         p1 = property()

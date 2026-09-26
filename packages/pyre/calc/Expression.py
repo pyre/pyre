@@ -160,7 +160,7 @@ class Expression:
         Compute the value of {expression} by expanding any references to {model} nodes
         """
         # compile {expression}
-        program, _ = cls.compile(model=model, expresion=expresion)
+        program, _ = cls.compile(model=model, expression=expression)
         # evaluate {program} and return the generated value
         return eval(program, {"model": model})
 

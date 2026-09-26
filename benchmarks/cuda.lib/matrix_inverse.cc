@@ -52,7 +52,7 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     grid_managed_t tensorArray { tensorPack, tensorPack.cells() };
     grid_managed_t inverseArray { tensorPack, tensorPack.cells() };
 
-    // create an array of arrays as pertubation of identity
+    // create an array of arrays as perturbation of identity
     double perturbation = 0.1;
     int i, j, ij, jj;
     for (int nTensor = 0; nTensor < nTensors; nTensor++) {
@@ -168,7 +168,7 @@ pinnedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     grid_pinned_t tensorArray { tensorPack, tensorPack.cells() };
     grid_pinned_t inverseArray { tensorPack, tensorPack.cells() };
 
-    // create an array of arrays as pertubation of identity
+    // create an array of arrays as perturbation of identity
     double perturbation = 0.1;
     int i, j, ij, jj;
     for (int nTensor = 0; nTensor < nTensors; nTensor++) {
@@ -328,7 +328,7 @@ mappedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
     grid_mapped_t tensorArray { tensorPack, tensorPack.cells() };
     grid_mapped_t inverseArray { tensorPack, tensorPack.cells() };
 
-    // create an array of arrays as pertubation of identity
+    // create an array of arrays as perturbation of identity
     double perturbation = 0.1;
     int i, j, ij, jj;
     for (int nTensor = 0; nTensor < nTensors; nTensor++) {

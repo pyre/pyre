@@ -7,7 +7,7 @@
 
 
 """
-A simple expression scanner that understands some whitespace as mutliplication
+A simple expression scanner that understands some whitespace as multiplication
 """
 
 import re

@@ -13,7 +13,7 @@ platform := $(platform.os)-$(platform.arch)
 # default compilers
 platform.compilers ?=
 
-# pull the plaform/architecture specific settings
+# pull the platform/architecture specific settings
 include make/platforms/$(host.os)/$(host.arch).mm
 
 

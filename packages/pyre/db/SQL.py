@@ -322,7 +322,7 @@ class SQL(Mill, family="pyre.db.sql"):
         """
         Build the statement to drop the given {table}
         """
-        # this is easy enogh
+        # this is easy enough
         yield "DROP TABLE {};".format(table.pyre_name)
         # all done
         return

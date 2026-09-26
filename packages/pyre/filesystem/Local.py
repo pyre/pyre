@@ -267,7 +267,7 @@ class Local(Filesystem):
                         channel.line(f"unable to determine the type of '{entry}'")
                         channel.line(f"while exploring '{location}'")
                         channel.log()
-                    # in wither case, just ignore this entry
+                    # in either case, just ignore this entry
                     continue
                 # stamp the entry meta-data
                 meta.sync = timestamp

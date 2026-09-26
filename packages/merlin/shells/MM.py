@@ -477,7 +477,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
         if self.branch:
             # find the project root to get the project name
             root = self.locateProjectRoot()
-            # get te branch name
+            # get the branch name
             branch = self.gitCurrentBranch()
             # the tag is the relative path that discriminates this build context; it is
             # appended to {bldroot} and {prefix} by {locateBuildRoot} and {locatePrefix}
@@ -1380,7 +1380,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
 
     def computeSlots(self):
         """
-        Choose the number of jobs tha GNU make will execute in parallel
+        Choose the number of jobs that GNU make will execute in parallel
         """
         # if the user doesn't want any parallelism
         if self.serial:

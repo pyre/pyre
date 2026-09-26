@@ -16,7 +16,7 @@ define vite.init
 
     # add the bundle to the pile
     ${eval vite.bundles += $(_bundle)}
-    # remeber the project
+    # remember the project
     ${eval $(_bundle).project := $(_project)}
     # and its home
     ${eval $(_bundle).home ?= $($(_project).home)/}
@@ -131,7 +131,7 @@ define vite.init
     $(_bundle).metadoc.prefix := "the full path to the bundle source code"
     $(_bundle).metadoc.source.static.present := "directories with static assets"
 
-    # sources: infromation about the sources
+    # sources: information about the sources
     $(_bundle).meta.source := source.npm_config source.npm_lock
     # document each one
     $(_bundle).metadoc.source.npm_config := "the npm configuration file; typically called 'package.json'"

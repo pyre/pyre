@@ -182,7 +182,7 @@ class PublicInventory(Inventory):
         # have the executive make a key
         # key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)
         #
-        # For LATE BIDING, {implicit} is irrelevant because the instantiation happens only once
+        # For LATE BINDING, {implicit} is irrelevant because the instantiation happens only once
 
         # have the executive make a key
         key = cls.pyre_executive.registerComponentInstance(instance=instance, name=name)

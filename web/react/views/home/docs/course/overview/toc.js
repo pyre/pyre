@@ -19,8 +19,8 @@ const TOC = () => (
     <TableOfContents title="Table of Contents">
         <Link to="/docs/course/overview/intro">introduction</Link>
         <Link to="/docs/course/overview/components">components</Link>
-        <Link to="/docs/course/overview/appications">applications</Link>
-        <Link to="/docs/course/overview/appications">persistence</Link>
+        <Link to="/docs/course/overview/applications">applications</Link>
+        <Link to="/docs/course/overview/applications">persistence</Link>
     </TableOfContents>
 )
 

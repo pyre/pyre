@@ -27,7 +27,7 @@ For example:
     g(10)
 
 is one way you could implement the constraint "check that value is a positive number" and use
-it to check that 10 does indeed statisfy it.
+it to check that 10 does indeed satisfy it.
 
 Instead of being functions that return booleans, constraints throw exceptions when they are
 violated. This design choice is motivated by the observation that it is not always possible to

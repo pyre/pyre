@@ -17,7 +17,7 @@ using ansi_t = pyre::journal::ansi_t;
 
 
 // verify a few of the x11 standard colors; the x11 color table is generated automatically from
-// the canonical {rgb.txt} file, but stil...
+// the canonical {rgb.txt} file, but still...
 int
 main()
 {

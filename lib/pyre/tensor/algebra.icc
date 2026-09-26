@@ -1119,7 +1119,7 @@ pyre::tensor::symmetric(const matrixT & A) -> typename matrixT::symmetric_tensor
     // the result
     matrix_result_t sym;
 
-    // helper function to fill all rows in colum K
+    // helper function to fill all rows in column K
     auto _fill_column = [&A, &sym]<int... K>(integer_sequence<K...>) {
         // helper function to fill entry (I, J)
         auto _fill_row = [&A, &sym]<int J, int... I>(integer_sequence<I...>) {

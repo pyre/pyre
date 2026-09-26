@@ -45,9 +45,9 @@ weber = volt * second  #  magnetic flux
 tesla = weber / meter**2  #  magnetic flux density
 henry = weber / ampere  #  inductance
 
-celcius = kelvin  #  Celcius temperature
+celcius = kelvin  #  Celsius temperature
 
-lumen = candela * steradian  #  luminus flux
+lumen = candela * steradian  #  luminous flux
 lux = lumen / meter**2  #  illuminance
 
 becquerel = 1 / second  #  radioactivity
