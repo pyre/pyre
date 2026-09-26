@@ -46,5 +46,10 @@ managed = libcuda.managed
 # wait for the work queued on the device
 synchronize = libcuda.synchronize
 
+# the thin bindings for the cuda libraries
+cublas = libcuda.cublas
+cusolver = libcuda.cusolver
+curand = libcuda.curand
+
 
 # end of file
