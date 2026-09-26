@@ -4,20 +4,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-function(pyre_cudaPackage)
-  # if the user requested CUDA support
-  if(WITH_CUDA)
-    # install the sources straight from the source directory
-    install(
-      DIRECTORY packages/cuda
-      DESTINATION ${PYRE_DEST_PACKAGES}
-      FILES_MATCHING PATTERN *.py
-      )
-  endif()
-  # all done
-endfunction(pyre_cudaPackage)
-
-
 # the pyre cuda headers
 function(pyre_cudaLib)
   # if the user requested CUDA support
@@ -80,23 +66,29 @@ function(pyre_cudaModule)
     set_target_properties(cudamodule PROPERTIES LIBRARY_OUTPUT_NAME cuda)
     # specify the directory for the module compilation products
     pyre_library_directory(cudamodule extensions)
-    # set the libraries to link against; {CUDA::cudart} brings the toolkit headers with it,
-    # so the module needs no include directories of its own
-    target_link_libraries(cudamodule PRIVATE pyre journal pybind11::module CUDA::cudart)
+    # set the libraries to link against; {cuda} brings the pyre cuda headers, and the toolkit
+    # targets bring theirs, so the module needs no include directories of its own
+    target_link_libraries(
+      cudamodule PRIVATE
+      pyre journal cuda pybind11::module CUDA::cudart CUDA::cublas CUDA::cusolver CUDA::curand
+    )
     # add the sources
     target_sources(cudamodule PRIVATE
-      extensions/cuda/cuda.cc
-      extensions/cuda/device.cc
-      extensions/cuda/discover.cc
-      extensions/cuda/exceptions.cc
-      extensions/cuda/metadata.cc
+      extensions/cuda/__init__.cc
+      extensions/cuda/api.cc
+      extensions/cuda/arithmetic.cu
+      extensions/cuda/cublas.cc
+      extensions/cuda/curand.cc
+      extensions/cuda/cusolver.cc
+      extensions/cuda/engine.cc
+      extensions/cuda/grids.cc
     )
 
     # install the cuda extensions
     install(
       TARGETS cudamodule
       LIBRARY
-      DESTINATION ${PYRE_DEST_PACKAGES}/cuda
+      DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
       )
   endif()
 endfunction(pyre_cudaModule)
