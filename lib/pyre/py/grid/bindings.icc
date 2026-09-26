@@ -122,6 +122,15 @@ pyre::py::grid::bindGrid(py::module & module, const char * name, const char * do
         // the docstring
         "write {value} into the cell at a full integer {index}");
 
+    // the address of my first cell
+    cls.def_property_readonly(
+        // the name
+        "address",
+        // the getter
+        &AnyGrid::address,
+        // the docstring
+        "the address of my first cell, as an integer, for code that takes raw pointers");
+
     // hand off the class, so the caller can add to it
     return cls;
 }
