@@ -225,6 +225,41 @@ def violations() -> None:
     return
 
 
+def bots() -> None:
+    """
+    The commits of a bot are not held to the commit conventions, and the same message from a
+    person still is
+    """
+    # in a scratch directory
+    with tempfile.TemporaryDirectory() as root:
+        # lay out the repository
+        scaffold(root=root)
+        # work on a branch
+        git("switch", "--quiet", "-c", "work", cwd=root)
+        # the message a dependency update comes with: no area, and a body
+        message = ["-m", "Bump black from 26.5.1 to 26.6.0", "-m", "the release notes"]
+        # a bot commits a change with it
+        write(root=root, name="words.txt", text="tread\n")
+        git("add", "words.txt", cwd=root)
+        git("-c", "user.name=dependabot[bot]", "commit", "--quiet", *message, cwd=root)
+        # which passes
+        status, report = check(root=root, base="main")
+        # every check
+        if status != 0:
+            # or else the bot is held to conventions it cannot follow
+            raise SelfTestError(f"a bot commit failed:\n{report}")
+        # a person commits another change with the same message
+        write(root=root, name="words.txt", text="tread\nraison\n")
+        git("add", "words.txt", cwd=root)
+        git("commit", "--quiet", *message, cwd=root)
+        # which does not pass
+        status, report = check(root=root, base="main")
+        # the commit check catches it
+        expect(report=report, check="commits", needle="is not of the form")
+    # all done
+    return
+
+
 def main() -> int:
     """
     Run the self tests
@@ -233,8 +268,10 @@ def main() -> int:
     try:
         # check a clean repository
         clean()
-        # and one full of violations
+        # one full of violations
         violations()
+        # and one with commits by a bot
+        bots()
     # if the checker misbehaved
     except SelfTestError as error:
         # say how
