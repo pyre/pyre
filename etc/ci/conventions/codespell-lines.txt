@@ -1,4 +1,2 @@
 tellurium = Element(52, "te", "tellurium", 127.60)
 neodymium = Element(60, "nd", "neodymium", 144.24)
-celcius = celsius
-    assert SI.celcius is SI.celsius
