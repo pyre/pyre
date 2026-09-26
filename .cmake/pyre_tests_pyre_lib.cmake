@@ -231,6 +231,7 @@ pyre_test_driver(tests/pyre.lib/viz/iterators/complex.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/decimate.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/domain_coloring.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/logsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/iterators/magnitude.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/phase.cc)
 pyre_test_driver(tests/pyre.lib/viz/iterators/polarsaw.cc)
 
