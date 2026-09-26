@@ -13,6 +13,8 @@ namespace pyre::cuda::py {
     // the engine that reaches the cells of grids on managed storage
     class DeviceEngine;
 
+    // the module functions
+    void api(py::module &);
     // the grids on managed memory
     void grids(py::module &);
 } // namespace pyre::cuda::py
