@@ -19,6 +19,8 @@ namespace pyre::cuda::py {
     void grids(py::module &);
     // the cublas bindings
     void cublas(py::module &);
+    // the cusolver bindings
+    void cusolver(py::module &);
 } // namespace pyre::cuda::py
 
 
