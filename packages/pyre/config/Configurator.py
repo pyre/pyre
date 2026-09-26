@@ -199,16 +199,55 @@ class Configurator:
         """
         The last step in the configuration of a component instance
         """
+        # get the model
+        nameserver = self.executive.nameserver
+
         # go through all deferred assignments that were meant for {instance}
         for assignment, priority in self.retrieveDeferredAssignments(instance=instance):
-            # get the name of the trait
-            alias = assignment.key[0]
-            # get the value
+            # get the path to the trait
+            split = list(assignment.key)
+            # the value
             value = assignment.value
             # and the locator
             locator = assignment.locator
-            # ask the instance to set the value
-            instance.pyre_setTrait(alias=alias, value=value, priority=priority, locator=locator)
+
+            # a single level key names one of my traits
+            if len(split) == 1:
+                # ask the instance to set the value, so that the trait descriptor gets
+                # located and the modification hooks get invoked
+                instance.pyre_setTrait(
+                    alias=split[0], value=value, priority=priority, locator=locator
+                )
+                # on to the next one
+                continue
+
+            # a multilevel key reaches inside a component that is nested within me; it
+            # cannot be applied directly because the nested component may not exist yet, so
+            # place it in the model under its fully qualified name and let it get picked up
+            # when the nested component is built
+            key = instance.pyre_key
+            # if i have no public name
+            if key is None:
+                # there is nothing to hang the qualified name off of; get the journal
+                import journal
+
+                # assemble the trait name
+                trait = nameserver.join(*split)
+                # and complain, rather than fail silently
+                journal.error("pyre.config").log(
+                    f"{locator}: cannot apply '{trait}' to the private component "
+                    f"'{instance.pyre_name}'"
+                )
+                # move on
+                continue
+
+            # splice my name with the path to the trait and update the model
+            nameserver.insert(
+                split=list(nameserver.getSplitName(key)) + split,
+                value=value,
+                priority=priority,
+                locator=locator,
+            )
 
         # notify each trait
         for trait in instance.pyre_traits():
