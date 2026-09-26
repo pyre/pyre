@@ -1,0 +1,130 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "bindings.h"
+
+
+// bind the grid class as {name} in {module}
+template <class engineT>
+auto
+pyre::py::grid::bindGrid(py::module & module, const char * name, const char * docstring, bool local)
+    -> py::class_<AnyGrid>
+{
+    // the argument literals
+    using namespace pybind11::literals;
+
+    // the type-erased grid class, presenting the python buffer protocol so any consumer of that
+    // protocol can view its cells with no copy
+    auto cls = py::class_<AnyGrid>(
+        // in the module
+        module,
+        // named
+        name,
+        // exposing the buffer protocol
+        py::buffer_protocol(),
+        // registered for this module alone, when asked
+        py::module_local(local),
+        // the docstring
+        docstring);
+
+    // wire the buffer protocol to the type-erased grid's own description
+    cls.def_buffer([](AnyGrid & self) -> py::buffer_info {
+        // make sure the cells are within reach of the host
+        engineT::access();
+        // and describe them
+        return self.view();
+    });
+
+    // the extent along each axis
+    cls.def_property_readonly(
+        // the name
+        "shape",
+        // the getter
+        &AnyGrid::shape,
+        // the docstring
+        "my extent along each axis");
+
+    // the strides, in cells
+    cls.def_property_readonly(
+        // the name
+        "strides",
+        // the getter
+        &AnyGrid::strides,
+        // the docstring
+        "the distance between consecutive cells along each axis, in cells");
+
+    // the number of axes
+    cls.def_property_readonly(
+        // the name
+        "rank",
+        // the getter
+        &AnyGrid::rank,
+        // the docstring
+        "my number of axes");
+
+    // whether my cells may be written
+    cls.def_property_readonly(
+        // the name
+        "writable",
+        // the getter
+        &AnyGrid::writable,
+        // the docstring
+        "whether python may write through to my cells");
+
+    // the storage strategy that backs me
+    cls.def_property_readonly(
+        // the name
+        "strategy",
+        // the getter
+        &AnyGrid::strategy,
+        // the docstring
+        "the storage strategy that holds my cells");
+
+    // read access: {g[i, j, ...]}
+    cls.def(
+        // the name
+        "__getitem__",
+        // the implementation
+        [](const AnyGrid & self, const py::object & key) -> py::object {
+            // make sure the cells are within reach of the host
+            engineT::access();
+            // and look up the cell, or the sub-grid
+            return self.getitem(key);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "the cell at a full index, or a sub-grid for a partial or sliced {index}");
+
+    // write access: {g[i, j, ...] = v}
+    cls.def(
+        // the name
+        "__setitem__",
+        // the implementation
+        [](AnyGrid & self, const py::object & key, const py::object & value) -> void {
+            // make sure the cells are within reach of the host
+            engineT::access();
+            // write the cell
+            self.setitem(key, value);
+            // all done
+            return;
+        },
+        // the signature
+        "index"_a, "value"_a,
+        // the docstring
+        "write {value} into the cell at a full integer {index}");
+
+    // hand off the class, so the caller can add to it
+    return cls;
+}
+
+
+// end of file
