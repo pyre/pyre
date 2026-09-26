@@ -15,6 +15,8 @@
 #include <pyre/py/grid/AnyGrid.h>
 // and the type-erased mosaic, its out-of-core sibling
 #include <pyre/py/grid/AnyMosaic.h>
+// the choice of a cell type from its name
+#include <pyre/py/grid/dispatch.h>
 
 
 // the type-erased grid measures with a signed integer, matching the c++ library
@@ -28,80 +30,6 @@ namespace pyre::py::grid {
     using packing_t = pyre::grid::dynamic_canonical_t;
     // its shape carries one signed extent per axis
     using shape_t = packing_t::shape_type;
-
-    // choose a native cell type from its pyre memory cell name and hand it to a callable that
-    // is templated on that type; this keeps the twelve-way dispatch in one place, and the
-    // return type is deduced so both grid and mosaic factories can ride it; {requested} is the
-    // name the caller actually used, for the complaint
-    template <class F>
-    auto dispatchBase(const string_t & cell, const string_t & requested, F && f)
-    {
-        // signed integers
-        if (cell == "int8")
-            return f.template operator()<pyre::memory::int8_t>();
-        if (cell == "int16")
-            return f.template operator()<pyre::memory::int16_t>();
-        if (cell == "int32")
-            return f.template operator()<pyre::memory::int32_t>();
-        if (cell == "int64")
-            return f.template operator()<pyre::memory::int64_t>();
-        // unsigned integers
-        if (cell == "uint8")
-            return f.template operator()<pyre::memory::uint8_t>();
-        if (cell == "uint16")
-            return f.template operator()<pyre::memory::uint16_t>();
-        if (cell == "uint32")
-            return f.template operator()<pyre::memory::uint32_t>();
-        if (cell == "uint64")
-            return f.template operator()<pyre::memory::uint64_t>();
-        // floating point
-        if (cell == "float32")
-            return f.template operator()<pyre::memory::float32_t>();
-        if (cell == "float64")
-            return f.template operator()<pyre::memory::float64_t>();
-        // complex
-        if (cell == "complex64")
-            return f.template operator()<pyre::memory::complex64_t>();
-        if (cell == "complex128")
-            return f.template operator()<pyre::memory::complex128_t>();
-
-        // anything else is a caller mistake; refuse it the way the other factories refuse bad
-        // arguments, with a python exception and no journal entry, since a fatal error channel
-        // would preempt the exception
-        throw py::value_error("unsupported grid cell type '" + requested + "'");
-    }
-
-    // choose a cell type from its name, honoring a trailing byte order marker: {float64be} is a
-    // big endian double, {uint16le} a little endian unsigned short; a marker that names the
-    // host's own order collapses to the native cell, so only foreign order data pays for the
-    // wrapper
-    template <class F>
-    auto dispatchCell(const string_t & cell, F && f)
-    {
-        // the marker is the last two characters, if there is room for a base name before them
-        if (cell.size() > 2) {
-            // split the name
-            auto base = cell.substr(0, cell.size() - 2);
-            auto marker = cell.substr(cell.size() - 2);
-            // big endian
-            if (marker == "be") {
-                // wrap the base cell in the big endian spelling
-                return dispatchBase(base, cell, [&]<class T>() {
-                    return f.template operator()<pyre::memory::big_t<T>>();
-                });
-            }
-            // little endian
-            if (marker == "le") {
-                // wrap the base cell in the little endian spelling
-                return dispatchBase(base, cell, [&]<class T>() {
-                    return f.template operator()<pyre::memory::little_t<T>>();
-                });
-            }
-        }
-        // no marker: the name is a native cell
-        return dispatchBase(cell, cell, std::forward<F>(f));
-    }
-
 
     // a heap grid: allocate a fresh block of {shape} cells of type {cellT}
     template <class cellT>
