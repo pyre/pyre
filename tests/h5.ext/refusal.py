@@ -27,6 +27,9 @@ def test():
     uri = "h5_ext_refusal.h5"
     # make it
     f = libh5.File(uri=uri, mode="w")
+    # the first refusal is expected, and only its exception is of interest, so its entry goes to
+    # the trash rather than the console; the channel stays fatal
+    journal.error("pyre.h5.group").device = journal.trash()
     # the library will not make a group whose parent does not exist; capture stderr while it
     # refuses, to check that the library says nothing there on its own
     capture = tempfile.TemporaryFile(mode="w+b")
