@@ -52,18 +52,18 @@ public:
     // metamethods
 public:
     // map an existing data product
-    inline View(pointer data, cell_count_type cells, cell_count_type stride = 1);
+    PYRE_HOST_DEVICE inline View(pointer data, cell_count_type cells, cell_count_type stride = 1);
 
     // interface
 public:
     // human readable form of my location
     inline auto uri() const -> uri_type;
     // the number of cells
-    inline auto cells() const -> cell_count_type;
+    PYRE_HOST_DEVICE inline auto cells() const -> cell_count_type;
     // the memory footprint of the block
-    inline auto bytes() const -> size_type;
+    PYRE_HOST_DEVICE inline auto bytes() const -> size_type;
     // access to the raw data pointer
-    inline auto data() const -> pointer;
+    PYRE_HOST_DEVICE inline auto data() const -> pointer;
     // access to the raw data pointer in a form suitable for diagnostics
     inline auto where() const -> const void *;
 
@@ -88,7 +88,7 @@ public:
     // with bounds checking
     inline auto at(difference_type) const -> reference;
     // without bounds checking
-    inline auto operator[](difference_type) const -> reference;
+    PYRE_HOST_DEVICE inline auto operator[](difference_type) const -> reference;
 
     // interface
 public:
