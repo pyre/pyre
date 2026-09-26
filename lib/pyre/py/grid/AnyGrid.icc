@@ -189,6 +189,15 @@ pyre::py::grid::AnyGrid::strategy() const -> const string_t &
 }
 
 
+// the address of my first cell
+inline auto
+pyre::py::grid::AnyGrid::address() const -> std::uintptr_t
+{
+    // as an integer, the way python passes pointers around
+    return reinterpret_cast<std::uintptr_t>(_data);
+}
+
+
 // turn a python index into the offset and residual layout it selects
 inline auto
 pyre::py::grid::AnyGrid::resolve(const py::object & key) const -> resolved

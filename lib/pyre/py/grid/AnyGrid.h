@@ -53,6 +53,8 @@ public:
     auto writable() const -> bool;
     // which storage strategy backs me, kept for clients that care how my cells are held
     auto strategy() const -> const string_t &;
+    // the address of my first cell, as an integer, for code that takes raw pointers
+    auto address() const -> std::uintptr_t;
 
     // item access
 public:
