@@ -109,6 +109,8 @@ namespace pyre::h5::py {
     using DataSet = pyre::h5::DataSet;
     // one chunk of a chunked dataset, as it exists in the file
     using Chunk = pyre::h5::Chunk;
+    // what the page buffer of a file has seen
+    using PageBufferStats = pyre::h5::PageBufferStats;
     // datatypes: now pyre-owned wrappers over the hdf5 c api, living in {pyre::h5::types}; the
     // binding-facing names keep their {*Type} spelling so the registered python classes are stable
     using DataType = pyre::h5::types::Datatype;

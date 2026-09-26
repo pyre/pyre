@@ -214,6 +214,25 @@ pyre::h5::py::dataset(py::module & m)
 
     cls.def(
         // the name
+        "chunkTable",
+        // the implementation
+        [](const DataSet & self) -> py::object {
+            // ask
+            auto table = self.chunkTable();
+            // a dataset that is not stored as chunks has no table at all
+            if (!table) {
+                // and says so
+                return py::none();
+            }
+            // otherwise, hand back the chunks
+            return py::cast(*table);
+        },
+        // the docstring
+        "every chunk that has been written, in one pass over the chunk index, or {None} when i "
+        "am not stored as chunks");
+
+    cls.def(
+        // the name
         "chunk",
         // the implementation
         [](const DataSet & self, hsize_t index) -> py::object {
