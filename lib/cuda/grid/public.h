@@ -8,9 +8,12 @@
 #pragma once
 
 
-// support
-#include "cuda/memory.h"
-#include "cuda/grid.h"
+// external packages
+#include "externals.h"
+// the namespace
+#include "forward.h"
+// published type aliases
+#include "api.h"
 
 
 // end of file
