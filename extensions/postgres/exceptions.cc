@@ -99,34 +99,27 @@ pyre::postgres::py::exceptions(py::module &)
         // a {DataError} would arrive in python under its parent's name
         catch (const DataError & error) {
             raise("DataError", error);
-        }
-        catch (const IntegrityError & error) {
+        } catch (const IntegrityError & error) {
             raise("IntegrityError", error);
-        }
-        catch (const InternalError & error) {
+        } catch (const InternalError & error) {
             raise("InternalError", error);
-        }
-        catch (const OperationalError & error) {
+        } catch (const OperationalError & error) {
             raise("OperationalError", error);
-        }
-        catch (const ProgrammingError & error) {
+        } catch (const ProgrammingError & error) {
             raise("ProgrammingError", error);
-        }
-        catch (const NotSupportedError & error) {
+        } catch (const NotSupportedError & error) {
             raise("NotSupportedError", error);
         }
         // the two interior nodes
         catch (const DatabaseError & error) {
             raise("DatabaseError", error);
-        }
-        catch (const InterfaceError & error) {
+        } catch (const InterfaceError & error) {
             raise("InterfaceError", error);
         }
         // and the two roots; a warning is not an error, and does not derive from one
         catch (const Warning & error) {
             raise("Warning", error);
-        }
-        catch (const Error & error) {
+        } catch (const Error & error) {
             raise("Error", error);
         }
         // anything else the package throws is, by construction, one of the above; this clause is

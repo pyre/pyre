@@ -81,7 +81,8 @@ pyre::mpi::Request::active() const -> bool
 
 
 // contextual conversion to {bool}
-pyre::mpi::Request::operator bool() const
+pyre::mpi::Request::
+operator bool() const
 {
     // i am usable exactly when i name a transfer
     return active();
@@ -172,7 +173,8 @@ pyre::mpi::Request::_abandon() noexcept -> void
             << "mpi refused to free a request"
             << pyre::journal::newline
             // details
-            << "status: " << status
+            << "status: "
+            << status
             // where, and flush
             << pyre::journal::endl(__HERE__);
     }

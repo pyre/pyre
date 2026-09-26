@@ -35,7 +35,8 @@ main()
             << "library: " << std::get<0>(library) << "." << std::get<1>(library) << "."
             << std::get<2>(library) << "." << std::get<3>(library) << pyre::journal::newline
             << "headers: " << std::get<0>(headers) << "." << std::get<1>(headers) << "."
-            << std::get<2>(headers) << "." << std::get<3>(headers)
+            << std::get<2>(headers) << "."
+            << std::get<3>(headers)
             // where
             << pyre::journal::endl(__HERE__);
         // and fail

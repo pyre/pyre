@@ -15,11 +15,10 @@
 namespace pyre::mpi::py {
     // materialize any python iterable of ranks into a rank vector; accepting an iterable rather
     // than insisting on a {list} lets callers pass a comprehension or a lazy generator expression
-    inline auto
-    asRanks(const py::iterable & ranks) -> Group::ranks_type
+    inline auto asRanks(const py::iterable & ranks) -> Group::ranks_type
     {
         // start with an empty rank vector
-        auto members = Group::ranks_type{};
+        auto members = Group::ranks_type {};
         // drain the iterable, casting each item to a rank
         for (const auto & rank : ranks) {
             // fold it in
@@ -28,7 +27,7 @@ namespace pyre::mpi::py {
         // hand back the materialized ranks
         return members;
     }
-}
+} // namespace pyre::mpi::py
 
 
 // add the bindings for the process group
@@ -120,9 +119,7 @@ pyre::mpi::py::group(py::module & m)
         // the name
         "union",
         // the implementation
-        [](const Group & self, const Group & other) -> Group {
-            return groupUnion(self, other);
-        },
+        [](const Group & self, const Group & other) -> Group { return groupUnion(self, other); },
         // the signature
         "other"_a,
         // the docstring

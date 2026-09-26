@@ -133,8 +133,7 @@ main()
         harvest[0].raise("SELECT * FROM pyre_no_such_table");
         std::cerr << "a failed result did not raise when asked" << std::endl;
         return 1;
-    }
-    catch (const ProgrammingError & error) {
+    } catch (const ProgrammingError & error) {
         // the same classification the synchronous calls make
         if (error.diagnostic().sqlstate() != "42P01") {
             std::cerr << "the failed result was classified as " << error.diagnostic().sqlstate()

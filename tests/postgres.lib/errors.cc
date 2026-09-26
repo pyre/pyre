@@ -44,8 +44,7 @@ main()
         session.exec("SELECT FROM WHERE");
         std::cerr << "a syntax error did not raise" << std::endl;
         return 1;
-    }
-    catch (const ProgrammingError & error) {
+    } catch (const ProgrammingError & error) {
         // the server named the condition
         if (error.diagnostic().sqlstate() != "42601") {
             std::cerr << "a syntax error came back as " << error.diagnostic().sqlstate()
@@ -69,8 +68,7 @@ main()
         session.exec("SELECT * FROM pyre_no_such_table");
         std::cerr << "an undefined table did not raise" << std::endl;
         return 1;
-    }
-    catch (const ProgrammingError & error) {
+    } catch (const ProgrammingError & error) {
         if (error.diagnostic().sqlstate() != "42P01") {
             std::cerr << "an undefined table came back as " << error.diagnostic().sqlstate()
                       << std::endl;
@@ -85,8 +83,7 @@ main()
         session.exec("SELECT 1/0");
         std::cerr << "a division by zero did not raise" << std::endl;
         return 1;
-    }
-    catch (const DataError & error) {
+    } catch (const DataError & error) {
         if (error.diagnostic().sqlstate() != "22012") {
             std::cerr << "a division by zero came back as " << error.diagnostic().sqlstate()
                       << std::endl;
@@ -99,8 +96,7 @@ main()
         session.exec("SELECT 'seven'::int");
         std::cerr << "a bad cast did not raise" << std::endl;
         return 1;
-    }
-    catch (const DataError & error) {
+    } catch (const DataError & error) {
         if (error.diagnostic().sqlstate() != "22P02") {
             std::cerr << "a bad cast came back as " << error.diagnostic().sqlstate() << std::endl;
             return 1;
@@ -116,8 +112,7 @@ main()
         session.exec("INSERT INTO unique_test (id) VALUES (1)");
         std::cerr << "a unique violation did not raise" << std::endl;
         return 1;
-    }
-    catch (const IntegrityError & error) {
+    } catch (const IntegrityError & error) {
         if (error.diagnostic().sqlstate() != "23505") {
             std::cerr << "a unique violation came back as " << error.diagnostic().sqlstate()
                       << std::endl;
@@ -143,8 +138,7 @@ main()
         session.exec("INSERT INTO child (id) VALUES (99)");
         std::cerr << "a foreign key violation did not raise" << std::endl;
         return 1;
-    }
-    catch (const IntegrityError & error) {
+    } catch (const IntegrityError & error) {
         if (error.diagnostic().sqlstate() != "23503") {
             std::cerr << "a foreign key violation came back as " << error.diagnostic().sqlstate()
                       << std::endl;
@@ -158,8 +152,7 @@ main()
         session.exec("SELECT 1/0");
         std::cerr << "a division by zero did not raise" << std::endl;
         return 1;
-    }
-    catch (const DatabaseError &) {
+    } catch (const DatabaseError &) {
         // as expected
     }
 
@@ -168,8 +161,7 @@ main()
         session.exec("SELECT * FROM pyre_no_such_table");
         std::cerr << "an undefined table did not raise" << std::endl;
         return 1;
-    }
-    catch (const Exception & error) {
+    } catch (const Exception & error) {
         // whose {what} is the one line summary, and which therefore says something
         if (string_t(error.what()).empty()) {
             std::cerr << "an exception has nothing to say for itself" << std::endl;
@@ -183,12 +175,10 @@ main()
         session.exec("SELECT 1")[0]["neither"];
         std::cerr << "an unknown column did not raise" << std::endl;
         return 1;
-    }
-    catch (const DatabaseError &) {
+    } catch (const DatabaseError &) {
         std::cerr << "an unknown column was blamed on the server" << std::endl;
         return 1;
-    }
-    catch (const InterfaceError & error) {
+    } catch (const InterfaceError & error) {
         // the server never saw this, so it has no name for it
         if (!error.diagnostic().sqlstate().empty()) {
             std::cerr << "an interface error carries a SQLSTATE" << std::endl;

@@ -118,8 +118,7 @@ pyre::postgres::py::transaction(py::module & m)
         "__repr__",
         // the implementation
         [](const Transaction & self) -> string_t {
-            return self.live() ? "<postgres.Transaction: open>"
-                               : "<postgres.Transaction: closed>";
+            return self.live() ? "<postgres.Transaction: open>" : "<postgres.Transaction: closed>";
         },
         // the docstring
         "a human readable summary of this transaction");

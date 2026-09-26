@@ -186,8 +186,7 @@ namespace pyre::postgres {
     // would surprise a caller on the platforms where they are not
     template <typename valueT>
     struct Codec<
-        valueT,
-        std::enable_if_t<std::is_integral_v<valueT> && !std::is_same_v<valueT, bool>>> {
+        valueT, std::enable_if_t<std::is_integral_v<valueT> && !std::is_same_v<valueT, bool>>> {
         // read it
         static inline auto decode(view_t value) -> valueT
         {
@@ -242,16 +241,17 @@ namespace pyre::postgres {
             // room for the length of the answer
             std::size_t length = 0;
             // undo whichever escaping the server chose
-            unsigned char * octets = PQunescapeBytea(
-                reinterpret_cast<const unsigned char *>(text.c_str()), &length);
+            unsigned char * octets =
+                PQunescapeBytea(reinterpret_cast<const unsigned char *>(text.c_str()), &length);
             // a null answer means the text was not an escaped byte string, or libpq ran out of
             // memory; either way there is nothing to hand back
             if (octets == nullptr) {
                 codecs::reject(value, "an octet string");
             }
             // copy the octets into storage the caller owns
-            bytes_t bytes(reinterpret_cast<std::byte *>(octets),
-                          reinterpret_cast<std::byte *>(octets) + length);
+            bytes_t bytes(
+                reinterpret_cast<std::byte *>(octets),
+                reinterpret_cast<std::byte *>(octets) + length);
             // give libpq its buffer back
             PQfreemem(octets);
             // and hand off the copy

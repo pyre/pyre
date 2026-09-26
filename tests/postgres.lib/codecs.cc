@@ -59,8 +59,7 @@ main()
         session.execute("SELECT $1::bigint", big)[0][0].as<std::int32_t>();
         std::cerr << "a bigint fit into an int" << std::endl;
         return 1;
-    }
-    catch (const DataError &) {
+    } catch (const DataError &) {
         // as expected
     }
     // and neither does text that is not a number at all
@@ -68,8 +67,7 @@ main()
         session.exec("SELECT 'seven'")[0][0].as<int>();
         std::cerr << "the word 'seven' parsed as a number" << std::endl;
         return 1;
-    }
-    catch (const DataError &) {
+    } catch (const DataError &) {
         // as expected
     }
 

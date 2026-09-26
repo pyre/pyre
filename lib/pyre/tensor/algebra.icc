@@ -473,7 +473,8 @@ pyre::tensor::matrix_row(const vectorT & v)
         return A;
     };
     // fill row K of a zero matrix with vector v
-    return _fill_matrix_row(make_zeros<matrix_result_t>(), v, make_integer_sequence<vectorT::size> {});
+    return _fill_matrix_row(
+        make_zeros<matrix_result_t>(), v, make_integer_sequence<vectorT::size> {});
 }
 
 // builds a square matrix with all zeros except the K-th column is equal to v

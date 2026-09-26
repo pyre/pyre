@@ -12,7 +12,8 @@
 
 
 // describe what a group expects to hold, so its object header is sized for it
-inline pyre::h5::properties::LinkEstimate::LinkEstimate(unsigned int links, unsigned int nameLength) :
+inline pyre::h5::properties::LinkEstimate::LinkEstimate(
+    unsigned int links, unsigned int nameLength) :
     // record how many members the group expects
     links(links),
     // then how long their names run

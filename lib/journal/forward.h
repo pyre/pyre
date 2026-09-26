@@ -83,8 +83,7 @@ namespace pyre::journal {
     // metadata
     inline constexpr auto operator<<(const Null &, const Note &) -> const Null &;
     // injection of a manipulator function
-    inline constexpr auto operator<<(const Null &, const Null & (*) (const Null &) )
-        -> const Null &;
+    inline constexpr auto operator<<(const Null &, const Null & (*)(const Null &) ) -> const Null &;
     // injection of everything else
     template <typename itemT>
     inline constexpr auto operator<<(const Null &, const itemT &) -> const Null &;
@@ -212,7 +211,7 @@ namespace pyre::journal {
     template <typename severityT, template <class> typename proxyT>
     inline auto operator<<(
         Channel<severityT, proxyT> &,
-        Channel<severityT, proxyT> & (*) (Channel<severityT, proxyT> &) )
+        Channel<severityT, proxyT> & (*)(Channel<severityT, proxyT> &) )
         -> Channel<severityT, proxyT> &;
 
     // injection of everything else

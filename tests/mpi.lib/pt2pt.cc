@@ -223,8 +223,7 @@ main()
         pyre::mpi::bytes_t payload;
         // the root brings the bytes
         if (rank == 0) {
-            payload = pyre::mpi::bytes_t { std::byte(1), std::byte(2), std::byte(3),
-                                           std::byte(4) };
+            payload = pyre::mpi::bytes_t { std::byte(1), std::byte(2), std::byte(3), std::byte(4) };
         }
         // send them out
         world.bcast(payload, 0);

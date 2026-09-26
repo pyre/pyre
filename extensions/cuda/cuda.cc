@@ -24,7 +24,7 @@
 
 
 // put everything in my private namespace
-namespace pyre ::extensions ::cuda {
+namespace pyre::extensions::cuda {
 
     // the module method table
     PyMethodDef methods[] = {

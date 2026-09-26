@@ -18,7 +18,7 @@ pyre::journal::py::warning(py::module & m)
     // type aliases for the member functions (mfp: method pointer)
     // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = warning_t::device_type (warning_t::*)() const;
-    using setDevice_mfp = warning_t & (warning_t::*) (warning_t::device_type);
+    using setDevice_mfp = warning_t & (warning_t::*)(warning_t::device_type);
 
 
     // the warning channel interface

@@ -180,7 +180,7 @@ pyre::journal::operator<<(const Null & null, const Note &) -> const Null &
 
 // injection of manipulator functions
 constexpr auto
-pyre::journal::operator<<(const Null & null, const Null & (*) (const Null &) ) -> const Null &
+pyre::journal::operator<<(const Null & null, const Null & (*)(const Null &) ) -> const Null &
 {
     // do nothing
     return null;

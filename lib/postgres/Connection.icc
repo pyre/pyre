@@ -57,7 +57,8 @@ pyre::postgres::Connection::ok() const -> bool
 
 
 // contextual conversion to {bool}
-pyre::postgres::Connection::operator bool() const
+pyre::postgres::Connection::
+operator bool() const
 {
     // delegate
     return ok();

@@ -18,7 +18,7 @@ pyre::journal::py::error(py::module & m)
     // type aliases for the member functions (mfp: method pointer)
     // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = error_t::device_type (error_t::*)() const;
-    using setDevice_mfp = error_t & (error_t::*) (error_t::device_type);
+    using setDevice_mfp = error_t & (error_t::*)(error_t::device_type);
 
 
     // the error channel interface

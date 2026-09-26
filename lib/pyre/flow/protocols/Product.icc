@@ -32,7 +32,8 @@ pyre::flow::protocols::Product::create(const name_type & name, bool stale) -> pr
 }
 
 // constructors
-pyre::flow::protocols::Product::Product(sentinel_type sentinel, const name_type & name, bool stale) :
+pyre::flow::protocols::Product::Product(
+    sentinel_type sentinel, const name_type & name, bool stale) :
     // superclass
     Node(sentinel, name),
     // data members

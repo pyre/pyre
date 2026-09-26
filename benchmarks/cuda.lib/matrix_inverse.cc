@@ -122,8 +122,7 @@ managedInverses(pack_t tensorPack, int nThreadPerBlock, int nTensors)
 
     // execute the kernel wrapper
     computeInvariantsManaged(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data(),
-        inverseArray.data());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data(), inverseArray.data());
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();

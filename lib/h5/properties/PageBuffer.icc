@@ -12,7 +12,8 @@
 
 
 // describe the buffer a paged file gathers its pages in
-inline pyre::h5::properties::PageBuffer::PageBuffer(std::size_t bytes, unsigned int metadata, unsigned int raw) :
+inline pyre::h5::properties::PageBuffer::PageBuffer(
+    std::size_t bytes, unsigned int metadata, unsigned int raw) :
     // record how much memory the buffer may hold
     bytes(bytes),
     // then the smallest share of the buffer reserved for metadata pages

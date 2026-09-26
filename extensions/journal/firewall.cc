@@ -18,7 +18,7 @@ pyre::journal::py::firewall(py::module & m)
     // type aliases for the member functions (mfp: method pointer)
     // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = firewall_t::device_type (firewall_t::*)() const;
-    using setDevice_mfp = firewall_t & (firewall_t::*) (firewall_t::device_type);
+    using setDevice_mfp = firewall_t & (firewall_t::*)(firewall_t::device_type);
 
 
     // the firewall channel interface

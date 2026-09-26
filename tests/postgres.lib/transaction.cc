@@ -145,8 +145,7 @@ main()
             work.commit();
             std::cerr << "committed a transaction that was already rolled back" << std::endl;
             return 1;
-        }
-        catch (const InterfaceError &) {
+        } catch (const InterfaceError &) {
             // as expected
         }
     }

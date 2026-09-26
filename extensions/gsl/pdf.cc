@@ -335,7 +335,8 @@ gsl::py::pdf(py::module & m)
         // the signature
         "mean"_a, "sigma"_a, "support"_a, "rng"_a, "vector"_a,
         // the docstring
-        "fill {vector} with samples from the gaussian of {mean} and {sigma}, truncated to {support}");
+        "fill {vector} with samples from the gaussian of {mean} and {sigma}, truncated to "
+        "{support}");
 
     // fill a matrix with samples
     m.def(
@@ -355,7 +356,8 @@ gsl::py::pdf(py::module & m)
         // the signature
         "mean"_a, "sigma"_a, "support"_a, "rng"_a, "matrix"_a,
         // the docstring
-        "fill {matrix} with samples from the gaussian of {mean} and {sigma}, truncated to {support}");
+        "fill {matrix} with samples from the gaussian of {mean} and {sigma}, truncated to "
+        "{support}");
 
     // the dirichlet distribution, parameterized by the concentration vector {alpha}
     // fill a vector with a single draw
