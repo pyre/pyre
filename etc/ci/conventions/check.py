@@ -50,6 +50,9 @@ EXEMPT = ("templates/",)
 # path, a package, or a c++ namespace, and several can be listed separated by commas
 AREA = r"[A-Za-z0-9_.{}/+\-]+(::[A-Za-z0-9_.{}/+\-]+)*"
 SUBJECT = re.compile(rf"^{AREA}(, ?{AREA})*: \S")
+# the authors whose commits the commit check leaves alone: bots whose messages are beyond our
+# control, such as the dependency updates dependabot proposes
+BOTS = ("dependabot[bot]",)
 # the copyright line, with any closing year
 COPYRIGHT = re.compile(r"\(c\) 1998-(\d{4}) all rights reserved")
 
@@ -201,20 +204,21 @@ def preambles(*, root: str, base: str | None) -> list:
 def commits(*, root: str, base: str | None) -> list:
     """
     Check the commits since {base}: a subject that names its area and says what the commit does,
-    and nothing after it
+    and nothing after it; the commits of the bots in {BOTS}, whose messages are beyond our
+    control, are left out
     """
     # without a base there is nothing to check
     if not base:
         # so say nothing
         return []
-    # the commits since the base, oldest first, as hash, subject, and body, merges left out
+    # the commits since the base, oldest first, as hash, author, subject, and body, merges left out
     log = run(
         command=[
             "git",
             "log",
             "--no-merges",
             "--reverse",
-            "--format=%h%x00%s%x00%b%x01",
+            "--format=%h%x00%an%x00%s%x00%b%x01",
             f"{base}..HEAD",
         ],
         cwd=root,
@@ -228,7 +232,11 @@ def commits(*, root: str, base: str | None) -> list:
             # by moving on
             continue
         # unpack
-        sha, subject, body = record.strip("\n").split("\x00")
+        sha, author, subject, body = record.strip("\n").split("\x00")
+        # a bot writes its messages its own way, and that way may change without notice
+        if author in BOTS:
+            # so its commits are not held to the conventions
+            continue
         # the subject names its area and says what the commit does
         if not SUBJECT.match(subject):
             # or else it does not read like the rest of the history
