@@ -17,6 +17,8 @@ namespace pyre::cuda::py {
     void api(py::module &);
     // the grids on managed memory
     void grids(py::module &);
+    // the cublas bindings
+    void cublas(py::module &);
 } // namespace pyre::cuda::py
 
 
