@@ -131,6 +131,40 @@ pyre::py::grid::bindGrid(py::module & module, const char * name, const char * do
         // the docstring
         "the address of my first cell, as an integer, for code that takes raw pointers");
 
+    // the device my cells live on
+    cls.def(
+        // the name
+        "__dlpack_device__",
+        // the implementation
+        &AnyGrid::dlpackDevice,
+        // the docstring
+        "the {(device_type, device_id)} pair that says where my cells live");
+
+    // the dlpack description of my cells
+    cls.def(
+        // the name
+        "__dlpack__",
+        // the implementation
+        [](const AnyGrid & self, const py::kwargs & kwds) -> py::capsule {
+            // assume a consumer that predates versioning
+            bool versioned = false;
+            // unless it asks for a version
+            if (kwds.contains("max_version") && !kwds["max_version"].is_none()) {
+                // a {(major, minor)} pair
+                const auto version = kwds["max_version"].cast<py::tuple>();
+                // the versioned tensor is dlpack 1.0 and later
+                versioned = version.size() > 0 && version[0].cast<int>() >= 1;
+            }
+            // the consumer may read the cells as soon as it has them
+            engineT::access();
+            // describe them
+            return self.dlpack(versioned);
+        },
+        // the docstring
+        "a capsule with the dlpack description of my cells, versioned for consumers that ask "
+        "for dlpack 1.0 or later with {max_version}; {stream}, {dl_device}, and {copy} are "
+        "accepted and left alone");
+
     // hand off the class, so the caller can add to it
     return cls;
 }
