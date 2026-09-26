@@ -10,6 +10,8 @@
 
 // my dependencies
 #include "forward.h"
+// the magnitude of a cell of any type
+#include "../../utilities.h"
 
 
 // a filter that extracts the amplitude of its complex data source

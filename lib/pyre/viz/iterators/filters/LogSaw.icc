@@ -26,7 +26,7 @@ auto
 pyre::viz::iterators::filters::LogSaw<sourceT>::operator*() const -> value_type
 {
     // get the magnitude of the value
-    auto mag = std::abs(*_source);
+    auto mag = pyre::viz::magnitude(*_source);
     // compute its log
     auto log = std::log2(mag);
     // project it onto [0,1]

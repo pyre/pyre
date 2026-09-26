@@ -26,7 +26,7 @@ auto
 pyre::viz::iterators::filters::Amplitude<sourceT>::operator*() const -> value_type
 {
     // easy enough: compute the magnitude of whatever my source is pointing to
-    return std::abs(*_source);
+    return pyre::viz::magnitude(*_source);
 }
 
 
