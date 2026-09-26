@@ -10,6 +10,8 @@
 
 // my dependencies
 #include "forward.h"
+// the magnitude of a cell of any type
+#include "../../utilities.h"
 
 // encode three color channels into a microsoft bitmap
 template <class signalT, class amplitudeT>

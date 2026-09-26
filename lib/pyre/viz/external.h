@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <memory>
 #include <tuple>
+#include <type_traits>
 
 // support
 #include <pyre/journal.h>

@@ -158,7 +158,7 @@ pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::make(
         // read
         auto sValue = sData[pixel];
         // compute the amplitude and write
-        aData[pixel] = std::abs(sValue);
+        aData[pixel] = pyre::viz::magnitude(sValue);
     }
 
     // all done

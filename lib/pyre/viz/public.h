@@ -16,6 +16,8 @@
 // published type aliases and declarations that constitute the public API of this package
 // this is the file you are looking for
 #include "api.h"
+// loose functions
+#include "utilities.h"
 
 // products
 // images

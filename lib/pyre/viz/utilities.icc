@@ -1,0 +1,33 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "utilities.h"
+
+
+// the magnitude of a cell of any of the supported types
+template <typename valueT>
+auto
+pyre::viz::magnitude(const valueT & value) -> double
+{
+    // an unsigned cell is its own magnitude, and the library has no absolute value to offer for
+    // it that is not ambiguous
+    if constexpr (std::is_unsigned_v<valueT>) {
+        // so convert it as it is
+        return static_cast<double>(value);
+    }
+    // everything else, complex cells included, asks the library
+    else {
+        // for its absolute value, or its modulus
+        return static_cast<double>(std::abs(value));
+    }
+}
+
+
+// end of file
