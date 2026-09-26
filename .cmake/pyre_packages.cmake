@@ -13,8 +13,6 @@ pyre_pyrePackage()
 pyre_surveyPackage()
 # build merlin
 pyre_merlinPackage()
-# build cuda
-pyre_cudaPackage()
 # build mpi
 pyre_mpiPackage()
 # build gsl
