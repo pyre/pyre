@@ -202,11 +202,12 @@ class Local(Filesystem):
         # and mark the beginning of discovery
         # print(f"  visiting:")
 
-        # initialize the traversal: pairs made of the node we are working on, and the depth of
-        # the traversal at the level of this node
-        todo = [(root, 0)]
+        # initialize the traversal: the node we are working on, the depth of the traversal at
+        # the level of this node, and the folder that holds it under what name, so that a folder
+        # that disappears while we are exploring can be removed from its parent
+        todo = [(root, 0, None, None)]
         # start walking and recognizing
-        for folder, level in todo:
+        for folder, level, parent, label in todo:
             # if we have gotten deeper than the user requested
             if levels is not None and level >= levels:
                 # do something else
@@ -222,8 +223,30 @@ class Local(Filesystem):
             dead = set(folder.contents)
             # show me
             # print(f"    contents: {dead}")
+            # attempt to
+            try:
+                # list the contents of the folder
+                entries = walker.walk(location)
+            # if that fails
+            except self.DirectoryListingError:
+                # a failure to read a folder that is still there is not ours to hide, and neither
+                # is the loss of the starting point
+                if parent is None or location.exists():
+                    # so pass it along
+                    raise
+                # otherwise, the folder was removed after its parent was listed, which a live
+                # filesystem is entitled to do; forget its contents
+                for node in folder.contents.values():
+                    # by removing them from the table of {vnodes}
+                    self.vnodes.pop(node, None)
+                # forget the folder itself
+                self.vnodes.pop(folder, None)
+                # detach it from its parent
+                del parent.contents[label]
+                # and move on
+                continue
             # walk through the contents
-            for entry in walker.walk(location):
+            for entry in entries:
                 # show me
                 # print(f"      {entry}")
                 # ask the recognizer for the entry type
@@ -259,27 +282,17 @@ class Local(Filesystem):
                 # if the node doesn't exist, either we are exploring this tree for the first time
                 # or the {entry} was created since the last time we visited; in any case
                 except self.NotFoundError:
-                    # build a new one
+                    # build a new one, of the right kind
                     node = folder.folder() if meta.isFolder else folder.node()
-                    # if we are building a folder
-                    if meta.isFolder:
-                        # make it
-                        node = folder.folder()
-                        # and add its location to our {todo} pile so we can visit it as well
-                        todo.append((node, level + 1))
-                    # otherwise
-                    else:
-                        # make a regular node
-                        node = folder.node()
-                    # attach the new node to its folder
+                    # and attach it to its folder
                     folder[name] = node
                 # new or old, update the metadata of the node; we do this for old nodes as well
                 # because we keep track of the last time the folder was explored
                 self.vnodes[node] = meta
                 # and if the current node is a folder
                 if meta.isFolder:
-                    # add it to our {todo} pile
-                    todo.append((node, level + 1))
+                    # add it to our {todo} pile, once, so we can visit it as well
+                    todo.append((node, level + 1, folder, name))
 
             # we are done with this folder; show me the dead nodes
             # print(f"    dead: {dead}")
