@@ -50,6 +50,24 @@ editing = ["ruamel.yaml"]
 # formatting: wrap at column 100
 [tool.black]
 line-length = 100
+# the versions of python the code is formatted for; without an explicit list, black infers
+# one from {requires-python} that reaches past the interpreter it runs under
+target-version = ["py311", "py312", "py313", "py314"]
+# the sources black leaves alone, even when they are named on the command line: project
+# templates hold substitution markers that are not python until they are expanded, and one
+# test fixture is a syntax error on purpose
+force-exclude = "^/(templates/.*|tests/pyre\\.pkg/framework/sample_syntaxerror\\.py)$"
+
+# spell checking of the prose in comments, docstrings, and documentation; the exclusions are
+# checked in and reviewed like any other change: {ignore-words} lists real words that
+# codespell mistakes for misspellings, {exclude-file} lists exact lines that are right as they
+# are, and {ignore-regex} leaves out mixed case identifiers such as {copyIn} or {cellsT},
+# which are code rather than prose
+[tool.codespell]
+skip = "*.graffle,*.nb,*.png,*.jpg,*.gif,*.ico,*.pdf,*.svg,*.woff,*.woff2,*.ttf,tests/pyre.pkg/externals/*,./tests/pyre.pkg/externals/*"
+ignore-words = "etc/ci/conventions/codespell-words.txt"
+exclude-file = "etc/ci/conventions/codespell-lines.txt"
+ignore-regex = "\\b[a-z]+[A-Z][A-Za-z0-9]*\\b"
 
 # versioning: derive the version from the most recent git tag; an untagged commit yields
 # {X.Y.Z.devN} without the local {+gHASH} suffix, which the package indices refuse, so a dry
