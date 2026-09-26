@@ -180,6 +180,30 @@ pyre::py::grid::bindGrid(py::module & module, const char * name, const char * do
         "the version 3 cuda array interface description of my cells; only grids on storage the "
         "device can reach have one");
 
+    // in-place arithmetic, with a grid of my shape and cell type, a buffer, or a number
+    for (const auto & [method, op] :
+         std::initializer_list<std::pair<const char *, arithmetic::Operation>> {
+             { "__iadd__", arithmetic::Operation::add },
+             { "__isub__", arithmetic::Operation::sub },
+             { "__imul__", arithmetic::Operation::mul },
+             { "__itruediv__", arithmetic::Operation::div },
+         }) {
+        // bind the operator
+        cls.def(
+            // the name
+            method,
+            // the implementation
+            [op](py::object self, py::object other) -> py::object {
+                // let the engine combine the operands
+                return inplace::apply<engineT>(self, other, op);
+            },
+            // the signature
+            "other"_a,
+            // the docstring
+            "combine {other}, a grid of my shape and cell type, a buffer, or a number, into my "
+            "cells");
+    }
+
     // hand off the class, so the caller can add to it
     return cls;
 }
