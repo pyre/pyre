@@ -57,7 +57,14 @@ class Component(Schema):
                 # point to existing instances known to the executive
                 value = protocol.pyre_resolveSpecification(spec=value, **kwds)
             # if that fails
-            except protocol.ResolutionError:
+            except protocol.ResolutionError as error:
+                # resolving a specification includes instantiating the component it names, so
+                # the complaint may be about something that went wrong while configuring that
+                # component; only a failure to resolve {value} itself leaves room for the other
+                # interpretations below, and anything else is the real problem, so let it through
+                if error.value != value or error.protocol is not protocol:
+                    # rather than blaming {value}, which may be perfectly good
+                    raise
                 # another valid possibility is a specification like
                 #
                 #   --facility=#name
@@ -70,16 +77,8 @@ class Component(Schema):
                 instanceName = uri.fragment
                 # extract the address, which we use as the component specification; it's ok if it's {None}
                 componentSpec = uri.address
-                # if we have a component specification
-                if componentSpec:
-                    # there is no interpretation left to try. N.B.: resolving a specification
-                    # includes instantiating the component it names, so the error may well
-                    # have been raised while configuring that component, rather than by the
-                    # failure to resolve {value}; swallowing it here would hide the real
-                    # problem and blame {value}, which may be perfectly good
-                    raise
                 # if we have an instance name but no component specification
-                if instanceName:
+                if instanceName and not componentSpec:
                     # get my default value
                     factory = self.default()
                     # perhaps it's a foundry
