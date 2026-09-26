@@ -22,12 +22,14 @@ class Walker:
         """
         # attempt
         try:
-            # to get the contents
-            return path.contents
+            # to get the contents, all at once, so a directory that cannot be read is reported
+            # here rather than halfway through the iteration, where nobody can tell it apart
+            # from any other failure
+            return list(path.contents)
         # if this fails
         except OSError as error:
             # raise a package specific exception
-            raise cls.DirectoryListingError(uri=path, error=str(serror))
+            raise cls.DirectoryListingError(uri=path, error=str(error))
 
 
 # end of file
