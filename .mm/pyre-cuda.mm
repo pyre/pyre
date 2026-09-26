@@ -11,8 +11,8 @@ pyre-cuda.cuda.available := ${findstring cuda,$(extern.available)}
 ifeq ($(pyre-cuda.cuda.available), cuda)
 
 
-# pyre-cuda builds a python package
-pyre-cuda.packages := pyre-cuda.pkg
+# the python package is part of {pyre.pkg}
+pyre-cuda.packages :=
 # no libraries
 pyre-cuda.libraries := pyre-cuda.lib
 # the mandatory extensions
@@ -31,12 +31,6 @@ pyre-cuda.tests :=
 endif
 
 
-# the package
-pyre-cuda.pkg.root := packages/cuda/
-pyre-cuda.pkg.stem := cuda
-pyre-cuda.pkg.meta :=
-pyre-cuda.pkg.ext :=
-
 # the library
 pyre-cuda.lib.root := lib/cuda/
 pyre-cuda.lib.stem := pyre-cuda
@@ -49,19 +43,22 @@ pyre-cuda.lib.c++.defines += $(pyre.lib.c++.defines)
 pyre-cuda.lib.cuda.flags += $(nvcc.std.c++17)
 pyre-cuda.lib.cuda.defines += $(pyre.lib.c++.defines)
 
-# the extension
+# the extension, installed with the other pyre bindings
 pyre-cuda.ext.root := extensions/cuda/
 pyre-cuda.ext.stem := cuda
-pyre-cuda.ext.pkg := pyre-cuda.pkg
+pyre-cuda.ext.pkg := pyre.pkg
 pyre-cuda.ext.wraps :=
 pyre-cuda.ext.capsule :=
-pyre-cuda.ext.extern := pyre.lib journal.lib cuda python
+pyre-cuda.ext.prerequisites := journal.lib pyre.lib pyre-cuda.lib
+pyre-cuda.ext.extern := pyre.lib journal.lib cuda pybind11 python
 pyre-cuda.ext.lib.c++.flags += $(pyre-cuda.lib.c++.flags)
 pyre-cuda.ext.lib.c++.defines += $(pyre-cuda.lib.c++.defines)
-pyre-cuda.ext.lib.prerequisites += journal.lib pyre.lib
+pyre-cuda.ext.lib.prerequisites += journal.lib pyre.lib pyre-cuda.lib
+pyre-cuda.ext.lib.cuda.flags += $(nvcc.std.c++20)
+pyre-cuda.ext.lib.cuda.defines += $(pyre-cuda.lib.c++.defines)
 
 # cuda configuration: make sure linking includes these libraries
-cuda.libraries += cudart
+cuda.libraries += cudart cublas cusolver curand
 
 
 # get the testsuites, when a cuda runtime gated them in
