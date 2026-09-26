@@ -1,0 +1,364 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "inplace.h"
+
+
+// the arithmetic cell type of a buffer protocol {format}
+inline auto
+pyre::py::grid::inplace::cell(string_t format) -> arithmetic::Cell
+{
+    // a byte order marker only makes sense when it names the order of the host
+    if (!format.empty() && (format.front() == '<' || format.front() == '>')) {
+        // the marker the host would use
+        const char native = std::endian::native == std::endian::big ? '>' : '<';
+        // cells in a foreign order would need byte swapping
+        if (format.front() != native) {
+            // so refuse them
+            throw py::type_error("grid arithmetic: cells in foreign byte order");
+        }
+        // otherwise, drop the marker
+        format.erase(0, 1);
+    }
+    // the signed integers
+    if (format == "b")
+        return arithmetic::Cell::int8;
+    if (format == "h")
+        return arithmetic::Cell::int16;
+    if (format == "i")
+        return arithmetic::Cell::int32;
+    if (format == "q" || format == "l")
+        return arithmetic::Cell::int64;
+    // the unsigned integers
+    if (format == "B")
+        return arithmetic::Cell::uint8;
+    if (format == "H")
+        return arithmetic::Cell::uint16;
+    if (format == "I")
+        return arithmetic::Cell::uint32;
+    if (format == "Q" || format == "L")
+        return arithmetic::Cell::uint64;
+    // the floating point numbers
+    if (format == "f")
+        return arithmetic::Cell::float32;
+    if (format == "d")
+        return arithmetic::Cell::float64;
+    // the complex numbers, in the spelling pybind11 and numpy use for them
+    if (format == "Zf")
+        return arithmetic::Cell::complex64;
+    if (format == "Zd")
+        return arithmetic::Cell::complex128;
+    // anything else has no arithmetic
+    throw py::type_error("grid arithmetic: unsupported cell format '" + format + "'");
+}
+
+
+// the layout of the block of cells {info} describes
+inline auto
+pyre::py::grid::inplace::layout(const py::buffer_info & info) -> arithmetic::Layout
+{
+    // the engine describes a fixed number of axes
+    if (info.ndim > arithmetic::maxRank) {
+        // so refuse more
+        throw py::value_error(
+            "grid arithmetic: at most " + std::to_string(arithmetic::maxRank) + " axes");
+    }
+    // make room for the description
+    auto result = arithmetic::Layout {};
+    // the address of the first cell
+    result.data = info.ptr;
+    // the number of axes
+    result.rank = static_cast<int>(info.ndim);
+    // start counting cells
+    result.cells = 1;
+    // and assume they are packed until an axis says otherwise
+    result.contiguous = true;
+    // the stride a packed row major layout would have along the current axis
+    std::int64_t packed = 1;
+    // walk the axes, fastest first
+    for (auto axis = info.ndim; axis-- > 0;) {
+        // the buffer protocol measures strides in bytes, and the engine in cells
+        if (info.strides[axis] % info.itemsize != 0) {
+            // so a stride that is not a whole number of cells has no description
+            throw py::value_error("grid arithmetic: strides that are not whole cells");
+        }
+        // the extent of this axis
+        result.shape[axis] = info.shape[axis];
+        // its stride, in cells
+        result.strides[axis] = info.strides[axis] / info.itemsize;
+        // fold its extent into the number of cells
+        result.cells *= info.shape[axis];
+        // an axis longer than one cell with an unexpected stride breaks the packing
+        if (info.shape[axis] > 1 && result.strides[axis] != packed) {
+            // so say so
+            result.contiguous = false;
+        }
+        // the packed stride of the next, slower, axis
+        packed *= info.shape[axis];
+    }
+    // hand off the description
+    return result;
+}
+
+
+// whether {a} and {b} reach some of the same cells without being the same view of them
+inline auto
+pyre::py::grid::inplace::overlap(
+    const arithmetic::Layout & a, const arithmetic::Layout & b, std::int64_t itemsize) -> bool
+{
+    // empty blocks reach nothing
+    if (a.cells == 0 || b.cells == 0) {
+        // so they cannot overlap
+        return false;
+    }
+    // the same view of the same cells is harmless, since each cell only meets itself
+    bool same = a.data == b.data && a.rank == b.rank;
+    // provided the strides agree too
+    for (int axis = 0; same && axis < a.rank; ++axis) {
+        // axis by axis
+        same = a.strides[axis] == b.strides[axis];
+    }
+    // if they do
+    if (same) {
+        // there is no conflict
+        return false;
+    }
+    // otherwise, find the range of bytes each one reaches
+    const auto span = [itemsize](const arithmetic::Layout & l) {
+        // starting at the first cell
+        auto lo = static_cast<const char *>(l.data);
+        // and going both ways from it
+        auto hi = lo;
+        // one axis at a time
+        for (int axis = 0; axis < l.rank; ++axis) {
+            // the distance to the far end of this axis
+            const auto reach = (l.shape[axis] - 1) * l.strides[axis] * itemsize;
+            // extends whichever end it points to
+            (reach < 0 ? lo : hi) += reach;
+        }
+        // the range, up to the end of the last cell
+        return std::pair { lo, hi + itemsize };
+    };
+    // the range of {a}
+    const auto [aLow, aHigh] = span(a);
+    // and of {b}
+    const auto [bLow, bHigh] = span(b);
+    // overlap if either one starts before the other ends
+    return aLow < bHigh && bLow < aHigh;
+}
+
+
+// the range of values integer cells of type {cell} hold
+inline auto
+pyre::py::grid::inplace::bounds(arithmetic::Cell cell) -> std::pair<py::int_, py::int_>
+{
+    // the widest unsigned integer, for spelling the unsigned limits
+    using ull = unsigned long long;
+    // pick the cell type
+    switch (cell) {
+        // the signed integers
+        case arithmetic::Cell::int8:
+            return { py::int_(INT8_MIN), py::int_(INT8_MAX) };
+        case arithmetic::Cell::int16:
+            return { py::int_(INT16_MIN), py::int_(INT16_MAX) };
+        case arithmetic::Cell::int32:
+            return { py::int_(INT32_MIN), py::int_(INT32_MAX) };
+        case arithmetic::Cell::int64:
+            return { py::int_(INT64_MIN), py::int_(INT64_MAX) };
+        // the unsigned integers
+        case arithmetic::Cell::uint8:
+            return { py::int_(0), py::int_(ull { UINT8_MAX }) };
+        case arithmetic::Cell::uint16:
+            return { py::int_(0), py::int_(ull { UINT16_MAX }) };
+        case arithmetic::Cell::uint32:
+            return { py::int_(0), py::int_(ull { UINT32_MAX }) };
+        // and the widest of them, which is all that is left
+        default:
+            return { py::int_(0), py::int_(ull { UINT64_MAX }) };
+    }
+}
+
+
+// translate the python number {value} for a target with cells of type {cell}
+inline auto
+pyre::py::grid::inplace::scalar(
+    const py::handle & value, arithmetic::Cell cell, arithmetic::Scalar & result) -> bool
+{
+    // the integer cell types
+    const bool integer = cell <= arithmetic::Cell::uint64;
+    // and the complex ones
+    const bool complex = cell >= arithmetic::Cell::complex64;
+    // a complex number
+    if (PyComplex_Check(value.ptr())) {
+        // fits complex cells only
+        if (!complex) {
+            // so refuse it anywhere else
+            throw py::type_error("grid arithmetic: a complex number needs complex cells");
+        }
+        // its real part
+        result.re = PyComplex_RealAsDouble(value.ptr());
+        // and its imaginary part
+        result.im = PyComplex_ImagAsDouble(value.ptr());
+        // it is a number
+        return true;
+    }
+    // a floating point number
+    if (PyFloat_Check(value.ptr())) {
+        // would lose its fraction in integer cells
+        if (integer) {
+            // so refuse it there
+            throw py::type_error(
+                "grid arithmetic: a float would lose its fraction in integer cells");
+        }
+        // its value
+        result.re = PyFloat_AsDouble(value.ptr());
+        // it is a number
+        return true;
+    }
+    // an integer, or anything that behaves like one
+    if (PyIndex_Check(value.ptr())) {
+        // convert it to a python integer
+        auto * index = PyNumber_Index(value.ptr());
+        // something that only looks like an integer, such as an array with more than one cell,
+        if (index == nullptr) {
+            // is not a number after all
+            PyErr_Clear();
+            // so let the caller try something else
+            return false;
+        }
+        // take ownership of the integer
+        const auto number = py::reinterpret_steal<py::int_>(index);
+        // fits floating point and complex cells as a real number
+        if (!integer) {
+            // so convert it
+            result.re = PyLong_AsDouble(number.ptr());
+            // it is a number
+            return true;
+        }
+        // the range of values the cells hold
+        const auto [lo, hi] = bounds(cell);
+        // an integer the cells cannot hold
+        if (number < lo || number > hi) {
+            // is refused, the way numpy refuses it
+            throw py::value_error(
+                "grid arithmetic: " + py::str(number).cast<string_t>()
+                + " is out of range for the cells");
+        }
+        // a negative one
+        if (number < py::int_(0)) {
+            // is stored signed
+            result.i = number.cast<long long>();
+            // with its unsigned bits alongside
+            result.u = static_cast<std::uint64_t>(result.i);
+        }
+        // and the rest
+        else {
+            // unsigned
+            result.u = number.cast<unsigned long long>();
+            // with the signed spelling alongside
+            result.i = static_cast<std::int64_t>(result.u);
+        }
+        // it is a number
+        return true;
+    }
+    // anything else is not a number
+    return false;
+}
+
+
+// {self op= other}, with {engineT} doing the work
+template <class engineT>
+auto
+pyre::py::grid::inplace::apply(py::object self, py::object other, arithmetic::Operation op)
+    -> py::object
+{
+    // the target
+    auto & target = self.cast<AnyGrid &>();
+    // must be writable
+    if (!target.writable()) {
+        // or there is nothing to do
+        throw py::value_error("grid arithmetic: the grid is read only");
+    }
+    // describe its cells
+    const auto info = target.view();
+    // their type
+    const auto type = cell(info.format);
+    // and their layout
+    const auto a = layout(info);
+    // integer cells cannot hold a quotient
+    if (op == arithmetic::Operation::div && type <= arithmetic::Cell::uint64) {
+        // so refuse to divide them in place, the way numpy does
+        throw py::type_error(
+            "grid arithmetic: a quotient would lose its fraction in integer cells");
+    }
+
+    // a python number
+    auto number = arithmetic::Scalar {};
+    // is combined into every cell
+    if (scalar(other, type, number)) {
+        // by the engine
+        engineT::apply(op, type, a, number);
+        // hand back the target
+        return self;
+    }
+
+    // a grid of my own kind hands over its description directly
+    const bool mine = py::isinstance<AnyGrid>(other);
+    // any other buffer can, if the engine reaches host memory
+    const bool buffer = !mine && PyObject_CheckBuffer(other.ptr());
+    // a buffer out of reach of the engine
+    if (buffer && !engineT::reachesHost) {
+        // is refused
+        throw py::type_error("grid arithmetic: the device cannot reach the cells of the operand");
+    }
+    // anything that is neither
+    if (!mine && !buffer) {
+        // is left for python to refuse
+        return py::reinterpret_borrow<py::object>(Py_NotImplemented);
+    }
+    // the description of the operand; asking a buffer for it lets its owner make the cells ready
+    const auto source =
+        mine ? other.cast<AnyGrid &>().view() : py::reinterpret_borrow<py::buffer>(other).request();
+    // must hold cells of the same type
+    if (cell(source.format) != type) {
+        // or the arithmetic would have to convert them
+        throw py::type_error(
+            "grid arithmetic: the operands hold cells of different types, '" + info.format
+            + "' and '" + source.format + "'");
+    }
+    // its layout
+    const auto b = layout(source);
+    // must have my shape
+    bool shaped = a.rank == b.rank;
+    // axis by axis
+    for (int axis = 0; shaped && axis < a.rank; ++axis) {
+        // same extent
+        shaped = a.shape[axis] == b.shape[axis];
+    }
+    // if not
+    if (!shaped) {
+        // refuse it
+        throw py::value_error("grid arithmetic: the operands have different shapes");
+    }
+    // and must not share cells with me in a different arrangement
+    if (overlap(a, b, info.itemsize)) {
+        // since an elementwise pass would read cells it has already written
+        throw py::value_error(
+            "grid arithmetic: the operands share cells in different places; copy one first");
+    }
+    // combine the cells
+    engineT::apply(op, type, a, b);
+    // hand back the target
+    return self;
+}
+
+
+// end of file
