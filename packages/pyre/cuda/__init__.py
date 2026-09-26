@@ -5,42 +5,38 @@
 # (c) 1998-2026 all rights reserved
 
 
-# attempt to
+"""
+Support for cuda capable devices
+
+The cuda extension of pyre is loaded here, and only here, so that importing pyre never touches
+cuda; a machine without the extension or without cuda-python gets an exception that says which
+"""
+
+# the exceptions
+from .exceptions import Error, ExtensionNotFoundError, CudaPythonNotFoundError
+
+# the extension
 try:
-    # load the extension module
-    from . import cuda
-# if this fails
-except ImportError:
-    # not much to do...
-    msg = "could not find 'cuda' support"
-    # complain
-    import journal
+    # is installed with the rest of the bindings
+    from ..extensions import cuda as libcuda
+# when it is not there
+except ImportError as error:
+    # say so
+    raise ExtensionNotFoundError() from error
 
-    journal.warning("cuda").log(msg)
-    # re-raise the exception so clients can cope
-    raise
+# cuda-python, which reaches the devices
+try:
+    # its runtime bindings
+    from cuda.bindings import runtime
+# when it is not there
+except ImportError as error:
+    # say so
+    raise CudaPythonNotFoundError() from error
 
-
-# otherwise, all is well;
-# pull in the administrivia
-version = cuda.version
-copyright = cuda.copyright
-
-
-def license():
-    print(cuda.license())
-
-
-# get the exceptions
-from . import exceptions
-
-# register the exceptions with the extension module
-cuda.registerExceptions(exceptions)
-
-
-# build the device manager
+# the attached devices
 from .DeviceManager import DeviceManager
 
+# the manager of the devices
 manager = DeviceManager()
 
 
