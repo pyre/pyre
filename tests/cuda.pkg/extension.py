@@ -7,13 +7,13 @@
 
 
 """
-Sanity check: verify that the extension module is accessible
+Verify that the cuda extension of pyre loads
 """
 
 
 def test():
     # access the extension module
-    from cuda import cuda
+    from pyre.extensions import cuda
 
     # all done
     return
@@ -21,6 +21,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
