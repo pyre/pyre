@@ -24,6 +24,8 @@ PYBIND11_MODULE(cuda, m)
     pyre::cuda::py::grids(m);
     // the cublas bindings
     pyre::cuda::py::cublas(m);
+    // the cusolver bindings
+    pyre::cuda::py::cusolver(m);
     // all done
     return;
 }
