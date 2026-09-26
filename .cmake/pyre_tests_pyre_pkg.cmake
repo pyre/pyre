@@ -63,6 +63,18 @@ pyre_test_python_testcase(tests/pyre.pkg/patterns/unique_split.py)
 #
 pyre_test_python_testcase(tests/pyre.pkg/grid/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/grid/heap.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/address.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/cai_host.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/dlpack_device.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/dlpack_legacy.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/dlpack_versioned.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/dlpack_numpy.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/inplace_grid.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/inplace_scalar.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/inplace_buffer.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/inplace_subgrid.py)
+pyre_test_python_testcase(tests/pyre.pkg/grid/inplace_refusals.py)
+pyre_test_python_testcase(tests/pyre.pkg/extensions/core.py)
 
 
 #
