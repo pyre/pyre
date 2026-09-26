@@ -28,8 +28,8 @@ namespace pyre::mpi::py {
             // the name
             name,
             // the implementation
-            [op](const Communicator & self, cellT item,
-                 std::optional<rank_t> destination) -> py::object {
+            [op](const Communicator & self, cellT item, std::optional<rank_t> destination)
+                -> py::object {
                 // when nobody is named, everybody gets the answer
                 if (!destination) {
                     // room for it

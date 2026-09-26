@@ -37,7 +37,8 @@ pyre::mpi::CommunicatorHandle::free(handle_type & communicator) noexcept -> void
             << "mpi refused to free a communicator"
             << pyre::journal::newline
             // details
-            << "status: " << status
+            << "status: "
+            << status
             // where, and flush
             << pyre::journal::endl(__HERE__);
     }
@@ -69,7 +70,8 @@ pyre::mpi::GroupHandle::free(handle_type & group) noexcept -> void
             << "mpi refused to free a process group"
             << pyre::journal::newline
             // details
-            << "status: " << status
+            << "status: "
+            << status
             // where, and flush
             << pyre::journal::endl(__HERE__);
     }

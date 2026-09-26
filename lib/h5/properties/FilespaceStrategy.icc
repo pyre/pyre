@@ -12,7 +12,8 @@
 
 
 // describe how a file manages the space its deleted objects leave behind
-inline pyre::h5::properties::FilespaceStrategy::FilespaceStrategy(H5F_fspace_strategy_t strategy, bool persist, hsize_t threshold) :
+inline pyre::h5::properties::FilespaceStrategy::FilespaceStrategy(
+    H5F_fspace_strategy_t strategy, bool persist, hsize_t threshold) :
     // record how free space is tracked
     strategy(strategy),
     // then whether the free space survives closing the file

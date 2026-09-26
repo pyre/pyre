@@ -393,8 +393,8 @@ pyre::mpi::Communicator::gatherBytes(const bytes_t & payload, rank_t root) const
     // move the octets
     check(MPI_Gatherv(
         payload.data(), extent, MPI_BYTE, collecting ? buffer.data() : nullptr,
-        collecting ? counts.data() : nullptr, collecting ? displacements.data() : nullptr,
-        MPI_BYTE, root, handle()));
+        collecting ? counts.data() : nullptr, collecting ? displacements.data() : nullptr, MPI_BYTE,
+        root, handle()));
 
     // cut the buffer back up into the payloads it was made of
     std::vector<bytes_t> collected;
@@ -529,8 +529,9 @@ pyre::mpi::Communicator::alltoallBytes(const std::vector<bytes_t> & payloads) co
     // every process must have brought exactly one payload per process
     if (processes != static_cast<std::size_t>(size())) {
         // so refuse, rather than let mpi read past the end of the buffer
-        throw ShapeError("pyre::mpi::alltoallBytes: every process must supply one payload per "
-                         "process");
+        throw ShapeError(
+            "pyre::mpi::alltoallBytes: every process must supply one payload per "
+            "process");
     }
 
     // how many octets i am sending to each process, and where its share begins

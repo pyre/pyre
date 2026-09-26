@@ -188,7 +188,9 @@ pyre::postgres::py::connection(py::module & m)
         // the name
         "setting",
         // the implementation
-        [](const Connection & self, view_t name) -> string_t { return string_t(self.setting(name)); },
+        [](const Connection & self, view_t name) -> string_t {
+            return string_t(self.setting(name));
+        },
         // the signature
         "name"_a,
         // the docstring

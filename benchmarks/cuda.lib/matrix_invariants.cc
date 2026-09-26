@@ -127,8 +127,7 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
 
     // execute the kernel wrapper
     computeInvariantsManaged(
-        nTensors, nThreadPerBlock, nBlocks, tensorArray.data(), I1.data(),
-        I2.data(), I3.data());
+        nTensors, nThreadPerBlock, nBlocks, tensorArray.data(), I1.data(), I2.data(), I3.data());
 
     // wait for GPU to finish before stopping the timer
     status = cudaDeviceSynchronize();

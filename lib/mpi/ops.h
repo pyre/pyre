@@ -58,7 +58,8 @@ pyre::mpi::opcode(Op op) -> opcode_t
         << "unknown reduction operator"
         << pyre::journal::newline
         // details
-        << "value: " << static_cast<int>(op)
+        << "value: "
+        << static_cast<int>(op)
         // where, and flush
         << pyre::journal::endl(__HERE__);
 
@@ -96,7 +97,8 @@ pyre::mpi::comparison(int result) -> Comparison
         << "unknown comparison result"
         << pyre::journal::newline
         // details
-        << "value: " << result
+        << "value: "
+        << result
         // where, and flush
         << pyre::journal::endl(__HERE__);
 

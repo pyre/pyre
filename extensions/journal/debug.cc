@@ -18,7 +18,7 @@ pyre::journal::py::debug(py::module & m)
     // type aliases for the member functions (mfp: method pointer)
     // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = debug_t::device_type (debug_t::*)() const;
-    using setDevice_mfp = debug_t & (debug_t::*) (debug_t::device_type);
+    using setDevice_mfp = debug_t & (debug_t::*)(debug_t::device_type);
 
 
     // the debug channel interface

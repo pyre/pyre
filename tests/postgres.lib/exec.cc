@@ -124,8 +124,7 @@ main()
         // so getting here is a failure
         std::cerr << "read a column that is not there" << std::endl;
         return 1;
-    }
-    catch (const InterfaceError &) {
+    } catch (const InterfaceError &) {
         // as expected
     }
 

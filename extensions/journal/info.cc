@@ -18,7 +18,7 @@ pyre::journal::py::info(py::module & m)
     // type aliases for the member functions (mfp: method pointer)
     // {device} is the only one that confuses {py::overload_cast}
     using getDevice_mfp = info_t::device_type (info_t::*)() const;
-    using setDevice_mfp = info_t & (info_t::*) (info_t::device_type);
+    using setDevice_mfp = info_t & (info_t::*)(info_t::device_type);
 
 
     // the info channel interface

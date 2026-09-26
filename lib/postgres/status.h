@@ -106,7 +106,8 @@ pyre::postgres::execStatus(ExecStatusType status) -> ExecStatus
         << "unknown result status"
         << pyre::journal::newline
         // details
-        << "libpq reported " << static_cast<int>(status)
+        << "libpq reported "
+        << static_cast<int>(status)
         // where, and flush
         << pyre::journal::endl(__HERE__);
 
@@ -188,7 +189,8 @@ pyre::postgres::describe(ExecStatus status) -> view_t
     // so complain
     channel
         // what
-        << "no description for result status " << static_cast<int>(status)
+        << "no description for result status "
+        << static_cast<int>(status)
         // where, and flush
         << pyre::journal::endl(__HERE__);
 
@@ -228,7 +230,8 @@ pyre::postgres::transactionStatus(PGTransactionStatusType status) -> Transaction
         << "unknown transaction status"
         << pyre::journal::newline
         // details
-        << "libpq reported " << static_cast<int>(status)
+        << "libpq reported "
+        << static_cast<int>(status)
         // where, and flush
         << pyre::journal::endl(__HERE__);
 
@@ -258,7 +261,8 @@ pyre::postgres::format(int code) -> Format
         << "unknown column format"
         << pyre::journal::newline
         // details
-        << "libpq reported " << code
+        << "libpq reported "
+        << code
         // where, and flush
         << pyre::journal::endl(__HERE__);
 

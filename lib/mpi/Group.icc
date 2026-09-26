@@ -57,7 +57,8 @@ pyre::mpi::Group::isEmpty() const -> bool
 
 
 // contextual conversion to {bool}
-pyre::mpi::Group::operator bool() const
+pyre::mpi::Group::
+operator bool() const
 {
     // i am usable exactly when i name a group
     return !isNull();

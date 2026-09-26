@@ -39,7 +39,8 @@ pyre::mpi::threadLevel(Thread thread) -> int
         << "unknown level of thread support"
         << pyre::journal::newline
         // details
-        << "value: " << static_cast<int>(thread)
+        << "value: "
+        << static_cast<int>(thread)
         // where, and flush
         << pyre::journal::endl(__HERE__);
 
@@ -77,7 +78,8 @@ pyre::mpi::threadSupport(int level) -> Thread
         << "unknown level of thread support"
         << pyre::journal::newline
         // details
-        << "value: " << level
+        << "value: "
+        << level
         // where, and flush
         << pyre::journal::endl(__HERE__);
 

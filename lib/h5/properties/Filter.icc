@@ -12,7 +12,8 @@
 
 
 // describe one stage of the pipeline a dataset's cells pass through
-inline pyre::h5::properties::Filter::Filter(H5Z_filter_t id, string_t name, unsigned int flags, unsigned int configuration) :
+inline pyre::h5::properties::Filter::Filter(
+    H5Z_filter_t id, string_t name, unsigned int flags, unsigned int configuration) :
     // record which filter this is
     id(id),
     // then what the library calls it

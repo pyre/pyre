@@ -12,7 +12,8 @@
 
 
 // describe the thresholds at which storage switches representation
-inline pyre::h5::properties::PhaseChange::PhaseChange(unsigned int maxCompact, unsigned int minDense) :
+inline pyre::h5::properties::PhaseChange::PhaseChange(
+    unsigned int maxCompact, unsigned int minDense) :
     // record the count above which storage becomes indexed
     maxCompact(maxCompact),
     // then the count below which it goes back to being inline

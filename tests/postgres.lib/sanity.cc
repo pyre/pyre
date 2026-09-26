@@ -28,8 +28,7 @@ main()
     static_assert(std::is_base_of_v<pyre::postgres::exception_t, pyre::postgres::warning_t>);
     // and the five that a caller branches on
     static_assert(std::is_base_of_v<pyre::postgres::error_t, pyre::postgres::databaseError_t>);
-    static_assert(
-        std::is_base_of_v<pyre::postgres::databaseError_t, pyre::postgres::dataError_t>);
+    static_assert(std::is_base_of_v<pyre::postgres::databaseError_t, pyre::postgres::dataError_t>);
     static_assert(
         std::is_base_of_v<pyre::postgres::databaseError_t, pyre::postgres::integrityError_t>);
     static_assert(
