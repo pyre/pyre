@@ -480,6 +480,9 @@ pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_componentFamily.py)
 pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_componentName.py)
 pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_componentConditional.py)
 pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_componentConditionalNested.py)
+pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_componentConditionalMultilevel.py)
+pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_componentConditionalMultilevelBinding.py)
+pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_facilityMaskedError.py)
 pyre_test_python_testcase(tests/pyre.pkg/codecs/yaml_sample.py)
 
 
