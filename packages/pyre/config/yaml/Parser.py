@@ -171,13 +171,15 @@ class Parser:
 
             # otherwise, we have an assignment; figure out which kind: if it's conditional
             if conditions:
-                # the component that owns the assignment is encoded in the last constraint
-                component, _ = conditions[-1]
-                # make a conditional assignment
+                # the full path to the trait
+                path = scope + name
+                # make a conditional assignment; the key is the naked name of the trait, and the
+                # rest of the path names the component that receives it, which may be nested
+                # inside the one that owns the constraints
                 yield self.ConditionalAssignment(
-                    key=name,
+                    key=path[-1:],
                     value=value,
-                    component=component,
+                    component=path[:-1],
                     conditions=reversed(conditions),
                     locator=where,
                 )

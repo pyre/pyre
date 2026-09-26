@@ -57,7 +57,14 @@ class Component(Schema):
                 # point to existing instances known to the executive
                 value = protocol.pyre_resolveSpecification(spec=value, **kwds)
             # if that fails
-            except protocol.ResolutionError:
+            except protocol.ResolutionError as error:
+                # resolving a specification includes instantiating the component it names, so
+                # the complaint may be about something that went wrong while configuring that
+                # component; only a failure to resolve {value} itself leaves room for the other
+                # interpretations below, and anything else is the real problem, so let it through
+                if error.value != value or error.protocol is not protocol:
+                    # rather than blaming {value}, which may be perfectly good
+                    raise
                 # another valid possibility is a specification like
                 #
                 #   --facility=#name

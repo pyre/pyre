@@ -1,0 +1,22 @@
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# the component that owns the facility we are configuring
+subject:
+    # bind the facility to a named instance of a specific implementation
+    field: basic#dotted
+
+# a conditional assignment whose key reaches inside a nested component; the path to
+# the nested trait is spelled using a dotted name
+"test.fields.basic # dotted":
+    alias: dotted_alias
+    discretization.basis_order: 2
+
+# the same thing, spelled as a nested mapping
+"test.fields.basic # nested":
+    alias: nested_alias
+    discretization:
+        basis_order: 3
+
+# end of file
