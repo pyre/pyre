@@ -36,6 +36,77 @@ class Device:
     maxGrid = ()
     maxThreadBlock = ()
 
+    # the library handles bound to this device, made on first use and reused after that
+    _cublasHandle = None
+    _cusolverHandle = None
+    _curandGenerator = None
+
+    # handles
+    @property
+    def cublasHandle(self) -> int:
+        """
+        The cublas handle bound to this device
+        """
+        # on first use
+        if self._cublasHandle is None:
+            # the bindings
+            import pyre.cuda
+
+            # make sure the handle binds to this device
+            self._activate()
+            # and make it
+            self._cublasHandle = pyre.cuda.cublas.create()
+        # hand off the handle
+        return self._cublasHandle
+
+    @property
+    def cusolverHandle(self) -> int:
+        """
+        The cusolver handle bound to this device
+        """
+        # on first use
+        if self._cusolverHandle is None:
+            # the bindings
+            import pyre.cuda
+
+            # make sure the handle binds to this device
+            self._activate()
+            # and make it
+            self._cusolverHandle = pyre.cuda.cusolver.create()
+        # hand off the handle
+        return self._cusolverHandle
+
+    def curandGenerator(self, rngType=None) -> int:
+        """
+        The curand generator bound to this device; {rngType} picks its kind the first time only
+        """
+        # on first use
+        if self._curandGenerator is None:
+            # the bindings
+            import pyre.cuda
+
+            # make sure the generator binds to this device
+            self._activate()
+            # the kind of generator, the default one unless asked otherwise
+            kind = pyre.cuda.curand.RngType.DEFAULT if rngType is None else rngType
+            # make it
+            self._curandGenerator = pyre.cuda.curand.create_generator(kind)
+        # hand off the generator
+        return self._curandGenerator
+
+    # implementation details
+    def _activate(self) -> None:
+        """
+        Make this the current device
+        """
+        # cuda-python
+        import cuda.core
+
+        # select the device
+        cuda.core.Device(self.id).set_current()
+        # all done
+        return
+
     # debugging
     def dump(self, indent=""):
         """
