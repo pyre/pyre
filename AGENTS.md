@@ -189,6 +189,36 @@ def locate(self, product):
   `pyre::journal::error_t` and return a safe default, and conditions that indicate a bug go to a
   `pyre::journal::firewall_t`.
 
+## Optional dependencies
+
+Much of pyre depends on external packages that a given machine may or may not have: CUDA, MPI,
+HDF5, libpq, GSL, and others. A build that finds one of them includes the support for it, and a
+binary distribution carries that support to machines that may lack the package. Whatever was
+present when pyre was built, the installed assets must work on a machine where any optional
+package is missing:
+
+- **The core never depends on an optional package.** `libjournal`, `libpyre`, and the `journal`
+  and `pyre` extension modules link no optional package, directly or through another library,
+  and `import pyre` works on a machine that has none of them. This holds for the mm and the
+  cmake builds alike, and for every configuration either one can produce.
+- **Each optional package gets shared objects of its own.** The support for a package lives in a
+  library such as `libpyre-h5` and in the extension module that binds it; they link that package
+  and no other optional one, and they are loaded only when the capability is used. A capability
+  is never folded into the core bindings behind a compile time flag, because a flag decides what
+  gets built, not what the machine running it has.
+- **Support that needs two optional packages** goes in a shared object that needs both, rather
+  than into the extension of either one: routines that take MPI communicators do not belong in
+  the GSL extension, which would then be unusable on a machine that has GSL but no MPI.
+- **Core headers stay clean.** A header of the core library does not include the headers of an
+  optional package, even conditionally; the code that needs them lives with the package's own
+  library.
+- **A missing capability says so.** When the extension module of an optional package cannot be
+  loaded, the python package that fronts it raises a specific exception that names the missing
+  package, rather than letting its clients fail later on an attribute of `None`.
+
+To check a build, list what the core shared objects need, with `readelf -d` on linux or
+`otool -L` on macOS: no optional package may appear.
+
 ## Building and testing
 
 - The build system is [mm](https://github.com/aivazis/mm). The `Make.mm` files are vestiges; do
