@@ -1,0 +1,23 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# keep the tools the convention checks pin current: once a month, dependabot opens a pull
+# request for each new release, and the checks on that pull request show what the new version
+# would change; moving a pin is then a deliberate merge, along with whatever reformatting or
+# configuration the new release calls for
+version: 2
+updates:
+  # the formatters and the spell checker in {etc/ci/conventions/requirements.txt}
+  - package-ecosystem: "pip"
+    directory: "/etc/ci/conventions"
+    schedule:
+      interval: "monthly"
+    # name the area, the way every commit subject in the repository does
+    commit-message:
+      prefix: "etc/ci"
+
+
+# end of file
