@@ -102,7 +102,7 @@ class MachO(Image):
                 # by moving on
                 continue
             # the name is an offset from the start of the command
-            name, = self.unpack("I", offset + 8)
+            (name,) = self.unpack("I", offset + 8)
             # which must land inside it
             if name >= size:
                 # or the command is damaged
@@ -124,7 +124,7 @@ class MachO(Image):
                 # and ignoring the rest
                 continue
             # the name is an offset from the start of the command
-            name, = self.unpack("I", offset + 8)
+            (name,) = self.unpack("I", offset + 8)
             # read the string it points at
             return self.string(offset=offset + name)
         # executables carry no install name
@@ -161,7 +161,7 @@ class MachO(Image):
         # the 64 bit header carries one reserved word the 32 bit header doesn't
         self.headerSize = 32 if magic == self.magic64 else 28
         # the command count is the fifth word of the header
-        self.count, = self.unpack("I", self.base + 16)
+        (self.count,) = self.unpack("I", self.base + 16)
         # all done
         return
 
@@ -174,7 +174,7 @@ class MachO(Image):
         # the table of contents is big endian regardless of the machine
         self.order = self.big
         # its second word counts the images that follow
-        count, = self.unpack("I", 4)
+        (count,) = self.unpack("I", 4)
         # a universal file with no images is useless
         if not count:
             # so complain

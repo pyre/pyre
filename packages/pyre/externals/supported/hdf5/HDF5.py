@@ -59,8 +59,14 @@ class HDF5(Library, family="pyre.externals.hdf5"):
             # settled by the build configuration header, regardless of who packaged it:
             # a serial build must not be mpi aware, and it reveals its version
             proofs=(
-                Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1", forbid=True),
-                Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
+                Proof(
+                    header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1", forbid=True
+                ),
+                Proof(
+                    header="H5pubconf.h",
+                    pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"',
+                    harvest="version",
+                ),
             ),
             # with database specific names where the category name isn't enough
             natives={
@@ -93,7 +99,11 @@ class HDF5(Library, family="pyre.externals.hdf5"):
             # carries the whole classification there
             proofs=(
                 Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1"),
-                Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
+                Proof(
+                    header="H5pubconf.h",
+                    pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"',
+                    harvest="version",
+                ),
             ),
             # the header says the build is mpi aware but not which implementation it
             # bound to; the library itself does, since openmpi and mpich give their
@@ -126,7 +136,11 @@ class HDF5(Library, family="pyre.externals.hdf5"):
             # settled by the build configuration header, like its openmpi sibling
             proofs=(
                 Proof(header="H5pubconf.h", pattern=r"#\s*define\s+H5_HAVE_PARALLEL\s+1"),
-                Proof(header="H5pubconf.h", pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"', harvest="version"),
+                Proof(
+                    header="H5pubconf.h",
+                    pattern=r'#\s*define\s+H5_VERSION\s+"([^"]+)"',
+                    harvest="version",
+                ),
             ),
             # and by the runtime it bound to: mpich ships its own {libmpich}, and the
             # {libmpi} it provides for compatibility carries a different version

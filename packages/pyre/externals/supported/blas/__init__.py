@@ -14,5 +14,4 @@ from .OpenBLAS import OpenBLAS
 from .Atlas import Atlas
 from .GSLCBLAS import GSLCBLAS
 
-
 # end of file

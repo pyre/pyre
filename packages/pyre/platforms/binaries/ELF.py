@@ -195,13 +195,13 @@ class ELF(Image):
         # the program header table is located differently in the two layouts
         if self.width == self.elf64:
             # its offset is a full word at the fifth field of the header
-            self.headers, = self.unpack("Q", 32)
+            (self.headers,) = self.unpack("Q", 32)
             # and its geometry sits further along
             self.stride, self.count = self.unpack("2H", 54)
         # the 32 bit header packs the same fields into narrower slots
         else:
             # so the offset lands earlier
-            self.headers, = self.unpack("I", 28)
+            (self.headers,) = self.unpack("I", 28)
             # as does the geometry
             self.stride, self.count = self.unpack("2H", 42)
         # all done

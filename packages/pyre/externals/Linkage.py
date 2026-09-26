@@ -52,9 +52,7 @@ class Linkage:
             # so let the interpretation through, with nothing harvested
             return True, {}
         # look for my pattern among the dependencies
-        match = next(
-            (m for m in map(self.pattern.search, dependencies) if m is not None), None
-        )
+        match = next((m for m in map(self.pattern.search, dependencies) if m is not None), None)
         # extractors
         if self.harvest:
             # deposit the capture when the pattern matched
@@ -127,7 +125,11 @@ class Linkage:
     # debugging support
     def __str__(self):
         # name the role I play
-        role = f"harvest '{self.harvest}'" if self.harvest else ("forbid" if self.forbid else "require")
+        role = (
+            f"harvest '{self.harvest}'"
+            if self.harvest
+            else ("forbid" if self.forbid else "require")
+        )
         # and identify myself by library and role
         return f"linkage against 'lib{self.library}': {role}"
 

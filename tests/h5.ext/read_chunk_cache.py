@@ -48,9 +48,7 @@ def test():
     dcpl.addShuffle()
     dcpl.addDeflate(4)
     # make the dataset
-    dataset = f.create(
-        path="product", type=libh5.types.native.double, space=space, dcpl=dcpl
-    )
+    dataset = f.create(path="product", type=libh5.types.native.double, space=space, dcpl=dcpl)
 
     # fill it with something that does not compress, or the inflation costs nothing and there
     # is no difference left to detect. a regular sequence is crushed by shuffle and deflate
@@ -83,9 +81,7 @@ def test():
 
     # open it again, with a cache with room to spare for the one chunk
     fapl = libh5.properties.fapl()
-    fapl.cache = libh5.properties.Cache(
-        fapl.cache.metadataElements, 521, 16 * cells * 8, 0.75
-    )
+    fapl.cache = libh5.properties.Cache(fapl.cache.metadataElements, 521, 16 * cells * 8, 0.75)
     f = libh5.File(uri=uri, mode="r", fapl=fapl)
     dataset = f.dataset(path="product")
 

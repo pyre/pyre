@@ -14,5 +14,4 @@ scanning this package yields the definitive list of supported externals, and add
 support for a new package means dropping in a folder without editing any registry
 """
 
-
 # end of file

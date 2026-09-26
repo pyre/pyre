@@ -11,5 +11,4 @@ from .Eigen import Eigen as protocol
 # and the implementations
 from .Default import Default
 
-
 # end of file

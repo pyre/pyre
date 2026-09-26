@@ -100,7 +100,11 @@ class Proof:
     # debugging support
     def __str__(self):
         # identify myself by header and role
-        role = f"harvest '{self.harvest}'" if self.harvest else ("forbid" if self.forbid else "require")
+        role = (
+            f"harvest '{self.harvest}'"
+            if self.harvest
+            else ("forbid" if self.forbid else "require")
+        )
         # assemble
         return f"proof against '{self.header}': {role}"
 

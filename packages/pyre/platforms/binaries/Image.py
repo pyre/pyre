@@ -35,9 +35,7 @@ class Image:
         Check whether this reader recognizes the image whose leading bytes are in {data}
         """
         # subclasses know their own magic
-        raise NotImplementedError(
-            f"class '{cls.__name__}' must implement 'claims'"
-        )
+        raise NotImplementedError(f"class '{cls.__name__}' must implement 'claims'")
 
     # interface
     @property
@@ -46,9 +44,7 @@ class Image:
         Generate the names of the shared libraries this image loads
         """
         # subclasses know where their format records them
-        raise NotImplementedError(
-            f"class '{type(self).__name__}' must implement 'dependencies'"
-        )
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'dependencies'")
 
     @property
     def soname(self):

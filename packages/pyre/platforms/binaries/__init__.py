@@ -28,7 +28,6 @@ from .Image import Image as image
 from .MachO import MachO as macho
 from .ELF import ELF as elf
 
-
 # the readers, in the order they are offered a file
 readers = (macho, elf)
 

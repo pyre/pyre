@@ -147,9 +147,7 @@ class Recipe:
         for stem in getattr(installation, "libraries", ()):
             # the host knows how libraries are named; the stem is a literal here, so it
             # goes in escaped
-            pattern = re.compile(
-                pyre.executive.host.libraryPattern(stem=re.escape(stem))
-            )
+            pattern = re.compile(pyre.executive.host.libraryPattern(stem=re.escape(stem)))
             # look for a match in any of the library directories
             if not any(
                 any(pattern.match(str(entry.name)) for entry in folder.contents)

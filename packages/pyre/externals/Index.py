@@ -154,9 +154,7 @@ class Index:
         # go through the category flavors, in order of preference
         for recipe in protocol.recipes():
             # if the requirements rule this flavor out
-            if not all(
-                demand.admits(flavor=recipe.flavor, tags=recipe.tags) for demand in demands
-            ):
+            if not all(demand.admits(flavor=recipe.flavor, tags=recipe.tags) for demand in demands):
                 # implicate the requirements in a potential failure
                 self._blocked.add(category)
                 # and move on to the next flavor
