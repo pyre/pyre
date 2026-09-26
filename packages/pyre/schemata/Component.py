@@ -70,8 +70,16 @@ class Component(Schema):
                 instanceName = uri.fragment
                 # extract the address, which we use as the component specification; it's ok if it's {None}
                 componentSpec = uri.address
+                # if we have a component specification
+                if componentSpec:
+                    # there is no interpretation left to try. N.B.: resolving a specification
+                    # includes instantiating the component it names, so the error may well
+                    # have been raised while configuring that component, rather than by the
+                    # failure to resolve {value}; swallowing it here would hide the real
+                    # problem and blame {value}, which may be perfectly good
+                    raise
                 # if we have an instance name but no component specification
-                if instanceName and not componentSpec:
+                if instanceName:
                     # get my default value
                     factory = self.default()
                     # perhaps it's a foundry

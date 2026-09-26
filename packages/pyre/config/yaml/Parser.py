@@ -173,9 +173,12 @@ class Parser:
             if conditions:
                 # the component that owns the assignment is encoded in the last constraint
                 component, _ = conditions[-1]
+                # the key is the path from the owning component down to the trait; the
+                # component name is a prefix of the current scope, so peel it off
+                key = (scope + name)[len(component) :]
                 # make a conditional assignment
                 yield self.ConditionalAssignment(
-                    key=name,
+                    key=key,
                     value=value,
                     component=component,
                     conditions=reversed(conditions),
