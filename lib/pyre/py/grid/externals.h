@@ -26,6 +26,9 @@
 #include <pyre/memory.h>
 // the buffer protocol description of a cell type
 #include <pyre/py/memory/format.h>
+// the dlpack abi, vendored verbatim; every array library that speaks dlpack ships its own
+// copy of this single, dependency-free header rather than pulling in a package for it
+#include "dlpack.h"
 
 
 // type aliases

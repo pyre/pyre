@@ -35,6 +35,26 @@
 #include <pyre/journal.h>
 #include <pyre/typelists.h>
 
+// decorate the functions that must also be callable from cuda device code; the cuda runtime
+// header supplies {__host__} and {__device__}, and defines them away for host compilers, so
+// translation units built with {WITH_CUDA} by something other than nvcc see plain functions
+#ifdef WITH_CUDA
+#include <cuda_runtime_api.h>
+#define PYRE_HOST_DEVICE __host__ __device__
+#else
+#define PYRE_HOST_DEVICE
+#endif
+
+// nvcc compiles a {PYRE_HOST_DEVICE} template for the device even when its storage is host-only
+// (e.g. a heap grid used on the host in a .cu file), and warns about the host call inside;
+// disable that check where a template merely forwards to its storage, since which side may call
+// it is decided by the storage, not by the template
+#if defined(WITH_CUDA) && defined(__CUDACC__)
+#define PYRE_HOST_DEVICE_NOCHECK _Pragma("nv_exec_check_disable")
+#else
+#define PYRE_HOST_DEVICE_NOCHECK
+#endif
+
 
 // aliases that define implementation choices
 namespace pyre::memory {

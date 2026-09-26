@@ -15,8 +15,11 @@ import pyre
 
 class Error(pyre.PyreError):
     """
-    Exception raised when the support layer detects a CUDA error
+    Exception raised when the cuda support layer detects an error
     """
+
+    # public data
+    description = "cuda error"
 
 
 # end of file

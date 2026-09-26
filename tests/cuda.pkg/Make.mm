@@ -17,8 +17,10 @@ test: sanity
 
 sanity:
 	${PYTHON} ./sanity.py
-	${PYTHON} ./extension.py
 	${PYTHON} ./manager.py
+	${PYTHON} ./cublas.py
+	${PYTHON} ./grid_interface.py
+	${PYTHON} ./grid_inplace.py
 
 
 # end of file

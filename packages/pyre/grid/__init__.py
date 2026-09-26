@@ -44,6 +44,7 @@ if pyre.libpyre is None:
     heap = None
     map = None
     view = None
+    managed = None
 # otherwise reach into the bindings by attribute, the way the rest of pyre does
 else:
     # the type-erased grid class, for type checks
@@ -54,6 +55,23 @@ else:
     map = pyre.libpyre.grid.map
     # the factory that lays a grid over memory python already holds, without copying
     view = pyre.libpyre.grid.view
+    # the factory that allocates a grid over a fresh block of cuda managed memory; only
+    # present when the extension was built with {WITH_CUDA}
+    managed = getattr(pyre.libpyre.grid, "managed", None)
+
+
+# in-place arithmetic on grids on cuda storage is queued on the device; this waits for it, and
+# is a no-op without cuda support, since then nothing is ever queued
+def synchronize():
+    """
+    Wait for the device to finish the work queued on grids on cuda storage
+    """
+    # if the bindings can wait for the device
+    if pyre.libpyre is not None and hasattr(pyre.libpyre.grid, "synchronize"):
+        # do so
+        pyre.libpyre.grid.synchronize()
+    # all done
+    return
 
 
 # end of file

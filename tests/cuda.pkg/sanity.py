@@ -12,7 +12,7 @@ Sanity check: verify that the package is accessible
 
 
 def test():
-    import cuda
+    import pyre.cuda
 
     return
 

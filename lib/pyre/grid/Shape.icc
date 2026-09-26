@@ -69,7 +69,7 @@ pyre::grid::Shape<Rank>::rank() noexcept -> size_type
 
 // element access: hand out the extent of a given axis, without checking that it exists
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Shape<Rank>::operator[](size_type axis) noexcept -> reference
 {
     // easy enough
@@ -78,7 +78,7 @@ pyre::grid::Shape<Rank>::operator[](size_type axis) noexcept -> reference
 
 // the read-only flavor
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Shape<Rank>::operator[](size_type axis) const noexcept -> const_reference
 {
     // easy enough

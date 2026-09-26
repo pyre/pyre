@@ -73,13 +73,13 @@ private:
     // accessors
 public:
     // how my index space maps onto memory
-    [[nodiscard]] constexpr auto packing() const noexcept -> const packing_type &;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto packing() const noexcept -> const packing_type &;
     // where my cells live
-    [[nodiscard]] constexpr auto storage() const noexcept -> const storage_type &;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto storage() const noexcept -> const storage_type &;
 
     // the address of my first cell, for handing off to code that speaks raw memory; available
     // only when my storage keeps its cells in one expanse
-    [[nodiscard]] constexpr auto data() const noexcept
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto data() const noexcept
         requires concepts::ContiguousStorage<storage_type>;
 
     // interface: reaching a cell
@@ -88,9 +88,9 @@ public:
     // storage, whose cell type carries its own constness
 public:
     // the cell named by an index, trusting the caller to stay in bounds
-    [[nodiscard]] constexpr auto operator[](const index_type & idx) const -> reference;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto operator[](const index_type & idx) const -> reference;
     // the cell at a given offset, same trust
-    [[nodiscard]] constexpr auto operator[](difference_type off) const -> reference;
+    [[nodiscard]] PYRE_HOST_DEVICE constexpr auto operator[](difference_type off) const -> reference;
 
     // the cell named by an index, with a guard against reaching past my cells
     [[nodiscard]] constexpr auto at(const index_type & idx) const -> reference;

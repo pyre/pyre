@@ -15,7 +15,7 @@
 
 // metamethods
 template <class T, bool isConst>
-pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells, cell_count_type stride) :
+PYRE_HOST_DEVICE pyre::memory::View<T, isConst>::View(pointer data, cell_count_type cells, cell_count_type stride) :
     super_type(),
     _data { data },
     _cells { cells },
@@ -40,7 +40,7 @@ pyre::memory::View<T, isConst>::uri() const -> uri_type
 
 // get the number of cells in the block
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::memory::View<T, isConst>::cells() const -> cell_count_type
 {
     // easy
@@ -50,7 +50,7 @@ pyre::memory::View<T, isConst>::cells() const -> cell_count_type
 
 // get the memory footprint of the block
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::memory::View<T, isConst>::bytes() const -> size_type
 {
     // scale the number of cells by the cell size
@@ -60,7 +60,7 @@ pyre::memory::View<T, isConst>::bytes() const -> size_type
 
 // access to the data pointer
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::memory::View<T, isConst>::data() const -> pointer
 {
     // return the raw data pointer
@@ -180,7 +180,7 @@ pyre::memory::View<T, isConst>::at(difference_type pos) const -> reference
 
 
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::memory::View<T, isConst>::operator[](difference_type pos) const -> reference
 {
     // return a reference to the cell at {pos}

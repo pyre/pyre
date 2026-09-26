@@ -7,10 +7,25 @@
 function(pyre_cudaPackage)
   # if the user requested CUDA support
   if(WITH_CUDA)
-    # install the sources straight from the source directory
+    # install the sources straight from the source directory; the package lives under the
+    # {pyre} namespace, not bare {cuda}, so it doesn't collide with nvidia's own {cuda-python}
+    # package, which claims that top-level name; device discovery/selection/properties are
+    # all pure python, riding on nvidia's own {cuda.bindings}/{cuda.core}, so there is no
+    # compiled extension of our own to build for this package any more
     install(
-      DIRECTORY packages/cuda
-      DESTINATION ${PYRE_DEST_PACKAGES}
+      DIRECTORY packages/pyre/cuda
+      DESTINATION ${PYRE_DEST_PACKAGES}/pyre
+      FILES_MATCHING PATTERN *.py
+      )
+    # build the package meta-data
+    configure_file(
+      packages/pyre/cuda/meta.py.in packages/pyre/cuda/meta.py
+      @ONLY
+      )
+    # install the generated package meta-data file
+    install(
+      DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/packages/pyre/cuda
+      DESTINATION ${PYRE_DEST_PACKAGES}/pyre
       FILES_MATCHING PATTERN *.py
       )
   endif()
@@ -68,38 +83,6 @@ function(pyre_cudaLib)
   endif()
   # all done
 endfunction(pyre_cudaLib)
-
-
-# build the cuda extension module
-function(pyre_cudaModule)
-  # if the user requested CUDA support
-  if(WITH_CUDA)
-    # the cuda bindings
-    Python_add_library(cudamodule MODULE WITH_SOABI)
-    # adjust the name to match what python expects
-    set_target_properties(cudamodule PROPERTIES LIBRARY_OUTPUT_NAME cuda)
-    # specify the directory for the module compilation products
-    pyre_library_directory(cudamodule extensions)
-    # set the libraries to link against; {CUDA::cudart} brings the toolkit headers with it,
-    # so the module needs no include directories of its own
-    target_link_libraries(cudamodule PRIVATE pyre journal pybind11::module CUDA::cudart)
-    # add the sources
-    target_sources(cudamodule PRIVATE
-      extensions/cuda/cuda.cc
-      extensions/cuda/device.cc
-      extensions/cuda/discover.cc
-      extensions/cuda/exceptions.cc
-      extensions/cuda/metadata.cc
-    )
-
-    # install the cuda extensions
-    install(
-      TARGETS cudamodule
-      LIBRARY
-      DESTINATION ${PYRE_DEST_PACKAGES}/cuda
-      )
-  endif()
-endfunction(pyre_cudaModule)
 
 
 # build the cuda kernel associated with this {driverfile}

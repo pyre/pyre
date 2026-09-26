@@ -1,0 +1,107 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+
+// code guard
+#pragma once
+
+
+// the pieces of the elementwise engine that the host loop and the device kernel share; each
+// half includes this and supplies its own mapping from {cell_t} to a c++ type, since the host
+// spells complex numbers {std::complex} and the device {cuda::std::complex}
+#include <type_traits>
+#include <pyre/memory.h>
+#include "arithmetic.h"
+
+
+namespace pyre::py::grid::arithmetic {
+    // the offset of the cell at flat, row major position {k}
+    PYRE_HOST_DEVICE inline auto
+    offset(const layout_t & layout, std::int64_t k) -> std::int64_t
+    {
+        // packed cells are where their flat index says
+        if (layout.contiguous) {
+            return k;
+        }
+        // otherwise, peel off the coordinates from the fastest axis, and fold in their strides
+        std::int64_t result = 0;
+        for (int axis = layout.rank - 1; axis >= 0; --axis) {
+            auto extent = layout.shape[axis];
+            result += (k % extent) * layout.strides[axis];
+            k /= extent;
+        }
+        return result;
+    }
+
+    // {a op= b} for one cell
+    template <op_t op, class T>
+    PYRE_HOST_DEVICE inline auto
+    apply(T & a, const T & b) -> void
+    {
+        // integers wrap around, like numpy's do; doing the arithmetic on 64 unsigned bits keeps
+        // it defined, and the conversion back to {T} keeps the low bits
+        if constexpr (std::is_integral_v<T>) {
+            auto x = static_cast<std::uint64_t>(a);
+            auto y = static_cast<std::uint64_t>(b);
+            if constexpr (op == op_t::add) {
+                a = static_cast<T>(x + y);
+            } else if constexpr (op == op_t::sub) {
+                a = static_cast<T>(x - y);
+            } else if constexpr (op == op_t::mul) {
+                a = static_cast<T>(x * y);
+            }
+            // the bindings turn integer division down before it gets here
+        } else {
+            if constexpr (op == op_t::add) {
+                a += b;
+            } else if constexpr (op == op_t::sub) {
+                a -= b;
+            } else if constexpr (op == op_t::mul) {
+                a *= b;
+            } else if constexpr (op == op_t::div) {
+                a /= b;
+            }
+        }
+    }
+
+    // the scalar operand, as a {T}
+    template <class T>
+    PYRE_HOST_DEVICE inline auto
+    value(const scalar_t & scalar) -> T
+    {
+        if constexpr (std::is_integral_v<T> && std::is_signed_v<T>) {
+            return static_cast<T>(scalar.i);
+        } else if constexpr (std::is_integral_v<T>) {
+            return static_cast<T>(scalar.u);
+        } else if constexpr (std::is_floating_point_v<T>) {
+            return static_cast<T>(scalar.re);
+        } else {
+            // complex
+            using real_t = typename T::value_type;
+            return T(static_cast<real_t>(scalar.re), static_cast<real_t>(scalar.im));
+        }
+    }
+
+    // call {f} with the operation as a compile time constant
+    template <class F>
+    inline auto
+    withOp(op_t op, F && f) -> void
+    {
+        switch (op) {
+            case op_t::add:
+                return f(std::integral_constant<op_t, op_t::add> {});
+            case op_t::sub:
+                return f(std::integral_constant<op_t, op_t::sub> {});
+            case op_t::mul:
+                return f(std::integral_constant<op_t, op_t::mul> {});
+            case op_t::div:
+                return f(std::integral_constant<op_t, op_t::div> {});
+        }
+    }
+} // namespace pyre::py::grid::arithmetic
+
+
+// end of file

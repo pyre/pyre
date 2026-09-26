@@ -18,6 +18,10 @@
 #include "timers/__init__.h"
 #include "viz/__init__.h"
 #include "chroma/__init__.h"
+// cublas/cusolver/curand, only when built with cuda support
+#ifdef WITH_CUDA
+#include "cuda/__init__.h"
+#endif
 
 // the module entry point
 PYBIND11_MODULE(pyre, m)
@@ -38,6 +42,10 @@ PYBIND11_MODULE(pyre, m)
     pyre::py::viz::__init__(m);
     // chroma
     pyre::py::chroma::__init__(m);
+    // cublas/cusolver/curand, only when built with cuda support
+#ifdef WITH_CUDA
+    pyre::py::cuda::__init__(m);
+#endif
 }
 
 
