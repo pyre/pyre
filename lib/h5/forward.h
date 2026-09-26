@@ -32,6 +32,8 @@ namespace pyre::h5 {
     class DataSet;
     // one chunk of a chunked dataset, as it exists in the file
     class Chunk;
+    // what the page buffer of a file has seen
+    class PageBufferStats;
 } // namespace pyre::h5
 
 
