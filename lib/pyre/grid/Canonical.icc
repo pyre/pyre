@@ -59,7 +59,7 @@ constexpr pyre::grid::Canonical<Rank>::Canonical(
 
 // the extent of my index box along each axis
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::shape() const noexcept -> shape_type
 {
     // hand off my shape
@@ -68,7 +68,7 @@ pyre::grid::Canonical<Rank>::shape() const noexcept -> shape_type
 
 // the smallest addressable index
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::origin() const noexcept -> index_type
 {
     // hand off my origin
@@ -86,7 +86,7 @@ pyre::grid::Canonical<Rank>::order() const noexcept -> order_type
 
 // the memory distance between consecutive cells along each axis
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::strides() const noexcept -> strides_type
 {
     // hand off my strides
@@ -95,7 +95,7 @@ pyre::grid::Canonical<Rank>::strides() const noexcept -> strides_type
 
 // the offset correction that maps my origin to offset zero
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::nudge() const noexcept -> difference_type
 {
     // hand off my nudge
@@ -104,7 +104,7 @@ pyre::grid::Canonical<Rank>::nudge() const noexcept -> difference_type
 
 // the number of addressable cells
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::cells() const noexcept -> difference_type
 {
     // the box knows how many indices it contains
@@ -135,7 +135,7 @@ pyre::grid::Canonical<Rank>::order(const order_type & o) const noexcept -> self_
 
 // map an index to its flat offset
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::offset(const index_type & index) const noexcept -> difference_type
 {
     // start the accumulation at the beginning of the block
@@ -154,7 +154,7 @@ pyre::grid::Canonical<Rank>::offset(const index_type & index) const noexcept -> 
 // the offset equals sum_i((idx[i] - origin[i]) * strides[i]); decompose by strides
 // from slowest-varying axis to fastest to recover (idx - origin), then shift by origin
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_type
 {
     // room for the answer
@@ -186,7 +186,7 @@ pyre::grid::Canonical<Rank>::index(difference_type off) const noexcept -> index_
 
 // index into the layout to get the offset of a cell
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::operator[](const index_type & index) const noexcept -> difference_type
 {
     // delegate to the forward map
@@ -195,7 +195,7 @@ pyre::grid::Canonical<Rank>::operator[](const index_type & index) const noexcept
 
 // index into the layout with an offset to get the index of a cell
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Canonical<Rank>::operator[](difference_type off) const noexcept -> index_type
 {
     // delegate to the inverse map
