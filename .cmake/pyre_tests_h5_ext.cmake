@@ -23,11 +23,13 @@ pyre_test_python_testcase(tests/h5.ext/read_chunk_cache.py)
 pyre_test_python_testcase(tests/h5.ext/dapl_chunk_cache.py)
 # the chunk table, and moving a chunk in the form it is stored in
 pyre_test_python_testcase(tests/h5.ext/chunk_table.py)
+pyre_test_python_testcase(tests/h5.ext/chunk_census.py)
 pyre_test_python_testcase(tests/h5.ext/direct_chunk.py)
 # a tile that skips cells, and one that is transformed on its way across
 pyre_test_python_testcase(tests/h5.ext/strided_tile.py)
 pyre_test_python_testcase(tests/h5.ext/courier.py)
 pyre_test_python_testcase(tests/h5.ext/transfer_list.py)
+pyre_test_python_testcase(tests/h5.ext/page_buffer.py)
 
 # the drivers leave their scratch products behind so they can be inspected; the harness
 # sweeps them, each after the driver that makes it
@@ -41,10 +43,12 @@ pyre_test_python_cleanup(h5_ext_mosaic.h5 tests/h5.ext/mosaic.py)
 pyre_test_python_cleanup(read_chunk_cache.h5 tests/h5.ext/read_chunk_cache.py)
 pyre_test_python_cleanup(dapl_chunk_cache.h5 tests/h5.ext/dapl_chunk_cache.py)
 pyre_test_python_cleanup(chunk_table.h5 tests/h5.ext/chunk_table.py)
+pyre_test_python_cleanup(chunk_census.h5 tests/h5.ext/chunk_census.py)
 pyre_test_python_cleanup(direct_chunk.h5 tests/h5.ext/direct_chunk.py)
 pyre_test_python_cleanup(strided_tile.h5 tests/h5.ext/strided_tile.py)
 pyre_test_python_cleanup(courier.h5 tests/h5.ext/courier.py)
 pyre_test_python_cleanup(transfer_list.h5 tests/h5.ext/transfer_list.py)
+pyre_test_python_cleanup(page_buffer.h5 tests/h5.ext/page_buffer.py)
 
 
 # end of file
