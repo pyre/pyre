@@ -6,7 +6,7 @@
 
 compiler.cython := cython
 
-# prefices for specific categories
+# prefixes for specific categories
 cython.prefix.flags :=
 cython.prefix.incpath := -I
 

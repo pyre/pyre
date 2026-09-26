@@ -51,7 +51,7 @@ def test():
     b = Base(name="b")
     # verify it is in the registry
     assert "b" in baseReg
-    # but not on the drived registry
+    # but not on the derived registry
     assert "b" not in derivedReg
 
     # make a derived instance

@@ -48,7 +48,7 @@ class Timestamp(Schema):
 
         # attempt to
         try:
-            # assume it is a string; strip it and covert it
+            # assume it is a string; strip it and convert it
             return datetime.datetime.strptime(value, self.format)
         # if the parser refuses
         except (TypeError, ValueError) as error:

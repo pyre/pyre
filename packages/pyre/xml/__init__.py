@@ -22,7 +22,7 @@ SAX parsing is event driven. The parser scans through the document and generates
 each significant encounter with the document contents, such the opening or closing of an XML
 tag, or encountering data in the body of a tag. The client interacts with the parser by
 registering handlers for each type of event that are responsible for absorbing the information
-collected by te parser. This trades some complexity in the handling of the document for the
+collected by the parser. This trades some complexity in the handling of the document for the
 savings of not needing to build and subsequently navigate through an intermediate data
 structure.
 

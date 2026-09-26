@@ -32,7 +32,7 @@ def test():
         msrp = (1 + margin + overhead) * cost
         price = msrp * (1 - discount)
 
-    # short names for the stuctural parts
+    # short names for the structural parts
     measure = pyre.tabular.measure
     derivation = pyre.tabular.derivation
 

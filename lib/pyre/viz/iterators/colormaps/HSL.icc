@@ -33,7 +33,7 @@ pyre::viz::iterators::colormaps::HSL<hueSourceT, saturationSourceT, luminositySo
     auto saturation = *_saturation;
     auto luminosity = *_luminosity;
 
-    // covert to {rgb} and return
+    // convert to {rgb} and return
     return pyre::chroma::rgb::hsl(hue, saturation, luminosity);
 }
 

@@ -136,7 +136,7 @@ class INet(Schema):
         if family == socket.AF_INET:
             # unpack the raw address
             host, port = address
-            # return an ipv4 addres
+            # return an ipv4 address
             return self.ipv4(host=host, port=port)
 
         # unix

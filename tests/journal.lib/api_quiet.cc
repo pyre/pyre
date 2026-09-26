@@ -15,7 +15,7 @@
 int
 main()
 {
-    // suppress all outut
+    // suppress all output
     pyre::journal::quiet();
 
     // make a channel

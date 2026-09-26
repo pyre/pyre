@@ -10,7 +10,7 @@ compiler.c := gcc
 # the name of the executable
 gcc.driver ?= gcc
 
-# prefices for specific categories
+# prefixes for specific categories
 gcc.prefix.flags :=
 gcc.prefix.defines := -D
 gcc.prefix.incpath := -I

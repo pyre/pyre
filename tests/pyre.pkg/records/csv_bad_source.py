@@ -7,7 +7,7 @@
 
 
 """
-Check that improperly formed input source raise predicatble exceptions
+Check that improperly formed input source raise predictable exceptions
 """
 
 

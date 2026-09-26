@@ -10,7 +10,7 @@ compiler.cuda := nvcc
 # the name of the executable
 nvcc.driver ?= nvcc
 
-# prefices for specific categories
+# prefixes for specific categories
 nvcc.prefix.flags :=
 nvcc.prefix.defines := -D
 nvcc.prefix.incpath := -I

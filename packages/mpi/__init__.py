@@ -6,10 +6,10 @@
 
 
 # bootstrapping
-# the current default builds of openmpi on linux do not link their pluggins against libmpi
+# the current default builds of openmpi on linux do not link their plugins against libmpi
 # so they all report unresolved symbols; the temporary fix is to change the way python
 # dlopens our extension module so the mpi symbols go to the global namespace, where the
-# pluggins will be able to find them. hopefully, the openmpi people will fix this soon
+# plugins will be able to find them. hopefully, the openmpi people will fix this soon
 # LAST CHECKED: 20120423, revision 1402, openmpi 1.4.3
 import sys
 

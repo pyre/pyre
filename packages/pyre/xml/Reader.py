@@ -151,7 +151,7 @@ class Reader(xml.sax.ContentHandler):
         """
 
         # NYI:
-        #     qnames seem to alway be None, so I am ignoring them
+        #     qnames seem to always be None, so I am ignoring them
         #     will address later, after further explorations
 
         # unpack the qualified name

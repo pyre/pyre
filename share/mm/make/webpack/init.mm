@@ -123,7 +123,7 @@ define webpack.init
     $(2).metadoc.prefix := "the full path to the pack source code"
     $(2).metadoc.source.static.present := "directories with static assets"
 
-    # sources: infromation about the sources
+    # sources: information about the sources
     $(2).meta.source := source.npm_config source.npm_lock
     # document each one
     $(2).metadoc.source.npm_config := "the npm configuration file; typically called 'package.json'"

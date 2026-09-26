@@ -53,7 +53,7 @@ managedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, 
     // and assemble in a grid
     grid_managed_t tensorArray { tensorPack, tensorPack.cells() };
 
-    // create an array of arrays as pertubation of identity
+    // create an array of arrays as perturbation of identity
     double perturbation = 0.1;
     int i, j, ij, jj;
     for (int nTensor = 0; nTensor < nTensors; nTensor++) {
@@ -171,7 +171,7 @@ pinnedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // assemble in a grid
     grid_pinned_t tensorArray { tensorPack, tensorPack.cells() };
 
-    // create an array of arrays as pertubation of identity
+    // create an array of arrays as perturbation of identity
     double perturbation = 0.1;
     int i, j, ij, jj;
     for (int nTensor = 0; nTensor < nTensors; nTensor++) {
@@ -311,7 +311,7 @@ mappedInvariants(pack_t tensorPack, pack_t invariantPack, int nThreadPerBlock, i
     // and assemble in a grid
     grid_mapped_t tensorArray { tensorPack, tensorPack.cells() };
 
-    // create an array of arrays as pertubation of identity
+    // create an array of arrays as perturbation of identity
     double perturbation = 0.1;
     int i, j, ij, jj;
     for (int nTensor = 0; nTensor < nTensors; nTensor++) {

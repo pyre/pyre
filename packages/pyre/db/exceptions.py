@@ -84,7 +84,7 @@ class Diagnosed(FrameworkError):
 class Warning(Diagnosed):
     """
     Exception raised for important warnings, such as data truncation, loss of precision and
-    other idications that the implementation engines have carried out a request in a perhaps
+    other indications that the implementation engines have carried out a request in a perhaps
     incorrect way
     """
 

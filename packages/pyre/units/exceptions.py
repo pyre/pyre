@@ -37,7 +37,7 @@ class ConversionError(UnitError):
 
 class CompatibilityError(UnitError):
     """
-    Exception raised when the operands of a binary operator have imcompatible units such as
+    Exception raised when the operands of a binary operator have incompatible units such as
     adding lengths to times
     """
 

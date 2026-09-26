@@ -66,7 +66,7 @@ chronicler_t::init(int argc, char * argv[])
     // the table of parsed arguments
     cmd_type commands;
 
-    // go trough the arguments
+    // go through the arguments
     for (int i = 0; i < argc; ++i) {
         // convert into a string
         string_type arg(argv[i]);

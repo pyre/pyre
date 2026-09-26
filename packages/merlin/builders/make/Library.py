@@ -107,7 +107,7 @@ class Library(
             channel.log()
             # and move on
             return
-        # get the explicit requierements for this folder
+        # get the explicit requirements for this folder
         require = folder.require
         # if the folder has explicit dependency requirements that aren't met
         if require and not library.supports(requirements=require):

@@ -122,7 +122,7 @@ pyre_test_python_testcase(tests/pyre.pkg/filesystem/finder_pattern.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/simple_explorer.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/tree_explorer.py)
 
-# the {local_make} test modifes its local directory; so there are race conditions when running
+# the {local_make} test modifies its local directory; so there are race conditions when running
 # the test suite in parallel with all the test that explore the current directory; run it after
 # the other test cases have finished
 set_property(TEST tests.pyre.pkg.filesystem.local_make.py PROPERTY DEPENDS

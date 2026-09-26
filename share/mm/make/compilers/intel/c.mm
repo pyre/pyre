@@ -10,7 +10,7 @@ compiler.c = intel
 # the name of the executable
 intel.driver ?= icx
 
-# prefices for specific categories
+# prefixes for specific categories
 intel.prefix.flags :=
 intel.prefix.defines := -D
 intel.prefix.incpath := -I

@@ -10,7 +10,7 @@ compiler.c = clang
 # the name of the executable
 clang.driver ?= clang
 
-# prefices for specific categories
+# prefixes for specific categories
 clang.prefix.flags :=
 clang.prefix.defines := -D
 clang.prefix.incpath := -I

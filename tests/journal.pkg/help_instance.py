@@ -8,7 +8,7 @@
 
 def test():
     """
-    Verify te channel state
+    Verify the channel state
     """
     # get the channel
     from journal.Help import Help as help

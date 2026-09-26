@@ -46,7 +46,7 @@ merlin.deep.dir = $(merlin.tests.tmpdir)/merlin.deep
 
 tests.merlin.pkg.spells.deep:
 	cd $(merlin.pkg.tests.prefix)spells; \
-        merlin init --create-prefix $(merlin.deep.dir)/ly/burried
+        merlin init --create-prefix $(merlin.deep.dir)/ly/buried
 
 
 # clean up

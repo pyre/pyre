@@ -10,7 +10,7 @@ compiler.c++ := g++
 # the name of the executable
 g++.driver ?= g++
 
-# prefices for specific categories
+# prefixes for specific categories
 g++.prefix.flags :=
 g++.prefix.defines := -D
 g++.prefix.incpath := -I
