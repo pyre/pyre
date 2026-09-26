@@ -9,6 +9,13 @@ on:
   pull_request:
   # and manually
   workflow_dispatch:
+
+# a new push to a pull request replaces the runs of the commits it supersedes, so they stop
+# holding runners; runs for any other event are never cancelled
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   # build and test the ref that launched this action against a conda-forge toolchain
   build:
