@@ -7,13 +7,13 @@
 
 
 """
-Verify processing of a {yaml} input file with conditional assignments whose keys reach
+Verify processing of a {pfg} input file with conditional assignments whose keys reach
 inside a nested component
 
 The key of a conditional assignment is the naked name of the trait, and the rest of the
 path names the component that receives it: the nested component, not the one that owns the
 constraints. This must be true regardless of whether the path is spelled as a dotted name or
-as a nested mapping, and it matches what the other codecs produce.
+as a nested section, and it matches what the other codecs produce.
 """
 
 
@@ -24,10 +24,10 @@ def test():
 
     # get the codec manager
     m = pyre.config.newConfigurator()
-    # ask for a {yaml} codec
-    reader = m.codec(encoding="yaml")
+    # ask for a {pfg} codec
+    reader = m.codec(encoding="pfg")
     # the configuration file
-    uri = "sample-componentConditionalMultilevel.yaml"
+    uri = "sample-componentConditionalMultilevel.pfg"
     # open a stream
     sample = open(uri)
     # read the contents
@@ -58,9 +58,10 @@ def test():
     assert event.component == ["dotted", "discretization"]
     assert event.conditions == [(["dotted"], ["test", "fields", "basic"])]
     assert event.key == ["basis_order"]
-    assert event.value == 2
+    # pfg values are strings; the trait converts them when the assignment lands
+    assert event.value == "2"
 
-    # repeat for the component configured using a nested mapping
+    # repeat for the component configured using a nested section
     event = events[3]
     assert isinstance(event, ConditionalAssignment)
     assert event.component == ["nested"]
@@ -68,13 +69,13 @@ def test():
     assert event.key == ["alias"]
     assert event.value == "nested_alias"
 
-    # the nested mapping spelling must produce exactly the same event as the dotted one
+    # the nested section spelling must produce exactly the same event as the dotted one
     event = events[4]
     assert isinstance(event, ConditionalAssignment)
     assert event.component == ["nested", "discretization"]
     assert event.conditions == [(["nested"], ["test", "fields", "basic"])]
     assert event.key == ["basis_order"]
-    assert event.value == 3
+    assert event.value == "3"
 
     # all done
     return m, reader, events

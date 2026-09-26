@@ -22,7 +22,7 @@ def test():
     import pyre
 
     # load the configuration file
-    pyre.loadConfiguration("sample-componentConditionalMultilevel.yaml")
+    pyre.loadConfiguration("sample-componentConditionalMultilevel.pfg")
 
     # N.B.: the protocols are named after their families, in the plural, so that their
     # names differ from the names of the traits they decorate: a class body that assigns a
@@ -94,7 +94,7 @@ def test():
     # and receives the assignment that reaches inside it
     assert dotted.discretization.basis_order == 2
 
-    # repeat for the component that is configured using a nested mapping, this time
+    # repeat for the component that is configured using a nested section, this time
     # instantiating it explicitly rather than through facility resolution
     nested = basic(name="nested")
     # the single level assignment is applied
