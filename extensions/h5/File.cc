@@ -141,6 +141,55 @@ pyre::h5::py::file(py::module & m)
         "count the open handles that refer to me or to my contents, by kind; i stay open for "
         "as long as any of them is alive");
 
+    // my size
+    cls.def_property_readonly(
+        // the name
+        "bytes",
+        // the implementation
+        [](const File & self) -> py::object {
+            // ask
+            auto size = self.bytes();
+            // a size the library could not tell
+            if (!size) {
+                // comes back empty
+                return py::none();
+            }
+            // otherwise, hand it off
+            return py::cast(*size);
+        },
+        // the docstring
+        "my size in bytes, user block and unused space at the end included, or {None} when "
+        "the library cannot tell");
+
+    // what my page buffer has seen
+    cls.def_property_readonly(
+        // the name
+        "pageBuffer",
+        // the implementation
+        [](const File & self) -> py::object {
+            // ask
+            auto stats = self.pageBuffer();
+            // a file opened without a page buffer has no tally
+            if (!stats) {
+                // and says so
+                return py::none();
+            }
+            // otherwise, hand it off
+            return py::cast(*stats);
+        },
+        // the docstring
+        "what my page buffer has seen since i was opened or since its tally was last reset, "
+        "or {None} when i was opened without one");
+
+    // start the tally over
+    cls.def(
+        // the name
+        "resetPageBuffer",
+        // the implementation
+        &File::resetPageBuffer,
+        // the docstring
+        "start the tally of my page buffer over; {False} when there is no buffer to reset");
+
     // close the file
     cls.def(
         // the name

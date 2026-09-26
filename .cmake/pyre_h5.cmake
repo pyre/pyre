@@ -116,6 +116,7 @@ function(pyre_h5Module)
       extensions/h5/File.cc
       extensions/h5/Group.cc
       extensions/h5/mosaics.cc
+      extensions/h5/PageBufferStats.cc
       # property lists
       extensions/h5/properties/__init__.cc
       extensions/h5/properties/ChunkCache.cc

@@ -38,6 +38,8 @@ PYBIND11_MODULE(h5, m)
     pyre::h5::py::chunk(m);
     pyre::h5::py::dataset(m);
     pyre::h5::py::group(m);
+    // the page buffer tally, before the file that hands it out
+    pyre::h5::py::pageBufferStats(m);
     pyre::h5::py::file(m);
     // the module-local flavors of the type-erased grid and mosaic
     pyre::h5::py::mosaics(m);
