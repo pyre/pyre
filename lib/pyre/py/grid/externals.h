@@ -9,12 +9,14 @@
 
 
 // externals
+#include <bit>
 #include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 // the type-erased closures lift cells into python and describe blocks to the buffer
 // protocol, so this layer depends on pybind11 by construction; it is the python-support

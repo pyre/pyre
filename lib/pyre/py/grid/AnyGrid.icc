@@ -350,4 +350,221 @@ pyre::py::grid::AnyGrid::setitem(const py::object & key, const py::object & valu
 }
 
 
+// the dlpack device of the memory a storage strategy holds
+inline auto
+pyre::py::grid::interop::deviceType(const string_t & strategy) -> DLDeviceType
+{
+    // managed memory is reachable by the host and the device alike
+    if (strategy == "managed") {
+        // so say so
+        return kDLCUDAManaged;
+    }
+    // pinned memory is host memory the device can reach
+    if (strategy == "pinned") {
+        // so say so
+        return kDLCUDAHost;
+    }
+    // everything else is ordinary host memory
+    return kDLCPU;
+}
+
+
+// the dlpack type of a cell, from its buffer protocol format
+inline auto
+pyre::py::grid::interop::dataType(string_t format) -> DLDataType
+{
+    // a byte order marker only makes sense when it names the order of the host
+    if (!format.empty() && (format.front() == '<' || format.front() == '>')) {
+        // the marker the host would use
+        const char native = std::endian::native == std::endian::big ? '>' : '<';
+        // dlpack has no way to describe cells in a foreign order
+        if (format.front() != native) {
+            // so refuse them
+            throw py::type_error("dlpack: cells in foreign byte order");
+        }
+        // otherwise, drop the marker
+        format.erase(0, 1);
+    }
+    // the signed integers
+    if (format == "b")
+        return { kDLInt, 8, 1 };
+    if (format == "h")
+        return { kDLInt, 16, 1 };
+    if (format == "i")
+        return { kDLInt, 32, 1 };
+    if (format == "q" || format == "l")
+        return { kDLInt, 64, 1 };
+    // the unsigned integers
+    if (format == "B")
+        return { kDLUInt, 8, 1 };
+    if (format == "H")
+        return { kDLUInt, 16, 1 };
+    if (format == "I")
+        return { kDLUInt, 32, 1 };
+    if (format == "Q" || format == "L")
+        return { kDLUInt, 64, 1 };
+    // the floating point numbers
+    if (format == "f")
+        return { kDLFloat, 32, 1 };
+    if (format == "d")
+        return { kDLFloat, 64, 1 };
+    // the complex numbers, in the spelling pybind11 uses for them
+    if (format == "Zf")
+        return { kDLComplex, 64, 1 };
+    if (format == "Zd")
+        return { kDLComplex, 128, 1 };
+    // anything else is a cell type the grid factories do not make
+    throw py::type_error("dlpack: unsupported cell format '" + format + "'");
+}
+
+
+// fill in the description of a block of cells
+inline auto
+pyre::py::grid::interop::describe(
+    DLTensor & tensor, void * data, DLDevice device, DLDataType dtype, Exported & exported) -> void
+{
+    // the address of the block
+    tensor.data = data;
+    // the device it lives on
+    tensor.device = device;
+    // the number of axes
+    tensor.ndim = static_cast<std::int32_t>(exported.shape.size());
+    // the type of the cells
+    tensor.dtype = dtype;
+    // the extents, which the exported context keeps alive
+    tensor.shape = exported.shape.data();
+    // the strides, likewise
+    tensor.strides = exported.strides.data();
+    // the block starts at the first cell
+    tensor.byte_offset = 0;
+    // all done
+    return;
+}
+
+
+// release a versioned tensor and what it kept alive
+inline auto
+pyre::py::grid::interop::releaseVersioned(DLManagedTensorVersioned * tensor) -> void
+{
+    // the context
+    delete static_cast<Exported *>(tensor->manager_ctx);
+    // and the tensor
+    delete tensor;
+    // all done
+    return;
+}
+
+
+// release a legacy tensor and what it kept alive
+inline auto
+pyre::py::grid::interop::releaseLegacy(DLManagedTensor * tensor) -> void
+{
+    // the context
+    delete static_cast<Exported *>(tensor->manager_ctx);
+    // and the tensor
+    delete tensor;
+    // all done
+    return;
+}
+
+
+// the destructor of a capsule with a versioned tensor
+inline auto
+pyre::py::grid::interop::destroyVersioned(PyObject * capsule) -> void
+{
+    // a consumer that imported the tensor renamed the capsule, and owns the tensor
+    if (PyCapsule_IsValid(capsule, "used_dltensor_versioned")) {
+        // so there is nothing left to do
+        return;
+    }
+    // otherwise, nobody took the tensor
+    auto * tensor = static_cast<DLManagedTensorVersioned *>(
+        PyCapsule_GetPointer(capsule, "dltensor_versioned"));
+    // if there is one
+    if (tensor != nullptr) {
+        // release it
+        releaseVersioned(tensor);
+    }
+    // all done
+    return;
+}
+
+
+// the destructor of a capsule with a legacy tensor
+inline auto
+pyre::py::grid::interop::destroyLegacy(PyObject * capsule) -> void
+{
+    // a consumer that imported the tensor renamed the capsule, and owns the tensor
+    if (PyCapsule_IsValid(capsule, "used_dltensor")) {
+        // so there is nothing left to do
+        return;
+    }
+    // otherwise, nobody took the tensor
+    auto * tensor = static_cast<DLManagedTensor *>(PyCapsule_GetPointer(capsule, "dltensor"));
+    // if there is one
+    if (tensor != nullptr) {
+        // release it
+        releaseLegacy(tensor);
+    }
+    // all done
+    return;
+}
+
+
+// the {(device_type, device_id)} pair that says where my cells live
+inline auto
+pyre::py::grid::AnyGrid::dlpackDevice() const -> std::pair<std::int32_t, std::int32_t>
+{
+    // every storage strategy lives at device index zero
+    return { interop::deviceType(_strategy), 0 };
+}
+
+
+// a capsule with the dlpack description of my cells
+inline auto
+pyre::py::grid::AnyGrid::dlpack(bool versioned) const -> py::capsule
+{
+    // what keeps my cells and my layout alive for as long as the tensor is held
+    auto * exported = new interop::Exported {
+        // my handle
+        _owner,
+        // my extents, in the integer type the protocol wants
+        std::vector<std::int64_t>(_shape.begin(), _shape.end()),
+        // my strides, in cells, the way the protocol wants them
+        std::vector<std::int64_t>(_strides.begin(), _strides.end()),
+    };
+    // the device my cells live on
+    const auto device = DLDevice { interop::deviceType(_strategy), 0 };
+    // and the type of my cells
+    const auto dtype = interop::dataType(_format);
+    // a consumer that predates versioning
+    if (!versioned) {
+        // gets a legacy tensor
+        auto * tensor = new DLManagedTensor {};
+        // that describes my cells
+        interop::describe(tensor->dl_tensor, _data, device, dtype, *exported);
+        // holds on to what keeps them alive
+        tensor->manager_ctx = exported;
+        // and knows how to let go
+        tensor->deleter = interop::releaseLegacy;
+        // in a capsule named the way the legacy protocol names it
+        return py::capsule(tensor, "dltensor", interop::destroyLegacy);
+    }
+    // everybody else gets a versioned tensor
+    auto * tensor = new DLManagedTensorVersioned {};
+    // stamped with the version of the protocol i speak
+    tensor->version = { dlpackMajor, dlpackMinor };
+    // that describes my cells
+    interop::describe(tensor->dl_tensor, _data, device, dtype, *exported);
+    // says whether they may be written
+    tensor->flags = _writable ? 0 : dlpackReadOnly;
+    // holds on to what keeps them alive
+    tensor->manager_ctx = exported;
+    // and knows how to let go
+    tensor->deleter = interop::releaseVersioned;
+    // in a capsule named the way the protocol names it
+    return py::capsule(tensor, "dltensor_versioned", interop::destroyVersioned);
+}
+
+
 // end of file
