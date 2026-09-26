@@ -10,6 +10,13 @@
 name: pr-conventions
 on:
   pull_request:
+
+# a new push to a pull request replaces the runs of the commits it supersedes, so they stop
+# holding runners; runs for any other event are never cancelled
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   conventions:
     name: conventions
