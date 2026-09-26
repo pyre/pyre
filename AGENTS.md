@@ -191,9 +191,20 @@ def locate(self, product):
 
 ## Building and testing
 
-- The build system is [mm](https://github.com/aivazis/mm). There is also a cmake build, kept in
-  step by listing new sources and tests in `.cmake/`. The `Make.mm` files are vestiges; do not
-  create, edit, or rely on them.
+- The build system is [mm](https://github.com/aivazis/mm). The `Make.mm` files are vestiges; do
+  not create, edit, or rely on them.
+- **Build and test with mm before opening a pull request.** A contribution is compiled and its
+  tests are run locally, with `mm` and then `mm tests`, or at least the suites it touches, before
+  the pull request is opened. A pull request is not the place to find out whether the code
+  compiles.
+- **Keep the cmake build in step.** pyre also builds with cmake, and the cmake build lists its
+  files explicitly: every compiled source (`.cc`, `.cu`) in the `target_sources` of its
+  component in `.cmake/pyre_*.cmake`, and every test in `.cmake/pyre_tests_*.cmake`, with
+  `pyre_test_driver` for a C++ driver, `pyre_test_python_testcase` for a python one, and the
+  cleanup of the files a test leaves behind. A contribution that adds, renames, or removes a
+  source or a test updates those lists in the same pull request; mm finds files on its own, so
+  an mm build that passes says nothing about the cmake one. Headers are picked up by directory.
+  The cmake build runs on every pull request, in `pr-cmake`.
 - Test against what `mm` installs, never against the source tree: `mm builder.info` shows where
   the installed files are, and running python with the working directory inside `packages/` or
   `tests/` imports the uninstalled sources and litters the tree with `__pycache__`.
