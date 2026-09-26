@@ -64,6 +64,12 @@ public:
     // kind when {versioned} is false, for consumers that predate versioning
     auto dlpack(bool versioned) const -> py::capsule;
 
+    // cuda array interface support
+public:
+    // the version 3 cuda array interface description of my cells; only grids on storage the
+    // device can reach have one, the rest raise an {AttributeError}
+    auto cudaArrayInterface() const -> py::dict;
+
     // item access
 public:
     // {g[i, j, ...]}: a full integer index yields the cell there; any slice, or fewer indices
@@ -163,6 +169,9 @@ namespace pyre::py::grid::interop {
 
     // the destructor of a capsule with a legacy tensor
     inline auto destroyLegacy(PyObject * capsule) -> void;
+
+    // the cuda array interface spelling of a cell type, from its buffer protocol format
+    inline auto typeString(const string_t & format) -> string_t;
 } // namespace pyre::py::grid::interop
 
 

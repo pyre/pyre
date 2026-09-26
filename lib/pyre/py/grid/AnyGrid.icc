@@ -511,6 +511,24 @@ pyre::py::grid::interop::destroyLegacy(PyObject * capsule) -> void
 }
 
 
+// the cuda array interface spelling of a cell type, from its buffer protocol format
+inline auto
+pyre::py::grid::interop::typeString(const string_t & format) -> string_t
+{
+    // the dlpack description of the cell, so the two protocols agree
+    const auto dtype = dataType(format);
+    // the kind of number, the way numpy spells it
+    const char kind = dtype.code == kDLInt   ? 'i' :
+                      dtype.code == kDLUInt  ? 'u' :
+                      dtype.code == kDLFloat ? 'f' :
+                                               'c';
+    // the byte order of the host
+    const char order = std::endian::native == std::endian::big ? '>' : '<';
+    // the order, the kind, and the width in bytes
+    return string_t(1, order) + kind + std::to_string(dtype.bits / 8);
+}
+
+
 // the {(device_type, device_id)} pair that says where my cells live
 inline auto
 pyre::py::grid::AnyGrid::dlpackDevice() const -> std::pair<std::int32_t, std::int32_t>
@@ -564,6 +582,40 @@ pyre::py::grid::AnyGrid::dlpack(bool versioned) const -> py::capsule
     tensor->deleter = interop::releaseVersioned;
     // in a capsule named the way the protocol names it
     return py::capsule(tensor, "dltensor_versioned", interop::destroyVersioned);
+}
+
+
+// the version 3 cuda array interface description of my cells
+inline auto
+pyre::py::grid::AnyGrid::cudaArrayInterface() const -> py::dict
+{
+    // the interface promises memory the device can reach, which host storage is not
+    if (interop::deviceType(_strategy) == kDLCPU) {
+        // so its absence is an attribute error, which is how consumers ask for it
+        throw py::attribute_error(
+            "a grid on '" + _strategy + "' storage has no cuda array interface");
+    }
+    // the interface measures strides in bytes
+    py::tuple strides(_strides.size());
+    // one axis at a time
+    for (std::size_t axis = 0; axis < _strides.size(); ++axis) {
+        // scale my stride by the width of a cell
+        strides[axis] = _strides[axis] * static_cast<size_type>(_itemsize);
+    }
+    // make room for the description
+    py::dict cai;
+    // my extents
+    cai["shape"] = py::tuple(py::cast(_shape));
+    // the type of my cells
+    cai["typestr"] = interop::typeString(_format);
+    // my address, and whether my cells are read only
+    cai["data"] = py::make_tuple(address(), !_writable);
+    // my strides
+    cai["strides"] = strides;
+    // the version of the interface i speak
+    cai["version"] = 3;
+    // hand off the description
+    return cai;
 }
 
 
