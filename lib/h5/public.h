@@ -30,6 +30,8 @@
 #include "Location.h"
 #include "Attribute.h"
 #include "Group.h"
+// the tally a file reports about its page buffer
+#include "PageBufferStats.h"
 #include "File.h"
 // the pieces a dataset describes itself in terms of
 #include "Chunk.h"

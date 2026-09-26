@@ -45,6 +45,17 @@ public:
     // the number of open handles of the given {kinds} that refer to me or to my contents; the
     // {kinds} are the {H5F_OBJ_*} flags. a file stays open for as long as any of them is alive
     auto handles(unsigned int kinds) const -> long;
+    // my size, in bytes: everything the library has allocated, user block and unused space at
+    // the end included; nothing when the library cannot tell
+    auto bytes() const -> std::optional<hsize_t>;
+
+    // the page buffer: the pages of a paged file that my access property list keeps in memory
+    // what the buffer has seen since i was opened, or since its tally was last started over;
+    // nothing when i was opened without one, which is not a failure
+    auto pageBuffer() const -> std::optional<PageBufferStats>;
+    // start the tally of my page buffer over, e.g. between the phases of a measurement; false
+    // when there is no buffer to start over
+    auto resetPageBuffer() const -> bool;
 };
 
 

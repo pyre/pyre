@@ -1,0 +1,31 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "PageBufferStats.h"
+
+
+// record a tally
+inline pyre::h5::PageBufferStats::PageBufferStats(
+    counts_type accesses, counts_type hits, counts_type misses, counts_type evictions,
+    counts_type bypasses) :
+    // the requests the buffer was asked to serve
+    accesses(accesses),
+    // the ones it served from pages it held
+    hits(hits),
+    // the ones that went to the file
+    misses(misses),
+    // the pages it let go of
+    evictions(evictions),
+    // and the requests that went around it
+    bypasses(bypasses)
+{}
+
+
+// end of file
