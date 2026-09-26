@@ -26,3 +26,6 @@ export default {
         },
     },
 }
+
+
+// end of file
