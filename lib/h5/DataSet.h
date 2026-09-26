@@ -103,6 +103,11 @@ public:
     // corner. nothing comes back when that chunk has never been written, which is the cheap
     // way to know a region is pure fill and not worth reading
     auto chunkAt(const index_t & origin) const -> std::optional<Chunk>;
+    // every chunk that has been written, in one pass over the chunk index and in the order the
+    // index keeps them; the way to survey the whole table, since looking chunks up one index
+    // at a time walks the index from the start on every call. nothing comes back when i am not
+    // stored as chunks, and an empty table when nothing has been written into me yet
+    auto chunkTable() const -> std::optional<std::vector<Chunk>>;
 
     // direct chunk access: moving a chunk in the form it is stored in, without decoding it
     // read the chunk that holds the cell at {origin} into {buffer}, which is resized to the

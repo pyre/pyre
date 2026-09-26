@@ -476,6 +476,58 @@ pyre::h5::DataSet::chunkAt(const index_t & origin) const -> std::optional<Chunk>
 }
 
 
+// every chunk that has been written
+auto
+pyre::h5::DataSet::chunkTable() const -> std::optional<std::vector<Chunk>>
+{
+    // the chunk index only exists for datasets that are stored as chunks, and the library
+    // rejects the question for any other layout
+    if (dcpl().layout() != H5D_CHUNKED) {
+        // so there is no table to walk
+        return {};
+    }
+    // what the walk collects, along with the rank the origins come in
+    struct census_t {
+        // the rank of my index space
+        std::size_t rank;
+        // the chunks found so far
+        std::vector<Chunk> chunks;
+    };
+    // make room for it
+    auto census = census_t { packing().rank(), {} };
+    // the visitor the library calls for every entry of the index
+    auto visit = [](const hsize_t * offset, unsigned filterMask, haddr_t address, hsize_t bytes,
+                    void * data) -> int {
+        // recover the census
+        auto & census = *static_cast<census_t *>(data);
+        // an entry that takes no room describes a chunk that does not exist
+        if (bytes == 0 || address == HADDR_UNDEF) {
+            // so move on to the next one
+            return H5_ITER_CONT;
+        }
+        // the origin comes in cells of my index space, one coordinate per axis
+        auto origin = index_t(offset, offset + census.rank);
+        // record the chunk
+        census.chunks.emplace_back(origin, filterMask, address, bytes);
+        // and keep going
+        return H5_ITER_CONT;
+    };
+    // walk the index
+    auto status = H5Dchunk_iter(id(), H5P_DEFAULT, visit, &census);
+    // if the library balked
+    if (status < 0) {
+        // the library's reasons, before asking it for my name disturbs them
+        auto reason = explanation();
+        // and complain
+        complain("pyre.h5.dataset", "walking the chunk index of '" + name() + "'", reason);
+        // and decline to answer
+        return {};
+    }
+    // hand off what the walk found
+    return census.chunks;
+}
+
+
 // read the chunk that holds the cell at {origin} in its stored form
 auto
 pyre::h5::DataSet::readChunk(const index_t & origin, bytes_t & buffer) const
