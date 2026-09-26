@@ -363,6 +363,8 @@ function(pyre_test_driver_cuda testfile)
   target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal cuda)
+  # kernels index grids through the constexpr machinery of the standard library
+  target_compile_options(${target} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target} ${ARGN})
