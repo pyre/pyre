@@ -20,6 +20,9 @@ CHECKER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "check.py")
 CLANG_FORMAT = os.path.join(os.path.dirname(CHECKER), "..", "..", "..", ".clang-format")
 # the current year, which the preamble of a touched file must carry
 YEAR = datetime.date.today().year
+# a misspelling for the spell checker to catch, assembled here so the source that plants it
+# does not trip the spell check of this repository
+MISSPELLING = "t" + "eh"
 
 
 class SelfTestError(Exception):
@@ -181,7 +184,8 @@ def violations() -> None:
         write(
             root=root,
             name="bad.py",
-            text=preamble(comment="#", language="Python") + "\n\n# teh answer\nx=[1,2 ,3]\n",
+            text=preamble(comment="#", language="Python")
+            + f"\n\n# {MISSPELLING} answer\nx=[1,2 ,3]\n",
         )
         # a c++ source that is not formatted
         write(
@@ -210,7 +214,7 @@ def violations() -> None:
             # or else it let everything through
             raise SelfTestError(f"violations passed:\n{report}")
         # and every check caught its violation
-        expect(report=report, check="spelling", needle="teh")
+        expect(report=report, check="spelling", needle=MISSPELLING)
         expect(report=report, check="python", needle="bad.py")
         expect(report=report, check="cxx", needle="bad.cc")
         expect(report=report, check="preambles", needle="bad.py: does not end")
