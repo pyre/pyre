@@ -21,6 +21,8 @@ namespace pyre::cuda::py {
     void cublas(py::module &);
     // the cusolver bindings
     void cusolver(py::module &);
+    // the curand bindings
+    void curand(py::module &);
 } // namespace pyre::cuda::py
 
 
