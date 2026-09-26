@@ -16,6 +16,10 @@
 #include <vector>
 // the cuda runtime
 #include <cuda_runtime.h>
+// the cuda libraries
+#include <cublas_v2.h>
+#include <cusolverDn.h>
+#include <curand.h>
 // pybind11
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>

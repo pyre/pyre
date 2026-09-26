@@ -22,6 +22,8 @@ PYBIND11_MODULE(cuda, m)
     pyre::cuda::py::api(m);
     // the grids on managed memory
     pyre::cuda::py::grids(m);
+    // the cublas bindings
+    pyre::cuda::py::cublas(m);
     // all done
     return;
 }
