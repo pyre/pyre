@@ -56,7 +56,7 @@ class Mapping:
         # unpack
         key, node = value
         # store
-        self.data[key] = noe
+        self.data[key] = node
         # all done
         return self
 
