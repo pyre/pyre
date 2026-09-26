@@ -14,6 +14,8 @@
 #include "forward.h"
 // the type-erased grid
 #include "AnyGrid.h"
+// the translation of python operands for in-place arithmetic
+#include "inplace.h"
 
 
 // the binding of the grid class, shared by every extension that makes grids
