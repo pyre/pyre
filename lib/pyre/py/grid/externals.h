@@ -10,6 +10,7 @@
 
 // externals
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <stdexcept>
@@ -26,6 +27,8 @@
 #include <pyre/memory.h>
 // the buffer protocol description of a cell type
 #include <pyre/py/memory/format.h>
+// the structures of the dlpack exchange protocol
+#include "dlpack.h"
 
 
 // type aliases
