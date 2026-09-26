@@ -219,6 +219,7 @@ pyre_test_python_testcase(tests/pyre.pkg/schemata/timestamps.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/casting_reason.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/tuples.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/uris.py)
+pyre_test_python_testcase(tests/pyre.pkg/schemata/components_unresolved.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/typed.py)
 
 # the {ostreams} test requires setup+cleanup
