@@ -8,9 +8,12 @@
 #pragma once
 
 
-// support
-#include "cuda/memory.h"
-#include "cuda/grid.h"
+// the grids
+#include <pyre/grid.h>
+// the host storage, for the views
+#include <pyre/memory.h>
+// the cuda storage
+#include "../memory.h"
 
 
 // end of file

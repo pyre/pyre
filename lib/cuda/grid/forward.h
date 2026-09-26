@@ -8,9 +8,9 @@
 #pragma once
 
 
-// support
-#include "cuda/memory.h"
-#include "cuda/grid.h"
+// set up the namespace
+namespace pyre::cuda::grid {
+} // namespace pyre::cuda::grid
 
 
 // end of file

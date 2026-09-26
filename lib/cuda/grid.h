@@ -8,9 +8,9 @@
 #pragma once
 
 
-// support
-#include "cuda/memory.h"
-#include "cuda/grid.h"
+// grids over the memory cuda devices reach, and views of their cells for kernels
+// the api is in "grid/api.h"
+#include "grid/public.h"
 
 
 // end of file
