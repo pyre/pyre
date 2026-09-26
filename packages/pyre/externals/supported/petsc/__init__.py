@@ -11,5 +11,4 @@ from .PETSc import PETSc as protocol
 # and the implementations
 from .Default import Default
 
-
 # end of file

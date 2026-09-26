@@ -45,9 +45,7 @@ def test():
     # a scalar space, which is what a single-valued attribute lives on
     space = libh5.DataSpace()
     # lay an attribute down with my property list
-    g.createAttribute(
-        name="units", type=libh5.types.native.double, space=space, acpl=acpl
-    )
+    g.createAttribute(name="units", type=libh5.types.native.double, space=space, acpl=acpl)
     # it is there
     assert g.hasAttribute(name="units")
 

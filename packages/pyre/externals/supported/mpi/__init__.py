@@ -13,5 +13,4 @@ from .Default import Default
 from .OpenMPI import OpenMPI
 from .MPICH import MPICH
 
-
 # end of file

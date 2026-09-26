@@ -11,7 +11,6 @@ import re
 import subprocess
 import sys
 
-
 # shell detection
 isBASH = True if sys.argv[-1] == "bash" else False
 isZSH = True if sys.argv[-1] == "zsh" else False
