@@ -14,6 +14,7 @@ tests.pyre.pkg.components.clean := __pycache__
 tests.pyre.pkg.descriptors.ostreams.clean := output.cfg
 tests.pyre.pkg.filesystem.local_make.clean := local-make
 tests.pyre.pkg.filesystem.zip.clean := sample.zip
+tests.pyre.pkg.filesystem.local_vanish.clean := local_vanish
 tests.pyre.pkg.schemata.ostreams.clean := output.cfg
 tests.pyre.pkg.primitives.path_resolution.clean := scratch
 tests.pyre.pkg.pyre.clean := __pycache__
@@ -37,6 +38,8 @@ tests.pyre.pkg.filesystem.local_make.pre := \
     tests.pyre.pkg.filesystem.local_open \
     tests.pyre.pkg.filesystem.zip \
     tests.pyre.pkg.filesystem.zip_open
+# and so does {filesystem.local_vanish}, which makes and removes a tree of its own there
+tests.pyre.pkg.filesystem.local_vanish.pre := $(tests.pyre.pkg.filesystem.local_make.pre)
 
 
 # special cases

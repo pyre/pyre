@@ -108,6 +108,7 @@ pyre_test_python_testcase(tests/pyre.pkg/filesystem/virtual_info.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/local.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/local_leaks.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/local_find.py)
+pyre_test_python_testcase(tests/pyre.pkg/filesystem/local_vanish.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/local_open.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/local_rootNonexistent.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/local_rootNotDirectory.py)
@@ -132,6 +133,15 @@ set_property(TEST tests.pyre.pkg.filesystem.local_make.py PROPERTY DEPENDS
   tests.pyre.pkg.filesystem.zip.py ;
   tests.pyre.pkg.filesystem.zip_open.py
   )
+# and so does {local_vanish}, which makes and removes a tree of its own there
+set_property(TEST tests.pyre.pkg.filesystem.local_vanish.py PROPERTY DEPENDS
+  tests.pyre.pkg.filesystem.local.py ;
+  tests.pyre.pkg.filesystem.local_find.py ;
+  tests.pyre.pkg.filesystem.local_leaks.py ;
+  tests.pyre.pkg.filesystem.local_open.py ;
+  tests.pyre.pkg.filesystem.zip.py ;
+  tests.pyre.pkg.filesystem.zip_open.py
+  )
 
 # also, it requires cleanup to remove the folder created by the test case
 set(filesystem_local_make_cleanup
@@ -140,6 +150,14 @@ set(filesystem_local_make_cleanup
 pyre_test_testcase_shell_fixture(
   "" "${filesystem_local_make_cleanup}"
   tests/pyre.pkg/filesystem/local_make.py
+  )
+# and so does {local_vanish}, for the tree it makes
+set(filesystem_local_vanish_cleanup
+  "rm -rf local_vanish"
+  )
+pyre_test_testcase_shell_fixture(
+  "" "${filesystem_local_vanish_cleanup}"
+  tests/pyre.pkg/filesystem/local_vanish.py
   )
 
 # the {zip} test requires setup+cleanup
