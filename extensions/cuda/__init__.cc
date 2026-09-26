@@ -18,6 +18,8 @@ PYBIND11_MODULE(cuda, m)
 {
     // the docstring
     m.doc() = "the cuda extension module";
+    // the grids on managed memory
+    pyre::cuda::py::grids(m);
     // all done
     return;
 }
