@@ -192,6 +192,11 @@ constexpr auto
 pyre::math::asin(double x) -> double
 {
     if (std::is_constant_evaluated()) {
+        // outside the domain there is no answer, and the standard library says so with a NaN;
+        // say the same here, so the two paths agree whichever one the compiler takes
+        if (x > 1.0 || x < -1.0) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
         // pin the endpoints: the {atan} argument would divide by zero at |x| == 1
         if (x == 1.0) {
             return M_PI / 2.0;
@@ -211,6 +216,11 @@ constexpr auto
 pyre::math::acos(double x) -> double
 {
     if (std::is_constant_evaluated()) {
+        // outside the domain there is no answer; say so with a NaN directly, since arithmetic
+        // on one is not a constant expression
+        if (x > 1.0 || x < -1.0) {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
         // use the identity {acos(x) = pi/2 - asin(x)}; valid across the whole domain and
         // correctly landing in [0, pi] for negative {x} where {atan(sqrt(1 - x^2) / x)} would not
         return M_PI / 2.0 - pyre::math::asin(x);
