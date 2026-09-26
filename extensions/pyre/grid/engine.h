@@ -8,6 +8,10 @@
 #pragma once
 
 
+// the vocabulary of in-place arithmetic
+#include <pyre/py/grid/arithmetic.h>
+
+
 // the engine that reaches the cells of grids on host storage
 class pyre::py::grid::HostEngine {
     // types
@@ -19,6 +23,16 @@ public:
 public:
     // make the cells within reach of the host; they always are
     static auto access() -> void;
+    // whether the engine reaches cells in host memory
+    static constexpr bool reachesHost = true;
+    // combine the cells of {source} into the cells of {target}
+    static auto apply(
+        arithmetic::Operation op, arithmetic::Cell cell, const arithmetic::Layout & target,
+        const arithmetic::Layout & source) -> void;
+    // combine {value} into the cells of {target}
+    static auto apply(
+        arithmetic::Operation op, arithmetic::Cell cell, const arithmetic::Layout & target,
+        const arithmetic::Scalar & value) -> void;
 
     // metamethods
 public:
