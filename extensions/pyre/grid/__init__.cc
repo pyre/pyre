@@ -17,6 +17,10 @@
 #include <pyre/py/grid/AnyMosaic.h>
 // the choice of a cell type from its name
 #include <pyre/py/grid/dispatch.h>
+// the binding of the grid class
+#include <pyre/py/grid/bindings.h>
+// the engine that reaches host cells
+#include "engine.h"
 
 
 // the type-erased grid measures with a signed integer, matching the c++ library
@@ -258,87 +262,16 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the docstring
         "multi-dimensional arrays over pluggable memory");
 
-    // the single type-erased grid class, presenting the python buffer protocol so any consumer of
-    // that protocol can view its cells with no copy
-    auto cls = py::class_<AnyGrid>(
+    // the grid class, whose cells live on host storage
+    bindGrid<HostEngine>(
         // in the submodule
         grid,
         // named
         "Grid",
-        // exposing the buffer protocol
-        py::buffer_protocol(),
         // the docstring
-        "a multi-dimensional array whose cells live behind a storage strategy");
-
-    // wire the buffer protocol to the type-erased grid's own description
-    cls.def_buffer([](AnyGrid & self) -> py::buffer_info { return self.view(); });
-
-    // the extent along each axis
-    cls.def_property_readonly(
-        // the name
-        "shape",
-        // the getter
-        &AnyGrid::shape,
-        // the docstring
-        "my extent along each axis");
-
-    // the strides, in cells
-    cls.def_property_readonly(
-        // the name
-        "strides",
-        // the getter
-        &AnyGrid::strides,
-        // the docstring
-        "the distance between consecutive cells along each axis, in cells");
-
-    // the number of axes
-    cls.def_property_readonly(
-        // the name
-        "rank",
-        // the getter
-        &AnyGrid::rank,
-        // the docstring
-        "my number of axes");
-
-    // whether my cells may be written
-    cls.def_property_readonly(
-        // the name
-        "writable",
-        // the getter
-        &AnyGrid::writable,
-        // the docstring
-        "whether python may write through to my cells");
-
-    // the storage strategy that backs me
-    cls.def_property_readonly(
-        // the name
-        "strategy",
-        // the getter
-        &AnyGrid::strategy,
-        // the docstring
-        "the storage strategy that holds my cells");
-
-    // read access: {g[i, j, ...]}
-    cls.def(
-        // the name
-        "__getitem__",
-        // the implementation
-        &AnyGrid::getitem,
-        // the signature
-        "index"_a,
-        // the docstring
-        "the cell at a full index, or a sub-grid for a partial or sliced {index}");
-
-    // write access: {g[i, j, ...] = v}
-    cls.def(
-        // the name
-        "__setitem__",
-        // the implementation
-        &AnyGrid::setitem,
-        // the signature
-        "index"_a, "value"_a,
-        // the docstring
-        "write {value} into the cell at a full integer {index}");
+        "a multi-dimensional array whose cells live behind a storage strategy",
+        // shared with other modules
+        false);
 
     // the type-erased mosaic: an out-of-core grid whose cells live on demand-materialized
     // pages, one per tile, reached tile by tile through zero-copy panes
