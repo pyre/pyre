@@ -43,9 +43,8 @@ SOURCES = (
 # the c++ sources clang-format looks after
 CXX = (".h", ".icc", ".cc", ".cpp", ".cu")
 # the trees that are exempt from the preamble and c++ formatting checks: project templates hold
-# substitution markers that are not valid c++ until they are expanded, and the external
-# fixtures stand in for headers that belong to other projects
-EXEMPT = ("templates/", "tests/pyre.pkg/externals/")
+# substitution markers that are not valid c++ until they are expanded
+EXEMPT = ("templates/",)
 
 # a commit subject names the area it touches, then says what the commit does: an area is a
 # path, a package, or a c++ namespace, and several can be listed separated by commas
