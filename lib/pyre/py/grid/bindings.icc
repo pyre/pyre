@@ -165,6 +165,21 @@ pyre::py::grid::bindGrid(py::module & module, const char * name, const char * do
         "for dlpack 1.0 or later with {max_version}; {stream}, {dl_device}, and {copy} are "
         "accepted and left alone");
 
+    // the cuda array interface description of my cells
+    cls.def_property_readonly(
+        // the name
+        "__cuda_array_interface__",
+        // the getter
+        [](const AnyGrid & self) -> py::dict {
+            // the description promises cells that are ready to be read
+            engineT::access();
+            // describe them
+            return self.cudaArrayInterface();
+        },
+        // the docstring
+        "the version 3 cuda array interface description of my cells; only grids on storage the "
+        "device can reach have one");
+
     // hand off the class, so the caller can add to it
     return cls;
 }
