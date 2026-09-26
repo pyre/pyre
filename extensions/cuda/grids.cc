@@ -11,8 +11,8 @@
 #include "forward.h"
 // the engine of managed storage
 #include "engine.h"
-// the cuda storage strategies
-#include <pyre/cuda/memory.h>
+// the grids over cuda storage
+#include <pyre/cuda/grid.h>
 // the type-erased grid, the binding of its class, and the choice of cell type
 #include <pyre/py/grid/AnyGrid.h>
 #include <pyre/py/grid/bindings.h>
@@ -34,16 +34,13 @@ namespace {
     template <class cellT>
     auto makeManaged(const shape_t & shape) -> AnyGrid
     {
-        // the storage
-        using storage_t = pyre::cuda::memory::managed_t<cellT>;
-        // and the grid over it
-        using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
+        // the grid
+        using grid_t = pyre::cuda::grid::managed_t<packing_t, cellT>;
         // lay out the shape
         auto packing = packing_t(shape);
-        // put enough cells on managed memory
-        auto storage = storage_t { packing.cells() };
-        // make the grid and type-erase it; managed storage owns its cells
-        return pyre::py::grid::anyGrid(grid_t { packing, storage }, "managed");
+        // make the grid over enough cells on managed memory and type-erase it; managed storage
+        // owns its cells
+        return pyre::py::grid::anyGrid(grid_t { packing, packing.cells() }, "managed");
     }
 } // namespace
 
