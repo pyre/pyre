@@ -39,5 +39,12 @@ from .DeviceManager import DeviceManager
 # the manager of the devices
 manager = DeviceManager()
 
+# the class of grids whose cells live in managed memory
+grid = libcuda.Grid
+# the factory that allocates a grid over a fresh block of managed memory
+managed = libcuda.managed
+# wait for the work queued on the device
+synchronize = libcuda.synchronize
+
 
 # end of file
