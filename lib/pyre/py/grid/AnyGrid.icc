@@ -330,7 +330,21 @@ pyre::py::grid::AnyGrid::setitem(const py::object & key, const py::object & valu
 {
     // resolve the index against my layout
     const auto r = resolve(key);
-    // only a full integer index, naming a single cell, may be assigned this way
+    // an augmented assignment on a sub-grid, {g[i:j] += v}, ends by assigning back the sub-grid
+    // it read, which already holds the result
+    if (!r.scalar && py::isinstance<AnyGrid>(value)) {
+        // get the sub-grid
+        const auto & other = value.cast<const AnyGrid &>();
+        // the address of the first cell {key} selects
+        const auto * first =
+            static_cast<const char *>(_data) + r.offset * static_cast<size_type>(_itemsize);
+        // if it is the same view of my cells
+        if (other._data == first && other._shape == r.shape && other._strides == r.strides) {
+            // there is nothing to write
+            return;
+        }
+    }
+    // otherwise, only a full integer index, naming a single cell, may be assigned this way
     if (!r.scalar) {
         // a slice target would need array assignment; steer the caller to a view instead
         throw py::index_error(
