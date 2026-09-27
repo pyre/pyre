@@ -13,6 +13,7 @@
 #include <complex>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <vector>
 // support
 #include <pyre/h5.h>
