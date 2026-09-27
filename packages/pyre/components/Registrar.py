@@ -28,6 +28,7 @@ class Registrar:
     # public data
     protocols = None  # the set of known protocols
     components = None  # the map of component classes to their instances
+    names = None  # the map of component classes to their instances by name
     implementers = None  # a map of protocols to component classes that implement them
 
     # interface
@@ -59,6 +60,8 @@ class Registrar:
         """
         # prime the map of components to their instances
         self.components[component] = weakref.WeakSet()
+        # and the map of components to their instances by name
+        self.names[component] = weakref.WeakValueDictionary()
         # update the map of protocols it implements
         for protocol in self.findRegisteredProtocols(component):
             # by registering this component as an implementor
@@ -74,8 +77,16 @@ class Registrar:
         """
         Register this component instance
         """
+        # get its class
+        componentClass = type(instance)
         # add this instance to the set of instances of its class
-        self.components[type(instance)].add(instance)
+        self.components[componentClass].add(instance)
+        # get its name
+        name = instance.pyre_name
+        # if it has one
+        if name is not None:
+            # file it under its name, so it can be found without a search
+            self.names[componentClass][name] = instance
         # notify all observers
         for observer in self.instanceObservers:
             # by invoking the hook
@@ -175,15 +186,10 @@ class Registrar:
 
     def retrieveComponentByName(self, componentClass, name):
         """
-        Look through the registered instances of {componentClass} for one with the given {name}
+        Look up the registered instance of {componentClass} with the given {name}
         """
-        # go through the pile
-        for instance in self.components[componentClass]:
-            # return the instance whose the name matches the given one
-            if instance.pyre_name == name:
-                return instance
-        # otherwise, no match
-        return None
+        # the index knows, and it forgets instances as soon as nobody else holds them
+        return self.names[componentClass].get(name)
 
     # meta-methods
     def __init__(self, **kwds):
@@ -191,6 +197,8 @@ class Registrar:
         super().__init__(**kwds)
         # map: components -> their instances
         self.components = {}
+        # map: components -> their instances by name
+        self.names = {}
         # the known interfaces
         self.protocols = set()
         # map: protocols -> components that implement them
