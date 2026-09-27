@@ -11,6 +11,8 @@
 pyre_test_python_testcase(tests/h5.ext/sanity.py)
 # the property lists, each proving that what it was told is what it reports
 pyre_test_python_testcase(tests/h5.ext/acpl.py)
+# the values of attributes
+pyre_test_python_testcase(tests/h5.ext/attribute_values.py)
 pyre_test_python_testcase(tests/h5.ext/dcpl_fill.py)
 pyre_test_python_testcase(tests/h5.ext/fapl.py)
 pyre_test_python_testcase(tests/h5.ext/fcpl.py)
@@ -34,6 +36,7 @@ pyre_test_python_testcase(tests/h5.ext/page_buffer.py)
 # the drivers leave their scratch products behind so they can be inspected; the harness
 # sweeps them, each after the driver that makes it
 pyre_test_python_cleanup(h5_ext_acpl.h5 tests/h5.ext/acpl.py)
+pyre_test_python_cleanup(h5_ext_attribute_values.h5 tests/h5.ext/attribute_values.py)
 pyre_test_python_cleanup(h5_ext_dcpl_fill.h5 tests/h5.ext/dcpl_fill.py)
 pyre_test_python_cleanup(h5_ext_fapl.h5 tests/h5.ext/fapl.py)
 pyre_test_python_cleanup(h5_ext_fcpl.h5 tests/h5.ext/fcpl.py)
