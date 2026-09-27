@@ -20,6 +20,7 @@ pyre::cuda::memory::Managed<T, isConst>::Managed(cell_count_type cells) :
     // the cuda {malloc} api is not RAII friendly, so we initialize with a {nullptr} and
     // replace it with the actual allocation
     _data { nullptr },
+    _raw { nullptr },
     _cells { cells }
 {
     // grab a spot
@@ -87,19 +88,22 @@ pyre::cuda::memory::Managed<T, isConst>::Managed(cell_count_type cells) :
 
     // replace the {nullptr} with the new block and register the deallocator
     _data.reset(spot, destructor);
+    // and remember the address
+    _raw = spot;
 }
 
 
 template <class T, bool isConst>
 pyre::cuda::memory::Managed<T, isConst>::Managed(handle_type handle, cell_count_type cells) :
     _data { handle },
+    _raw { handle.get() },
     _cells { cells }
 {}
 
 // interface
 // get the number of cells in the block
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::cuda::memory::Managed<T, isConst>::cells() const -> cell_count_type
 {
     // easy
@@ -109,7 +113,7 @@ pyre::cuda::memory::Managed<T, isConst>::cells() const -> cell_count_type
 
 // get the memory footprint of the block
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::cuda::memory::Managed<T, isConst>::bytes() const -> size_type
 {
     // scale the number of cells by the cell size
@@ -119,11 +123,11 @@ pyre::cuda::memory::Managed<T, isConst>::bytes() const -> size_type
 
 // access to the data pointer
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::cuda::memory::Managed<T, isConst>::data() const -> pointer
 {
     // return the raw data pointer
-    return _data.get();
+    return _raw;
 }
 
 
@@ -137,9 +141,19 @@ pyre::cuda::memory::Managed<T, isConst>::handle() const -> handle_type
 }
 
 
-// iterator support
 template <class T, bool isConst>
 auto
+pyre::cuda::memory::Managed<T, isConst>::view() const -> pyre::memory::View<T, isConst>
+{
+    // the raw address and my cell count, without the ownership; the caller must keep me alive
+    // for as long as the view is in use
+    return pyre::memory::View<T, isConst>(data(), cells());
+}
+
+
+// iterator support
+template <class T, bool isConst>
+PYRE_HOST_DEVICE auto
 pyre::cuda::memory::Managed<T, isConst>::begin() const -> pointer
 {
     // the beginning of the block
@@ -148,7 +162,7 @@ pyre::cuda::memory::Managed<T, isConst>::begin() const -> pointer
 
 
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::cuda::memory::Managed<T, isConst>::end() const -> pointer
 {
     // one past the last cell in the block
@@ -181,7 +195,7 @@ pyre::cuda::memory::Managed<T, isConst>::at(difference_type pos) const -> refere
 
 
 template <class T, bool isConst>
-auto
+PYRE_HOST_DEVICE auto
 pyre::cuda::memory::Managed<T, isConst>::operator[](difference_type pos) const -> reference
 {
     // return a reference to the cell at {pos}

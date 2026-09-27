@@ -11,6 +11,7 @@
 # cuda tests managed memory
 pyre_test_driver_cuda(tests/cuda.lib/managed.cc)
 pyre_test_driver_cuda(tests/cuda.lib/grid_managed_sanity.cc)
+pyre_test_driver_cuda(tests/cuda.lib/grid_kernel.cu)
 
 # cuda tests pinned memory
 pyre_test_driver_cuda(tests/cuda.lib/pinned.cc)

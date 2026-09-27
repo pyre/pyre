@@ -1,0 +1,60 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "support.h"
+
+
+// the library handle carried by the integer {handle}
+template <class handleT>
+inline auto
+pyre::cuda::py::toHandle(std::uintptr_t handle) -> handleT
+{
+    // a handle is an opaque pointer, spelled by the bits of the integer
+    return reinterpret_cast<handleT>(handle);
+}
+
+
+// the integer python carries for the library {handle}
+template <class handleT>
+inline auto
+pyre::cuda::py::fromHandle(handleT handle) -> std::uintptr_t
+{
+    // the bits of the opaque pointer, as an integer
+    return reinterpret_cast<std::uintptr_t>(handle);
+}
+
+
+// the device address of the cells of {grid}
+inline auto
+pyre::cuda::py::data(pyre::py::grid::AnyGrid & grid, char expected, const char * routine) -> void *
+{
+    // the device must be able to reach the cells
+    if (grid.dlpackDevice().first == pyre::py::grid::kDLCPU) {
+        // or the library would read memory that is not there
+        throw py::type_error(
+            string_t(routine) + ": a grid on '" + grid.strategy()
+            + "' storage is out of reach of the device");
+    }
+    // describe the cells
+    const auto info = grid.view();
+    // they must be of the type the routine is named for
+    if (info.format.size() != 1 || info.format[0] != expected) {
+        // or the library would misread them
+        throw py::type_error(
+            string_t(routine) + ": expected cells of type '" + expected + "', got '" + info.format
+            + "'");
+    }
+    // hand off the address
+    return info.ptr;
+}
+
+
+// end of file

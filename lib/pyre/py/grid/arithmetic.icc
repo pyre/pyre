@@ -1,0 +1,142 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "arithmetic.h"
+
+
+// the offset of the cell at row major position {k} of a {layout}
+PYRE_HOST_DEVICE inline auto
+pyre::py::grid::arithmetic::offset(const Layout & layout, std::int64_t k) -> std::int64_t
+{
+    // packed cells are where their flat index says
+    if (layout.contiguous) {
+        // so there is nothing to compute
+        return k;
+    }
+    // otherwise, start at the first cell
+    std::int64_t result = 0;
+    // and peel off the coordinates, fastest axis first
+    for (int axis = layout.rank - 1; axis >= 0; --axis) {
+        // the extent of this axis
+        const auto extent = layout.shape[axis];
+        // fold in the contribution of this axis
+        result += (k % extent) * layout.strides[axis];
+        // and move on to the slower axes
+        k /= extent;
+    }
+    // hand off the offset
+    return result;
+}
+
+
+// combine the cell {b} into the cell {a}
+PYRE_HOST_DEVICE_NOCHECK
+template <pyre::py::grid::arithmetic::Operation op, class cellT>
+PYRE_HOST_DEVICE inline auto
+pyre::py::grid::arithmetic::apply(cellT & a, const cellT & b) -> void
+{
+    // integers wrap around, the way numpy's do
+    if constexpr (std::is_integral_v<cellT>) {
+        // so compute on 64 unsigned bits, where wrapping around is defined
+        const auto x = static_cast<std::uint64_t>(a);
+        // both operands
+        const auto y = static_cast<std::uint64_t>(b);
+        // and keep the low bits of the sum
+        if constexpr (op == Operation::add) {
+            a = static_cast<cellT>(x + y);
+        }
+        // of the difference
+        else if constexpr (op == Operation::sub) {
+            a = static_cast<cellT>(x - y);
+        }
+        // or of the product; integer cells are never divided in place
+        else if constexpr (op == Operation::mul) {
+            a = static_cast<cellT>(x * y);
+        }
+    }
+    // everything else uses its own arithmetic
+    else {
+        // to add
+        if constexpr (op == Operation::add) {
+            a += b;
+        }
+        // to subtract
+        else if constexpr (op == Operation::sub) {
+            a -= b;
+        }
+        // to multiply
+        else if constexpr (op == Operation::mul) {
+            a *= b;
+        }
+        // and to divide
+        else if constexpr (op == Operation::div) {
+            a /= b;
+        }
+    }
+    // all done
+    return;
+}
+
+
+// the {scalar} operand, as a {cellT}
+PYRE_HOST_DEVICE_NOCHECK
+template <class cellT>
+PYRE_HOST_DEVICE inline auto
+pyre::py::grid::arithmetic::value(const Scalar & scalar) -> cellT
+{
+    // signed integers take the signed spelling
+    if constexpr (std::is_integral_v<cellT> && std::is_signed_v<cellT>) {
+        return static_cast<cellT>(scalar.i);
+    }
+    // unsigned integers take the unsigned one
+    else if constexpr (std::is_integral_v<cellT>) {
+        return static_cast<cellT>(scalar.u);
+    }
+    // floating point numbers take the real part
+    else if constexpr (std::is_floating_point_v<cellT>) {
+        return static_cast<cellT>(scalar.re);
+    }
+    // and complex numbers take both parts
+    else {
+        // in the precision of the cell
+        using real_t = typename cellT::value_type;
+        // build the number
+        return cellT(static_cast<real_t>(scalar.re), static_cast<real_t>(scalar.im));
+    }
+}
+
+
+// call {f} with the operation {op} as a compile time constant
+template <class functionT>
+inline auto
+pyre::py::grid::arithmetic::withOperation(Operation op, functionT && f) -> void
+{
+    // pick the operation
+    switch (op) {
+        // addition
+        case Operation::add:
+            return f(std::integral_constant<Operation, Operation::add> {});
+        // subtraction
+        case Operation::sub:
+            return f(std::integral_constant<Operation, Operation::sub> {});
+        // multiplication
+        case Operation::mul:
+            return f(std::integral_constant<Operation, Operation::mul> {});
+        // division
+        case Operation::div:
+            return f(std::integral_constant<Operation, Operation::div> {});
+    }
+    // all done
+    return;
+}
+
+
+// end of file

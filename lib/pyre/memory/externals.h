@@ -35,6 +35,21 @@
 #include <pyre/journal.h>
 #include <pyre/typelists.h>
 
+// the functions device code may call are marked for both sides when nvcc compiles
+#if defined(__CUDACC__)
+#define PYRE_HOST_DEVICE __host__ __device__
+#else
+#define PYRE_HOST_DEVICE
+#endif
+
+// nvcc checks both sides of templates that forward to their storage, even when the storage is
+// host only; the check is left to the storage
+#if defined(__CUDACC__)
+#define PYRE_HOST_DEVICE_NOCHECK _Pragma("nv_exec_check_disable")
+#else
+#define PYRE_HOST_DEVICE_NOCHECK
+#endif
+
 
 // aliases that define implementation choices
 namespace pyre::memory {

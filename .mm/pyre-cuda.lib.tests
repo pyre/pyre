@@ -12,6 +12,8 @@ pyre-cuda.lib.tests.extern := pyre-cuda.lib pyre.lib journal.lib cuda
 # c++ compiler arguments
 pyre-cuda.lib.tests.c++.defines += $(pyre.lib.c++.defines)
 pyre-cuda.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
+# kernels index grids through the constexpr machinery of the standard library
+pyre-cuda.lib.tests.cuda.flags += $(nvcc.std.c++20) --expt-relaxed-constexpr
 
 
 # end of file

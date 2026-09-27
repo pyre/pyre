@@ -46,6 +46,8 @@ dependencies = ["PyYAML"]
 # optional: the round trip editor of yaml documents rides on ruamel.yaml
 [project.optional-dependencies]
 editing = ["ruamel.yaml"]
+# optional: the devices of pyre.cuda are reached through cuda-python
+cuda = ["cuda-python"]
 
 # formatting: wrap at column 100
 [tool.black]

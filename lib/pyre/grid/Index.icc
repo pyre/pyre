@@ -80,7 +80,7 @@ pyre::grid::Index<Rank>::rank() noexcept -> size_type
 
 // element access
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Index<Rank>::operator[](size_type axis) noexcept -> reference
 {
     // hand over the coordinate along {axis}, trusting the caller to stay in range
@@ -88,7 +88,7 @@ pyre::grid::Index<Rank>::operator[](size_type axis) noexcept -> reference
 }
 
 template <std::size_t Rank>
-constexpr auto
+PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Index<Rank>::operator[](size_type axis) const noexcept -> const_reference
 {
     // hand over the coordinate along {axis} read-only

@@ -1,0 +1,86 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "dispatch.h"
+
+
+// call {f} with the native type of the cell named {cell}
+template <class functionT>
+auto
+pyre::py::grid::dispatchBase(const string_t & cell, const string_t & requested, functionT && f)
+{
+    // signed integers
+    if (cell == "int8")
+        return f.template operator()<pyre::memory::int8_t>();
+    if (cell == "int16")
+        return f.template operator()<pyre::memory::int16_t>();
+    if (cell == "int32")
+        return f.template operator()<pyre::memory::int32_t>();
+    if (cell == "int64")
+        return f.template operator()<pyre::memory::int64_t>();
+    // unsigned integers
+    if (cell == "uint8")
+        return f.template operator()<pyre::memory::uint8_t>();
+    if (cell == "uint16")
+        return f.template operator()<pyre::memory::uint16_t>();
+    if (cell == "uint32")
+        return f.template operator()<pyre::memory::uint32_t>();
+    if (cell == "uint64")
+        return f.template operator()<pyre::memory::uint64_t>();
+    // floating point
+    if (cell == "float32")
+        return f.template operator()<pyre::memory::float32_t>();
+    if (cell == "float64")
+        return f.template operator()<pyre::memory::float64_t>();
+    // complex
+    if (cell == "complex64")
+        return f.template operator()<pyre::memory::complex64_t>();
+    if (cell == "complex128")
+        return f.template operator()<pyre::memory::complex128_t>();
+    // anything else is a caller mistake, refused with a python exception
+    throw py::value_error("unsupported grid cell type '" + requested + "'");
+}
+
+
+// call {f} with the type of the cell named {cell}, honoring a trailing byte order marker
+template <class functionT>
+auto
+pyre::py::grid::dispatchCell(const string_t & cell, functionT && f)
+{
+    // the marker is the last two characters, if there is room for a base name before them
+    if (cell.size() > 2) {
+        // the base name
+        const auto base = cell.substr(0, cell.size() - 2);
+        // and the marker
+        const auto marker = cell.substr(cell.size() - 2);
+        // big endian
+        if (marker == "be") {
+            // wraps the base cell in the big endian spelling
+            return dispatchBase(base, cell, [&]<class cellT>() {
+                // by handing {f} the wrapped cell
+                return f.template operator()<pyre::memory::big_t<cellT>>();
+            });
+        }
+        // little endian
+        if (marker == "le") {
+            // wraps the base cell in the little endian spelling
+            return dispatchBase(base, cell, [&]<class cellT>() {
+                // by handing {f} the wrapped cell
+                return f.template operator()<pyre::memory::little_t<cellT>>();
+            });
+        }
+    }
+    // without a marker, the name is a native cell
+    return dispatchBase(cell, cell, std::forward<functionT>(f));
+}
+
+
+// end of file

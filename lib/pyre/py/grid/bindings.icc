@@ -1,0 +1,212 @@
+// -*- C++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// support
+#include "bindings.h"
+
+
+// bind the grid class as {name} in {module}
+template <class engineT>
+auto
+pyre::py::grid::bindGrid(py::module & module, const char * name, const char * docstring, bool local)
+    -> py::class_<AnyGrid>
+{
+    // the argument literals
+    using namespace pybind11::literals;
+
+    // the type-erased grid class, presenting the python buffer protocol so any consumer of that
+    // protocol can view its cells with no copy
+    auto cls = py::class_<AnyGrid>(
+        // in the module
+        module,
+        // named
+        name,
+        // exposing the buffer protocol
+        py::buffer_protocol(),
+        // registered for this module alone, when asked
+        py::module_local(local),
+        // the docstring
+        docstring);
+
+    // wire the buffer protocol to the type-erased grid's own description
+    cls.def_buffer([](AnyGrid & self) -> py::buffer_info {
+        // make sure the cells are within reach of the host
+        engineT::access();
+        // and describe them
+        return self.view();
+    });
+
+    // the extent along each axis
+    cls.def_property_readonly(
+        // the name
+        "shape",
+        // the getter
+        &AnyGrid::shape,
+        // the docstring
+        "my extent along each axis");
+
+    // the strides, in cells
+    cls.def_property_readonly(
+        // the name
+        "strides",
+        // the getter
+        &AnyGrid::strides,
+        // the docstring
+        "the distance between consecutive cells along each axis, in cells");
+
+    // the number of axes
+    cls.def_property_readonly(
+        // the name
+        "rank",
+        // the getter
+        &AnyGrid::rank,
+        // the docstring
+        "my number of axes");
+
+    // whether my cells may be written
+    cls.def_property_readonly(
+        // the name
+        "writable",
+        // the getter
+        &AnyGrid::writable,
+        // the docstring
+        "whether python may write through to my cells");
+
+    // the storage strategy that backs me
+    cls.def_property_readonly(
+        // the name
+        "strategy",
+        // the getter
+        &AnyGrid::strategy,
+        // the docstring
+        "the storage strategy that holds my cells");
+
+    // read access: {g[i, j, ...]}
+    cls.def(
+        // the name
+        "__getitem__",
+        // the implementation
+        [](const AnyGrid & self, const py::object & key) -> py::object {
+            // make sure the cells are within reach of the host
+            engineT::access();
+            // and look up the cell, or the sub-grid
+            return self.getitem(key);
+        },
+        // the signature
+        "index"_a,
+        // the docstring
+        "the cell at a full index, or a sub-grid for a partial or sliced {index}");
+
+    // write access: {g[i, j, ...] = v}
+    cls.def(
+        // the name
+        "__setitem__",
+        // the implementation
+        [](AnyGrid & self, const py::object & key, const py::object & value) -> void {
+            // make sure the cells are within reach of the host
+            engineT::access();
+            // write the cell
+            self.setitem(key, value);
+            // all done
+            return;
+        },
+        // the signature
+        "index"_a, "value"_a,
+        // the docstring
+        "write {value} into the cell at a full integer {index}");
+
+    // the address of my first cell
+    cls.def_property_readonly(
+        // the name
+        "address",
+        // the getter
+        &AnyGrid::address,
+        // the docstring
+        "the address of my first cell, as an integer, for code that takes raw pointers");
+
+    // the device my cells live on
+    cls.def(
+        // the name
+        "__dlpack_device__",
+        // the implementation
+        &AnyGrid::dlpackDevice,
+        // the docstring
+        "the {(device_type, device_id)} pair that says where my cells live");
+
+    // the dlpack description of my cells
+    cls.def(
+        // the name
+        "__dlpack__",
+        // the implementation
+        [](const AnyGrid & self, const py::kwargs & kwds) -> py::capsule {
+            // assume a consumer that predates versioning
+            bool versioned = false;
+            // unless it asks for a version
+            if (kwds.contains("max_version") && !kwds["max_version"].is_none()) {
+                // a {(major, minor)} pair
+                const auto version = kwds["max_version"].cast<py::tuple>();
+                // the versioned tensor is dlpack 1.0 and later
+                versioned = version.size() > 0 && version[0].cast<int>() >= 1;
+            }
+            // the consumer may read the cells as soon as it has them
+            engineT::access();
+            // describe them
+            return self.dlpack(versioned);
+        },
+        // the docstring
+        "a capsule with the dlpack description of my cells, versioned for consumers that ask "
+        "for dlpack 1.0 or later with {max_version}; {stream}, {dl_device}, and {copy} are "
+        "accepted and left alone");
+
+    // the cuda array interface description of my cells
+    cls.def_property_readonly(
+        // the name
+        "__cuda_array_interface__",
+        // the getter
+        [](const AnyGrid & self) -> py::dict {
+            // the description promises cells that are ready to be read
+            engineT::access();
+            // describe them
+            return self.cudaArrayInterface();
+        },
+        // the docstring
+        "the version 3 cuda array interface description of my cells; only grids on storage the "
+        "device can reach have one");
+
+    // in-place arithmetic, with a grid of my shape and cell type, a buffer, or a number
+    for (const auto & [method, op] :
+         std::initializer_list<std::pair<const char *, arithmetic::Operation>> {
+             { "__iadd__", arithmetic::Operation::add },
+             { "__isub__", arithmetic::Operation::sub },
+             { "__imul__", arithmetic::Operation::mul },
+             { "__itruediv__", arithmetic::Operation::div },
+         }) {
+        // bind the operator
+        cls.def(
+            // the name
+            method,
+            // the implementation
+            [op](py::object self, py::object other) -> py::object {
+                // let the engine combine the operands
+                return inplace::apply<engineT>(self, other, op);
+            },
+            // the signature
+            "other"_a,
+            // the docstring
+            "combine {other}, a grid of my shape and cell type, a buffer, or a number, into my "
+            "cells");
+    }
+
+    // hand off the class, so the caller can add to it
+    return cls;
+}
+
+
+// end of file
