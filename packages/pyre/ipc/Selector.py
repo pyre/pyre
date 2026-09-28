@@ -10,6 +10,7 @@ import os
 import pyre
 import select
 import collections
+import weakref
 
 # my interface
 from . import dispatcher
@@ -35,6 +36,8 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         """
         Add {call} to the list of routines to call when {channel} is ready to be read
         """
+        # interest in a channel that was forgotten revives it
+        self._forgotten.discard(channel)
         # add it to the pile
         self._read[channel.inbound].append(self._event(channel=channel, handler=call, **kwds))
         # and return
@@ -45,6 +48,8 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         """
         Add {call} to the list of routines to call when {channel} is ready to be written
         """
+        # interest in a channel that was forgotten revives it
+        self._forgotten.discard(channel)
         # add it to the pile
         self._write[channel.outbound].append(self._event(channel=channel, handler=call, **kwds))
         # and return
@@ -60,6 +65,24 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         self._exception[channel.inbound].append(self._event(channel=channel, handler=call, **kwds))
         self._exception[channel.outbound].append(self._event(channel=channel, handler=call, **kwds))
         # and return
+        return
+
+    @pyre.export
+    def forget(self, channel):
+        """
+        Stop watching {channel}: drop every handler registered on it, including the ones that
+        are running right now, so a channel that is about to be closed leaves nothing behind
+        under descriptor numbers that will be recycled
+        """
+        # the handlers that are running right now must not be put back when they are done
+        self._forgotten.add(channel)
+        # go through the endpoints of the channel
+        for endpoint in {channel.inbound, channel.outbound}:
+            # and drop its handlers from every pile
+            self._read.pop(endpoint, None)
+            self._write.pop(endpoint, None)
+            self._exception.pop(endpoint, None)
+        # all done
         return
 
     @pyre.export
@@ -242,6 +265,8 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
                 self._inflight.remove(pile)
                 # the handlers that did not get their turn keep their place
                 survivors += pile[done:]
+                # unless their channel was forgotten while the pile was in flight
+                survivors = [event for event in survivors if event.channel not in self._forgotten]
                 # if anything is going back
                 if survivors:
                     # put it back, ahead of whatever interest arrived while the handlers ran
@@ -288,6 +313,9 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         self._exception = collections.defaultdict(list)
         # the piles of events whose handlers are running
         self._inflight = []
+        # the channels that were forgotten, whose running handlers must not be put back; they
+        # are held weakly, so the record vanishes with the channel
+        self._forgotten = weakref.WeakSet()
 
         # my debug aspect
         import journal
