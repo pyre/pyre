@@ -71,14 +71,20 @@ class Configurable(Dashboard):
         # all done
         return
 
-    def pyre_showConfiguration(self, indent="", deep=False):
+    def pyre_showConfiguration(self, indent="", deep=False, seen=None):
         """
-        Traverse my configuration tree and display trait metadata
+        Traverse my configuration tree and display trait metadata; the values of secret traits
+        are not shown, and a configurable met again, e.g. because the tree has a cycle, is
+        referred to by name rather than shown again
         """
         # prepare the indent levels
         one = indent + " " * 2
         two = one + " " * 2
         three = two + " " * 2
+        # the configurables shown so far
+        seen = set() if seen is None else seen
+        # which now include me
+        seen.add(id(self))
         # sign on
         yield "{}{.pyre_name}:".format(indent, self)
 
@@ -97,16 +103,24 @@ class Configurable(Dashboard):
             # show me
             yield "{}{.name}:".format(one, trait)
             yield "{}schema: {}".format(two, trait.typename)
-            yield "{}value: {}".format(two, value)
-            yield "{}default: {}".format(two, default)
+            # unless my value is a secret
+            yield "{}value: {}".format(two, self._pyre_secret if trait.secret else value)
+            # and so is my default, which could hold one
+            yield "{}default: {}".format(two, self._pyre_secret if trait.secret else default)
             yield "{}tip: {}".format(two, tip)
 
             # if the value itself is a configurable
             if isinstance(value, Configurable):
                 # mark it
                 yield "{}configuration:".format(two)
-                # and describe it
-                yield from value.pyre_showConfiguration(indent=three, deep=deep)
+                # if it has been shown already
+                if id(value) in seen:
+                    # refer to it
+                    yield "{}see {.pyre_name}".format(three, value)
+                    # and move on
+                    continue
+                # otherwise, describe it
+                yield from value.pyre_showConfiguration(indent=three, deep=deep, seen=seen)
         # all done
         return
 
@@ -190,11 +204,12 @@ class Configurable(Dashboard):
                 # and move on
                 continue
 
-            # with properties, attach the property meta-data
+            # with properties, attach the property meta-data, keeping secrets out of it
             properties[traitName] = {
                 "name": traitName,
-                "value": trait.json(value),
-                "default": trait.default,
+                "value": None if trait.secret else trait.json(value),
+                "default": None if trait.secret else trait.default,
+                "secret": trait.secret,
             }
 
         # all done
@@ -532,6 +547,10 @@ class Configurable(Dashboard):
 
         # all done
         return
+
+    # private data
+    # what stands in for the value of a secret trait whenever the configuration is displayed
+    _pyre_secret = "(secret)"
 
 
 # end of file

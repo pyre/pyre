@@ -42,6 +42,9 @@ class Trait(stem.variable, Dashboard):
     isFacility = False
     # predicate that indicates whether this trait is subject to runtime configuration
     isConfigurable = False
+    # predicate that indicates whether my value must be kept from anybody who asks to see the
+    # configuration, e.g. because it is a credential; set it on the trait, the way {doc} is set
+    secret = False
 
     # framework support
     def classConfigured(self, **kwds):
