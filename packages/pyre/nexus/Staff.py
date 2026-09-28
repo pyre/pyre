@@ -75,6 +75,8 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         self.pending[task] = [callback]
         # add the task to the workplan
         self.workplan[task] = None
+        # a staff that stood down is back on duty
+        self._resting = False
         # and mobilize: recruit up to strength and wake the bench
         self.assemble(workplan=())
         # all done
@@ -120,14 +122,41 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         """
         Restore the staff to full strength after a casualty
         """
-        # a disbanded staff stays disbanded; a recovery must not resurrect it
-        if self._disbanded:
+        # a disbanded staff stays disbanded, and one that stood down stays at rest until work
+        # arrives; a recovery must not resurrect either
+        if self._disbanded or self._resting:
             # so it does nothing
             return None
         # otherwise, recruit replacements and wake the bench, in case there is work waiting
         self.assemble(workplan=set())
         # all done
         return None
+
+    def standDown(self):
+        """
+        Send every crew member home once it is done with its task, without replacing anybody,
+        and stay ready to recruit again: the next {assign} brings the staff back to strength
+
+        Unlike {disband}, which is for good, this is for a staff that has nothing to do for
+        now, e.g. one whose work comes in bursts, whose members hold resources while parked
+        """
+        # crew dismissal is a team side activity; forked children must not attempt it
+        if os.getpid() != self._manager:
+            # so they bail
+            return self
+        # a disbanded staff has nobody left to send home
+        if self._disbanded:
+            # so there is nothing to do
+            return self
+        # mark me, so members that finish their tasks go home instead of being parked, and
+        # nobody is recruited to replace them
+        self._resting = True
+        # the parked members have nothing to finish
+        for crew in list(self.idle):
+            # so they go home now
+            self._release(crew=crew)
+        # all done
+        return self
 
     def disband(self):
         """
@@ -316,6 +345,12 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         if not self.workplan:
             # take the crew member off duty
             self.active.discard(crew)
+            # a staff that stood down has no bench
+            if self._resting:
+                # so the member goes home
+                self._release(crew=crew)
+                # and this handler is done
+                return False
             # and park it; a future {assemble} will wake it
             self.idle.add(crew)
             # keep an eye on the parked member, so its death gets noticed and its channel
@@ -346,6 +381,27 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             self.bury(crew=crew)
         # the harvesting of the result decides the fate of this crew member
         return False
+
+    def _release(self, crew):
+        """
+        Send the {crew} member home, without replacing it
+        """
+        # take it off the bench, and stop watching it
+        self.idle.discard(crew)
+        self.vigils.discard(crew)
+        # the event loop must forget its channel before the channel is closed, or the handlers
+        # left behind would sit under a descriptor number the next recruit may be handed
+        self.dispatcher.forget(channel=crew.channel)
+        # carefully, since a member may have died on its own
+        try:
+            # dismiss it; the staff is at rest, so nobody is recruited in its place
+            self.dismiss(crew=crew)
+        # dead members raise while being messaged or waited on
+        except (OSError, ChildProcessError):
+            # and there is nothing left to do for them
+            pass
+        # all done
+        return self
 
     def vigil(self, channel, crew, **kwds):
         """
@@ -383,6 +439,8 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         self._manager = os.getpid()
         # the marker that i have been sent home for good
         self._disbanded = False
+        # the marker that i stood down, and send members home rather than park them
+        self._resting = False
         # applications may exit by raising from deep inside the event loop, bypassing any
         # orderly shutdown; register the cleanup so crews never outlive me
         atexit.register(self.disband)
