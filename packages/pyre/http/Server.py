@@ -7,6 +7,7 @@
 
 # externals
 import functools
+import os
 import journal
 import pyre
 
@@ -221,6 +222,11 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
             # hand the channel to the hub instead of rendering and writing it once
             return self.stream(channel=channel, request=request, response=response)
 
+        # if the body of the response is in a file
+        if response.payload is not None:
+            # it goes from the file to the peer without passing through this process
+            return self.transmit(channel=channel, request=request, response=response)
+
         # attempt to
         try:
             # ask the renderer to put together the byte stream
@@ -257,6 +263,57 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
             # do it
             raise SystemExit(response.exitCode)
 
+        # otherwise, let the response document decide whether we should keep the channel alive
+        return response.alive
+
+    def transmit(self, channel, request, response):
+        """
+        Send the status line and the headers of {response}, and then its body straight from
+        the file that holds it, which the kernel copies to the peer without it ever passing
+        through this process
+        """
+        # the file that holds the body
+        payload = response.payload
+        # the file must be closed, whatever happens
+        try:
+            # the size of the body is the size of the file
+            size = os.fstat(payload.fileno()).st_size
+            # which the client learns before the headers go out
+            response.headers["Content-Length"] = size
+            # render the status line and the headers, and mark their end
+            preamble = b"\r\n".join(self.renderer.preamble(document=response)) + b"\r\n\r\n"
+            # send them
+            channel.write(preamble)
+            # a socket can have the kernel send the body
+            send = getattr(channel, "sendfile", None)
+            # if mine can
+            if send is not None:
+                # let it
+                send(payload, 0, size)
+            # otherwise
+            else:
+                # read the body and write it
+                channel.write(os.pread(payload.fileno(), size, 0))
+        # if anything goes wrong on the wire
+        except OSError as error:
+            # make a channel
+            channel = journal.debug("pyre.http.server")
+            # if it is active
+            if channel.active:
+                # build a message
+                channel.line(f"encountered {error}")
+                channel.line(f"while transmitting the body of a {request.command} response")
+                channel.line(f"for '{request.url}'")
+                # and complain
+                channel.log()
+        # no matter what
+        finally:
+            # let go of the file
+            payload.close()
+        # if the application wants to terminate
+        if response.abort:
+            # do it
+            raise SystemExit(response.exitCode)
         # otherwise, let the response document decide whether we should keep the channel alive
         return response.alive
 

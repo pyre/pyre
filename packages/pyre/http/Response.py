@@ -47,17 +47,22 @@ class Response(NexusError):
     # route me down the server's streaming path instead of render-once
     streaming = False
 
+    # a file whose contents are my body, which the server hands to the kernel to send instead of
+    # asking me to render it; i own it, and the server closes it once it is on the wire
+    payload = None
     # terminate the process after serving this response
     abort = False
     # the code to pass to the shell upon exiting
     exitCode = 0
 
     # meta-methods
-    def __init__(self, server, version=version, encoding=encoding, **kwds):
+    def __init__(self, server, version=version, encoding=encoding, payload=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the server reference
         self.server = server
+        # the file that holds my body, if any
+        self.payload = payload
         # the version
         self.version = version
         # the encoding
