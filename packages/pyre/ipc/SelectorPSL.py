@@ -12,6 +12,7 @@ in the python standard library
 # external
 import errno
 import selectors
+import weakref
 
 # support
 import pyre
@@ -42,6 +43,8 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         Add {call} to the handlers that will be invoked when {channel} is ready for reading
         """
+        # interest in a channel that was forgotten revives it
+        self._forgotten.discard(channel)
         # get the read side of the channel
         fd = channel.inbound
         # a key with no registered interest is a fresh conversation, possibly on a recycled
@@ -61,6 +64,8 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         Add {call} to the handlers that will be invoked when {channel} is ready for writing
         """
+        # interest in a channel that was forgotten revives it
+        self._forgotten.discard(channel)
         # get the write side of the channel
         fd = channel.outbound
         # a key with no registered interest is a fresh conversation, possibly on a recycled
@@ -83,6 +88,31 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         # mark as unsupported, for now
         raise NotImplementedError(f"class '{type(self).__name__}' does not support 'whenException'")
+
+    @pyre.export
+    def forget(self, channel):
+        """
+        Stop watching {channel}: drop every handler registered on it, including the ones that
+        are running right now, and the kernel's watch of its descriptors, so a channel that is
+        about to be closed leaves nothing behind under descriptor numbers that will be recycled
+        """
+        # the handlers that are running right now must not be put back when they are done
+        self._forgotten.add(channel)
+        # go through the endpoints of the channel
+        for endpoint in {channel.inbound, channel.outbound}:
+            # drop its handlers
+            self._read.pop(endpoint, None)
+            self._write.pop(endpoint, None)
+            # carefully, since its registration may be gone, or its descriptor already closed
+            try:
+                # tear down the kernel side
+                self._selector.unregister(endpoint)
+            # tolerating whatever state it is in
+            except (KeyError, ValueError, OSError):
+                # nothing further
+                pass
+        # all done
+        return
 
     @pyre.export
     def channels(self):
@@ -192,6 +222,9 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         self._write = {}
         # the piles of events whose handlers are running
         self._inflight = []
+        # the channels that were forgotten, whose running handlers must not be put back; they
+        # are held weakly, so the record vanishes with the channel
+        self._forgotten = weakref.WeakSet()
 
         # all done
         return
@@ -259,6 +292,8 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
             self._inflight.remove(pile)
             # the handlers that did not get their turn keep their place
             reschedule += pile[done:]
+            # unless their channel was forgotten while the pile was in flight
+            reschedule = [event for event in reschedule if event.channel not in self._forgotten]
             # if any handlers survived
             if reschedule:
                 # put them back, ahead of whatever interest arrived while they ran

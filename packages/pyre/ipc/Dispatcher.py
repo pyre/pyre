@@ -69,6 +69,14 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         to {channel}
         """
 
+    @pyre.provides
+    def forget(self, channel):
+        """
+        Stop watching {channel}: drop every handler registered on it, including the ones that
+        are running right now, so a channel that is about to be closed leaves nothing behind
+        under descriptor numbers that will be recycled
+        """
+
     # introspection
     @pyre.provides
     def channels(self):
