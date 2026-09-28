@@ -47,8 +47,8 @@ class BMP(OK):
         return self.bmp
 
     # meta-methods
-    def __init__(self, bmp, **kwds):
-        # chain up
+    def __init__(self, bmp=b"", **kwds):
+        # chain up; a bitmap that lives in a file travels as my {payload}
         super().__init__(**kwds)
         # add the content type to the headers
         self.headers["Content-Type"] = f"image/bmp"
