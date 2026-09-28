@@ -32,6 +32,7 @@ class Postgres(Server, family="pyre.db.server.postgres"):
     username.doc = "the database user name to use during authentication"
 
     password = pyre.properties.str(default=None)
+    password.secret = True
     password.doc = "the password of the database user"
 
     application = pyre.properties.str(default=None)
