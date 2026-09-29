@@ -188,6 +188,36 @@ pyre::journal::py::help(py::module & m)
             // the docstring
             "the default device for all help channels")
 
+        // the default device, for those that prefer methods to class properties
+        .def_static(
+            // the name
+            "getDefaultDevice",
+            // the implementation
+            []() -> help_t::device_type {
+                // my index knows
+                return help_t::index().device();
+            },
+            // the docstring
+            "get the default device of all help channels")
+
+        // install a new default device
+        .def_static(
+            // the name
+            "setDefaultDevice",
+            // the implementation
+            [](help_t::device_type device) -> help_t::device_type {
+                // get the current setting
+                auto old = help_t::index().device();
+                // install the new device
+                help_t::index().device(device);
+                // and hand back the previous one
+                return old;
+            },
+            // the signature
+            "device"_a,
+            // the docstring
+            "make {device} the default device of all help channels, and return the previous one")
+
         // interface
         // activate
         .def(

@@ -188,6 +188,37 @@ pyre::journal::py::firewall(py::module & m)
             // the docstring
             "the default device for all firewall channels")
 
+        // the default device, for those that prefer methods to class properties
+        .def_static(
+            // the name
+            "getDefaultDevice",
+            // the implementation
+            []() -> firewall_t::device_type {
+                // my index knows
+                return firewall_t::index().device();
+            },
+            // the docstring
+            "get the default device of all firewall channels")
+
+        // install a new default device
+        .def_static(
+            // the name
+            "setDefaultDevice",
+            // the implementation
+            [](firewall_t::device_type device) -> firewall_t::device_type {
+                // get the current setting
+                auto old = firewall_t::index().device();
+                // install the new device
+                firewall_t::index().device(device);
+                // and hand back the previous one
+                return old;
+            },
+            // the signature
+            "device"_a,
+            // the docstring
+            "make {device} the default device of all firewall channels, and return the previous "
+            "one")
+
         // interface
         // activate
         .def(
@@ -261,9 +292,9 @@ pyre::journal::py::firewall(py::module & m)
         .def(
             "log",
             // the handler
-            [m](firewall_t & channel, const firewall_t::string_type & message,
-                // additional arguments are interpreted as entry notes
-                py::kwargs kwds) -> py::object {
+            [](firewall_t & channel, const firewall_t::string_type & message,
+               // additional arguments are interpreted as entry notes
+               py::kwargs kwds) -> py::object {
                 // unpack {kwds}
                 for (auto entry : kwds) {
                     // and treat each one as a note
@@ -271,9 +302,9 @@ pyre::journal::py::firewall(py::module & m)
                 }
                 // inject and flush; a fatal channel raises here, otherwise it hands back the
                 // exception that states the condition
-                auto complaint = channel << locator() << message << pyre::journal::endl;
+                auto outcome = channel << locator() << message << pyre::journal::endl;
                 // hand back its python counterpart, so the caller can raise it
-                return m.attr("FirewallError")(complaint.what());
+                return pyre::journal::py::complaint("FirewallError", outcome);
             },
             // the signature
             "message"_a = "",

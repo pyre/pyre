@@ -181,6 +181,36 @@ pyre::journal::py::debug(py::module & m)
             // the docstring
             "the default device for all debug channels")
 
+        // the default device, for those that prefer methods to class properties
+        .def_static(
+            // the name
+            "getDefaultDevice",
+            // the implementation
+            []() -> debug_t::device_type {
+                // my index knows
+                return debug_t::index().device();
+            },
+            // the docstring
+            "get the default device of all debug channels")
+
+        // install a new default device
+        .def_static(
+            // the name
+            "setDefaultDevice",
+            // the implementation
+            [](debug_t::device_type device) -> debug_t::device_type {
+                // get the current setting
+                auto old = debug_t::index().device();
+                // install the new device
+                debug_t::index().device(device);
+                // and hand back the previous one
+                return old;
+            },
+            // the signature
+            "device"_a,
+            // the docstring
+            "make {device} the default device of all debug channels, and return the previous one")
+
         // interface
         // activate
         .def(

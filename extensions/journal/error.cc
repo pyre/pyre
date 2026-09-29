@@ -188,6 +188,36 @@ pyre::journal::py::error(py::module & m)
             // the docstring
             "the default device for all error channels")
 
+        // the default device, for those that prefer methods to class properties
+        .def_static(
+            // the name
+            "getDefaultDevice",
+            // the implementation
+            []() -> error_t::device_type {
+                // my index knows
+                return error_t::index().device();
+            },
+            // the docstring
+            "get the default device of all error channels")
+
+        // install a new default device
+        .def_static(
+            // the name
+            "setDefaultDevice",
+            // the implementation
+            [](error_t::device_type device) -> error_t::device_type {
+                // get the current setting
+                auto old = error_t::index().device();
+                // install the new device
+                error_t::index().device(device);
+                // and hand back the previous one
+                return old;
+            },
+            // the signature
+            "device"_a,
+            // the docstring
+            "make {device} the default device of all error channels, and return the previous one")
+
         // interface
         // activate
         .def(
@@ -261,9 +291,9 @@ pyre::journal::py::error(py::module & m)
         .def(
             "log",
             // the handler
-            [m](error_t & channel, const error_t::string_type & message,
-                // additional arguments are interpreted as entry notes
-                py::kwargs kwds) -> py::object {
+            [](error_t & channel, const error_t::string_type & message,
+               // additional arguments are interpreted as entry notes
+               py::kwargs kwds) -> py::object {
                 // unpack {kwds}
                 for (auto entry : kwds) {
                     // and treat each one as a note
@@ -271,9 +301,9 @@ pyre::journal::py::error(py::module & m)
                 }
                 // inject and flush; a fatal channel raises here, otherwise it hands back the
                 // exception that states the condition
-                auto complaint = channel << locator() << message << pyre::journal::endl;
+                auto outcome = channel << locator() << message << pyre::journal::endl;
                 // hand back its python counterpart, so the caller can raise it
-                return m.attr("ApplicationError")(complaint.what());
+                return pyre::journal::py::complaint("ApplicationError", outcome);
             },
             // the signature
             "message"_a = "",

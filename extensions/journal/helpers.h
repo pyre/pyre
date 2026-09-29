@@ -12,6 +12,11 @@
 namespace pyre::journal::py {
     // build a locator that points to the nearest caller from python
     inline auto locator() -> locator_t;
+
+    // build the python counterpart of the journal exception {error}, an instance of the
+    // exception class {type} from {journal.exceptions}
+    template <class errorT>
+    inline auto complaint(const char * type, const errorT & error) -> py::object;
 } // namespace pyre::journal::py
 
 
