@@ -50,6 +50,8 @@ public:
     inline void record();
     // raise an exception when fatal
     inline void die();
+    // build the exception that states the condition in my current entry
+    inline auto complaint() const -> exception_type;
 
     // static methods
 public:

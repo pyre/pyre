@@ -135,13 +135,19 @@ pyre::journal::Channel<severityT, proxyT>::line() -> severity_reference
 
 template <typename severityT, template <typename> typename proxyT>
 auto
-pyre::journal::Channel<severityT, proxyT>::log() -> severity_reference
+pyre::journal::Channel<severityT, proxyT>::log() -> decltype(auto)
 {
+    // me as a {severity_reference}; this works trivially because of crtp
+    severity_reference self = static_cast<severity_reference>(*this);
+
     // if there's anything in the entry buffer
     if (!entry().buffer().str().empty()) {
         // move it to the page
         entry().push(dent());
     }
+
+    // ask my severity what the entry leads to, while the entry still holds the message
+    decltype(auto) outcome = self.outcome();
 
     // very carefully
     try {
@@ -160,8 +166,8 @@ pyre::journal::Channel<severityT, proxyT>::log() -> severity_reference
     // channel instance, so they can be set whenever the information becomes available
     entry().flush();
 
-    // enable chaining
-    return static_cast<severity_reference>(*this);
+    // hand back the outcome
+    return outcome;
 }
 
 
@@ -195,6 +201,16 @@ pyre::journal::Channel<severityT, proxyT>::commit() -> severity_reference
 
     // all done
     return self;
+}
+
+
+// what recording an entry leads to
+template <typename severityT, template <typename> typename proxyT>
+auto
+pyre::journal::Channel<severityT, proxyT>::outcome() -> severity_reference
+{
+    // enable chaining
+    return static_cast<severity_reference>(*this);
 }
 
 

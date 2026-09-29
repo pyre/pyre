@@ -125,9 +125,15 @@ namespace pyre::journal {
     template <template <typename> typename proxyT>
     class Firewall;
 
+    // what a channel of a given severity hands back when it records an entry: the channel
+    // itself, or the exception that states the condition, for severities that leave the
+    // caller no viable path forward
+    template <class severityT>
+    using outcome_t = decltype(std::declval<severityT &>().outcome());
+
     // end of transaction
     template <typename severityT, template <class> typename proxyT>
-    inline auto endl(Channel<severityT, proxyT> &) -> Channel<severityT, proxyT> &;
+    inline auto endl(Channel<severityT, proxyT> &) -> outcome_t<severityT>;
 
     // flushing with a decorator
     template <typename decoratorT>
@@ -205,7 +211,7 @@ namespace pyre::journal {
     // flush with a decorator
     template <typename severityT, template <class> typename proxyT, typename decoratorT>
     inline auto operator<<(Channel<severityT, proxyT> & channel, const Flush<decoratorT> & flush)
-        -> Channel<severityT, proxyT> &;
+        -> outcome_t<severityT>;
 
     // injection of manipulator functions
     template <typename severityT, template <class> typename proxyT>
@@ -213,6 +219,12 @@ namespace pyre::journal {
         Channel<severityT, proxyT> &,
         Channel<severityT, proxyT> & (*)(Channel<severityT, proxyT> &) )
         -> Channel<severityT, proxyT> &;
+
+    // injection of the manipulators that record the entry
+    template <typename severityT, template <class> typename proxyT>
+    inline auto operator<<(
+        Channel<severityT, proxyT> &, outcome_t<severityT> (*)(Channel<severityT, proxyT> &))
+        -> outcome_t<severityT>;
 
     // injection of everything else
     template <typename itemT, typename severityT, template <class> typename proxyT>
