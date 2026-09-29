@@ -31,9 +31,7 @@ def test():
     # if the correct exception was raised
     except channel.FirewallError as error:
         # verify that the description is correct
-        assert str(error) == (
-            f"file='{__file__}', line='28', function='test': " "firewall breached; aborting..."
-        )
+        assert str(error) == "tests.journal.firewall: FIREWALL BREACHED!"
 
     # all done
     return
