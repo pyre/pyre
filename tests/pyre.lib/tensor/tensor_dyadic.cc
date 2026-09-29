@@ -23,8 +23,8 @@ main(int argc, char * argv[])
     pyre::journal::init(argc, argv);
     pyre::journal::application("tensor_dyadic");
 
-    // make a channel
-    pyre::journal::info_t channel("pyre.tensor");
+    // make a developer channel, so the report appears only on request
+    pyre::journal::debug_t channel("pyre.tensor");
 
     // a vector in 3D
     constexpr auto vector_1 = vector_t<3> { -2.0, 2.0, 10.0 };

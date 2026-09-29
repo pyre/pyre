@@ -7,70 +7,89 @@
 
 // dependencies
 #include <pyre/tensor.h>
+// support
+#include <cassert>
+#include <sstream>
+#include <string>
+#include <vector>
 
+
+// use namespace for readability
 using namespace pyre::tensor;
 
-// main program
-int
-main(int argc, char * argv[])
+
+// render {item} the way a stream sees it
+template <class itemT>
+auto
+render(const itemT & item) -> std::string
 {
-    // initialize the journal
-    pyre::journal::init(argc, argv);
-    pyre::journal::application("tensor_print");
+    // make a stream
+    std::ostringstream stream;
+    // inject the item
+    stream << item;
+    // and hand off the text
+    return stream.str();
+}
 
-    // make a channel
-    pyre::journal::info_t channel("pyre.tensor.tensor_print");
 
-    matrix_t<1, 1> A { 1 };
-    channel << A << pyre::journal::endl;
+// gather the stored values of {tensor}, in storage order
+template <class tensorT>
+auto
+storage(const tensorT & tensor) -> std::vector<double>
+{
+    // make a pile
+    std::vector<double> values;
+    // go through the stored values
+    for (const auto value : tensor) {
+        // and add each one to the pile
+        values.push_back(value);
+    }
+    // hand off the pile
+    return values;
+}
 
-    matrix_t<1, 2> B { 0, 1 };
-    channel << B << pyre::journal::endl;
 
-    matrix_t<2, 1> C { 0, 1 };
-    channel << C << pyre::journal::endl;
+// verify the rendering of tensors
+int
+main()
+{
+    // matrices of every shape up to 3x3 render row by row
+    assert(render(matrix_t<1, 1> { 1 }) == "[ [ 1 ] ]");
+    assert(render(matrix_t<1, 2> { 0, 1 }) == "[ [ 0, 1 ] ]");
+    assert(render(matrix_t<2, 1> { 0, 1 }) == "[ [ 0 ],[ 1 ] ]");
+    assert(render(matrix_t<2, 2> { 0, 1, 2, 3 }) == "[ [ 0, 1 ],[ 2, 3 ] ]");
+    assert(
+        render(matrix_t<3, 3> { 0, 1, 2, 3, 4, 5, 6, 7, 8 })
+        == "[ [ 0, 1, 2 ],[ 3, 4, 5 ],[ 6, 7, 8 ] ]");
 
-    matrix_t<2, 2> D { 0, 1, 2, 3 };
-    channel << D << pyre::journal::endl;
+    // vectors render as a single row
+    assert(render(vector_t<1> { 1 }) == "[ 1 ]");
+    assert(render(vector_t<2> { 1, 1 }) == "[ 1, 1 ]");
+    assert(render(vector_t<3> { 1, 1, 1 }) == "[ 1, 1, 1 ]");
 
-    matrix_t<3, 3> E { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-    channel << E << pyre::journal::endl;
-
-    vector_t<1> a { 1 };
-    channel << a << pyre::journal::endl;
-
-    vector_t<2> b { 1, 1 };
-    channel << b << pyre::journal::endl;
-
-    vector_t<3> c { 1, 1, 1 };
-    channel << c << pyre::journal::endl;
-
+    // a symmetric matrix stores only its upper triangle
     symmetric_matrix_t<2> S { 0, 1, /*1, */ 2 };
-    channel << "Tensor S: " << pyre::journal::newline;
-    channel << pyre::journal::indent(1);
-    channel << S << pyre::journal::newline;
-    channel << "is symmetric = " << S.is_symmetric() << pyre::journal::newline;
-    channel << "shape = " << S.shape() << pyre::journal::newline;
-    channel << "data = " << pyre::journal::newline;
-    channel << pyre::journal::indent(1);
-    for (const auto s : S) {
-        channel << s << pyre::journal::newline;
-    }
-    channel << pyre::journal::outdent(2) << pyre::journal::endl;
+    // but renders in full
+    assert(render(S) == "[ [ 0, 1 ],[ 1, 2 ] ]");
+    // knows it is symmetric
+    assert(S.is_symmetric());
+    // renders its shape
+    assert(render(S.shape()) == "[ 2, 2 ]");
+    // and holds exactly the values it was given
+    assert((storage(S) == std::vector<double> { 0, 1, 2 }));
 
+    // a diagonal matrix stores only its diagonal
     diagonal_matrix_t<2> R { 0, 1 };
-    channel << "Tensor R: " << pyre::journal::newline;
-    channel << pyre::journal::indent(1);
-    channel << R << pyre::journal::newline;
-    channel << "is diagonal = " << R.is_diagonal() << pyre::journal::newline;
-    channel << "is symmetric = " << R.is_symmetric() << pyre::journal::newline;
-    channel << "shape = " << R.shape() << pyre::journal::newline;
-    channel << "data = " << pyre::journal::newline;
-    channel << pyre::journal::indent(1);
-    for (const auto r : R) {
-        channel << r << pyre::journal::newline;
-    }
-    channel << pyre::journal::outdent(2) << pyre::journal::endl;
+    // but renders in full
+    assert(render(R) == "[ [ 0, 0 ],[ 0, 1 ] ]");
+    // knows it is diagonal
+    assert(R.is_diagonal());
+    // and therefore symmetric
+    assert(R.is_symmetric());
+    // renders its shape
+    assert(render(R.shape()) == "[ 2, 2 ]");
+    // and holds exactly the values it was given
+    assert((storage(R) == std::vector<double> { 0, 1 }));
 
     // all done
     return 0;

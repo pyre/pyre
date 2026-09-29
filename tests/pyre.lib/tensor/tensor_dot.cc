@@ -23,8 +23,8 @@ main(int argc, char * argv[])
     pyre::journal::init(argc, argv);
     pyre::journal::application("tensor_dot");
 
-    // make a channel
-    pyre::journal::info_t channel("pyre.tensor");
+    // make a developer channel, so the report appears only on request
+    pyre::journal::debug_t channel("pyre.tensor");
 
     // a canonical tensor
     constexpr auto tensor_1 = matrix_t<2, 2> { 1.0, 2.0, 3.0, 4.0 };
