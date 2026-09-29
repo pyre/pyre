@@ -8,7 +8,7 @@
 
 def test():
     """
-    Exercise the firewall channel with a realistic example
+    The exception raised by a fatal firewall carries the entry it recorded
     """
     # get the trash can
     from journal.Trash import Trash as trash
@@ -16,26 +16,30 @@ def test():
     # and the channel
     from journal.Firewall import Firewall as firewall
 
-    # make a firewall channel
+    # make a channel
     channel = firewall(name="tests.journal.firewall")
-    # send the output to trash
+    # send the output to the trash
     channel.device = trash()
-
-    # add some metadata
-    channel.notes["time"] = "now"
 
     # carefully
     try:
         # inject
-        channel.line("firewall:")
-        # and flush with some additional metadata
-        channel.log("    a nasty bug was detected", code=7)
+        channel.line("nasty bug:")
+        channel.log("    hello world!", code="7")
         # shouldn't get here
         assert False, "unreachable"
     # if the correct exception was raised
     except channel.FirewallError as error:
-        # verify that the description is correct
+        # check the summary
         assert str(error) == "tests.journal.firewall: FIREWALL BREACHED!"
+        # the channel name
+        assert error.channel == "tests.journal.firewall"
+        # the page
+        assert error.page == ["nasty bug:", "    hello world!"]
+        # and the notes
+        assert error.notes["severity"] == "firewall"
+        assert error.notes["code"] == "7"
+        assert error.notes["filename"] == __file__
 
     # all done
     return
