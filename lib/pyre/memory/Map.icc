@@ -15,9 +15,9 @@
 
 // map over an existing data product
 template <typename T, bool isConst>
-pyre::memory::Map<T, isConst>::Map(uri_type uri, writable_type writable) :
+pyre::memory::Map<T, isConst>::Map(uri_type uri, writable_type writable, size_type offset) :
     super_type(),
-    _map { std::make_shared<FileMap>(uri, writable) }
+    _map { std::make_shared<FileMap>(uri, writable, offset) }
 {}
 
 
@@ -35,10 +35,11 @@ pyre::memory::Map<T, isConst>::Map(uri_type uri, countT cells) :
 // map an existing data product
 template <typename T, bool isConst>
 auto
-pyre::memory::Map<T, isConst>::open(uri_type uri, writable_type writable) -> self_type
+pyre::memory::Map<T, isConst>::open(uri_type uri, writable_type writable, size_type offset)
+    -> self_type
 {
     // defer to the mapping constructor
-    return self_type(uri, writable);
+    return self_type(uri, writable, offset);
 }
 
 

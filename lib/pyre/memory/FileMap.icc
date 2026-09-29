@@ -22,9 +22,12 @@ pyre::memory::FileMap::~FileMap()
 
 
 // constructor that maps an existing data product
-pyre::memory::FileMap::FileMap(uri_type uri, writable_type writable) :
+pyre::memory::FileMap::FileMap(uri_type uri, writable_type writable, size_type offset) :
     _uri { uri },
     _writable { writable },
+    _offset { offset },
+    _map { MAP_FAILED },
+    _extent { 0 },
     _data { nullptr },
     _bytes {},
     _info {}
@@ -38,8 +41,9 @@ pyre::memory::FileMap::FileMap(uri_type uri, writable_type writable) :
     pyre::journal::debug_t channel("pyre.memory.map");
     // sign on
     channel << pyre::journal::at() << "mapped existing data product:" << pyre::journal::newline
-            << "  name: " << _uri << pyre::journal::newline << "  size: " << _bytes << " bytes"
-            << pyre::journal::newline << "  addr: " << _data << pyre::journal::endl;
+            << "  name: " << _uri << pyre::journal::newline << "  offset: " << _offset << " bytes"
+            << pyre::journal::newline << "  size: " << _bytes << " bytes" << pyre::journal::newline
+            << "  addr: " << _data << pyre::journal::endl;
 
     // all done
     return;
@@ -50,6 +54,9 @@ pyre::memory::FileMap::FileMap(uri_type uri, writable_type writable) :
 pyre::memory::FileMap::FileMap(uri_type uri, size_type bytes) :
     _uri { uri },
     _writable { true },
+    _offset { 0 },
+    _map { MAP_FAILED },
+    _extent { 0 },
     _data { nullptr },
     _bytes { bytes },
     _info {}
@@ -90,6 +97,15 @@ pyre::memory::FileMap::writable() const -> bool
 {
     // easy enough
     return _writable;
+}
+
+
+// get the number of bytes of the file before the block
+auto
+pyre::memory::FileMap::offset() const -> size_type
+{
+    // easy enough
+    return _offset;
 }
 
 

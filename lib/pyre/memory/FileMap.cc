@@ -27,10 +27,26 @@ pyre::memory::FileMap::stat()
         channel << pyre::journal::at() << "while looking for '" << _uri
                 << "':" << pyre::journal::newline << "stat: error " << errno << ": "
                 << std::strerror(errno) << pyre::journal::endl;
+        // unreachable, unless the user has marked this error as non-fatal
+        return;
     }
 
     // get the file size
-    _bytes = _info.st_size;
+    auto size = static_cast<size_type>(_info.st_size);
+    // if the block is supposed to start past the end of the file
+    if (_offset > size) {
+        // make a channel
+        pyre::journal::error_t channel("pyre.memory.map");
+        // complain
+        channel << pyre::journal::at() << "while looking for '" << _uri
+                << "':" << pyre::journal::newline << "an offset of " << _offset
+                << " bytes is past the end of the file, which holds " << size << " bytes"
+                << pyre::journal::endl;
+        // unreachable, unless the user has marked this error as non-fatal
+        return;
+    }
+    // the block is whatever the file holds past the offset
+    _bytes = size - _offset;
 
     // all done
     return;
@@ -80,19 +96,40 @@ pyre::memory::FileMap::map()
 
     // derive the protection flag for the mapping
     auto protection = _writable ? (PROT_READ | PROT_WRITE) : PROT_READ;
+    // a mapping must start on a page boundary, so start at the one at or before the offset
+    auto page = static_cast<size_type>(::sysconf(_SC_PAGESIZE));
+    // the bytes between that boundary and the start of the block
+    auto slack = _offset % page;
+    // the mapping runs from the boundary to the end of the file
+    _extent = slack + _bytes;
+    // a block with nothing in it
+    if (_bytes == 0) {
+        // needs no mapping
+        _extent = 0;
+        // so let go of the descriptor
+        ::close(fd);
+        // and leave the block empty
+        return;
+    }
     // map it
-    _data = ::mmap(nullptr, _bytes, protection, MAP_SHARED, fd, 0);
+    _map = ::mmap(nullptr, _extent, protection, MAP_SHARED, fd, _offset - slack);
+    // hold on to the error, if any, before closing the file descriptor can clobber it
+    auto error = errno;
+    // the mapping keeps its own reference to the file, so the descriptor is no longer needed
+    ::close(fd);
     // if something went wrong
-    if (_data == MAP_FAILED) {
+    if (_map == MAP_FAILED) {
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
         channel << pyre::journal::at() << "while mapping '" << _uri
-                << "':" << pyre::journal::newline << "mmap: error " << errno << ": "
-                << std::strerror(errno) << pyre::journal::endl;
+                << "':" << pyre::journal::newline << "mmap: error " << error << ": "
+                << std::strerror(error) << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         return;
     }
+    // the block starts past the slack
+    _data = static_cast<std::byte *>(_map) + slack;
 
     // make a channel
     pyre::journal::debug_t channel("pyre.memory.map");
@@ -100,9 +137,6 @@ pyre::memory::FileMap::map()
     channel << pyre::journal::at() << "with '" << _uri << "':" << pyre::journal::newline
             << "mapped " << _bytes << " bytes of " << (_writable ? "read/write" : "read only")
             << " memory at " << _data << pyre::journal::endl;
-
-    // close the file descriptor; we don't need it any more
-    ::close(fd);
 
     // all done
     return;
@@ -114,13 +148,13 @@ void
 pyre::memory::FileMap::unmap()
 {
     // if we don't have a valid map
-    if (_data == MAP_FAILED || _bytes == 0) {
+    if (_map == MAP_FAILED || _extent == 0) {
         // nothing to do
         return;
     }
 
-    // otherwise, unmap
-    auto status = ::munmap(_data, _bytes);
+    // otherwise, unmap, from the page boundary where the mapping starts
+    auto status = ::munmap(_map, _extent);
     // if something went wrong
     if (status) {
         // make a channel
@@ -138,8 +172,11 @@ pyre::memory::FileMap::unmap()
             << "unmapped " << _bytes << " bytes of " << (_writable ? "read/write" : "read only")
             << " memory at " << _data << pyre::journal::endl;
 
-    // invalidate the pointer
-    _data = MAP_FAILED;
+    // invalidate the mapping
+    _map = MAP_FAILED;
+    _extent = 0;
+    // the pointer
+    _data = nullptr;
     // and the size
     _bytes = 0;
 

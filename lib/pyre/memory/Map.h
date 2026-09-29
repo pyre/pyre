@@ -49,12 +49,12 @@ public:
 
     // permissions
     using writable_type = FileMap::writable_type;
-    // my handle
 
     // metamethods
 public:
-    // map an existing data product; the {bool} is the read/write flag
-    inline explicit Map(uri_type, writable_type = false);
+    // map an existing data product; the {bool} is the read/write flag, and the block starts
+    // {offset} bytes into the file
+    inline explicit Map(uri_type, writable_type = false, size_type offset = 0);
     // create a new one sized to hold the given number of cells; any integer count binds here,
     // and only a {bool} binds the mapping constructor above
     template <std::integral countT>
@@ -62,8 +62,9 @@ public:
 
     // named factories
 public:
-    // map an existing data product, read-only unless asked otherwise
-    static inline auto open(uri_type, writable_type = false) -> self_type;
+    // map an existing data product, read-only unless asked otherwise, starting {offset} bytes
+    // into the file
+    static inline auto open(uri_type, writable_type = false, size_type offset = 0) -> self_type;
     // create a new data product sized to hold the given number of cells
     template <std::integral countT>
     static inline auto create(uri_type, countT) -> self_type;
