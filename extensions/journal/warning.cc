@@ -314,7 +314,7 @@ pyre::journal::py::warning(py::module & m)
                 warning_t::logfile(path, flag);
             },
             // the signature
-            "name"_a, "mode"_a = "w",
+            "path"_a, "mode"_a = "w",
             // the docstring
             "send all output to a file")
 

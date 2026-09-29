@@ -307,7 +307,7 @@ pyre::journal::py::debug(py::module & m)
                 debug_t::logfile(path, flag);
             },
             // the arguments
-            "name"_a, "mode"_a = "w",
+            "path"_a, "mode"_a = "w",
             // the docstring
             "send all output to a file")
 

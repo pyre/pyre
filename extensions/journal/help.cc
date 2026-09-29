@@ -316,7 +316,7 @@ pyre::journal::py::help(py::module & m)
                 return;
             },
             // the signature
-            "name"_a, "mode"_a = "w",
+            "path"_a, "mode"_a = "w",
             // the docstring
             "send all output to a file")
 
