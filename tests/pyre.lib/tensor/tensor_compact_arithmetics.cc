@@ -23,8 +23,8 @@ main(int argc, char * argv[])
     pyre::journal::init(argc, argv);
     pyre::journal::application("tensor_packings_arithmetic");
 
-    // make a channel
-    pyre::journal::info_t channel("pyre.tensor");
+    // make a developer channel, so the report appears only on request
+    pyre::journal::debug_t channel("pyre.tensor");
 
     {
         // report
