@@ -18,61 +18,58 @@ class JournalError(PyreError):
     """
 
 
+# the base of the exceptions that fatal channels raise
+class EntryError(JournalError):
+    """
+    Base class for the exceptions raised by fatal channels; they carry the entry that the
+    channel recorded, so that whoever catches them can examine it
+    """
+
+    # public data
+    description = "{0.headline}"
+
+    # metamethods
+    def __init__(self, headline, channel, page=(), notes=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the summary of the condition
+        self.headline = headline
+        # the name of the channel that raised me
+        self.channel = channel
+        # the content of the entry
+        self.page = list(page)
+        # and its metadata
+        self.notes = dict(notes) if notes is not None else {}
+        # all done
+        return
+
+    def __reduce__(self):
+        """
+        Support for pickling, so that processes can hand these exceptions to each other
+        """
+        # rebuild from the entry, and restore the rest of my state
+        return (type(self), (self.headline, self.channel, self.page, self.notes), self.__dict__)
+
+
 # raised by firewalls
-class FirewallError(JournalError):
+class FirewallError(EntryError):
     """
     Exception raised when firewalls fire
     """
 
-    # public data
-    description = "firewall breached; aborting..."
-
-    # metamethods
-    def __init__(self, channel, **kwds):
-        # chain up
-        super().__init__(locator=channel.locator, **kwds)
-        # save the channel
-        self.firewall = channel
-        # all done
-        return
-
 
 # raised by debug channels that are marked fatal
-class DebugError(JournalError):
+class DebugError(EntryError):
     """
     Exception raised when fatal debug channels fire
     """
 
-    # public data
-    description = "aborting..."
-
-    # metamethods
-    def __init__(self, channel, **kwds):
-        # chain up
-        super().__init__(locator=channel.locator, **kwds)
-        # save the channel
-        self.debug = channel
-        # all done
-        return
-
 
 # raised by error channels
-class ApplicationError(JournalError):
+class ApplicationError(EntryError):
     """
     Exception raised when an application error is encountered
     """
-
-    # public data
-    description = "application error; aborting..."
-
-    # metamethods
-    def __init__(self, channel, **kwds):
-        # chain up
-        super().__init__(locator=channel.locator, **kwds)
-        # save the channel
-        self.error = channel
-        # all done
-        return
 
 
 # raised while decoding a record that is not in its wire form

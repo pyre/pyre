@@ -5,10 +5,15 @@
 # (c) 1998-2026 all rights reserved
 
 
-# map of channel names to the their inventory
+# the shared state of the channels
+from .Inventory import Inventory
+
+
+# map of channel names to their inventory
 class Index(dict):
     """
-    A map from the names of channels to their shared inventory
+    A map from the names of channels to their shared inventory, along with the severity wide
+    defaults
     """
 
     # interface
@@ -16,19 +21,19 @@ class Index(dict):
         """
         Look up the given channel {name} and return the associated inventory
         """
-        # if the {name} is already know
+        # if the {name} is already known
         if name in self:
             # retrieve the associated inventory and return it
             return self[name]
 
-        # otherwise, instantiate one
-        inventory = self.inventoryType()
+        # otherwise, make one in the severity wide default state
+        inventory = Inventory(active=self.active, fatal=self.fatal)
 
         # cascade: use '.' as the separator
         separator = "."
         # take the name apart
         fragments = name.split(separator)
-        # while there are still part to process
+        # while there are still parts to process
         while fragments:
             # pop the last portion
             fragments.pop()
@@ -48,11 +53,15 @@ class Index(dict):
         return inventory
 
     # metamethods
-    def __init__(self, inventoryType):
-        # chain up
+    def __init__(self, active, fatal, device=None, **kwds):
+        # chain up; {kwds} stays out of the map, since its content would become channel names
         super().__init__()
-        #  save the inventory type
-        self.inventoryType = inventoryType
+        # the default activation state of the channels of this severity
+        self.active = active
+        # whether they are fatal by default
+        self.fatal = fatal
+        # and the severity wide device; {None} defers to the chronicler
+        self.device = device
         # all done
         return
 

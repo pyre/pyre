@@ -30,6 +30,7 @@ class Help(Channel, active=True, fatal=False):
 
     # constants
     severity = "help"  # the channel severity
+    headline = "help"  # the summary of the condition when i'm fatal
     fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 

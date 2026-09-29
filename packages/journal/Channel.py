@@ -8,13 +8,13 @@
 # externals
 import sys  # location information
 
-# framework
-import pyre  # for my superclass and {tracking}
+# my metaclass
+from .Severity import Severity
 
 # the index
 from .Index import Index
 
-# the base inventory
+# the shared state
 from .Inventory import Inventory
 
 # the keeper of the global settings
@@ -22,7 +22,7 @@ from .Chronicler import Chronicler
 
 
 # access to the channel shared state
-class Channel(pyre.patterns.named):
+class Channel(metaclass=Severity):
     """
     Encapsulation of the per-channel shared state
 
@@ -37,6 +37,15 @@ class Channel(pyre.patterns.named):
     # public data
     dent = 0  # default indentation level
     detail = 1  # default detail
+
+    # my name
+    @property
+    def name(self):
+        """
+        Get my name
+        """
+        # easy enough
+        return self._name
 
     # access to settings from my shared inventory
     @property
@@ -80,14 +89,29 @@ class Channel(pyre.patterns.named):
         """
         Get my device
         """
-        # ask my inventory
+        # first, look in my inventory for a local setting
         device = self.inventory.device
-        # if it's non-trivial
+        # if it's set
         if device is not None:
             # that's the one
             return device
-        # otherwise, return whatever the chronicler keeps
-        return self.chronicler.device
+        # next, check whether there is a severity wide default registered with my index
+        device = self.index.device
+        # if it's set
+        if device is not None:
+            # that's the one
+            return device
+        # next, look for the global default
+        device = self.chronicler.device
+        # if it's set
+        if device is not None:
+            # that's the one
+            return device
+        # if all else fails, get the trash can
+        from .Trash import Trash
+
+        # make one and hand it off
+        return Trash()
 
     @device.setter
     def device(self, device):
@@ -99,24 +123,51 @@ class Channel(pyre.patterns.named):
         # all done
         return
 
+    # access to the severity wide defaults from my instances; my metaclass grants access to
+    # them from the class itself
+    @property
+    def defaultActive(self):
+        """
+        The default activation state of the channels of my severity
+        """
+        # ask my class
+        return type(self).defaultActive
+
+    @property
+    def defaultFatal(self):
+        """
+        The default fatality of the channels of my severity
+        """
+        # ask my class
+        return type(self).defaultFatal
+
+    @property
+    def defaultDevice(self):
+        """
+        The default device of the channels of my severity
+        """
+        # ask my class
+        return type(self).defaultDevice
+
     # control over the severity wide device
     @classmethod
     def getDefaultDevice(cls):
         """
         Get the default device associated with all channels of this severity
         """
-        # my inventory type has it
-        return cls.inventory_type.device
+        # my index has it
+        return cls.index.device
 
     @classmethod
     def setDefaultDevice(cls, device):
         """
-        Get the default device associated with all channels of this severity
+        Set the default device associated with all channels of this severity to {device}, and
+        return the previous setting
         """
         # get the previous setting
-        old = cls.inventory_type.device
+        old = cls.index.device
         # install the new device
-        cls.inventory_type.device = device
+        cls.index.device = device
         # all done
         return old
 
@@ -278,8 +329,10 @@ class Channel(pyre.patterns.named):
     # metamethods
     def __init__(self, name, detail=detail, dent=dent, **kwds):
         # chain up
-        super().__init__(name=name, **kwds)
+        super().__init__(**kwds)
 
+        # save my name
+        self._name = name
         # set my detail
         self.detail = detail
         # and my indentation level
@@ -288,8 +341,6 @@ class Channel(pyre.patterns.named):
         self.inventory = self.index.lookup(name)
         # start out with an empty entry
         self.entry = self.newEntry()
-        # and an invalid locator
-        self.locator = None
 
         # all done
         return
@@ -298,25 +349,8 @@ class Channel(pyre.patterns.named):
     def __init_subclass__(cls, active=True, fatal=False, **kwds):
         # chain up
         super().__init_subclass__(**kwds)
-
-        # we will derive a customized class with a synthesized name
-        name = cls.__name__ + Inventory.__name__
-        # that is a subclass of {Inventory}
-        bases = [Inventory]
-        # with default values for the channel state
-        attributes = {"active": active, "fatal": fatal, "device": None}
-        # build the class
-        inventory = type(name, tuple(bases), attributes)
-        # fix the module so it gets the correct attribution in stack traces
-        inventory.__module__ = cls.__module__
-        # attach it as the inventory type
-        cls.inventory_type = inventory
-
-        # create one using my inventory type
-        index = Index(inventoryType=inventory)
-        # and attach it
-        cls.index = index
-
+        # give the severity an index of its own, with its default channel state
+        cls.index = Index(active=active, fatal=fatal)
         # all done
         return
 
@@ -356,16 +390,13 @@ class Channel(pyre.patterns.named):
         """
         Prepare the exception i raise when i'm fatal
         """
-        # get my metadata
-        notes = self.notes
-        # pull the location information
-        filename = notes["filename"]
-        line = notes["line"]
-        function = notes["function"]
-        # build a locator
-        self.locator = pyre.tracking.script(source=filename, line=line, function=function)
-        # instantiate the exception
-        complaint = self.fatalError(channel=self)
+        # instantiate the exception, with a copy of my entry
+        complaint = self.fatalError(
+            headline=f"{self.name}: {self.headline}",
+            channel=self.name,
+            page=self.page,
+            notes=self.notes,
+        )
         # and return it
         return complaint
 
@@ -407,14 +438,14 @@ class Channel(pyre.patterns.named):
 
     # class data
     severity = "generic"  # the severity name
+    headline = "generic"  # the summary of the condition when i'm fatal
     chronicler = Chronicler()  # the keeper of the global settings
     fatalError = JournalError  # the exception i raise when i'm fatal
-    inventory_type = Inventory  # the default inventory type; subclasses get their own
-    index = Index(inventory_type)  # the severity wide channel index
+    inventory_type = Inventory  # the type of the state shared by channels of the same name
+    index = Index(active=False, fatal=False)  # the generic channel records nothing
 
     # instance data
     entry = None  # the accumulator of message content and metadata
-    locator = None  # location information
     inventory = None  # the state shared by all instances of the same name/severity
 
 

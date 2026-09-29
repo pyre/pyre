@@ -41,6 +41,7 @@ class Error(Channel, active=True, fatal=True):
 
     # constants
     severity = "error"  # the channel severity
+    headline = "application error"  # the summary of the condition when i'm fatal
     fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 
