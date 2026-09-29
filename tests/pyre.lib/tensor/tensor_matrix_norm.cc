@@ -14,14 +14,12 @@
 // use namespace for readability
 using namespace pyre::tensor;
 
-// the packing-agnostic canonical basis of R^3x3
+// the elements of the packing-agnostic canonical basis of R^3x3 that {A} needs
 constexpr auto e00 = unit<matrix_t<3>, 0, 0>;
 constexpr auto e01 = unit<matrix_t<3>, 0, 1>;
-constexpr auto e02 = unit<matrix_t<3>, 0, 2>;
 constexpr auto e10 = unit<matrix_t<3>, 1, 0>;
 constexpr auto e11 = unit<matrix_t<3>, 1, 1>;
 constexpr auto e12 = unit<matrix_t<3>, 1, 2>;
-constexpr auto e20 = unit<matrix_t<3>, 2, 0>;
 constexpr auto e21 = unit<matrix_t<3>, 2, 1>;
 constexpr auto e22 = unit<matrix_t<3>, 2, 2>;
 
