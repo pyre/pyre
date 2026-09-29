@@ -16,6 +16,7 @@ stays counted as busy with nobody listening to it, and the team never hands it w
 """
 
 # support
+import journal
 import pyre
 
 # the unit of time
@@ -35,6 +36,50 @@ class Quick(pyre.nexus.task):
         """
         # done already
         return "done"
+
+
+# a device that keeps the entries it receives
+class Recorder(journal.device):
+    """
+    A journal device that files away the pages of the entries it receives
+    """
+
+    # interface
+    def alert(self, entry):
+        """
+        File away a user facing entry
+        """
+        # save a copy of the page
+        self.pages.append(list(entry.page))
+        # all done
+        return self
+
+    def help(self, entry):
+        """
+        File away a help screen
+        """
+        # save a copy of the page
+        self.pages.append(list(entry.page))
+        # all done
+        return self
+
+    def memo(self, entry):
+        """
+        File away a developer entry
+        """
+        # save a copy of the page
+        self.pages.append(list(entry.page))
+        # all done
+        return self
+
+    # metamethods
+    def __init__(self, name="recorder", **kwds):
+        # chain up
+        super().__init__(name=name, **kwds)
+        # the pages of the entries i received
+        self.pages = []
+        # all done
+        return
 
 
 def test():
@@ -75,6 +120,10 @@ def test():
         # and don't reschedule
         return None
 
+    # the dispatcher reports the handler it discards on this channel; keep its entries
+    recorder = Recorder()
+    journal.warning("pyre.ipc.psl").device = recorder
+
     # hand over a task whose subscriber fails
     staff.assign(task=Quick(), callback=failing)
     # run the loop long enough for the member to be recruited, take the task, and report;
@@ -84,6 +133,11 @@ def test():
     staff.dispatcher.watch()
     # the subscriber was served
     assert outcomes == [("failing", "done", None)]
+    # and the dispatcher said that it discarded the handler, because the process appeared to
+    # have run out of resources
+    assert len(recorder.pages) == 1
+    assert recorder.pages[0][0].startswith("discarding a handler of")
+    assert recorder.pages[0][1] == "after it raised [Errno 24] Too many open files"
 
     # the member that did the work is accounted for: it is on the bench, or on its way there
     # with a wake-up pending, and in either case not counted as busy with nobody listening

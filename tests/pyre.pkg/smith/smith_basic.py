@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- Python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -11,6 +12,7 @@ basic one, with every macro in the templates resolved
 """
 
 # support
+import journal
 import pyre
 import pyre.smith
 
@@ -35,6 +37,8 @@ def test():
         app.project.authors = "the authors"
         app.project.span = "2026"
         app.project.github = "authors/hello"
+        # silence the progress report, since what matters is the generated tree
+        journal.info("smith").deactivate()
         # generate the project
         status = app.run()
         # it went well
