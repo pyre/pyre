@@ -87,6 +87,11 @@ namespace pyre::memory {
     template <typename T>
     struct Native;
 
+    // a cell value type that reads correctly at any address: the type itself when a single byte
+    // aligns it, or a byte ordered wrapper otherwise, which keeps its value as an array of bytes
+    template <typename T>
+    struct Unaligned;
+
     // recognize complex scalars, whose two components swap bytes independently
     template <typename T>
     concept complex_c = requires { typename T::value_type; }

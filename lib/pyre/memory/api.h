@@ -43,6 +43,10 @@ namespace pyre::memory {
     // the native scalar behind a cell value type
     template <typename T>
     using native_t = typename Native<T>::type;
+    // a cell value type that reads correctly at any address, for data that sits wherever its
+    // writer put it, e.g. past a header whose length is not a multiple of the cell size
+    template <typename T>
+    using unaligned_t = typename Unaligned<T>::type;
 
     // block on the stack
     template <int D, typename T>
