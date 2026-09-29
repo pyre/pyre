@@ -14,7 +14,7 @@ def test():
     from journal.ext.journal import Warning as warning
 
     # send output to a log file
-    warning.logfile(name="warning_file_mode.log", mode="a")
+    warning.logfile(path="warning_file_mode.log", mode="a")
 
     # make a warning channel
     channel = warning(name="tests.journal.warning")

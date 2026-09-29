@@ -14,7 +14,7 @@ def test():
     import journal.ext.journal as libjournal
 
     # send all output to a log file
-    libjournal.logfile(name="api_file.log")
+    libjournal.logfile(path="api_file.log")
 
     # make a channel
     channel = libjournal.Debug(name="test.journal.debug")
