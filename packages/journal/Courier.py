@@ -11,15 +11,15 @@ import os
 import socket
 import time
 
-# the device base class of whichever implementation is live, so the chronicler accepts me
-from . import device
+# superclass
+from .Device import Device
 
 # the wire form of an entry
 from .Record import Record
 
 
 # ship entries to another process
-class Courier(device):
+class Courier(Device):
     """
     Journal device that writes entries, as records, to a file descriptor
 
