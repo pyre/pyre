@@ -13,8 +13,31 @@ a copy of.
 
 Branch: `forkserver` in `pyre`.
 
-Status: **design**. Nothing below is built. The facts about the current code were read out of
-the source on 2026-09-28, with the file cited.
+Status: **built**, as `pyre.nexus.recruiters.forkserver` (`nexus/Forkserver.py`) and the shell
+`pyre.shells.forkserver` (`shells/Forkserver.py`). The facts about the code that predates it were
+read out of the source on 2026-09-28, with the file cited. What was built differs from the design
+below in these details:
+
+- The helper is started by `Forkserver.start()`, which an application calls as early as it needs,
+  e.g. a server while it activates; otherwise the first recruitment starts it. One helper serves
+  every team of the process.
+- The helper runs the command line of the application, with the script made absolute when the
+  recruiter is imported, followed by `--shell=forkserver --shell.control=<fd>
+  --shell.journal=<fd>`; only a pyre application can be re-run this way, so a plain script keeps
+  `Fork`.
+- The control channel is a unix datagram socket pair, so each request keeps its own descriptors;
+  the messages are pickled. The helper's first message describes the interpreter, the
+  interpreter options and the script, and the installation of pyre it runs; a mismatch with the
+  team's process breaches a firewall.
+- The crew class travels pickled, with the file its module was loaded from in the team's
+  process. The helper passes it along without loading it; the member loads it after the fork,
+  and refuses to serve, with a firewall on the journal it ships to the team, if its module comes
+  from another file.
+- The helper routes its own journal to the process that started it, which replays the entries
+  when it listens on an event loop. Journal controls reach the helper through the new recruiter
+  obligation `instruct`, which `Pool.instruct` calls; `Fork` has nothing to pass along.
+- `Staff.disband` hands the members it kills to its recruiter to collect, since only the
+  recruiter knows whose children they are.
 
 
 ## The problem
