@@ -197,8 +197,9 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             try:
                 # terminate each one; its work is moot at exit
                 os.kill(crew.pid, signal.SIGKILL)
-                # and reap the process
-                os.waitpid(crew.pid, 0)
+                # and have the recruiter collect the process, since only it knows whose child
+                # the member is
+                self.recruiter.dismiss(team=self, crew=crew)
             # dead members raise while being signaled or waited on
             except (OSError, ChildProcessError):
                 # nothing more to do for them
