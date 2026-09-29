@@ -36,14 +36,15 @@ def here(level=0):
     setting {level} to 1 will use the caller's caller's location, and so on.
     """
     # externals
-    import traceback
+    import sys
 
-    # get a stack trace
-    trace = traceback.extract_stack(limit=callerStackDepth + level)
-    # grab the information from the current frame
-    source, line, function, text = trace[0]
-    # hand to the script locator
-    return script(source=source, line=line, function=function)
+    # get the frame of the requested caller, which is all a locator needs; a stack trace would
+    # also read the text of every line in it from the source files, which is never used
+    frame = sys._getframe(callerStackDepth + level - 1)
+    # get its code
+    code = frame.f_code
+    # hand its location to the script locator
+    return script(source=code.co_filename, line=frame.f_lineno, function=code.co_name)
 
 
 # end of file
