@@ -1,8 +1,10 @@
-<!-- -*- Markdown -*-
-   -
-   - michael a.g. aïvázis <michael.aivazis@para-sim.com>
-   - (c) 1998-2026 all rights reserved
-   -->
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
 
 # The `pyre.h5` layer
 
@@ -993,5 +995,6 @@ beyond the namespace/registration moves.
 - **infer** — synthesize structure purely from on-disk information.
 - **consolidate** — reconcile an expected (query) schema with the actual
   on-disk schema.
+
 
 <!-- end of file -->

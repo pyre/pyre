@@ -1,3 +1,11 @@
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
+
 # server-sent events over pyre.http
 
 A design for pushing server-originated events to connected HTTP clients, built as
@@ -297,3 +305,6 @@ Keeping `Hub` topic-aware now is what makes that a layer rather than a refit.
 - `ux/client/qed.js` — mount `<LiveSync/>` next to `<Automation/>`.
 
 Build with `mm` from the `qed` scope. Commit `pyre` and `qed` separately.
+
+
+<!-- end of file -->
