@@ -133,6 +133,19 @@ def daemon():
 
 
 @foundry(implements=shell)
+def forkserver():
+    """
+    The forkserver shell: a copy of the application that never runs it, and instead forks crew
+    members on behalf of the process that started it
+    """
+    # grab the component class record
+    from .Forkserver import Forkserver as forkserver
+
+    # and return it
+    return forkserver
+
+
+@foundry(implements=shell)
 def web():
     """
     The web shell: an interactive shell that presents the user with an initial web page
