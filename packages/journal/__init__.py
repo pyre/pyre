@@ -111,32 +111,44 @@ if without_libjournal:
         # all done
         return
 
-    # convenience function to set the message decoration level
-    def decor(level):
+    # convenience function to set or report the message decoration level
+    def decor(level=None):
         """
-        Set the message decoration level
+        Set the message decoration level to {level}; without one, report the current setting
         """
-        # set {level} as the default
+        # if there is no new setting
+        if level is None:
+            # report the current one
+            return chronicler.decor
+        # otherwise, make {level} the default
         chronicler.decor = level
         # all done
         return
 
-    # convenience function to set the maximum message detail level
-    def detail(level):
+    # convenience function to set or report the maximum message detail level
+    def detail(level=None):
         """
-        Set the maximum message detail level
+        Set the maximum message detail level to {level}; without one, report the current setting
         """
-        # set {level} as the default
+        # if there is no new setting
+        if level is None:
+            # report the current one
+            return chronicler.detail
+        # otherwise, make {level} the default
         chronicler.detail = level
         # all done
         return
 
-    # convenience function to set the margin decorator
-    def margin(margin):
+    # convenience function to set or report the margin decorator
+    def margin(margin=None):
         """
-        Set the margin decoration
+        Set the margin decoration to {margin}; without one, report the current setting
         """
-        # set {level} as the default
+        # if there is no new setting
+        if margin is None:
+            # report the current one
+            return chronicler.margin
+        # otherwise, make {margin} the default
         chronicler.margin = margin
         # all done
         return
