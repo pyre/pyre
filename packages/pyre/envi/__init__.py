@@ -18,10 +18,13 @@ The sequence
     import pyre
     import pyre.grid
     hdr = pyre.envi.reader().read(uri="product.hdr")
-    data = pyre.grid.map(uri="product", shape=hdr.shape, cell=hdr.cell, create=False)
+    data = pyre.grid.map(
+        uri="product", shape=hdr.shape, cell=hdr.cell, create=False, offset=hdr.offset
+    )
 
 reads a header and lays a grid over the product it describes, in place, whatever byte order the
-product was written in; {writer} renders a header back to text.
+product was written in, and past the header embedded in the product, if there is one;
+{writer} renders a header back to text.
 """
 
 # the exceptions
