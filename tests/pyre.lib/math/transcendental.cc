@@ -28,7 +28,7 @@ constexpr auto pi = M_PI;
 
 
 // verify {asin} across its domain, endpoints included, at compile time
-// the endpoints used to divide by zero in {atan(x / sqrt(1 - x^2))}, making them non-constexpr
+// the endpoints, where {atan(x / sqrt(1 - x^2))} would divide by zero, must be constant expressions
 static_assert(close(pyre::math::asin(0.0), 0.0));
 static_assert(close(pyre::math::asin(1.0), pi / 2.0));
 static_assert(close(pyre::math::asin(-1.0), -pi / 2.0));
@@ -36,8 +36,7 @@ static_assert(close(pyre::math::asin(0.5), pi / 6.0));
 static_assert(close(pyre::math::asin(-0.5), -pi / 6.0));
 
 // verify {acos} across its domain, endpoints included, at compile time
-// {acos(0)} used to divide by zero and {acos(x < 0)} used to land outside [0, pi] with the wrong
-// sign
+// {acos(0)} must be a constant expression, and {acos(x < 0)} must land in [0, pi]
 static_assert(close(pyre::math::acos(0.0), pi / 2.0));
 static_assert(close(pyre::math::acos(1.0), 0.0));
 static_assert(close(pyre::math::acos(-1.0), pi));
@@ -46,6 +45,7 @@ static_assert(close(pyre::math::acos(-0.5), 2.0 * pi / 3.0));
 
 // verify the {acos(x) = pi/2 - asin(x)} identity holds at compile time across the domain
 static_assert(close(pyre::math::acos(0.25) + pyre::math::asin(0.25), pi / 2.0));
+static_assert(close(pyre::math::acos(-0.75) + pyre::math::asin(-0.75), pi / 2.0));
 
 // outside the domain, the compile time path yields NaN, just like the standard library does at
 // run time; a NaN is the only value that differs from itself, which a constant expression can
@@ -56,11 +56,12 @@ nan(double x) -> bool
     // compare the value with itself
     return x != x;
 }
+
+// verify {asin} and {acos} yield NaN outside the domain at compile time
 static_assert(nan(pyre::math::asin(2.0)));
 static_assert(nan(pyre::math::asin(-2.0)));
 static_assert(nan(pyre::math::acos(2.0)));
 static_assert(nan(pyre::math::acos(-2.0)));
-static_assert(close(pyre::math::acos(-0.75) + pyre::math::asin(-0.75), pi / 2.0));
 
 
 // main program
