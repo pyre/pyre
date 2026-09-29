@@ -35,4 +35,35 @@ pyre::journal::py::locator() -> locator_t
 }
 
 
+// build the python counterpart of a journal exception
+template <class errorT>
+auto
+pyre::journal::py::complaint(const char * type, const errorT & error) -> py::object
+{
+    // get the exception class
+    auto cls = py::module::import("journal.exceptions").attr(type);
+    // copy the page into a list, since the bound page is opaque
+    py::list page;
+    // one line at a time
+    for (const auto & line : error.page()) {
+        // add it to the pile
+        page.append(line);
+    }
+    // copy the notes into a dictionary, for the same reason
+    py::dict notes;
+    // one pair at a time
+    for (const auto & [key, value] : error.notes()) {
+        // add it to the pile
+        notes[py::str(key)] = value;
+    }
+    // look up the name of the channel that raised it
+    auto name = error.notes().find("channel");
+    // if it's not there, the channel is anonymous
+    auto channel = (name != error.notes().end()) ? py::object(py::str(name->second)) : py::none();
+    // build the exception and hand it off
+    return cls(
+        "headline"_a = error.what(), "channel"_a = channel, "page"_a = page, "notes"_a = notes);
+}
+
+
 // end of file

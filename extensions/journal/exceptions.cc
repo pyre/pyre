@@ -11,19 +11,59 @@
 #include "forward.h"
 
 
+// raise the python counterpart of a journal exception
+template <class errorT>
+static void
+raise(const char * type, const errorT & error)
+{
+    // build the exception
+    auto complaint = pyre::journal::py::complaint(type, error);
+    // and hand it to the interpreter
+    PyErr_SetObject(reinterpret_cast<PyObject *>(Py_TYPE(complaint.ptr())), complaint.ptr());
+    // all done
+    return;
+}
+
+
 // add bindings to the inventory
 void
 pyre::journal::py::exceptions(py::module & m)
 {
-    // get the base exception as a raw {PyObject *}, which is what {register_exception} wants
-    auto journalError = py::module::import("journal").attr("exceptions").attr("JournalError").ptr();
+    // the exception classes live in the python package, so both implementations share them
+    auto exceptions = py::module::import("journal.exceptions");
+    // publish them
+    m.attr("DebugError") = exceptions.attr("DebugError");
+    m.attr("FirewallError") = exceptions.attr("FirewallError");
+    m.attr("ApplicationError") = exceptions.attr("ApplicationError");
 
-    // when {debug} channels are fatal
-    py::register_exception<debug_error>(m, "DebugError", journalError);
-    // when {firewalls} are fatal
-    py::register_exception<firewall_error>(m, "FirewallError", journalError);
-    // when user facing channels are fatal
-    py::register_exception<application_error>(m, "ApplicationError", journalError);
+    // translate the journal exceptions that cross into python
+    py::register_exception_translator([](std::exception_ptr pending) -> void {
+        // carefully
+        try {
+            // if there is an exception in flight
+            if (pending) {
+                // raise it again so we can tell what it is
+                std::rethrow_exception(pending);
+            }
+        }
+        // when {debug} channels are fatal
+        catch (const debug_error & error) {
+            // raise the python counterpart
+            raise("DebugError", error);
+        }
+        // when {firewalls} are fatal
+        catch (const firewall_error & error) {
+            // raise the python counterpart
+            raise("FirewallError", error);
+        }
+        // when user facing channels are fatal
+        catch (const application_error & error) {
+            // raise the python counterpart
+            raise("ApplicationError", error);
+        }
+        // all done
+        return;
+    });
 
     // all done
     return;
