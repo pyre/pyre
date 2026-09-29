@@ -22,6 +22,14 @@ class Error(Channel, active=True, fatal=True):
     from .exceptions import ApplicationError
 
     # implementation details
+    def outcome(self):
+        """
+        What recording an entry leads to: the exception that states the condition, so the
+        caller can raise it whether i am fatal or not
+        """
+        # build the exception and hand it off
+        return self.complaint()
+
     def record(self):
         """
         Commit my payload to the journal

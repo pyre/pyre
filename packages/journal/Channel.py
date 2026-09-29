@@ -256,12 +256,13 @@ class Channel(pyre.patterns.named):
         # exception. of course, if no exception is raised, we just clean up the page and move
         # on
 
+        # ask my severity what the entry leads to, while the entry still holds the message
+        outcome = self.outcome()
+
         # carefully
         try:
-            # commit the message to the journal and let the channel decide what to return to
-            # the caller; currently, all channels return {self}, except {firewall}, which
-            # returns the exception it would have raised if it were fatal
-            status = self.commit()
+            # commit the message to the journal
+            self.commit()
         # if i'm a fatal diagnostic, {commit} raises a journal exception
         except self.JournalError:
             # no worries; someone else may know what to do
@@ -271,8 +272,8 @@ class Channel(pyre.patterns.named):
             # flush my entry
             self.entry = self.newEntry()
 
-        # all done
-        return status
+        # hand back the outcome
+        return outcome
 
     # metamethods
     def __init__(self, name, detail=detail, dent=dent, **kwds):
@@ -340,8 +341,8 @@ class Channel(pyre.patterns.named):
             # nothing to do
             return self
 
-        # record the entry and let the channel decide what to return to the user
-        status = self.record()
+        # record the entry
+        self.record()
 
         # if i'm fatal
         if self.fatal:
@@ -349,7 +350,7 @@ class Channel(pyre.patterns.named):
             raise self.complaint()
 
         # all done
-        return status
+        return self
 
     def complaint(self):
         """
@@ -367,6 +368,13 @@ class Channel(pyre.patterns.named):
         complaint = self.fatalError(channel=self)
         # and return it
         return complaint
+
+    def outcome(self):
+        """
+        What recording an entry leads to: me, so the caller can keep going
+        """
+        # enable chaining
+        return self
 
     def record(self):
         """

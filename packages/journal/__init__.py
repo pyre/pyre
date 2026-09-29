@@ -77,6 +77,9 @@ if without_libjournal:
     # the content of an entry, for those that rebuild entries from records
     from .Entry import Entry as entry
 
+    # the device that ships entries to another process
+    from .Courier import Courier as courier
+
     # convenience function to set the application name
     def application(name):
         """
@@ -187,6 +190,8 @@ else:
     device = libjournal.Device
     # the content of an entry, for those that rebuild entries from records
     entry = libjournal.Entry
+    # the device that ships entries to another process
+    courier = libjournal.Courier
     # renderer = libjournal.Renderer
     # alert = libjournal.Alert
     # memo = libjournal.Memo
@@ -206,10 +211,6 @@ from .Record import Record as record
 
 # an instruction to a channel in another process
 from .Control import Control as control
-
-# the device that ships entries to another process; it derives from {device}, so it must
-# come after the implementation choice
-from .Courier import Courier as courier
 
 # the channel factories, by severity, for those that rebuild entries from records
 severities = {

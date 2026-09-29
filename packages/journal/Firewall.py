@@ -30,14 +30,22 @@ class Firewall(Channel, active=True, fatal=True):
     from .exceptions import FirewallError
 
     # implementation details
+    def outcome(self):
+        """
+        What recording an entry leads to: the exception that states the condition, so the
+        caller can raise it whether i am fatal or not
+        """
+        # build the exception and hand it off
+        return self.complaint()
+
     def record(self):
         """
         Commit my payload to the journal
         """
         # hunt down my device and record the entry
         self.device.memo(entry=self.entry)
-        # return the exception that would have been raised if i were fatal
-        return self.complaint()
+        # all done
+        return self
 
     # constants
     severity = "firewall"  # the channel severity
