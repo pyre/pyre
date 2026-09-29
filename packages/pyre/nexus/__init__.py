@@ -45,6 +45,19 @@ def fork():
     return fork
 
 
+@pyre.foundry(implements=recruiter, tip="recruit team members from a clean helper process")
+def forkserver():
+    """
+    Ask a helper process, spawned from the command line of the application, to fork the team
+    members, so they inherit nothing the team's process did after it started
+    """
+    # get the implementation
+    from .Forkserver import Forkserver as forkserver
+
+    # and return it
+    return forkserver
+
+
 @pyre.foundry(implements=asynchronous, tip="a component that endows a process with an event loop")
 def peer():
     """
