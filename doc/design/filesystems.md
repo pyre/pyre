@@ -1,8 +1,10 @@
-<!-- -*- Markdown -*-
-   -
-   - michael a.g. aïvázis <michael.aivazis@para-sim.com>
-   - (c) 1998-2026 all rights reserved
-   -->
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
 
 # The `pyre.filesystem` package
 
@@ -130,5 +132,6 @@ place, so the split is mechanical.
   base class.
 - `Folder.remove` refuses folders; removal of subtrees is not implemented.
 - `hdf5` is a placeholder.
+
 
 <!-- end of file -->

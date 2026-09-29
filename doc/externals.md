@@ -1,8 +1,10 @@
-<!-- -*- Markdown -*-
-   -
-   - michael a.g. aïvázis <michael.aivazis@para-sim.com>
-   - (c) 1998-2026 all rights reserved
-   -->
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
 
 # The `pyre.externals` layer
 
@@ -464,3 +466,6 @@ Nothing else requires modification. The category is found because its directory 
 and every engine interprets its recipes without alteration. Note that this presumes write
 access to the framework's own source: contributing a category from outside pyre is not
 currently supported, and is recorded as a gap.
+
+
+<!-- end of file -->

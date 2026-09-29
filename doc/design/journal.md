@@ -1,3 +1,11 @@
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
+
 # journal: the diagnostics framework
 
 `journal` is the pyre diagnostics framework. It works identically from Python and
@@ -110,3 +118,6 @@ Manipulators:
 
 After a `firewall_t` or `error_t` fires, always `break` or `return`; do not fall
 through as if the logging were optional.
+
+
+<!-- end of file -->

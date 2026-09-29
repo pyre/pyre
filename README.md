@@ -1,3 +1,11 @@
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
+
 # pyre
 
 [![release](https://img.shields.io/github/v/release/pyre/pyre)](https://github.com/pyre/pyre/releases)
@@ -256,4 +264,5 @@ installation. Let's verify:
 
 Both statements should succeed, and the latter should print out the `pyre` installation location.
 
-[comment]: <> (end of file)
+
+<!-- end of file -->

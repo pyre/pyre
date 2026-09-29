@@ -1,8 +1,10 @@
-<!-- -*- Markdown -*-
-   -
-   - michael a.g. aïvázis <michael.aivazis@para-sim.com>
-   - (c) 1998-2026 all rights reserved
-   -->
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
 
 # Cutting a release
 
@@ -223,5 +225,6 @@ order it must happen, with the reason for each step and how to check it.
 
 15. **Record what the walk taught.** Anything that surprised, failed, or had to be done by
     hand goes into this file.
+
 
 <!-- end of file -->
