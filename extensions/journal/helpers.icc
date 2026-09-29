@@ -16,20 +16,16 @@
 auto
 pyre::journal::py::locator() -> locator_t
 {
-    // get the stack extractor from the {traceback} module
-    auto stackgen = py::module::import("traceback").attr("extract_stack");
-    // ask it for a stack trace that includes our caller
-    // N.B. unlike the pure python implementation, it appears that the call to the python
-    // bindings itself is not recorded in the stack trace, hence the shallower stack trace
-    // request; it's not clear whether that's
-    // something that depends on the version of pybind11
-    auto trace = stackgen("limit"_a = 1);
-    // get the trace info from the topmost entry
-    auto caller = trace[py::int_(0)];
+    // get the frame of our caller; the call to the bindings does not add a frame of its own,
+    // so the innermost python frame is the caller's. a stack trace would also read the text of
+    // the line from the source file, which is never used
+    auto frame = py::module::import("sys").attr("_getframe")(0);
+    // get its code
+    auto code = frame.attr("f_code");
     // pull out what we need
-    py::str filename = caller[py::int_(0)];
-    py::str line = caller[py::int_(1)];
-    py::str function = caller[py::int_(2)];
+    py::str filename = code.attr("co_filename");
+    py::str line = frame.attr("f_lineno");
+    py::str function = code.attr("co_name");
 
     // make a locator
     locator_t loc(filename, line, function);
