@@ -87,6 +87,8 @@ pyre_test_driver(tests/pyre.lib/memory/heap_copy.cc)
 pyre_test_driver(tests/pyre.lib/memory/heap_oob.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_create.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_oob.cc)
+pyre_test_driver(tests/pyre.lib/memory/map_offset.cc)
+pyre_test_driver(tests/pyre.lib/memory/map_offset_past.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_read.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_write.cc)
 pyre_test_driver(tests/pyre.lib/memory/memory_sanity.cc)
@@ -104,6 +106,7 @@ pyre_test_driver(tests/pyre.lib/memory/constheap_slice.cc)
 pyre_test_driver(tests/pyre.lib/memory/view_slice.cc)
 pyre_test_driver(tests/pyre.lib/memory/constview_slice.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_slice.cc)
+pyre_test_driver(tests/pyre.lib/memory/map_unaligned.cc)
 pyre_test_driver(tests/pyre.lib/memory/constmap_slice.cc)
 
 # some tests must happen in a specific order
@@ -149,6 +152,10 @@ pyre_test_driver_cleanup(map.dat
 # the slice tests each own their file
 pyre_test_driver_cleanup(map_slice.dat tests/pyre.lib/memory/map_slice.cc)
 pyre_test_driver_cleanup(constmap_slice.dat tests/pyre.lib/memory/constmap_slice.cc)
+# and so do the tests of mapping past a header
+pyre_test_driver_cleanup(map_offset.dat tests/pyre.lib/memory/map_offset.cc)
+pyre_test_driver_cleanup(map_offset_past.dat tests/pyre.lib/memory/map_offset_past.cc)
+pyre_test_driver_cleanup(map_unaligned.dat tests/pyre.lib/memory/map_unaligned.cc)
 
 
 # typelists

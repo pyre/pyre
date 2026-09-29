@@ -66,6 +66,24 @@ pyre_test_python_testcase(tests/pyre.pkg/grid/heap.py)
 
 
 #
+# pyre/envi
+#
+pyre_test_python_testcase(tests/pyre.pkg/envi/sanity.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/header.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/read.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/write.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/malformed.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/extras.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/mapinfo.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/cell.py)
+pyre_test_python_testcase(tests/pyre.pkg/envi/offset.py)
+# the drivers leave their scratch products behind so they can be inspected; sweep them
+pyre_test_python_cleanup(envi_write_test.hdr tests/pyre.pkg/envi/write.py)
+pyre_test_python_cleanup("envi_cell_test_*" tests/pyre.pkg/envi/cell.py)
+pyre_test_python_cleanup("envi_offset_test_*" tests/pyre.pkg/envi/offset.py)
+
+
+#
 # pyre/parsing
 #
 pyre_test_python_testcase(tests/pyre.pkg/parsing/sanity.py)
