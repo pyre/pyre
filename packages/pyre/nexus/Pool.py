@@ -95,11 +95,14 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         Apply the {control} instruction to my own journal, and send it to every crew member
 
-        A member forked after this inherits the new state, so only the ones already deployed
-        need to be told
+        The members already deployed are told directly; my recruiter is told as well, so the
+        members it recruits from now on start with the new state, whether they inherit it or
+        have to be sent it
         """
         # apply it here
         control.apply()
+        # tell my recruiter
+        self.recruiter.instruct(control=control)
         # go through the members
         for crew in self.crews():
             # carefully, since a member may have died

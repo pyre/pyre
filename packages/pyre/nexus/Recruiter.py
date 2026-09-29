@@ -34,6 +34,13 @@ class Recruiter(pyre.protocol, family="pyre.nexus.recruiters"):
         The {team} manager has dismissed the given {member}
         """
 
+    @pyre.provides
+    def instruct(self, control):
+        """
+        The journal {control} was applied to the team; see that members recruited from now on
+        start with it in place
+        """
+
     # default implementation
     @classmethod
     def pyre_default(cls, **kwds):

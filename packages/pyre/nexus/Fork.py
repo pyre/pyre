@@ -223,6 +223,15 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         # all done
         return
 
+    @pyre.provides
+    def instruct(self, control):
+        """
+        The journal {control} was applied to the team; members forked from its process from now
+        on inherit it, so there is nothing to pass along
+        """
+        # nothing to do
+        return
+
     # implementation details
     def reap(self, pid, patience):
         """
