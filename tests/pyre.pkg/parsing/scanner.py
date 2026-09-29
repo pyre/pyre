@@ -34,7 +34,7 @@ def test():
         [
             "(?P<comment>#)",
             "(?P<separator>:)",
-            "(?P<whitespace>\s+)",
+            r"(?P<whitespace>\s+)",
         ]
     )
 
