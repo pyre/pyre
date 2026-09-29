@@ -6,7 +6,7 @@
 
 
 # externals
-import traceback  # location information
+import sys  # location information
 
 # framework
 import pyre  # for my superclass and {tracking}
@@ -228,10 +228,13 @@ class Channel(pyre.patterns.named):
             # add it to the page
             self.line(message)
 
-        # get a stack trace
-        trace = traceback.extract_stack(limit=2)
-        # so we can extract location information
-        filename, line, function, *_ = trace[0]
+        # get the frame of my caller, which is all the location information needs; a stack trace
+        # would also read the text of the line from the source file, which is never used
+        frame = sys._getframe(1)
+        # get its code
+        code = frame.f_code
+        # and extract the location information
+        filename, line, function = code.co_filename, frame.f_lineno, code.co_name
 
         # decorate my current metadata
         notes = self.notes
