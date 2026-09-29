@@ -15,10 +15,24 @@ def test():
     # for the scratch file
     import os
 
+    # to capture the console
+    import io
+    import sys
+
     # the file
     path = "tee_sanity_pkg.log"
-    # make a tee over the console and the file
-    tee = journal.tee(paths=[path])
+    # capture the console, which binds the standard output when it is built
+    console, sys.stdout = sys.stdout, io.StringIO()
+    # carefully
+    try:
+        # make a tee over the console and the file
+        tee = journal.tee(paths=[path])
+    # in any case
+    finally:
+        # grab the capture
+        capture = sys.stdout
+        # and restore the standard output
+        sys.stdout = console
     # check its name
     assert tee.name == "tee"
     # it holds the console and the file
@@ -32,7 +46,9 @@ def test():
     # let go of the tee so the file is flushed
     channel.device = journal.trash()
     del tee
-    # and check that the message is in the file
+    # check that the message made it to the console
+    assert "hello world!" in capture.getvalue()
+    # and to the file
     assert "hello world!" in open(path, encoding="utf-8").read()
     # clean up
     os.remove(path)
