@@ -14,7 +14,7 @@ def test():
     from journal.ext.journal import Informational as info
 
     # send all output to a file
-    info.logfile(name="info_file_mode.log", mode="a")
+    info.logfile(path="info_file_mode.log", mode="a")
 
     # make an info channel
     channel = info(name="tests.journal.info")

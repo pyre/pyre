@@ -14,7 +14,7 @@ def test():
     from journal.ext.journal import Debug as debug
 
     # send all output to a log file
-    debug.logfile(name="debug_file.log")
+    debug.logfile(path="debug_file.log")
 
     # make a channel
     channel = debug(name="test.journal.debug")

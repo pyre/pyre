@@ -14,7 +14,7 @@ def test():
     from journal.ext.journal import Error as error
 
     # send output to a log file
-    error.logfile(name="error_file_mode.log", mode="a")
+    error.logfile(path="error_file_mode.log", mode="a")
 
     # make a channel
     channel = error(name="test.journal.error")
