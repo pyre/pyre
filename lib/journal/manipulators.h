@@ -26,9 +26,9 @@
 // end of transaction
 template <typename severityT, template <class> typename proxyT>
 auto
-pyre::journal::endl(Channel<severityT, proxyT> & channel) -> Channel<severityT, proxyT> &
+pyre::journal::endl(Channel<severityT, proxyT> & channel) -> outcome_t<severityT>
 {
-    // ask the channel to record the accumulated message
+    // ask the channel to record the accumulated message and hand back its outcome
     return channel.log();
 }
 
@@ -250,6 +250,18 @@ pyre::journal::operator<<(
 }
 
 
+// this template takes care of {endl}, which hands back the outcome of recording the entry
+template <typename severityT, template <class> typename proxyT>
+inline auto
+pyre::journal::operator<<(
+    Channel<severityT, proxyT> & channel,
+    outcome_t<severityT> (*manipulator)(Channel<severityT, proxyT> &)) -> outcome_t<severityT>
+{
+    // invoke the manipulator function with the {channel} as an argument
+    return manipulator(channel);
+}
+
+
 // injection of everything else
 template <typename itemT, typename severityT, template <class> typename proxyT>
 auto
@@ -267,11 +279,11 @@ pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const itemT & it
 template <typename severityT, template <class> typename proxyT, typename decoratorT>
 auto
 pyre::journal::operator<<(Channel<severityT, proxyT> & channel, const Flush<decoratorT> & flush)
-    -> Channel<severityT, proxyT> &
+    -> outcome_t<severityT>
 {
     // inject the decorator
     channel << flush.decorator();
-    // all done
+    // record the entry and hand back its outcome
     return channel.log();
 }
 

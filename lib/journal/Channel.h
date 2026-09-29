@@ -90,10 +90,13 @@ public:
 public:
     // end of a line of message
     inline auto line() -> severity_reference;
-    // end of a message
-    inline auto log() -> severity_reference;
+    // end of a message; hands back what my severity says a recorded entry leads to
+    inline auto log() -> decltype(auto);
     // commit the current message to the journal
     inline auto commit() -> severity_reference;
+    // what recording an entry leads to: me, so the caller can keep going; severities that
+    // leave the caller no viable path forward hand back an exception instead
+    inline auto outcome() -> severity_reference;
 
     // static interface
 public:

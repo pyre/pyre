@@ -28,7 +28,7 @@ public:
     // me
     using self_type = Error<proxyT>;
     // my superclass
-    using super_type = Channel<self_type, InventoryProxy>;
+    using super_type = Channel<self_type, proxyT>;
 
     // my channel
     using channel_type = super_type;
@@ -51,6 +51,11 @@ public:
     inline void record();
     // raise the correct exception when fatal
     inline void die();
+    // build the exception that states the condition in my current entry
+    inline auto complaint() const -> exception_type;
+    // what recording an entry leads to: the exception that states the condition, so
+    // the caller can raise it whether i am fatal or not
+    inline auto outcome() const -> exception_type;
 
     // implementation details
 public:
