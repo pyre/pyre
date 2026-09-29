@@ -128,11 +128,12 @@ namespace pyre::py::grid {
     }
 
 
-    // a file-backed grid: lay {shape} cells of {cellT} over the product at {uri}
-    // {create} chooses between making a fresh product sized to the shape, and mapping an
-    // existing one, which is how a data product on disk is read back
+    // a file-backed grid: lay {shape} cells of {cellT} over the product at {uri}, starting
+    // {offset} bytes into the file; {create} chooses between making a fresh product sized to the
+    // shape, and mapping an existing one, which is how a data product on disk is read back
     template <class cellT>
-    auto makeMap(const string_t & uri, const shape_t & shape, bool create) -> AnyGrid
+    auto makeMap(const string_t & uri, const shape_t & shape, bool create, std::size_t offset)
+        -> AnyGrid
     {
         // the storage and the grid over it
         using storage_t = pyre::memory::map_t<cellT>;
@@ -141,15 +142,16 @@ namespace pyre::py::grid {
         auto packing = packing_t(shape);
         // either make a file large enough to hold the grid, or map an existing one for writing
         auto storage =
-            create ? storage_t::create(uri, packing.cells()) : storage_t::open(uri, true);
+            create ? storage_t::create(uri, packing.cells()) : storage_t::open(uri, true, offset);
         // make the grid and type-erase it; map storage owns its cells through a shared handle
         return anyGrid(grid_t { packing, storage }, "map");
     }
 
-    // a read-only file-backed grid: map the product at {uri} without write access, which is
-    // how a client examines a data product it does not own
+    // a read-only file-backed grid: map the product at {uri} without write access, starting
+    // {offset} bytes into the file, which is how a client examines a data product it does not
+    // own
     template <class cellT>
-    auto makeConstMap(const string_t & uri, const shape_t & shape) -> AnyGrid
+    auto makeConstMap(const string_t & uri, const shape_t & shape, std::size_t offset) -> AnyGrid
     {
         // the storage and the grid over it
         using storage_t = pyre::memory::constmap_t<cellT>;
@@ -157,7 +159,7 @@ namespace pyre::py::grid {
         // lay out the shape
         auto packing = packing_t(shape);
         // map the existing product for reading only
-        auto storage = storage_t::open(uri);
+        auto storage = storage_t::open(uri, false, offset);
         // make the grid and type-erase it; the const cells mark the description read-only
         return anyGrid(grid_t { packing, storage }, "map");
     }
@@ -165,7 +167,7 @@ namespace pyre::py::grid {
     // the map factory python calls
     auto map(
         const string_t & uri, const std::vector<size_type> & extents, const string_t & cell,
-        bool create, bool writable) -> AnyGrid
+        bool create, bool writable, size_type offset) -> AnyGrid
     {
         // a fresh product exists to be filled, so refusing write access to it is a mistake
         if (create && !writable) {
@@ -174,15 +176,46 @@ namespace pyre::py::grid {
                 "a fresh product must be writable; open an existing one "
                 "with {create=False} for read-only access");
         }
+        // a fresh product is all cells, so there is nothing for an offset to skip
+        if (create && offset != 0) {
+            // complain
+            throw py::value_error(
+                "a fresh product has no header to skip; an {offset} needs {create=False}");
+        }
+        // the block cannot start before the file does
+        if (offset < 0) {
+            // complain
+            throw py::value_error("the {offset} of a mapped grid cannot be negative");
+        }
         // adopt the extents as a shape
         auto shape = shape_t(extents.begin(), extents.end());
+        // the mapping starts on a page boundary, so the cells are aligned exactly when the
+        // offset is a multiple of their alignment; cells that are not must be read by copying
+        // their bytes, which is what the unaligned spelling of each cell does
+        auto bytes = static_cast<std::size_t>(offset);
         // for read-only access
         if (!writable) {
             // dispatch to the const flavor
-            return dispatchCell(cell, [&]<class T>() { return makeConstMap<T>(uri, shape); });
+            return dispatchCell(cell, [&]<class T>() {
+                // over aligned cells
+                if (bytes % alignof(T) == 0) {
+                    // use them as they are
+                    return makeConstMap<T>(uri, shape, bytes);
+                }
+                // otherwise, read them wherever they sit
+                return makeConstMap<pyre::memory::unaligned_t<T>>(uri, shape, bytes);
+            });
         }
         // otherwise, dispatch to the writable one
-        return dispatchCell(cell, [&]<class T>() { return makeMap<T>(uri, shape, create); });
+        return dispatchCell(cell, [&]<class T>() {
+            // over aligned cells
+            if (bytes % alignof(T) == 0) {
+                // use them as they are
+                return makeMap<T>(uri, shape, create, bytes);
+            }
+            // otherwise, read and write them wherever they sit
+            return makeMap<pyre::memory::unaligned_t<T>>(uri, shape, create, bytes);
+        });
     }
 
 
@@ -643,10 +676,12 @@ pyre::py::grid::__init__(py::module & m) -> void
         // the implementation
         &map,
         // the signature; {create} makes a fresh product, else an existing one is mapped;
-        // {writable} chooses between mapping it for writing and read-only access
-        "uri"_a, "shape"_a, "cell"_a, "create"_a = true, "writable"_a = true,
+        // {writable} chooses between mapping it for writing and read-only access; {offset} is
+        // the number of bytes of an existing product before its cells
+        "uri"_a, "shape"_a, "cell"_a, "create"_a = true, "writable"_a = true, "offset"_a = 0,
         // the docstring
-        "lay a grid of the given {shape} and {cell} over the memory-mapped file at {uri}");
+        "lay a grid of the given {shape} and {cell} over the memory-mapped file at {uri}, "
+        "starting {offset} bytes into it");
 
     // the factory that wraps memory python already holds
     grid.def(
