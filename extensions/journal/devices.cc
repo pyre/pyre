@@ -181,6 +181,14 @@ pyre::journal::py::devices(py::module & m)
             // the docstring
             "the descriptor the records are written to")
 
+        // the mirror
+        .def_property_readonly(
+            "mirror",
+            // the getter
+            &courier_t::mirror,
+            // the docstring
+            "the device that also gets every entry")
+
         // the sequence number
         .def_property_readonly(
             "seq",

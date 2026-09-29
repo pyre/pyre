@@ -261,18 +261,19 @@ pyre::journal::py::firewall(py::module & m)
         .def(
             "log",
             // the handler
-            [](firewall_t & channel, const firewall_t::string_type & message,
-               // additional arguments are interpreted as entry notes
-               py::kwargs kwds) -> firewall_t & {
+            [m](firewall_t & channel, const firewall_t::string_type & message,
+                // additional arguments are interpreted as entry notes
+                py::kwargs kwds) -> py::object {
                 // unpack {kwds}
                 for (auto entry : kwds) {
                     // and treat each one as a note
                     channel << pyre::journal::note(py::str(entry.first), py::str(entry.second));
                 }
-                // inject and flush
-                channel << locator() << message << pyre::journal::endl;
-                // enable chaining
-                return channel;
+                // inject and flush; a fatal channel raises here, otherwise it hands back the
+                // exception that states the condition
+                auto complaint = channel << locator() << message << pyre::journal::endl;
+                // hand back its python counterpart, so the caller can raise it
+                return m.attr("FirewallError")(complaint.what());
             },
             // the signature
             "message"_a = "",
