@@ -91,12 +91,20 @@ h = grid.map(uri="product.dat", shape=[1024, 1024], cell="float32", create=False
 # examining a product you do not own: map it read-only
 r = grid.map(uri="product.dat", shape=[1024, 1024], cell="float32",
              create=False, writable=False)
+
+# a product whose cells sit past a header embedded in the file: skip it
+e = grid.map(uri="product.dat", shape=[1024, 1024], cell="float32",
+             create=False, offset=512)
 ```
 
 A read-only map refuses writes through indexing and marks its buffer protocol view
 read-only, so numpy sees an immutable array. Asking for a *fresh* product that is
-read-only is refused: a product that could never be filled is a mistake. Exhibits:
-`tests/pyre.ext/grid/map.py`, `tests/pyre.ext/grid/readonly.py`.
+read-only is refused: a product that could never be filled is a mistake. An `offset`
+skips that many bytes of an existing product before its first cell; when it is not a multiple
+of the cell's alignment, the cells are read and written by copying their bytes, and the buffer
+protocol description names their byte order, a spelling that implies no alignment. Exhibits:
+`tests/pyre.ext/grid/map.py`, `tests/pyre.ext/grid/readonly.py`,
+`tests/pyre.ext/grid/offset.py`.
 
 <a id="uc3"></a>
 ## 3. Memory owned by someone else
