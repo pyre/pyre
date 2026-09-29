@@ -37,8 +37,9 @@ public:
     inline ~FileMap();
 
     // constructors
-    // map an existing data product given its filename
-    inline explicit FileMap(uri_type, writable_type = false);
+    // map an existing data product given its filename; the block starts {offset} bytes into
+    // the file, past whatever header the product carries
+    inline explicit FileMap(uri_type, writable_type = false, size_type offset = 0);
     // create a new product of a given size in bytes
     inline FileMap(uri_type, size_type);
 
@@ -47,6 +48,8 @@ public:
     // accessors
     inline auto uri() const -> uri_type;
     inline auto writable() const -> bool;
+    // the number of bytes of the file before the block
+    inline auto offset() const -> size_type;
     // memory footprint
     inline auto bytes() const -> size_type;
     // raw access to the memory block
@@ -67,10 +70,13 @@ private:
     // client supplied
     uri_type _uri;           // the path to my backing store
     writable_type _writable; // access control
+    size_type _offset;       // the bytes of the file before the block
     // bookkeeping
-    pointer _data;    // the address of the memory block
-    size_type _bytes; // the memory footprint of the block
-    info_type _info;  // information about the backing store; retrieved by {::stat}
+    pointer _map;      // the address of the mapping, on a page boundary
+    size_type _extent; // the length of the mapping, from the page boundary to the end of the file
+    pointer _data;     // the address of the memory block
+    size_type _bytes;  // the memory footprint of the block
+    info_type _info;   // information about the backing store; retrieved by {::stat}
 
     // disallow
 private:
