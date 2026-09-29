@@ -22,6 +22,19 @@ class Chronicler(metaclass=pyre.patterns.singleton):
     detail = 1
     margin = " " * 2
 
+    # interface
+    def quiet(self):
+        """
+        Suppress all output
+        """
+        # get the trash can
+        from .Trash import Trash
+
+        # make one and install it as the default device
+        self.device = Trash()
+        # all done
+        return
+
     # metamethods
     def __init__(
         self,

@@ -30,6 +30,7 @@ class Debug(Channel, active=False, fatal=False):
 
     # constants
     severity = "debug"  # the channel severity
+    headline = "debug"  # the summary of the condition when i'm fatal
     fatalError = DebugError  # the exception i raise when i'm fatal
 
 

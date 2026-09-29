@@ -49,6 +49,7 @@ class Firewall(Channel, active=True, fatal=True):
 
     # constants
     severity = "firewall"  # the channel severity
+    headline = "FIREWALL BREACHED!"  # the summary of the condition when i'm fatal
     fatalError = FirewallError  # the exception i raise when i'm fatal
 
 

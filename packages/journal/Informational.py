@@ -30,6 +30,7 @@ class Informational(Channel, active=True, fatal=False):
 
     # constants
     severity = "info"  # the channel severity
+    headline = "info"  # the summary of the condition when i'm fatal
     fatalError = ApplicationError  # the exception i raise when i'm fatal
 
 

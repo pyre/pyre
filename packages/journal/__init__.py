@@ -8,8 +8,14 @@
 # publish the package metadata
 from . import meta
 
-# load the exception hierarchy
+# load the exception hierarchy, which both implementations share
 from . import exceptions
+
+# publish the exceptions
+JournalError = exceptions.JournalError
+FirewallError = exceptions.FirewallError
+DebugError = exceptions.DebugError
+ApplicationError = exceptions.ApplicationError
 
 # set up a marker about whether we are going to load and publish the bindings
 without_libjournal = False
@@ -42,12 +48,6 @@ if without_libjournal:
 
     # instantiate the singleton and publish the instance
     chronicler = Chronicler()
-
-    # exceptions
-    JournalError = exceptions.JournalError
-    FirewallError = exceptions.FirewallError
-    DebugError = exceptions.DebugError
-    ApplicationError = exceptions.ApplicationError
 
     # devices
     from .Trash import Trash as trash
@@ -95,10 +95,8 @@ if without_libjournal:
         """
         Suppress all output
         """
-        # make a trash can
-        trashcan = trash()
-        # set it as the default device
-        chronicler.device = trashcan
+        # ask the chronicler
+        chronicler.quiet()
         # all done
         return
 
@@ -162,12 +160,6 @@ else:
     # let the c++ library take over
     # publish the keeper of the global state
     chronicler = libjournal.Chronicler
-
-    # exceptions
-    JournalError = exceptions.JournalError
-    FirewallError = libjournal.FirewallError
-    DebugError = libjournal.DebugError
-    ApplicationError = libjournal.ApplicationError
 
     # devices
     trash = libjournal.Trash
