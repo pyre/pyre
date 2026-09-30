@@ -102,7 +102,9 @@ read-only, so numpy sees an immutable array. Asking for a *fresh* product that i
 read-only is refused: a product that could never be filled is a mistake. An `offset`
 skips that many bytes of an existing product before its first cell; when it is not a multiple
 of the cell's alignment, the cells are read and written by copying their bytes, and the buffer
-protocol description names their byte order, a spelling that implies no alignment. Exhibits:
+protocol description names their byte order, a spelling that implies no alignment. An `offset`
+that leaves nothing to map, at or past the end of the file, is an error, and so is a fresh
+product with no cells. Exhibits:
 `tests/pyre.ext/grid/map.py`, `tests/pyre.ext/grid/readonly.py`,
 `tests/pyre.ext/grid/offset.py`.
 
