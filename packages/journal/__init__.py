@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import os
+
 # publish the package metadata
 from . import meta
 
@@ -28,8 +31,8 @@ try:
     without_libjournal = __main__.journal_no_libjournal
 # if not
 except AttributeError:
-    # no worries
-    pass
+    # turn the bindings off when the environment asks for it
+    without_libjournal = os.environ.get("JOURNAL_LIBJOURNAL") == "off"
 
 # if we are allowed
 if not without_libjournal:
@@ -43,11 +46,11 @@ if not without_libjournal:
 
 # if we don't have access to the bindings, rely on the pure python implementation
 if without_libjournal:
-    # publish the keeper of the global settings
-    from .Chronicler import Chronicler
+    # get the keeper of the global settings, without publishing its class
+    from . import Chronicler
 
     # instantiate the singleton and publish the instance
-    chronicler = Chronicler()
+    chronicler = Chronicler.Chronicler()
 
     # devices
     from .Trash import Trash as trash
@@ -70,9 +73,6 @@ if without_libjournal:
 
     # lower level entities that users may want to subclass
     from .Device import Device as device
-    from .Renderer import Renderer as renderer
-    from .Alert import Alert as alert
-    from .Memo import Memo as memo
 
     # the content of an entry, for those that rebuild entries from records
     from .Entry import Entry as entry
