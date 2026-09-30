@@ -27,7 +27,7 @@ except ImportError:
     # force the existence of the directory
     os.makedirs(name=xdg, exist_ok=True)
     # pick the target release of pyre
-    release = "v1.12.7"
+    release = "v1.14.0"
     # the pyre installation is in a zip file
     pyre = f"pyre-{release}.zip"
     # which we place in the pyre specific configuration directory
@@ -35,7 +35,7 @@ except ImportError:
     # if the file doesn't exist already
     if not os.path.exists(path=bootstrap):
         # form the url to the github release asset
-        url = f"http://github.com/pyre/pyre/releases/download/{release}/pyre-boot.zip"
+        url = f"https://github.com/pyre/pyre/releases/download/{release}/pyre-boot.zip"
         # get the zip file from github
         with urllib.request.urlopen(url=url) as ins:
             # by opening the local file in binary mode
