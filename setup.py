@@ -20,10 +20,12 @@ def version() -> str:
     metadata when the build happens outside a git checkout.
     """
     try:
+        # a checkout knows its tag, and a tarball made by git archive carries it in
+        # .git_archival.txt
         return get_version(root=".", relative_to=__file__, local_scheme="no-local-version")
     except LookupError:
-        # no .git here: we are building from an sdist, where setuptools_scm has
-        # already recorded the version in PKG-INFO
+        # neither: we are building from an sdist, where setuptools_scm has already
+        # recorded the version in the PKG-INFO it generated
         info = os.path.join(os.path.dirname(os.path.abspath(__file__)), "PKG-INFO")
         with open(info) as stream:
             for line in stream:
