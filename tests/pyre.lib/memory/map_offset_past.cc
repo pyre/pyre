@@ -18,7 +18,7 @@ using cell_t = double;
 using constmap_t = pyre::memory::constmap_t<cell_t>;
 
 
-// map a product with an offset past its end, and with an offset right at its end
+// map a product with an offset right at its end, and with one past it
 int
 main(int argc, char * argv[])
 {
@@ -36,27 +36,21 @@ main(int argc, char * argv[])
         product.write("0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", 64);
     }
 
-    // an offset right at the end of the file leaves an empty block
-    {
-        // map it
-        constmap_t product(uri, false, 64);
-        // there is nothing in it
-        assert((product.cells() == 0));
-        assert((product.bytes() == 0));
-    }
-
     // silence the error channel
     pyre::journal::error_t::quiet();
-    // gingerly
-    try {
-        // map it with an offset past its end
-        constmap_t product(uri, false, 65);
-        // unreachable
-        throw std::logic_error("unreachable");
-    }
-    // the complaint
-    catch (const pyre::journal::error_t::exception_type &) {
-        // is the expected outcome
+    // offsets right at the end of the file, and past it, leave nothing to map
+    for (auto offset : { 64, 65 }) {
+        // so, gingerly
+        try {
+            // map it
+            constmap_t product(uri, false, offset);
+            // unreachable
+            throw std::logic_error("unreachable");
+        }
+        // the complaint
+        catch (const pyre::journal::error_t::exception_type &) {
+            // is the expected outcome
+        }
     }
 
     // all done

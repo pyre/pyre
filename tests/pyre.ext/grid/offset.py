@@ -177,6 +177,59 @@ def bad():
     return
 
 
+def empty():
+    """
+    Confirm that a map with nothing in it is refused: an offset at the end of the file, an empty
+    file, and a fresh product with no cells
+    """
+    # support
+    import os
+    import journal
+
+    # the grid bindings
+    from pyre.extensions.pyre import grid
+
+    # the refusals are expected, so keep them off the screen
+    journal.error("pyre.memory.map").device = journal.trash()
+    # a product with a header of 16 bytes and nothing after it
+    product(header=16, values=[], code="=d")
+    # an empty file
+    blank = "grid_offset_empty.dat"
+    # make it
+    open(blank, "wb").close()
+    # a fresh product that must never appear
+    fresh = "grid_offset_fresh.dat"
+    # the requests
+    requests = [
+        # an offset right at the end of the file
+        dict(uri=uri, shape=[1], create=False, offset=16),
+        # an empty file
+        dict(uri=blank, shape=[1], create=False, offset=0),
+        # a fresh product with no cells
+        dict(uri=fresh, shape=[0, 3], create=True, offset=0),
+    ]
+    # go through them
+    for request in requests:
+        # carefully
+        try:
+            # ask for a map with nothing in it
+            grid.map(cell="float64", **request)
+        # the refusal
+        except journal.ApplicationError:
+            # is the expected outcome
+            pass
+        # anything else
+        else:
+            # is a failure
+            assert False, f"{request} was accepted"
+    # the refused product was never made
+    assert not os.path.exists(fresh)
+    # clean up
+    os.remove(blank)
+    # all done
+    return
+
+
 # main
 if __name__ == "__main__":
     # run the tests
@@ -185,6 +238,7 @@ if __name__ == "__main__":
     foreign()
     numpy()
     bad()
+    empty()
 
 
 # end of file
