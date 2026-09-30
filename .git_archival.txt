@@ -1,0 +1,13 @@
+# -*- text -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+# the version of a tarball that git archive makes, e.g. the ones github offers for every tag;
+# git fills in the placeholders on the way out, and setuptools_scm reads them when there is no .git
+node: $Format:%H$
+node-date: $Format:%cI$
+describe-name: $Format:%(describe:tags=true,match=v[0-9]*)$
+
+# end of file
