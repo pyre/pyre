@@ -85,6 +85,20 @@ order it must happen, with the reason for each step and how to check it.
      shared libraries against the wheel's layout, and a wheel whose layout misleads them
      imports the pure python package and fails at the first extension, which is what every
      v1.13.0 wheel did; nothing short of installing the repaired wheel catches it
+   - **a tarball made by `git archive` knows its version.** The tarball GitHub offers for the
+     tag, which conda-forge builds from, has no `.git`, and `setuptools_scm` takes the version
+     from the entries git filled into `.git_archival.txt`. Make one, extract it, and ask
+     `setuptools_scm` from inside it, in an environment that has it:
+
+     ```
+     git archive --format=tar.gz --prefix=pyre/ -o /tmp/pyre.tar.gz HEAD
+     tar xzf /tmp/pyre.tar.gz -C /tmp && cd /tmp/pyre
+     python -c "from setuptools_scm import get_version; print(get_version(root='.'))"
+     ```
+
+     Before the tag it answers the next patch version with a `devN` suffix; a `LookupError`, or
+     a warning that git archive did not support describe output, means the entries were not
+     found
    - the `pypi-testpypi` workflow (`workflow_dispatch`, `ref: main`) uploads an sdist to
      TestPyPI; this is the only exercise of the trusted publishing path before the real one
 
