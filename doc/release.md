@@ -33,17 +33,21 @@ order it must happen, with the reason for each step and how to check it.
    print nothing. A check that prints nothing after a failed fetch has not run; deleting the
    head branch of an unmerged pull request closes it.
 
-3. **The bootstrap pins name the release about to be cut.** Four scripts download the boot
-   bundle from the GitHub release when `pyre` is not importable, and each pins the release it
-   fetches:
+3. **The bootstrap pins in this repository name the release about to be cut.** Three scripts
+   here download the boot bundle from the GitHub release when `pyre` is not importable, and
+   each pins the release it fetches:
 
-   - `bin/mm` in this repository: `_pyre_release`
-   - `bin/merlin` in this repository: `release`
-   - `configure` in this repository: `release`
-   - `mm` in the `mm` repository (`github.com/aivazis/mm`): `_pyre_release`
+   - `bin/mm`: `_pyre_release`
+   - `bin/merlin`: `release`
+   - `configure`: `release`
 
    All of them must name the tag about to be created. The pins cannot be verified until the
-   release exists, so this is the one place a version is written ahead of the tag. The README's
+   release exists, so this is the one place a version is written ahead of the tag.
+
+   The fourth pin, `_pyre_release` in `mm` in the `mm` repository (`github.com/aivazis/mm`),
+   is different: every CI workflow here clones that repository's `main` and bootstraps from
+   its pin on runners where `pyre` is not importable, so a pin that names a release that does
+   not exist yet fails every run with a 404. It moves after the release, in step 14. The README's
    release tarball link (`archive/refs/tags/vX.Y.Z.tar.gz`) is the last. A patch release walks
    this item too: the pins name the previous release, which was set moments ago and looks
    current.
@@ -244,9 +248,11 @@ order it must happen, with the reason for each step and how to check it.
 
 ## After the release
 
-14. **Update the pins that could not be verified before.** If the bootstrap in either
-    repository needed changes discovered in step 11, they land on `main` after the release
-    and ride the next one.
+14. **Update the pins that could not be verified before.** The pin in the `mm` repository
+    names the new release now that its boot bundle is published; check that
+    `releases/download/vX.Y.Z/pyre-boot.zip` downloads before merging it. If the bootstrap in
+    either repository needed changes discovered in step 11, they land on `main` after the
+    release and ride the next one.
 
 15. **Record what the walk taught.** Anything that surprised, failed, or had to be done by
     hand goes into this file.
