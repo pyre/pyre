@@ -11,7 +11,9 @@ michael a.g. aïvázis <michael.aivazis@para-sim.com>
 A release is a git tag on `main`, a GitHub release built on that tag, and the distributions
 that follow from it. The version is derived from the tag everywhere: `setuptools_scm` reads it
 for the pip distributions, `.cmake/pyre_init.cmake` and `mm` read it through `git describe`, and
-the packages get it stamped into their `meta.py`. Nothing in the source tree records the
+the packages get it stamped into their `meta.py`. A tarball made by `git archive`, e.g. the one
+GitHub offers for every tag, has no `.git`; git fills in `.git_archival.txt` as it makes the
+tarball, and `setuptools_scm` reads the version from there. Nothing in the source tree records the
 version, so a release does not begin with a version bump. What follows is the sequence, in the
 order it must happen, with the reason for each step and how to check it.
 
@@ -31,18 +33,27 @@ order it must happen, with the reason for each step and how to check it.
    print nothing. A check that prints nothing after a failed fetch has not run; deleting the
    head branch of an unmerged pull request closes it.
 
-3. **The bootstrap pins name the release about to be cut.** Two scripts download the boot
+3. **The bootstrap pins name the release about to be cut.** Four scripts download the boot
    bundle from the GitHub release when `pyre` is not importable, and each pins the release it
    fetches:
 
    - `bin/mm` in this repository: `_pyre_release`
+   - `bin/merlin` in this repository: `release`
+   - `configure` in this repository: `release`
    - `mm` in the `mm` repository (`github.com/aivazis/mm`): `_pyre_release`
 
-   Both must name the tag about to be created. The pin cannot be verified until the release
-   exists, so this is the one place a version is written ahead of the tag. The README's
-   release tarball link (`archive/refs/tags/vX.Y.Z.tar.gz`) is the third. A patch release
-   walks this item too: the pins name the previous release, which was set moments ago and
-   looks current.
+   All of them must name the tag about to be created. The pins cannot be verified until the
+   release exists, so this is the one place a version is written ahead of the tag. The README's
+   release tarball link (`archive/refs/tags/vX.Y.Z.tar.gz`) is the last. A patch release walks
+   this item too: the pins name the previous release, which was set moments ago and looks
+   current.
+
+   The list is only as good as its last update, so sweep the tree for the previous tag, and for
+   the one before it, before trusting it; a pin the list does not name shows up there:
+
+   ```
+   git grep -nE "vPREV|vPREVPREV"
+   ```
 
 4. **The declared python floor matches what is tested.** `requires-python` and the
    classifiers in `pyproject.toml`, `find_package(Python ...)` in `CMakeLists.txt`, and the
