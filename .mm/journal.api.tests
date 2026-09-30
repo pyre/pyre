@@ -8,5 +8,12 @@
 journal.api.tests.stem := journal.api
 journal.api.tests.prerequisites := journal.pkg journal.ext
 
+# every driver runs against both implementations
+journal.api.tests.cases := journal.api.tests.libjournal journal.api.tests.python
+# the bindings to the c++ library
+journal.api.tests.libjournal.harness := JOURNAL_LIBJOURNAL=on
+# the pure python implementation
+journal.api.tests.python.harness := JOURNAL_LIBJOURNAL=off
+
 
 # end of file
