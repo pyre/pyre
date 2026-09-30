@@ -20,7 +20,7 @@ try:
 # if this fails
 except ImportError:
     # the target version
-    release = "v1.12.7"
+    release = "v1.14.0"
     # the bootstrapping  package
     boot = "pyre-boot.zip"
     # the local file
@@ -31,9 +31,9 @@ except ImportError:
         import urllib.request
 
         # form the url to the bootstrapper
-        url = f"http://github.com/pyre/pyre/releases/download/{release}/{boot}"
+        url = f"https://github.com/pyre/pyre/releases/download/{release}/{boot}"
         # show me
-        print(f"downloading '{url}'")  # form the url to the bootstrapper
+        print(f"downloading '{url}'")
         # pull the bootstrapper from the web
         with urllib.request.urlopen(url=url) as ins:
             # open the local file
