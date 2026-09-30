@@ -574,6 +574,13 @@ class Editor:
                 return None
             # otherwise, unpack it
             container, key = fallback
+        # an empty collection at the tail holds its block until its first entry arrives; an
+        # entry that follows the collection takes the block from there
+        held = self._unhold(node=container[key], residue=residue)
+        # if it held one
+        if held is not None:
+            # that is the block
+            return held
         # get the record
         slot = container.ca.items.get(key)
         # if there is none
@@ -588,23 +595,64 @@ class Editor:
         if token is None:
             # there is nothing to take
             return None
-        # the blank lines that open the block separate the old tail from whatever follows it;
-        # the block itself moves, blank lines and all
+        # the block moves, and whatever should stay behind takes its place
+        slot[position] = self._leftover(token=token, residue=residue)
+        # hand off the token
+        return token
+
+    def _unhold(self, node, residue=False):
+        """
+        Detach and return the block held for {node} while it is an empty collection waiting
+        for its first entry
+
+        With {residue} set, the blank lines that open the block stay behind, held for {node}
+        """
+        # anything but an empty collection holds nothing
+        if not isinstance(node, (self.Map, self.Seq)) or len(node):
+            # so there is nothing to take
+            return None
+        # look up what is held for it
+        held = self._held.get(id(node))
+        # if there is nothing
+        if held is None:
+            # there is nothing to take
+            return None
+        # unpack it
+        fallback, token = held
+        # the blank lines that stay behind, if any
+        leftover = self._leftover(token=token, residue=residue)
+        # if there are some
+        if leftover is not None:
+            # hold them in place of the block
+            self._held[id(node)] = (fallback, leftover)
+        # otherwise
+        else:
+            # nothing is held any more
+            del self._held[id(node)]
+        # hand off the block
+        return token
+
+    def _leftover(self, token, residue):
+        """
+        Build the part of the block in {token} that stays behind when the block moves: the blank
+        lines that open it, when {residue} asks for them and there are any, or nothing
+
+        The blank lines that open the block separate the old tail from whatever follows it; the
+        block itself moves, blank lines and all
+        """
+        # get the text
         text = token.value
         # count the newlines that open it, past the one that ends the line of the value
         blanks = len(text) - len(text.lstrip("\n"))
-        # if the blank lines are wanted and there are any
-        if residue and blanks > 1:
-            # leave a copy of them behind
-            residue = copy.copy(token)
-            residue.value = "\n" * blanks
-            slot[position] = residue
-        # otherwise
-        else:
-            # clear the slot
-            slot[position] = None
-        # and hand off the token
-        return token
+        # if the blank lines are not wanted, or there are none
+        if not residue or blanks < 2:
+            # nothing stays behind
+            return None
+        # otherwise, leave a copy of them behind
+        leftover = copy.copy(token)
+        leftover.value = "\n" * blanks
+        # and hand it off
+        return leftover
 
     def _give(self, node, token, fallback):
         """
@@ -859,6 +907,13 @@ class Editor:
         if container is None:
             # so say so
             return False
+        # an empty collection at the tail may be holding a block while it waits for its first
+        # entry
+        tail = container[key]
+        # if it is
+        if isinstance(tail, (self.Map, self.Seq)) and not len(tail) and id(tail) in self._held:
+            # the block trails it
+            return True
         # get the record
         slot = container.ca.items.get(key)
         # and check the position of the trailing comment
