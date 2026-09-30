@@ -33,14 +33,14 @@ pyre::memory::FileMap::stat()
 
     // get the file size
     auto size = static_cast<size_type>(_info.st_size);
-    // if the block is supposed to start past the end of the file
-    if (_offset > size) {
+    // if the block would hold nothing, because it starts at or past the end of the file
+    if (_offset >= size) {
         // make a channel
         pyre::journal::error_t channel("pyre.memory.map");
         // complain
         channel << pyre::journal::at() << "while looking for '" << _uri
                 << "':" << pyre::journal::newline << "an offset of " << _offset
-                << " bytes is past the end of the file, which holds " << size << " bytes"
+                << " bytes leaves nothing to map in a file that holds " << size << " bytes"
                 << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         return;
@@ -57,6 +57,18 @@ pyre::memory::FileMap::stat()
 void
 pyre::memory::FileMap::create()
 {
+    // a product with no bytes cannot be mapped, so there is no point in making one
+    if (_bytes == 0) {
+        // make a channel
+        pyre::journal::error_t channel("pyre.memory.map");
+        // complain
+        channel << pyre::journal::at() << "while creating '" << _uri
+                << "':" << pyre::journal::newline
+                << "a new data product must hold at least one byte" << pyre::journal::endl;
+        // unreachable, unless the user has marked this error as non-fatal
+        return;
+    }
+
     // we take advantage of the POSIX requirement that writing past the end of a file
     // automatically fills all preceding locations with nulls
     // make a stream
@@ -102,15 +114,6 @@ pyre::memory::FileMap::map()
     auto slack = _offset % page;
     // the mapping runs from the boundary to the end of the file
     _extent = slack + _bytes;
-    // a block with nothing in it
-    if (_bytes == 0) {
-        // needs no mapping
-        _extent = 0;
-        // so let go of the descriptor
-        ::close(fd);
-        // and leave the block empty
-        return;
-    }
     // map it
     _map = ::mmap(nullptr, _extent, protection, MAP_SHARED, fd, _offset - slack);
     // hold on to the error, if any, before closing the file descriptor can clobber it
