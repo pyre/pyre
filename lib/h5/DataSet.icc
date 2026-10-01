@@ -213,10 +213,12 @@ pyre::h5::DataSet::fillValue() const -> std::optional<valueT>
         auto channel = pyre::journal::error_t("pyre.h5.dataset.fill");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the fill value was asked for as a type this dataset does not hold"
-            // where
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
         // and refuse, in case errors are not fatal
         return {};
     }
