@@ -28,12 +28,14 @@ namespace pyre::h5::py {
         auto channel = pyre::journal::error_t("pyre.hdf5");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the attribute '" << self.name() << "' holds " << cells << " values, not a single '"
             << what
             << "'"
-            // where
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
         // and refuse
         return false;
     }
@@ -180,10 +182,12 @@ pyre::h5::py::attribute(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the attribute value cannot be represented as an 'int'"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return 0;
             }
@@ -216,10 +220,12 @@ pyre::h5::py::attribute(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the attribute value must be representable as an 'int'"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -252,10 +258,12 @@ pyre::h5::py::attribute(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the attribute value cannot be represented as a 'float'"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return 0;
             }
@@ -288,10 +296,12 @@ pyre::h5::py::attribute(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the attribute value must be representable as a 'float'"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -327,10 +337,12 @@ pyre::h5::py::attribute(py::module & m)
                                  auto channel = pyre::journal::error_t("pyre.hdf5");
                                  // complain
                                  channel
+                                     // where
+                                     << pyre::journal::at()
                                      // what
                                      << "the attribute value cannot be represented as a 'complex'"
-                                     // where
-                                     << pyre::journal::endl(__HERE__);
+                                     // flush
+                                     << pyre::journal::endl;
                                  // and bail
                                  return {};
                              }
@@ -363,10 +375,12 @@ pyre::h5::py::attribute(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the attribute value must be representable as a 'complex'"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -435,10 +449,12 @@ pyre::h5::py::attribute(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the attribute value cannot be represented as a 'str'"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return "";
             }
@@ -462,10 +478,12 @@ pyre::h5::py::attribute(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.hdf5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the attribute value must be representable as a 'str'"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
