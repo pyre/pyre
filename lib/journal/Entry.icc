@@ -69,8 +69,8 @@ pyre::journal::Entry::notes() -> notes_reference
 auto
 pyre::journal::Entry::note(const key_type & key, const value_type & value) -> entry_reference
 {
-    // place the pair in the metadata table
-    _notes.emplace(key, value);
+    // place the pair in the metadata table, replacing any earlier value
+    _notes.insert_or_assign(key, value);
     // all done
     return *this;
 }

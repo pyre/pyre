@@ -31,8 +31,10 @@ firewall_hit(const char * channel, __HERE_DECL__, const char * fmt, ...)
     // create a firewall channel
     firewall_t firewall(channel);
 
+    // render the line number, leaving it blank when it is unknown
+    auto line = lineno > 0 ? std::to_string(lineno) : "";
     // log the message
-    firewall << pyre::journal::Locator(__HERE_ARGS__) << buffer << pyre::journal::endl;
+    firewall << pyre::journal::Locator(filename, line, funcname) << buffer << pyre::journal::endl;
 
     // all done
     return;
@@ -55,8 +57,11 @@ firewall_check(const char * channel, int condition, __HERE_DECL__, const char * 
         // create a firewall channel
         firewall_t firewall(channel);
 
+        // render the line number, leaving it blank when it is unknown
+        auto line = lineno > 0 ? std::to_string(lineno) : "";
         // log the message
-        firewall << pyre::journal::Locator(__HERE_ARGS__) << buffer << pyre::journal::endl;
+        firewall << pyre::journal::Locator(filename, line, funcname) << buffer
+                 << pyre::journal::endl;
     }
 
     // all done

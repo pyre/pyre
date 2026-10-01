@@ -32,7 +32,11 @@ public:
 #endif
     // modern version; preferred when instantiating explicitly
     inline Locator(const value_type &, const value_type &, const value_type &);
-    // legacy version; used by the {__HERE__} locator factories
+    // legacy version; used by the {__HERE__} locator factories, and deprecated for c++ clients,
+    // which get the location from the compiler by using the default constructor instead
+    [[deprecated(
+        "use pyre::journal::at(), which records the location automatically; "
+        "the {__HERE__} form will be removed in pyre 1.15")]]
     inline explicit Locator(const char *, int = 0, const char * = "");
 
     // interface

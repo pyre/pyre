@@ -54,32 +54,56 @@ namespace pyre::journal {
 } // namespace pyre::journal
 
 
+// the developer channels, {debug_t} and {firewall_t}, are live or null depending on the build:
+// {JOURNAL_DEBUG}, when set to 0 or 1, decides; otherwise {NDEBUG} turns them off and {DEBUG}
+// turns them on, with {NDEBUG} winning when both are present, and they are off when neither is;
+// the library itself is always built with them on. on the way out, {JOURNAL_DEBUG} is always
+// defined, as 1 when the channels are live and 0 when they are null, so clients can guard code
+// that only compiles against the live channels, such as {throw firewall << ... << endl;}, with
+// {#if JOURNAL_DEBUG}
+// if we are building the library
+#if defined(PYRE_CORE)
+// the developer channels are live, so a request to turn them off cannot be honored
+#if defined(JOURNAL_DEBUG) && !JOURNAL_DEBUG
+#error "the journal developer channels are always live in the library; JOURNAL_DEBUG must not be 0"
+#endif
+// if there is no setting
+#if !defined(JOURNAL_DEBUG)
+// record that the developer channels are live
+#define JOURNAL_DEBUG 1
+#endif
+// if the user has decided explicitly
+#elif defined(JOURNAL_DEBUG)
+// there is nothing to record; the setting picks the channels below
+// if the user has suppressed debugging support
+#elif defined(NDEBUG)
+// record that the developer channels are null
+#define JOURNAL_DEBUG 0
+// if the user has requested debugging support
+#elif defined(DEBUG)
+// record that the developer channels are live
+#define JOURNAL_DEBUG 1
+// otherwise, this is a production build
+#else
+// record that the developer channels are null
+#define JOURNAL_DEBUG 0
+#endif
+
+
 // the developer facing api
 namespace pyre::journal {
     // null diagnostic: always available
     using null_t = Null;
 
-    // if we are building the library
-#if defined(PYRE_CORE)
-    // enable the developer channels
+    // if the developer channels are live
+#if JOURNAL_DEBUG
+    // enable them
     using debug_t = Debug<InventoryProxy>;
     using firewall_t = Firewall<InventoryProxy>;
 
-    // if the user has suppressed debugging support explicitly
-#elif defined(NDEBUG)
-    // disable the developer channels
-    using debug_t = null_t;
-    using firewall_t = null_t;
-
-    // if the user has requested debugging support explicitly
-#elif defined(DEBUG) || defined(JOURNAL_DEBUG)
-    // enable the developer channels
-    using debug_t = Debug<InventoryProxy>;
-    using firewall_t = Firewall<InventoryProxy>;
-
-    // otherwise, this is a production build
+    // otherwise
 #else
-    // disable the developer channels
+    // disable them
     using debug_t = null_t;
     using firewall_t = null_t;
 #endif
