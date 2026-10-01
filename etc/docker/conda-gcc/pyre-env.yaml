@@ -31,10 +31,12 @@ dependencies:
   # the native external packages
   - gsl
   - hdf5
-  # the postgres client library; the bindings build against it (the tests self-skip with no server)
+  # the postgres client library the bindings build against, and the server the tests talk to
   - libpq
+  - postgresql
+  # the mpi the mpi support builds against and runs on
+  - openmpi
   # numpy, for the gsl test suite
   - numpy
-  # openmpi is skipped until {pyre.platforms} has a conda package manager
 
 # end of file
