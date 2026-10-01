@@ -214,14 +214,22 @@ order it must happen, with the reason for each step and how to check it.
 11. **Verify the bootstrap, both ways.** On a host without `pyre`, or in a fresh environment,
     `mm` from the `mm` repository downloads the bundle and runs; that exercises only the
     `sys.path` bootstrap. The installer is a separate path: in a fresh conda environment with
-    the compilers installed and no `pyre` importable, run the downloaded asset to completion
+    what the core needs, and no `pyre` importable
+
+    ```
+    conda create -n pyre-installer -c conda-forge python cxx-compiler make git pybind11 pyyaml
+    ```
+
+    run the downloaded asset to completion
 
     ```
     timeout 1800 python pyre-boot.zip --interactive=no --channel=release --tag=vX.Y.Z \
         --target=<dir> --mode=conda
     ```
 
-    and confirm that the bootstrapper's banner appears exactly once, that the build gets past
+    and confirm that the bootstrapper's banner appears exactly once, that its audit marks the
+    core framework buildable (without pybind11 or the python headers it stops there, before
+    staging the source), that the build gets past
     the package database, and that the installed package imports with its extensions loaded
     and `pyre.meta.version` naming the release. Run it under `timeout`, since the failure mode
     of a broken relaunch is unbounded recursion, and stop it by pid, never by a pattern, on a
