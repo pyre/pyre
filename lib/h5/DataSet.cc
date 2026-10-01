@@ -354,9 +354,9 @@ pyre::h5::DataSet::chunk(hsize_t index) const -> std::optional<Chunk>
         // make a channel
         auto channel = pyre::journal::error_t("pyre.h5");
         // complain
-        channel << "while looking up chunk " << index << " of '" << name() << "'"
-                << pyre::journal::newline << "only " << *total << " chunks have been written"
-                << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "while looking up chunk " << index << " of '" << name()
+                << "'" << pyre::journal::newline << "only " << *total << " chunks have been written"
+                << pyre::journal::endl;
         // and decline to answer
         return {};
     }
@@ -401,10 +401,9 @@ pyre::h5::DataSet::_corner(const index_t & origin) const -> std::optional<index_
         // make a channel
         auto channel = pyre::journal::error_t("pyre.h5");
         // complain
-        channel << "while looking for the chunk of '" << name() << "' at a given cell"
-                << pyre::journal::newline << "the cell has " << origin.size()
-                << " coordinates, but the dataset has rank " << box.size()
-                << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "while looking for the chunk of '" << name()
+                << "' at a given cell" << pyre::journal::newline << "the cell has " << origin.size()
+                << " coordinates, but the dataset has rank " << box.size() << pyre::journal::endl;
         // and decline to answer
         return {};
     }
@@ -421,10 +420,10 @@ pyre::h5::DataSet::_corner(const index_t & origin) const -> std::optional<index_
             // make a channel
             auto channel = pyre::journal::error_t("pyre.h5");
             // complain
-            channel << "while looking for the chunk of '" << name() << "' at a given cell"
-                    << pyre::journal::newline << "coordinate " << axis << " is " << origin[axis]
-                    << ", which is outside my extent of " << box[axis]
-                    << pyre::journal::endl(__HERE__);
+            channel << pyre::journal::at() << "while looking for the chunk of '" << name()
+                    << "' at a given cell" << pyre::journal::newline << "coordinate " << axis
+                    << " is " << origin[axis] << ", which is outside my extent of " << box[axis]
+                    << pyre::journal::endl;
             // and decline to answer
             return {};
         }
@@ -921,11 +920,13 @@ pyre::h5::DataSet::_trim(string_t & value, H5T_str_t pad) const -> void
         default: {
             auto channel = pyre::journal::firewall_t("pyre.h5.dataset");
             channel
+                // where
+                << pyre::journal::at()
                 // what
                 << "unknown string padding method "
                 << pad
-                // where
-                << pyre::journal::endl(__HERE__);
+                // flush
+                << pyre::journal::endl;
             break;
         }
     }

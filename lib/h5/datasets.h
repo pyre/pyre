@@ -115,14 +115,16 @@ pyre::h5::read(
         auto channel = pyre::journal::error_t("pyre.h5");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the destination is too small for the tile"
             << pyre::journal::newline
             // details
             << "it holds " << data.cells() << " cells, and the tile has "
             << cells
-            // where
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
         // and bail, rather than let the library write past the end of the buffer
         return;
     }
@@ -170,14 +172,16 @@ pyre::h5::read(
         auto channel = pyre::journal::error_t("pyre.h5");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the destination is too small for the tile"
             << pyre::journal::newline
             // details
             << "it holds " << data.cells() << " cells, and the tile has "
             << cells
-            // where
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
         // and bail, rather than let the library write past the end of the buffer
         return;
     }
