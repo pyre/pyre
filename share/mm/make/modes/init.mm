@@ -32,6 +32,18 @@ mode.compiler.libpath :=
 mode.compiler.rpath :=
 mode.compiler.libraries :=
 
+# test drivers exist to check, so the ones whose suite asks for it compile with the checks on in
+# every mode, while the code they test keeps the disposition of the mode; {mode.tests} takes the
+# place of {mode.compiler} among their option sources, with the same options and the same
+# defines, except that the disposition pair always reads checks on
+mode.tests.flags = $(mode.compiler.flags)
+mode.tests.defines = ${filter-out DEBUG NDEBUG,$(mode.compiler.defines)} DEBUG
+mode.tests.incpath = $(mode.compiler.incpath)
+mode.tests.ldflags = $(mode.compiler.ldflags)
+mode.tests.libpath = $(mode.compiler.libpath)
+mode.tests.rpath = $(mode.compiler.rpath)
+mode.tests.libraries = $(mode.compiler.libraries)
+
 # the implemented modes, discovered from the files present here, minus the framework files
 modes.available := ${filter-out init default rules model,${basename ${notdir ${wildcard $(mm.home)/make/modes/*.mm}}}}
 

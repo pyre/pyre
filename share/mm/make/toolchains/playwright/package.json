@@ -1,9 +1,10 @@
 {
     "name": "mm-toolchain-playwright",
-    "version": "1.60.0",
+    "version": "1.63.0",
     "private": true,
     "description": "pinned playwright toolchain managed by mm",
     "dependencies": {
-        "@playwright/test": "1.60.0"
+        "@playwright/test": "1.63.0",
+        "mm-playwright": "file:mm-playwright"
     }
 }
