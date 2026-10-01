@@ -35,14 +35,16 @@ pyre::mpi::threadLevel(Thread thread) -> int
     auto channel = pyre::journal::firewall_t("pyre.mpi.thread");
     // complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "unknown level of thread support"
         << pyre::journal::newline
         // details
         << "value: "
         << static_cast<int>(thread)
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // not reached, since the firewall is fatal; here so every path returns
     return MPI_THREAD_SINGLE;
@@ -74,14 +76,16 @@ pyre::mpi::threadSupport(int level) -> Thread
     auto channel = pyre::journal::firewall_t("pyre.mpi.thread");
     // complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "unknown level of thread support"
         << pyre::journal::newline
         // details
         << "value: "
         << level
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // not reached, since the firewall is fatal; here so every path returns
     return Thread::single;

@@ -54,14 +54,16 @@ pyre::mpi::opcode(Op op) -> opcode_t
     auto channel = pyre::journal::firewall_t("pyre.mpi.op");
     // complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "unknown reduction operator"
         << pyre::journal::newline
         // details
         << "value: "
         << static_cast<int>(op)
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // not reached, since the firewall is fatal; here so every path returns
     return MPI_OP_NULL;
@@ -93,14 +95,16 @@ pyre::mpi::comparison(int result) -> Comparison
     auto channel = pyre::journal::firewall_t("pyre.mpi.comparison");
     // complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "unknown comparison result"
         << pyre::journal::newline
         // details
         << "value: "
         << result
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // not reached, since the firewall is fatal; here so every path returns
     return Comparison::unequal;
