@@ -35,14 +35,27 @@ RUN dnf -y upgrade
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 #  - {gcc}/{gcc-c++}/{gcc-gfortran} are the toolchain
 #  - the {-devel} packages are the externals the rpm engine will be asked to discover
+#  - {postgresql-server} is the server the postgres tests talk to
 RUN dnf -y install \
         git vim zip unzip \
         openssh-server passwd \
         gcc gcc-c++ gcc-gfortran make \
         python3 python3-devel \
         pybind11-devel python3-pyyaml python3-ruamel-yaml python3-numpy \
-        openmpi-devel hdf5-devel gsl-devel
+        openmpi-devel hdf5-devel gsl-devel libpq-devel \
+        postgresql-server
 
+
+# the postgres server: there is no systemd to run {postgresql-setup}, so create the cluster by
+# hand, and start it once to give {root}, the user the tests run as, a role that can create and
+# drop the databases the tests use; the socket directory lives on a volatile filesystem, so
+# whatever starts the server makes it first
+ENV PGDATA=/var/lib/pgsql/data
+RUN su postgres -c "initdb" && \
+        mkdir -p /run/postgresql && chown postgres:postgres /run/postgresql && \
+        su postgres -c "pg_ctl --wait --log=/var/lib/pgsql/server.log start" && \
+        su postgres -c "createuser --superuser root" && \
+        su postgres -c "pg_ctl --wait stop"
 
 # allow passwordless {ssh localhost} as root
 RUN ssh-keygen -A && \
@@ -91,8 +104,11 @@ ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 # go to the source directory; {mm} and {pyre} are bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
-# discover packages, build, and test the mounted working tree
-CMD /usr/sbin/sshd && ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
+# start the postgres server, discover packages, build, and test the mounted working tree
+CMD /usr/sbin/sshd && \
+    mkdir -p /run/postgresql && chown postgres:postgres /run/postgresql && \
+    su postgres -c "pg_ctl --wait --log=/var/lib/pgsql/server.log start" && \
+    ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
 
 
 # end of file
