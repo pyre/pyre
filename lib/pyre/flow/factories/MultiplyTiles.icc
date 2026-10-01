@@ -129,7 +129,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
     }
 
     // go through its data
-    for (auto cell = 0ul; cell < cells; ++cell) {
+    for (decltype(cells) cell = 0; cell < cells; ++cell) {
         // read the values of the two operands, multiply, and save
         result[cell] = op1[cell] * op2[cell];
     }
