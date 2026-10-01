@@ -19,7 +19,7 @@ main()
     // mute it, so that a successful run says nothing
     channel.deactivate();
     // and exercise it; this is what pulls a symbol out of the library
-    channel << "the installed journal is reachable" << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "the installed journal is reachable" << pyre::journal::endl;
 
     // all done
     return 0;
