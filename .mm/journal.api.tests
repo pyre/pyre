@@ -15,5 +15,24 @@ journal.api.tests.libjournal.harness := JOURNAL_LIBJOURNAL=on
 # the pure python implementation
 journal.api.tests.python.harness := JOURNAL_LIBJOURNAL=off
 
+# the tests of the environment variables run against both implementations with their setting
+tests.journal.api.env_debug.cases := env_debug.libjournal env_debug.python
+# the bindings, with two debug channels named in the environment
+env_debug.libjournal.harness := JOURNAL_LIBJOURNAL=on JOURNAL_DEBUG=tests.journal.env.one,tests.journal.env.two
+# the pure python implementation, with the same channels
+env_debug.python.harness := JOURNAL_LIBJOURNAL=off JOURNAL_DEBUG=tests.journal.env.one,tests.journal.env.two
+# the detail level
+tests.journal.api.env_detail.cases := env_detail.libjournal env_detail.python
+# the bindings, with the detail set in the environment
+env_detail.libjournal.harness := JOURNAL_LIBJOURNAL=on JOURNAL_DETAIL=5
+# the pure python implementation, with the same detail
+env_detail.python.harness := JOURNAL_LIBJOURNAL=off JOURNAL_DETAIL=5
+# the decoration level
+tests.journal.api.env_decor.cases := env_decor.libjournal env_decor.python
+# the bindings, with the decoration set in the environment
+env_decor.libjournal.harness := JOURNAL_LIBJOURNAL=on JOURNAL_DECOR=3
+# the pure python implementation, with the same decoration
+env_decor.python.harness := JOURNAL_LIBJOURNAL=off JOURNAL_DECOR=3
+
 
 # end of file
