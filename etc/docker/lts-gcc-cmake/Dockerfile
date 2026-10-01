@@ -104,7 +104,9 @@ ENV PYBIND11_DIR=${pybind11_dir}
 
 # go to the source directory; {pyre} is bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
-# start the postgres server, configure with cmake, build and install, then run the test suite
+# start the postgres server, configure with cmake, build and install, then run the test suite;
+# make runs one job per core, since cmake's makefiles offer every object of every target at once,
+# and an unbounded {-j} starts enough compilers to run out of memory
 CMD service ssh start && service postgresql start && \
         mkdir -p ${BUILDDIR} && cd ${BUILDDIR} && \
         cmake \
@@ -115,7 +117,7 @@ CMD service ssh start && service postgresql start && \
             -Dpybind11_DIR=${PYBIND11_DIR} \
             -DPYRE_MPI_OVERSUBSCRIBE=ON \
             /usr/local/src/pyre && \
-        make -j2 install && \
+        make -j$(nproc) install && \
         ctest --output-on-failure
 
 

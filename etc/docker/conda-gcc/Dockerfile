@@ -109,7 +109,7 @@ SHELL ["/bin/bash", "-c"]
 CMD service ssh start && \
     eval "$(/root/.local/bin/micromamba shell hook --shell bash /root/.local)" && \
     micromamba activate pyre-dev && \
-    ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
+    ${MM} --setup && ${MM} && ${MM} tests
 
 
 # end of file

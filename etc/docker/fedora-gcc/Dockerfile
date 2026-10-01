@@ -108,7 +108,7 @@ WORKDIR ${srcdir}/pyre
 CMD /usr/sbin/sshd && \
     mkdir -p /run/postgresql && chown postgres:postgres /run/postgresql && \
     su postgres -c "pg_ctl --wait --log=/var/lib/pgsql/server.log start" && \
-    ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
+    ${MM} --setup && ${MM} && ${MM} tests
 
 
 # end of file
