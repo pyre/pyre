@@ -18,6 +18,8 @@ function(pyre_test_driver_postgres testfile)
   add_executable(${target} ${testfile})
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
+  # that keep their checks in every configuration
+  pyre_test_checks(${target})
   # link against the postgres layer, which brings pyre, journal and libpq along
   target_link_libraries(${target} PUBLIC pyre::postgres)
 
