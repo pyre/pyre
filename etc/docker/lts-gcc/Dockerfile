@@ -34,6 +34,9 @@ RUN apt dist-upgrade -y
 #  - {vim} is for interactive use
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 #  - {gcc}/{g++}/{gfortran} are the toolchain; {libhdf5-dev} is the serial hdf5
+#  - {libopenmpi-dev}, {libgsl-dev}, and {libpq-dev} bring in the optional packages pyre has
+#    support for, so their libraries and bindings get built; the postgres tests also need a
+#    live server, so without one only the build is exercised
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
         curl git vim zip unzip \
@@ -41,7 +44,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
         gcc g++ gfortran make \
         python3 python3-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev libhdf5-dev libgsl-dev
+        libopenmpi-dev libhdf5-dev libgsl-dev libpq-dev
 
 
 # allow passwordless {ssh localhost} as root
