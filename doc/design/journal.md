@@ -103,8 +103,9 @@ built with the streaming operator and closed with a manipulator:
 ```cpp
 auto channel = pyre::journal::firewall_t("qed.a.b.c");
 channel
+    << pyre::journal::at()
     << "something went wrong"
-    << pyre::journal::endl(__HERE__);
+    << pyre::journal::endl;
 ```
 
 Manipulators:
@@ -112,12 +113,58 @@ Manipulators:
 | Manipulator | Effect |
 |-------------|--------|
 | `endl` | flush and close the entry; always last |
-| `here()` | inject the source location, inline or as the argument to `endl` |
+| `at()` | record the source location of the entry, as the compiler reports it; entries start with it |
 | `newline` | a line break within an entry, without flushing |
 | `indent` / `outdent` | adjust the indentation level of structured output |
 
 After a `firewall_t` or `error_t` fires, always `break` or `return`; do not fall
 through as if the logging were optional.
+
+`endl` hands back the outcome of the entry. For `error_t` and `firewall_t` that is
+the exception that states the condition, whether or not the channel is fatal or
+active, so an entry can be raised directly:
+
+```cpp
+throw channel << pyre::journal::at() << "the grid has no cells" << pyre::journal::endl;
+```
+
+### The developer channels in release builds
+
+`debug_t` and `firewall_t` are the developer channels. In release builds they are
+`null_t`, which accepts the same expressions and compiles to nothing, so they cost
+nothing where they are off. Which one a translation unit gets is settled when
+`pyre/journal.h` is included:
+
+| Build settings | Developer channels |
+|----------------|--------------------|
+| `PYRE_CORE` (pyre itself) | live |
+| `JOURNAL_DEBUG` set to 1 | live |
+| `JOURNAL_DEBUG` set to 0 | null |
+| otherwise, `NDEBUG` | null |
+| otherwise, `DEBUG` | live |
+| none of the above | null |
+
+The rows are checked in order and the first match decides, so `JOURNAL_DEBUG` wins
+over `DEBUG` and `NDEBUG`, and `NDEBUG` wins over `DEBUG`. `-DJOURNAL_DEBUG` on the
+command line sets it to 1; a definition with no value is an error. pyre itself is
+always built with the developer channels live, and setting `JOURNAL_DEBUG` to 0
+there is an error.
+
+After the include, `JOURNAL_DEBUG` is always defined: 1 when the developer channels
+are live and 0 when they are null. Code that only compiles against the live
+channels goes behind it. Raising a firewall entry is such code, since `null_t`
+hands back nothing that can be thrown:
+
+```cpp
+#if JOURNAL_DEBUG
+    throw firewall << pyre::journal::at() << "nasty bug" << pyre::journal::endl;
+#endif
+```
+
+`error_t` is never null, so raising an error entry needs no guard.
+
+The `JOURNAL_DEBUG` environment variable is unrelated: it names the debug channels
+to activate when the application starts.
 
 
 <!-- end of file -->
