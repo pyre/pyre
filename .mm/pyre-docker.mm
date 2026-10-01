@@ -8,6 +8,7 @@
 pyre.docker-images := \
     pyre.lts-clang \
     pyre.lts-gcc \
+    pyre.lts-gcc-cmake \
     pyre.rolling-clang \
     pyre.rolling-gcc \
     pyre.conda-clang \
