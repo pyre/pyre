@@ -24,48 +24,68 @@ def fill(entity, value):
 try:
     # load the extension module
     from . import libgsl as gsl
-# if this fails
+# treat any import failure as the absence of gsl, as {mpi} does: installations that cannot
+# build the bindings, e.g. the pip wheels, still ship this package
 except ImportError:
-    # not much to do...
-    msg = "could not load the 'gsl' extension module"
-    # complain
-    import journal
+    # indicate that there is no runtime support
+    gsl = None
 
-    raise journal.error("gsl").log(msg)
+    # and that none of the entities the bindings publish are available
+    version = None
+    copyright = None
+    license = None
+    histogram = None
+    matrix = None
+    permutation = None
+    rng = None
+    vector = None
+    Transpose = None
+    Triangle = None
+    Diagonal = None
+    Side = None
+    EigenOrder = None
+    blas = None
+    pdf = None
+    linalg = None
+    stats = None
+# otherwise, we have bindings and hence GSL support
+else:
+    # get the framework
+    import pyre
 
-# get the framework
-import pyre
+    # register the package
+    package = pyre.executive.registerPackage(name="gsl", file=__file__)
+    # record the layout
+    home, prefix, defaults = package.layout()
 
-# register the package
-package = pyre.executive.registerPackage(name="gsl", file=__file__)
-# record the layout
-home, prefix, defaults = package.layout()
+    # pull in the administrivia
+    version = gsl.version
+    copyright = gsl.copyright
 
-# otherwise, all is well;
-# pull in the administrivia
-version = gsl.version
-copyright = gsl.copyright
+    def license():
+        """
+        Print the license of the GSL bindings
+        """
+        # show it
+        print(gsl.license())
+        # all done
+        return
 
+    # wrappers
+    from .Histogram import Histogram as histogram
+    from .Matrix import Matrix as matrix
+    from .Permutation import Permutation as permutation
+    from .RNG import RNG as rng
+    from .Vector import Vector as vector
 
-def license():
-    print(gsl.license())
+    # the blas and eigen flag enumerations, straight from the extension
+    Transpose = gsl.Transpose
+    Triangle = gsl.Triangle
+    Diagonal = gsl.Diagonal
+    Side = gsl.Side
+    EigenOrder = gsl.EigenOrder
 
-
-# wrappers
-from .Histogram import Histogram as histogram
-from .Matrix import Matrix as matrix
-from .Permutation import Permutation as permutation
-from .RNG import RNG as rng
-from .Vector import Vector as vector
-
-# the blas and eigen flag enumerations, straight from the extension
-Transpose = gsl.Transpose
-Triangle = gsl.Triangle
-Diagonal = gsl.Diagonal
-Side = gsl.Side
-EigenOrder = gsl.EigenOrder
-
-# other interfaces
-from . import blas, pdf, linalg, stats
+    # other interfaces
+    from . import blas, pdf, linalg, stats
 
 # end of file
