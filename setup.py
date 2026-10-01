@@ -73,6 +73,12 @@ skbuild.setup(
         f"-DPYRE_VERSION={cmakeVersion}",
         # put packages in {site-packages}
         f"-DPYRE_DEST_PACKAGES={packageDir}",
+        # a wheel carries no tests, so building them only costs time, and a test may need a newer
+        # platform than the wheel targets, e.g. {std::filesystem} on macOS before 10.15
+        "-DPYRE_BUILD_TESTING=OFF",
+        # install the libraries in {lib} on every platform, where environments look for them,
+        # rather than in {lib64}, which some linux distributions, e.g. the manylinux images, prefer
+        "-DCMAKE_INSTALL_LIBDIR=lib",
     ],
 )
 
