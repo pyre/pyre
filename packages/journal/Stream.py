@@ -107,8 +107,8 @@ class Stream(Device):
         content = "\n".join(page)
         # if there is anything there
         if content:
-            # inject it
-            print(content, file=self.stream)
+            # inject it, and flush, so the entry is on the stream as soon as it is recorded
+            print(content, file=self.stream, flush=True)
         # all done
         return
 

@@ -26,8 +26,8 @@ class ErrorConsole(Stream):
     def __init__(self, **kwds):
         # colorize only when {stderr} is an interactive, ANSI-compatible terminal
         if sys.stderr.isatty() and ANSI.compatible():
-            # use the palette tuned for a light background
-            palette = palettes.light
+            # use the palette tuned for a dark background, as the console does
+            palette = palettes.dark
         # otherwise
         else:
             # emit no color

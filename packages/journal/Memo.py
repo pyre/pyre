@@ -36,6 +36,8 @@ class Memo(Renderer):
 
         # setup the marker
         marker = self.footerMarker
+        # grab the chronicler
+        from . import chronicler
 
         # start off with the channel name and its severity
         buffer = [
@@ -52,7 +54,7 @@ class Memo(Renderer):
         yield "".join(buffer)
 
         # get the name of the file
-        filename = notes["filename"]
+        filename = notes.get("filename")
         # consider it an indication that we have location information
         if filename:
             # initialize a buffer
@@ -81,7 +83,7 @@ class Memo(Renderer):
             buffer.append(palette["reset"])
 
             # get the line number
-            line = str(notes["line"])
+            line = str(notes.get("line", ""))
             # if it's available
             if line:
                 # add a spacer
@@ -96,16 +98,23 @@ class Memo(Renderer):
             # assemble and hand off
             yield "".join(buffer)
 
-        # repeat with the function name
-        function = notes["function"]
-        # if it's available
-        if function:
-            # start over
-            buffer = [palette[severity], marker, palette["reset"], "in '"]
-            # add the function name to the pile
-            buffer.append(function)
-            # close  the quote
-            buffer.append("'")
+            # repeat with the function name
+            function = notes.get("function")
+            # if it's available
+            if function:
+                # give it a line of its own, since its signature may be long
+                buffer = [palette[severity], marker, palette["reset"], f"in '{function}'"]
+                # assemble the line and make it available
+                yield "".join(buffer)
+        # if we don't have location information, and the decoration level is high enough
+        elif chronicler.decor > 1:
+            # say so
+            buffer = [
+                palette[severity],
+                self.headerMarker,
+                palette["reset"],
+                "location information is not available",
+            ]
             # assemble the line and make it available
             yield "".join(buffer)
 
@@ -218,7 +227,6 @@ class Memo(Renderer):
                 "filename",
                 "line",
                 "function",
-                "source",
             }
             # go through the metadata
             for key, value in notes.items():
@@ -246,7 +254,7 @@ class Memo(Renderer):
         return
 
     # implementation details
-    maxlen = 60
+    maxlen = 80
     headerMarker = " >> "
     bodyMarker = " -- "
     footerMarker = " .. "
