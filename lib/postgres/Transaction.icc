@@ -156,13 +156,15 @@ pyre::postgres::Transaction::_close() noexcept -> void
         auto channel = pyre::journal::warning_t("pyre.postgres.transaction");
         // and complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "failed to roll back a transaction that was never committed"
             << pyre::journal::newline
             // details
             << error.what()
-            // where, and flush
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
     }
     // and nothing else may escape a destructor
     catch (...) {
@@ -170,13 +172,15 @@ pyre::postgres::Transaction::_close() noexcept -> void
         auto channel = pyre::journal::warning_t("pyre.postgres.transaction");
         // and complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "failed to roll back a transaction that was never committed"
             << pyre::journal::newline
             // details
             << "the reason is not one this package recognizes"
-            // where, and flush
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
     }
 
     // all done

@@ -235,6 +235,8 @@ pyre::postgres::Result::affected() const -> long
         // which is worth saying out loud, since a caller is about to believe the answer
         auto channel = pyre::journal::firewall_t("pyre.postgres.result");
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "cannot read the row count out of the command tag"
             << pyre::journal::newline
@@ -242,8 +244,8 @@ pyre::postgres::Result::affected() const -> long
             << "tag: '" << PQcmdStatus(handle()) << "'" << pyre::journal::newline << "count: '"
             << text
             << "'"
-            // where, and flush
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
         // and in a build with firewalls disabled, the honest answer is that we do not know
         return 0;
     }

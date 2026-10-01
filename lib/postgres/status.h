@@ -102,14 +102,16 @@ pyre::postgres::execStatus(ExecStatusType status) -> ExecStatus
     auto channel = pyre::journal::firewall_t("pyre.postgres.status");
     // so complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "unknown result status"
         << pyre::journal::newline
         // details
         << "libpq reported "
         << static_cast<int>(status)
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // in a build with firewalls disabled, say that we do not know
     return ExecStatus::unknown;
@@ -188,11 +190,13 @@ pyre::postgres::describe(ExecStatus status) -> view_t
     auto channel = pyre::journal::firewall_t("pyre.postgres.status");
     // so complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "no description for result status "
         << static_cast<int>(status)
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // and say nothing
     return "";
@@ -226,14 +230,16 @@ pyre::postgres::transactionStatus(PGTransactionStatusType status) -> Transaction
     auto channel = pyre::journal::firewall_t("pyre.postgres.status");
     // so complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "unknown transaction status"
         << pyre::journal::newline
         // details
         << "libpq reported "
         << static_cast<int>(status)
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // and fall back on the answer that promises nothing
     return TransactionStatus::unknown;
@@ -257,14 +263,16 @@ pyre::postgres::format(int code) -> Format
     auto channel = pyre::journal::firewall_t("pyre.postgres.status");
     // so complain
     channel
+        // where
+        << pyre::journal::at()
         // what
         << "unknown column format"
         << pyre::journal::newline
         // details
         << "libpq reported "
         << code
-        // where, and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // and assume the value is text, which is what every server has ever sent unless asked
     return Format::text;
