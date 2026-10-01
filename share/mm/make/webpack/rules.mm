@@ -58,12 +58,18 @@ $(1).generated: $($(1).staging.relay_generated) $($(1).install.generated.assets)
 # chunks from the external dependencies
 $(1).chunks: ${foreach chunk,$($(1).chunks),$(1).chunks.$(chunk)}
 
-# group all the generated assets together (the '&:' in the rule separator)
+# group all the generated assets together (the '&:' in the rule separator); the staged
+# configuration, and the lock that pins the dependencies, shape the bundle as much as the sources
+# do, so a change to any of them rebuilds it;
+# webpack leaves an output alone when its contents did not change, so the recipe marks the bundle
+# as rebuilt, or it would look out of date to every build that follows
 $($(1).staging.generated.assets) &: \
     $($(1).staging.babel_config) $($(1).staging.page) \
-    $($(1).staging.app.sources) \
+    $($(1).staging.webpack_config) $($(1).staging.npm_config) $($(1).staging.ts_config) \
+    $($(1).staging.npm_lock) $($(1).staging.app.sources) \
     ${if $($(1).schema.generator),$($(1).staging.schema),} | $(1).generate.prep
-	$(cd) $($(1).staging.prefix); npm run relay && npm run build
+	$(cd) $($(1).staging.prefix); npm run relay && NODE_ENV=$(webpack.node_env) npm run build
+	$(touch) $($(1).staging.generated.assets)
 
 $(1).generate.prep: $(1).config $(1).npm_modules $(1).sources
 
@@ -185,11 +191,15 @@ endef
 
 
 # helpers
-# install the node modules fresh from {package.json}
+# install the node modules fresh from {package.json}; the lock is resolved by the same {npm i},
+# so the two are grouped (the '&:' in the rule separator) and the bundle that depends on the lock
+# has a rule that makes it; {npm i} leaves both alone when there is nothing to install, so the
+# recipe marks them as current, or every build that follows would install again
 define webpack.npm.install.fresh =
-$($(1).staging.modules): $($(1).staging.npm_config) | $($(1).staging.prefix)
+$($(1).staging.modules) $($(1).staging.npm_lock) &: $($(1).staging.npm_config) | $($(1).staging.prefix)
 	@${call log.action,"npm i",$(1)}
 	$(cd) $($(1).staging.prefix); npm i
+	$(touch) $($(1).staging.modules) $($(1).staging.npm_lock)
 # all done
 endef
 
@@ -208,6 +218,8 @@ endef
 
 # the install strategy selected by the build mode
 webpack.npm.install := webpack.npm.install.${if $(mode.npm.locked),locked,fresh}
+# the environment the build of the bundle runs in, selected by the build mode
+webpack.node_env := ${if $(mode.webpack.production),production,development}
 
 
 define webpack.workflows.static.asset =

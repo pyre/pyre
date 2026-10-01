@@ -1,0 +1,7 @@
+{
+    "name": "mm-playwright",
+    "version": "1.0.0",
+    "private": true,
+    "description": "what the browsers of the mm playwright toolchain need on each platform",
+    "main": "index.js"
+}

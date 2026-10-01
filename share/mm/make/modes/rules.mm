@@ -15,6 +15,9 @@ mode.info:
 	@${call log.var,assertions,${if $(mode.compiler.assertions),yes,no}}
 	@${call log.var,pinned,${if $(project.assertions),$(project.assertions),no}}
 	@${call log.var,defines,$(mode.compiler.defines)}
+	@${call log.sec,"  webpack",}
+	@${call log.var,production,${if $(mode.webpack.production),yes,no}}
+	@${call log.var,NODE_ENV,$(webpack.node_env)}
 
 # what the build mode controls and the values it can take
 mode.help: | mm.banner
@@ -36,6 +39,7 @@ mode.help: | mm.banner
 	@${call log.sec,"settings",}
 	@${call log.help,"mode.npm.locked","install npm deps from the committed lock when set (otherwise resolve fresh)"}
 	@${call log.help,"mode.compiler.assertions","compile in the developer-time checks (asserts, DEBUG blocks, journal debug/firewall) when set"}
+	@${call log.help,"mode.webpack.production","build web bundles for production when set (the build sees NODE_ENV=production)"}
 	@$(log)
 
 

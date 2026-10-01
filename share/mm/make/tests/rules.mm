@@ -15,6 +15,14 @@ tests.info: mm.banner
 	@$(log) "    mm ${firstword $(testsuites)}.info"
 	@$(log)
 
+# the option source that stands for the mode when compiling a test suite or driver: {mode.tests}
+# when it keeps its checks in every mode, nothing otherwise, so {mode.compiler} applies
+#   usage: test.mode {test suite or driver}
+define test.mode =
+${if ${filter yes,$($(1).assertions)},mode.tests}
+endef
+
+
 # bootstrap
 # make the test suite specific targets
 #  usage: test.workflows {test suite}
@@ -94,8 +102,8 @@ define test.runner.object =
 $(_obj): $(2) | $($(1).prerequisites)
 	@${call log.action,$(3),${subst $($(1).home),,$(2)}}
 	@$(mkdirp) ${dir $(_obj)}
-	${call languages.compile,$(3),$(2),$(_obj),$(1).$(3) $(1) $($(1).extern)}
-	${call languages.makedep,$(3),$(2),$(_obj:$(builder.ext.obj)=$(builder.ext.dep)),$(1).$(3) $($(1).extern)}
+	${call languages.compile,$(3),$(2),$(_obj),$(1).$(3) $(1) $($(1).extern) ${call test.mode,$(1)}}
+	${call languages.makedep,$(3),$(2),$(_obj:$(builder.ext.obj)=$(builder.ext.dep)),$(1).$(3) $($(1).extern) ${call test.mode,$(1)}}
 # all done
 endef
 
@@ -107,7 +115,7 @@ define test.runner.binary =
 $(3): $(4) $($(1).prerequisites)
 	@$(mkdirp) ${dir $(3)}
 	@${call log.action,link,${subst $($(1).home),,$(3)}}
-	${call languages.link,$(2),$(4),$(3),$(1).$(2) $(1) $($(1).extern)}
+	${call languages.link,$(2),$(4),$(3),$(1).$(2) $(1) $($(1).extern) ${call test.mode,$(1)}}
 # all done
 endef
 
@@ -416,7 +424,8 @@ $($(1).base): $($($(1).suite).prerequisites) $($(1).source)
             languages.$($(1).language).link, \
             $($(1).source), \
             $($(1).base), \
-            $(1).$($(1).language) $(1) $($(1).suite).$($(1).language) $($(1).extern) }
+            $(1).$($(1).language) $(1) $($(1).suite).$($(1).language) $($(1).extern) \
+            ${call test.mode,$(1)} }
 
 
 $(1).cases: $(1).driver $(1).pre

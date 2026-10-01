@@ -11,5 +11,8 @@ mode.npm.locked :=
 # compile in, and journal's {debug}/{firewall} channels are real -- even in an optimized build
 mode.compiler.assertions := yes
 
+# {dev} builds the bundle for development, with whatever source maps the project asks for
+mode.webpack.production :=
+
 
 # end of file
