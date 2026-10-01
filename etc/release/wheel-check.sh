@@ -92,10 +92,14 @@ EOF
 
 # make a project from the templates
 env -u PYTHONPATH "$mm" run -n "$env" smith.pyre --project.name=toy >smith.log 2>&1
-# and report what came of it
-if [ -d toy ]; then
-    echo "smith.pyre: made the project toy, $(find toy -type f | wc -l | tr -d ' ') files"
+# smith commits and tags the project only after it has generated every file, so the tag is how
+# a complete project is recognized; a folder alone may be what a failure left behind
+if git -C toy rev-parse -q --verify v0.0.1 >/dev/null 2>&1; then
+    # count what it committed, which leaves out anything that should not be in the project
+    echo "smith.pyre: made and committed the project toy, $(git -C toy ls-files | wc -l | tr -d ' ') files"
+# otherwise
 else
+    # say so, and show why
     echo "smith.pyre: FAILED"
     tail -5 smith.log
 fi
