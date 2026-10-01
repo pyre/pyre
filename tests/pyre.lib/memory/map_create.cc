@@ -25,7 +25,7 @@ main(int argc, char * argv[])
     pyre::journal::application("map_create");
 
     // pick the number of cells in the block
-    std::size_t len = 1024;
+    map_t::cell_count_type len = 1024;
     // create the block
     map_t product("map.dat", len);
 
