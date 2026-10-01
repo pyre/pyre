@@ -92,10 +92,33 @@ pyre::journal::py::devices(py::module & m)
     py::class_<file_t, file_t::pointer_type, device_t>(m, "File")
         // constructor
         .def(
-            // the implementation
-            py::init<const file_t::path_type &>(),
+            // the implementation; the {mode} is spelled as for {open}, and {a} appends
+            py::init([](const file_t::path_type & path, const std::string & mode) {
+                // start out by writing over whatever is there
+                auto flag = std::ios_base::out;
+                // if the caller asked to append
+                if (mode == "a") {
+                    // set the corresponding bit
+                    flag |= std::ios_base::app;
+                }
+                // build the device
+                return std::make_shared<file_t>(path, flag);
+            }),
             // the signature
-            "path"_a /*, "mode"_a = "w" */)
+            "path"_a, "mode"_a = "w",
+            // the docstring
+            "a device that writes every entry to the file at {path}, opened with {mode}")
+        // the path to my file
+        .def_property_readonly(
+            // the name
+            "path",
+            // the implementation
+            [](const file_t & self) -> file_t::path_type {
+                // easy enough
+                return self.path();
+            },
+            // the docstring
+            "the path to the file i write to")
         // done
         ;
 
@@ -103,12 +126,24 @@ pyre::journal::py::devices(py::module & m)
     py::class_<splitter_t, splitter_t::pointer_type, device_t>(m, "Splitter")
         // constructor
         .def(
-            // the implementation
-            py::init<const splitter_t::name_type &>(),
+            // the implementation; the devices arrive as any iterable, as they do for the pure
+            // python splitter
+            py::init([](py::iterable outputs, const splitter_t::name_type & name) {
+                // the devices, as the splitter wants them
+                splitter_t::outputs_type devices;
+                // go through the iterable
+                for (auto output : outputs) {
+                    // and convert each entry
+                    devices.push_back(output.cast<device_t::pointer_type>());
+                }
+                // build the splitter
+                return std::make_shared<splitter_t>(devices, name);
+            }),
             // the signature
-            "name"_a = "splitter",
+            "outputs"_a = py::tuple(), "name"_a = "splitter",
             // the docstring
-            "a device that forwards every entry to each of the devices attached to it")
+            "a device that forwards every entry to each of {outputs}, and to the devices attached "
+            "to it later")
         // attach a device
         .def(
             // the name
