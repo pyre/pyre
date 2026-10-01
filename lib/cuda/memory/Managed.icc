@@ -33,9 +33,9 @@ pyre::cuda::memory::Managed<T, isConst>::Managed(cell_count_type cells) :
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
         // complain
-        error << "while allocating " << footprint
+        error << pyre::journal::at() << "while allocating " << footprint
               << " bytes of device memory: " << pyre::journal::newline << cudaGetErrorName(status)
-              << " (" << status << ")" << pyre::journal::endl(__HERE__);
+              << " (" << status << ")" << pyre::journal::endl;
         // and bail
         throw std::bad_alloc();
     }
@@ -43,8 +43,8 @@ pyre::cuda::memory::Managed<T, isConst>::Managed(cell_count_type cells) :
     // all went well
     pyre::journal::debug_t channel("pyre.cuda.managed_t");
     // so let me know
-    channel << "allocated " << footprint << " bytes at " << (void *) spot
-            << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "allocated " << footprint << " bytes at " << (void *) spot
+            << pyre::journal::endl;
 
     // zero out the memory
     status = cudaMemset(spot, 0, footprint);
@@ -55,9 +55,9 @@ pyre::cuda::memory::Managed<T, isConst>::Managed(cell_count_type cells) :
         // make a channel
         pyre::journal::error_t error("pyre.cuda");
         // complain
-        error << "while initializing " << footprint
+        error << pyre::journal::at() << "while initializing " << footprint
               << " bytes of device memory for the offset field: " << description << " (" << status
-              << ")" << pyre::journal::endl(__HERE__);
+              << ")" << pyre::journal::endl;
         // and bail
         throw std::runtime_error(description);
     }
@@ -71,16 +71,15 @@ pyre::cuda::memory::Managed<T, isConst>::Managed(cell_count_type cells) :
             // make a channel
             pyre::journal::error_t error("pyre.cuda");
             // complain
-            error << "while deallocating " << footprint
+            error << pyre::journal::at() << "while deallocating " << footprint
                   << " bytes of device memory: " << pyre::journal::newline
-                  << cudaGetErrorName(status) << " (" << status << ")"
-                  << pyre::journal::endl(__HERE__);
+                  << cudaGetErrorName(status) << " (" << status << ")" << pyre::journal::endl;
         }
         // all went well
         pyre::journal::debug_t channel("pyre.cuda.managed_t");
         // so let me know
-        channel << "deallocated " << footprint << " bytes starting at " << (void *) ptr
-                << " on the device" << pyre::journal::endl(__HERE__);
+        channel << pyre::journal::at() << "deallocated " << footprint << " bytes starting at "
+                << (void *) ptr << " on the device" << pyre::journal::endl;
         // all done
         return;
     };
@@ -166,10 +165,10 @@ pyre::cuda::memory::Managed<T, isConst>::at(difference_type pos) const -> refere
         // make a channel
         pyre::journal::firewall_t channel("pyre.memory.bounds");
         // and complain
-        channel << "out of bounds access:" << pyre::journal::newline << "  index " << pos
-                << " must be less than " << cells() << pyre::journal::newline
+        channel << pyre::journal::at() << "out of bounds access:" << pyre::journal::newline
+                << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
                 << "  in pyre::cuda::memory::managed_t::operator[]" << pyre::journal::newline
-                << "  with a block on the heap at " << data() << pyre::journal::endl(__HERE__);
+                << "  with a block on the heap at " << data() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;
