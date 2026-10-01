@@ -5,11 +5,13 @@
 # (c) 1998-2026 all rights reserved
 
 # externals
+import importlib.util
 import json
 import os
 import shutil
 import subprocess
 import sys
+import sysconfig
 import tarfile
 import tempfile
 import typing
@@ -24,7 +26,8 @@ import survey
 # the build strategies understood by {mm}; mirrors the {mode} trait validator in {merlin.shells.MM}
 modes = ("dev", "release", "conda", "macports", "ubuntu")
 
-# optional features and the external package each one needs; the core framework needs none
+# optional features and the external package each one needs; the core needs only a C++ compiler,
+# the python headers, and pybind11, which {audit} checks on its own
 features = (
     ("h5 extension", "hdf5", ("h5c++", "h5cc")),
     ("postgres extension", "libpq", ("pg_config",)),
@@ -301,12 +304,27 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
         # open with a heading so the checklist that follows reads as one thought
         channel.line("checking what this machine can build:")
 
-        # the core needs nothing more exotic than a working C++ compiler
+        # the core needs a C++ compiler, the headers of this python, and pybind11
         cxx = self.compiler()
-        # so if none turned up, mark the core as unbuildable and say how to fix it
+        # gather what is missing
+        missing = []
+        # if no compiler turned up
         if cxx is None:
-            channel.line("  ✗ core framework — no C++ compiler found (set CXX or install one)")
-        # and when one is present, confirm the core is good to go and name the compiler
+            # say how to fix it
+            missing.append("a C++ compiler (set CXX or install one)")
+        # the bindings include {Python.h}
+        if self.pythonHeaders() is None:
+            # which some installations of python leave out
+            missing.append(f"the headers of python {sysconfig.get_python_version()}")
+        # and every extension, the journal's included, is written with pybind11
+        if self.pybind11() is None:
+            # which this python must be able to import, since the build asks it for its headers
+            missing.append("pybind11, installed for this python")
+        # if anything is missing, mark the core as unbuildable
+        if missing:
+            # and name what it needs
+            channel.line(f"  ✗ core framework — needs {', '.join(missing)}")
+        # otherwise, confirm the core is good to go and name the compiler
         else:
             channel.line(f"  ✓ core framework (pyre, journal, merlin + extensions) via {cxx}")
 
@@ -321,16 +339,22 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
             # then record the verdict for this feature
             channel.line(f"  {mark} {name} — {note}")
 
-        # close by setting expectations: a bare toolchain already yields a usable framework
+        # close by setting expectations
         channel.line("")
-        # spelling out that the core stands alone
-        channel.line("  the core builds with no extra packages")
+        # spelling out what the core needs and nothing more
+        channel.line("  the core needs a C++ compiler, the python headers, and pybind11")
         # and that the rest arrives for free as dependencies appear
         channel.line(
             "  optional features are activated automatically if their dependencies are available"
         )
         # flush the assembled checklist as a single entry
         channel.log()
+        # a core that cannot be built is not worth staging the source for
+        if missing:
+            # so stop here, before anything lands on disk
+            self.error.log(
+                "the core framework cannot be built on this machine; see the audit above"
+            )
         # nothing to report back; the audit speaks through its channel
         return
 
@@ -347,6 +371,39 @@ class Boot(pyre.application, family="pyre.applications.boot", namespace="boot"):
                 # by handing back its full path
                 return found
         # nothing on the list was usable, so report the absence
+        return None
+
+    def pythonHeaders(self) -> typing.Optional[str]:
+        """
+        Locate the headers of this python, which the bindings include
+        """
+        # ask the interpreter where its headers belong
+        include = sysconfig.get_paths().get("include")
+        # if they are there
+        if include and os.path.isfile(os.path.join(include, "Python.h")):
+            # hand back their location
+            return include
+        # otherwise, report the absence
+        return None
+
+    def pybind11(self) -> typing.Optional[str]:
+        """
+        Locate the pybind11 headers the way the build does, by asking the python package
+        """
+        # if this python cannot find the package
+        if importlib.util.find_spec("pybind11") is None:
+            # the build cannot either
+            return None
+        # get the package
+        import pybind11
+
+        # ask it where its headers are
+        include = pybind11.get_include()
+        # if the main header is there
+        if os.path.isfile(os.path.join(include, "pybind11", "pybind11.h")):
+            # hand back their location
+            return include
+        # otherwise, report the absence
         return None
 
     def stage(self, *, target: "pyre.primitives.path") -> None:
