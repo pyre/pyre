@@ -47,8 +47,9 @@ class Package(Named):
         # two levels up from {home}: {prefix}/packages/{home}/{file}
         prefix = home.parent.parent
         # a package installed by pip or conda lives in the interpreter's site-packages, which
-        # sits three levels below the prefix: {prefix}/lib/pythonX.Y/site-packages/{home}
-        if home.parent.name == "site-packages":
+        # sits three levels below the prefix: {prefix}/lib/pythonX.Y/site-packages/{home}; the
+        # system python on debian and ubuntu calls the same folder dist-packages
+        if home.parent.name in ("site-packages", "dist-packages"):
             # so look two more levels up
             prefix = prefix.parent.parent
         # hopefully, it also exists
