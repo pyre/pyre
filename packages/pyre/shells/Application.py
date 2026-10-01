@@ -258,11 +258,11 @@ class Application(pyre.component, metaclass=Director):
 
         # at this point, i either have both {home} and {prefix}, or neither; there isn't much more
         # to be done about {home}, but i still have a shot to find the system {config} by
-        # examining my {package}
+        # examining my {package}, which i don't have when my class has no family
         package = self.pyre_package()
-        # if i don't know my {prefix} and my package has one
-        if prefix is None and package.prefix:
-            # use it; it's almost certainly a better choice that leaving it empty
+        # if i don't know my {prefix} and i have a package that does
+        if prefix is None and package is not None and package.prefix:
+            # use it; it's almost certainly a better choice than leaving it empty
             prefix = package.prefix
 
         # finding my {config} directory requires me to have a namespace
