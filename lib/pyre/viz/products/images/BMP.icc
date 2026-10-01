@@ -127,6 +127,8 @@ pyre::viz::products::images::BMP::BMP(
         auto channel = pyre::journal::info_t("pyre.viz.products.images.bmp");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the insertion cursor is at " << (cur - _data) << "instead of " << _payloadOffset
             << pyre::journal::newline
@@ -134,7 +136,7 @@ pyre::viz::products::images::BMP::BMP(
             << "after injecting the header of a " << height << "x" << width
             << " BMP"
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
     }
 
     // all done

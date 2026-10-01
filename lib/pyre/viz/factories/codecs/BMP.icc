@@ -24,11 +24,13 @@ pyre::viz::factories::codecs::BMP<redT, greenT, blueT>::create(const name_type &
     auto channel = pyre::journal::debug_t("pyre.viz.factories.codecs.bmp.create");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "bmp '" << ref->name() << "' at " << ref.get() << ": create "
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // return it
     return ref;
 }
@@ -153,6 +155,8 @@ pyre::viz::factories::codecs::BMP<redT, greenT, blueT>::make(
         auto channel = pyre::journal::error_t("pyre.viz.factories.codecs.bmp");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "bmp factory at " << this << ":"
             << pyre::journal::newline
@@ -190,7 +194,7 @@ pyre::viz::factories::codecs::BMP<redT, greenT, blueT>::make(
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
         // and bail, just in case errors aren't fatal
         return self;
     }

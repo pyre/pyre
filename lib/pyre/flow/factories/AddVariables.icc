@@ -24,11 +24,13 @@ pyre::flow::factories::Add<pyre::flow::products::Variable, op1T, op2T, resultT>:
     auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "var add '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::flow::factories::Add<pyre::flow::products::Variable, op1T, op2T, resultT>:
     auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "var add '" << this->name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;

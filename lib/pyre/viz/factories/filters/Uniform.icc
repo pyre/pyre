@@ -24,11 +24,13 @@ pyre::viz::factories::filters::Uniform<signalT, binT>::create(const name_type & 
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.uniform");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "uniform '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::viz::factories::filters::Uniform<signalT, binT>::~Uniform()
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.uniform");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "uniform '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;
@@ -149,6 +153,8 @@ pyre::viz::factories::filters::Uniform<signalT, binT>::make(
         auto channel = pyre::journal::error_t("pyre.viz.factories.filters.uniform");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "uniform " << this->name() << "' at " << this << ":"
             << pyre::journal::newline
@@ -176,7 +182,7 @@ pyre::viz::factories::filters::Uniform<signalT, binT>::make(
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
         // and bail, just in case errors aren't fatal
         return self;
     }

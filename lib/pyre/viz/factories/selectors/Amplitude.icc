@@ -24,11 +24,13 @@ pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::create(const na
     auto channel = pyre::journal::debug_t("pyre.viz.factories.selectors.amplitude.create");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "amplitude '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // return it
     return ref;
 }
@@ -114,6 +116,8 @@ pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::make(
         auto channel = pyre::journal::error_t("pyre.viz.factories.selectors.amplitude");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "amplitude factory '" << name() << "' at " << this << ":"
             << pyre::journal::newline
@@ -142,7 +146,7 @@ pyre::viz::factories::selectors::Amplitude<signalT, amplitudeT>::make(
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
         // and bail, just in case errors aren't fatal
         return self;
     }

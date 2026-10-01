@@ -24,11 +24,13 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::create(const name_type 
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.logsaw");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "logsaw '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::~LogSaw()
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.logsaw");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "logsaw '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;
@@ -126,6 +130,8 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::make(
         auto channel = pyre::journal::error_t("pyre.viz.factories.filters.logsaw");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "logsaw " << this->name() << "' at " << this << ":"
             << pyre::journal::newline
@@ -153,7 +159,7 @@ pyre::viz::factories::filters::LogSaw<signalT, logsawT>::make(
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
         // and bail, just in case errors aren't fatal
         return self;
     }

@@ -22,11 +22,13 @@ pyre::flow::protocols::Factory::create(const name_type & name) -> factory_ref_ty
     auto channel = pyre::journal::debug_t("pyre.flow.factories.create");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << ref->name() << "' at " << ref.get() << " : create "
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // hand off the ref
     return ref;
 }

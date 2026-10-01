@@ -14,11 +14,13 @@ pyre::flow::protocols::Factory::~Factory()
     auto channel = pyre::journal::debug_t("pyre.flow.factories.destroy");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // all done
     return;
 }
@@ -32,6 +34,8 @@ pyre::flow::protocols::Factory::addInput(const name_type & slot, product_ref_typ
     auto channel = pyre::journal::debug_t("pyre.flow.factories.input");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << name() << "' at " << this << ": adding an input"
         << pyre::journal::newline
@@ -46,7 +50,7 @@ pyre::flow::protocols::Factory::addInput(const name_type & slot, product_ref_typ
         // outdent
         << pyre::journal::outdent
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // notify the product i am one of its readers
     product->addReader(slot, ref());
     // add the binding to my pile
@@ -63,6 +67,8 @@ pyre::flow::protocols::Factory::addOutput(const name_type & slot, product_ref_ty
     auto channel = pyre::journal::debug_t("pyre.flow.factories.output");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << name() << "' at " << this << ": adding an output"
         << pyre::journal::newline
@@ -77,7 +83,7 @@ pyre::flow::protocols::Factory::addOutput(const name_type & slot, product_ref_ty
         // outdent
         << pyre::journal::outdent
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // notify the product i am one of its writers
     product->addWriter(slot, ref());
     // add the binding to my pile
@@ -102,6 +108,8 @@ pyre::flow::protocols::Factory::removeInput(const name_type & slot) -> factory_r
     auto channel = pyre::journal::debug_t("pyre.flow.factories.input");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << name() << "' at " << this << ": removing an input"
         << pyre::journal::newline
@@ -116,7 +124,7 @@ pyre::flow::protocols::Factory::removeInput(const name_type & slot) -> factory_r
         // outdent
         << pyre::journal::outdent
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // return a reference to me
     return self;
@@ -138,6 +146,8 @@ pyre::flow::protocols::Factory::removeOutput(const name_type & slot) -> factory_
     auto channel = pyre::journal::debug_t("pyre.flow.factories.output");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << name() << "' at " << this << ": removing an output"
         << pyre::journal::newline
@@ -152,7 +162,7 @@ pyre::flow::protocols::Factory::removeOutput(const name_type & slot) -> factory_
         // outdent
         << pyre::journal::outdent
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // return a reference to me
     return self;
@@ -166,11 +176,13 @@ pyre::flow::protocols::Factory::flush() -> void
     auto channel = pyre::journal::debug_t("pyre.flow.factories.flush");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << name() << "' at " << this << ": flush"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // chain up
     Node::flush();
     // go through my output slots
@@ -191,6 +203,8 @@ pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type pr
     auto channel = pyre::journal::debug_t("pyre.flow.factories.make");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "factory '" << name() << "' at " << this << ": make"
         << pyre::journal::newline
@@ -205,7 +219,7 @@ pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type pr
         // outdent
         << pyre::journal::outdent
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // go through my inputs
     for (auto & [slot, product] : _inputs) {
@@ -213,6 +227,8 @@ pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type pr
         if (product->stale()) {
             // show me
             channel
+                // where
+                << pyre::journal::at()
                 // the factory
                 << "factory '" << name() << "' at " << this << ": make"
                 << pyre::journal::newline
@@ -224,11 +240,13 @@ pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type pr
                 // outdent
                 << pyre::journal::outdent
                 // flush
-                << pyre::journal::endl(__HERE__);
+                << pyre::journal::endl;
             // and refresh them
             product->make();
             // show me
             channel
+                // where
+                << pyre::journal::at()
                 // the factory
                 << "factory '" << name() << "' at " << this << ": make"
                 << pyre::journal::newline
@@ -240,7 +258,7 @@ pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type pr
                 // outdent
                 << pyre::journal::outdent
                 // flush
-                << pyre::journal::endl(__HERE__);
+                << pyre::journal::endl;
         }
     }
 

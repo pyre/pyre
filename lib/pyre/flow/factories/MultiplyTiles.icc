@@ -24,11 +24,13 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
     auto channel = pyre::journal::debug_t("pyre.flow.factories.multiply");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "tile multiply '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
     auto channel = pyre::journal::debug_t("pyre.flow.factories.multiply");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "tile multiply '" << this->name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;
@@ -89,6 +93,8 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
         auto channel = pyre::journal::error_t("pyre.flow.factories.multiply");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "tile multiply factory at " << this << ":"
             << pyre::journal::newline
@@ -119,7 +125,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT>
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
     }
 
     // go through its data

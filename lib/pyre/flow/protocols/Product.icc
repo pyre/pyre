@@ -22,11 +22,13 @@ pyre::flow::protocols::Product::create(const name_type & name, bool stale) -> pr
     auto channel = pyre::journal::debug_t("pyre.flow.products.create");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the product
         << "product " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // hand off the ref
     return ref;
 }
