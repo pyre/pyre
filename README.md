@@ -69,7 +69,8 @@ dependencies:
   - git
   - gcc
   - gxx
-  - make
+  # GNU make 4.4 or later, which mm needs
+  - make >=4.4
   - nodejs
   - pybind11
 
@@ -207,7 +208,7 @@ active conda environment:
 ``` text
 ~/dv/pyre> mm builder.info
 
-    mm 5.3.0
+    mm 5.4.1
     Michael Aïvázis <michael.aivazis@para-sim.com>
     copyright 1998-2026 all rights reserved
 
