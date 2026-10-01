@@ -7,7 +7,7 @@
 # the h5 library testsuite
 pyre-h5.lib.tests.stem := h5.lib
 pyre-h5.lib.tests.prerequisites := pyre-h5.lib journal.lib
-pyre-h5.lib.tests.extern := pyre-h5.lib journal.lib hdf5
+pyre-h5.lib.tests.extern := pyre-h5.lib pyre.lib journal.lib hdf5
 
 # c++ compiler arguments
 pyre-h5.lib.tests.c++.defines += $(pyre.lib.c++.defines)
