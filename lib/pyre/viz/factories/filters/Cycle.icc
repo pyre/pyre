@@ -194,7 +194,7 @@ pyre::viz::factories::filters::Cycle<signalT, cycleT>::make(
     // compute its length
     auto delta = high - low;
     // go over the cells
-    for (auto cell = 0ul; cell < cells; ++cell) {
+    for (decltype(cells) cell = 0; cell < cells; ++cell) {
         // read the value from the signal
         auto value = signal[cell];
         // compute the phase and map it to [-0.5, 0.5]
