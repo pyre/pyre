@@ -119,11 +119,11 @@ class Alert(Renderer):
         # if the chronicler decoration level is sufficiently high
         if chronicler.decor > 1:
             # get the name of the file
-            filename = notes["filename"]
+            filename = notes.get("filename")
             # get the line number
-            line = str(notes["line"])
+            line = str(notes.get("line", ""))
             # get the function name
-            function = notes["function"]
+            function = notes.get("function")
             # consider it an indication that we have location information
             if filename:
                 # lookup the longest filename we are going to print
@@ -152,17 +152,28 @@ class Alert(Renderer):
                     self.footerMarker,
                     resetColor,
                     # introduce the locator
-                    "at ",
+                    "from ",
                     # the filename
                     f"{filenameLeader}{ellipsis}{filenameTrailer}:",
                     # the line number
                     f"{line}:" if line else "",
-                    # the function name
-                    f"{function}" if function else "",
                 ]
-
                 # assemble the line and make it available
                 yield "".join(buffer)
+
+                # if we know the function
+                if function:
+                    # give it a line of its own, since its signature may be long
+                    buffer = [
+                        # a marker
+                        severityColor,
+                        self.footerMarker,
+                        resetColor,
+                        # the function name
+                        f"in '{function}'",
+                    ]
+                    # assemble the line and make it available
+                    yield "".join(buffer)
 
         # if the {chronicler} decoration level is sufficiently high
         if chronicler.decor > 2:
@@ -194,7 +205,6 @@ class Alert(Renderer):
                 "filename",
                 "line",
                 "function",
-                "source",
             }
             # go through the metadata
             for key, value in notes.items():
@@ -222,7 +232,7 @@ class Alert(Renderer):
         return
 
     # implementation details
-    maxlen = 60
+    maxlen = 80
     headerMarker = " >> "
     bodyMarker = " -- "
     footerMarker = " .. "

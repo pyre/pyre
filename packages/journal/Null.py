@@ -13,56 +13,113 @@ class Null:
 
     # my state
     @property
-    def state(self):
-        # if always off
+    def active(self):
+        """
+        Null channels are never active
+        """
+        # always off
         return False
 
-    @state.setter
-    def state(self, state):
+    @active.setter
+    def active(self, active):
+        """
+        Ignore attempts to turn me on
+        """
+        # ignore
+        return
+
+    @property
+    def fatal(self):
+        """
+        Null channels are never fatal
+        """
+        # never
+        return False
+
+    @fatal.setter
+    def fatal(self, fatal):
+        """
+        Ignore attempts to make me fatal
+        """
         # ignore
         return
 
     # my device
     @property
     def device(self):
+        """
+        Null channels have no device
+        """
         # and always null
         return None
 
     @device.setter
     def device(self, device):
+        """
+        Ignore attempts to give me a {device}
+        """
         # ignore
         return
 
     # interface
     def activate(self):
+        """
+        Ignore requests to turn me on
+        """
         # ignore
         return self
 
     def deactivate(self):
+        """
+        Ignore requests to turn me off, since I am never on
+        """
         # ignore
         return self
 
     def line(self, *args, **kwds):
+        """
+        Discard the line
+        """
         # do nothing
         return
 
     def log(self, *args, **kwds):
+        """
+        Discard the entry
+        """
         # do nothing
         return self
 
     # access to severity wide configuration
     @classmethod
+    def activateChannels(cls, names):
+        """
+        Ignore requests to activate the channels in {names}
+        """
+        # ignore
+        return
+
+    @classmethod
     def getDefaultDevice(cls):
+        """
+        Null channels have no default device
+        """
         # easy enough
         return None
 
     @classmethod
     def setDefaultDevice(cls, device):
+        """
+        Ignore attempts to set the default {device}
+        """
         # ignore
         return None
 
     # metamethods
     def __init__(self, **kwds):
+        """
+        Absorb my construction arguments
+        """
         # absorb all
         return
 
@@ -70,7 +127,7 @@ class Null:
         """
         Simplify state testing
         """
-        return self.state
+        return self.active
 
     # implementation details
     def commit(self):

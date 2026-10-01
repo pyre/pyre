@@ -241,7 +241,7 @@ class Channel(metaclass=Severity):
         # clip from below and apply
         self.dent = max(0, self.dent + levels)
         # all done
-        return
+        return self
 
     def outdent(self, levels=1):
         """
@@ -250,7 +250,7 @@ class Channel(metaclass=Severity):
         # clip from below and apply
         self.dent = max(0, self.dent - levels)
         # all done
-        return
+        return self
 
     def line(self, message=""):
         """
@@ -265,8 +265,10 @@ class Channel(metaclass=Severity):
         """
         Add lines from the {report} to the current page
         """
-        # use {report} to extend my {page}
-        self.page.extend(str(entry) for entry in report)
+        # go through the lines in the {report}
+        for entry in report:
+            # and add each one at my current indentation
+            self.line(entry)
         # all done
         return self
 
@@ -276,8 +278,12 @@ class Channel(metaclass=Severity):
         """
         # if there is a final {message} to process
         if message is not None:
-            # add it to the page
-            self.line(message)
+            # render it
+            text = str(message)
+            # an empty one adds nothing, so a bare flush records only what is already on the page
+            if text:
+                # add it to the page
+                self.line(text)
 
         # get the frame of my caller, which is all the location information needs; a stack trace
         # would also read the text of the line from the source file, which is never used
@@ -320,8 +326,8 @@ class Channel(metaclass=Severity):
             raise
         # but in any case
         finally:
-            # flush my entry
-            self.entry = self.newEntry()
+            # start a fresh page; the notes carry over, since they accumulate for my lifetime
+            self.entry = self.newEntry(notes=self.entry.notes)
 
         # hand back the outcome
         return outcome
@@ -346,11 +352,31 @@ class Channel(metaclass=Severity):
         return
 
     @classmethod
+    def initializeIndex(cls, active: bool, fatal: bool):
+        """
+        Build the index of the channels of my severity, with the given default state
+        """
+        # make one
+        return Index(active=active, fatal=fatal)
+
+    @classmethod
+    def activateChannels(cls, names) -> None:
+        """
+        Activate the channels of my severity in {names}
+        """
+        # go through the names
+        for name in names:
+            # make a channel by this name and activate it
+            cls(name).activate()
+        # all done
+        return
+
+    @classmethod
     def __init_subclass__(cls, active=True, fatal=False, **kwds):
         # chain up
         super().__init_subclass__(**kwds)
         # give the severity an index of its own, with its default channel state
-        cls.index = Index(active=active, fatal=fatal)
+        cls.index = cls.initializeIndex(active=active, fatal=fatal)
         # all done
         return
 
@@ -414,11 +440,19 @@ class Channel(metaclass=Severity):
         # subclasses must override
         raise NotImplementedError(f"class '{type(self).__name__}' must implement 'record'")
 
-    def newEntry(self):
+    def newEntry(self, notes: dict | None = None):
         """
-        Create a fresh message entry
+        Create a fresh message entry, starting from {notes} when they are given
         """
-        # initialize my metadata
+        # if there are notes to carry over
+        if notes is not None:
+            # get the entry factory
+            from .Entry import Entry
+
+            # make an entry with them; it keeps a copy of its own
+            return Entry(notes=notes)
+
+        # otherwise, initialize my metadata
         notes = {
             "channel": self.name,
             "severity": self.severity,
