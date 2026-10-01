@@ -56,6 +56,8 @@ pyre::h5::py::file(py::module & m)
             auto channel = pyre::journal::error_t("pyre.h5.file");
             // so complain
             channel
+                // where
+                << pyre::journal::at()
                 // say why
                 << "invalid mode '" << mode << "'"
                 << pyre::journal::newline
@@ -64,8 +66,8 @@ pyre::h5::py::file(py::module & m)
                 << pyre::journal::newline
                 // show me what's supported
                 << "currently supported modes: r, r+, w, w-"
-                // and flush
-                << pyre::journal::endl(__HERE__);
+                // flush
+                << pyre::journal::endl;
 
             // just in case this error is not fatal, make a stub
             return File();

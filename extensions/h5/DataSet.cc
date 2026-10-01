@@ -36,14 +36,16 @@ namespace pyre::h5::py {
             auto channel = pyre::journal::error_t("pyre.h5");
             // complain
             channel
+                // where
+                << pyre::journal::at()
                 // what
                 << "the stride does not match the shape of the tile"
                 << pyre::journal::newline
                 // details
                 << "the stride has " << stride.size() << " entries, and the tile has "
                 << shape.size()
-                // where
-                << pyre::journal::endl(__HERE__);
+                // flush
+                << pyre::journal::endl;
             // and decline to select anything
             return false;
         }
@@ -77,14 +79,16 @@ namespace pyre::h5::py {
             auto channel = pyre::journal::error_t("pyre.h5");
             // complain
             channel
+                // where
+                << pyre::journal::at()
                 // what
                 << "the destination is too small for the tile"
                 << pyre::journal::newline
                 // details
                 << "it holds " << info.size << " cells, and the tile has "
                 << cells
-                // where
-                << pyre::journal::endl(__HERE__);
+                // flush
+                << pyre::journal::endl;
             // and bail, rather than let the library write past the end of somebody's array
             return;
         }
@@ -391,10 +395,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain an integer"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return 0;
             }
@@ -422,10 +428,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain an integer"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -454,10 +462,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain a floating point number"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return 0;
             }
@@ -485,10 +495,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain a floating point number"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -516,10 +528,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain a string"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return "";
             }
@@ -543,10 +557,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain a string"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -575,10 +591,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "not a dataset with null terminated strings"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // build an empty list of strings
                 strings_t strings;
                 // and bail
@@ -593,10 +611,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "not a list "
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail with an empty list
                 return strings_t();
             }
@@ -639,10 +659,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "not a dataset with null terminated strings"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -655,10 +677,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "not a list "
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
@@ -695,10 +719,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain an enumeration"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return 0;
             }
@@ -726,10 +752,12 @@ pyre::h5::py::dataset(py::module & m)
                 auto channel = pyre::journal::error_t("pyre.h5");
                 // complain
                 channel
+                    // where
+                    << pyre::journal::at()
                     // what
                     << "the dataset does not contain an enumeration"
-                    // where
-                    << pyre::journal::endl(__HERE__);
+                    // flush
+                    << pyre::journal::endl;
                 // and bail
                 return;
             }
