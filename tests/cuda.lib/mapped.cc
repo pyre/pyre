@@ -33,8 +33,8 @@ main(int argc, char * argv[])
     mapped_t arena(cells);
 
     // show me the address
-    channel << "allocated " << cells << " doubles at " << arena.data()
-            << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "allocated " << cells << " doubles at " << arena.data()
+            << pyre::journal::endl;
 
     // verify we can iterate and initialize all cells
     for (auto & cell : arena) {
