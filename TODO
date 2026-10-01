@@ -116,6 +116,12 @@
     {mm} layer bundled under {share/mm} should be capable of building pyre on its own, so
     the cells (and their mount contract) should not need {~/dv/mm}
 
+  - {bin/mm} downloads the boot bundle into a new {tempfile.mkdtemp()} directory every time
+    {pyre} is not importable, so its check for an existing copy never succeeds: every run
+    downloads the bundle again and leaves a directory behind. The standalone {mm} keeps its
+    copy in a {.mm} directory next to the script; {bin/mm} should keep one too, in a stable,
+    per-release location such as the user's cache directory, so a second run reuses it
+
 - framework:
 
   - take advantage of the new class creation protocol in 3.6+
