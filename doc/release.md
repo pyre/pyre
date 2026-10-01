@@ -59,6 +59,16 @@ order it must happen, with the reason for each step and how to check it.
    git grep -nE "vPREV|vPREVPREV"
    ```
 
+   The make engine under `share/mm`, which the boot bundle's installer and every build from a
+   release tarball use, matches the engine of the latest `mm` release, `make` in the `mm`
+   repository, except for the banner in `mm/rules.mm`, which names merlin. pyre's own build
+   files use what the engine offers, e.g. suite cases, so an engine that lags builds a release
+   that silently skips part of its tests:
+
+   ```
+   diff -r share/mm/make <mm>/make
+   ```
+
 4. **The declared python floor matches what is tested.** `requires-python` and the
    classifiers in `pyproject.toml`, `find_package(Python ...)` in `CMakeLists.txt`, and the
    wheel matrix in `.github/workflows/pypi-wheels.yaml` agree with one another and with the
