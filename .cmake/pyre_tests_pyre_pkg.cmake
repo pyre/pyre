@@ -547,6 +547,7 @@ pyre_test_python_testcase(tests/pyre.pkg/config/persist.py)
 # pyre/smith
 #
 pyre_test_python_testcase(tests/pyre.pkg/smith/smith_basic.py)
+pyre_test_python_testcase(tests/pyre.pkg/smith/smith_bytecode.py)
 
 
 #
