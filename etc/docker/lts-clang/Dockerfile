@@ -100,7 +100,7 @@ ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 # go to the source directory; {mm} and {pyre} are bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
 # discover packages, build, and test the mounted working tree
-CMD service ssh start && service postgresql start && ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
+CMD service ssh start && service postgresql start && ${MM} --setup && ${MM} && ${MM} tests
 
 
 # end of file
