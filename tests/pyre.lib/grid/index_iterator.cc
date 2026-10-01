@@ -42,7 +42,7 @@ main(int argc, char * argv[])
         ++expected;
     }
     // the walk must have visited every axis
-    assert((expected == index_t::rank()));
+    assert((expected == static_cast<index_t::value_type>(index_t::rank())));
 
     // all done
     return 0;
