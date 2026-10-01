@@ -139,7 +139,11 @@ namespace pyre::journal {
     template <typename decoratorT>
     inline auto endl(decoratorT) -> Flush<decoratorT>;
 
-    // flushing with the special locator signature
+    // flushing with the special locator signature; deprecated for c++ clients, which start their
+    // entries with {at()} instead
+    [[deprecated(
+        "start the entry with pyre::journal::at(), which records the location "
+        "automatically; the {__HERE__} form will be removed in pyre 1.15")]]
     inline auto endl(__HERE_DECL__) -> Flush<Locator>;
 
     // end of a line of output

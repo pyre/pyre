@@ -8,8 +8,8 @@
 #pragma once
 
 
-// define __HERE__, which has to be a preprocessor macro
-// c++20 has <source_location>, so this will soon be obsolete
+// define __HERE__, which has to be a preprocessor macro; it is how c and fortran clients pass
+// their location to the journal, while c++ clients use {at()}, which gets it from the compiler
 
 // used by the locator to communicate the source of a message
 #define __HERE__ __FILE__, __LINE__, __func__

@@ -64,8 +64,11 @@ debuginfo_out(const char * name, __HERE_DECL__, const char * fmt, ...)
         std::vsnprintf(buffer, sizeof(buffer), fmt, args);
         va_end(args);
 
+        // render the line number, leaving it blank when it is unknown
+        auto line = lineno > 0 ? std::to_string(lineno) : "";
         // log the message
-        channel << pyre::journal::locator_t(__HERE_ARGS__) << buffer << pyre::journal::endl;
+        channel << pyre::journal::locator_t(filename, line, funcname) << buffer
+                << pyre::journal::endl;
     }
 
     // all done

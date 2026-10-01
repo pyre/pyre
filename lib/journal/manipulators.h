@@ -302,7 +302,8 @@ pyre::journal::endl(decoratorT decorator) -> Flush<decoratorT>
 auto
 pyre::journal::endl(__HERE_DECL__) -> Flush<Locator>
 {
-    return Flush(Locator(__HERE_ARGS__));
+    // render the line number, leaving it blank when it is unknown, and make the locator flushable
+    return Flush(Locator(filename, lineno > 0 ? std::to_string(lineno) : "", funcname));
 }
 
 
