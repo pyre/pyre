@@ -48,7 +48,7 @@ alias mm.setup='python3 ${SRCDIR}/mm/mm --setup'
 
 mm.activate() {
     # get mm to adjust the environment to activate the current installation
-    eval "$(python3 ${SRCDIR}/mm/mm --quiet --activate "@")"
+    eval "$(python3 ${SRCDIR}/mm/mm --quiet --activate "$@")"
 }
 
 mm.branch() {

@@ -4,8 +4,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-# nothing to configure here: with {pkgdb: rpm} every external dependency is discovered
+# with {pkgdb: rpm} every external dependency is discovered
 # from the installed fedora packages; leave this file as the place for any local overrides
+
+
+# pyre: the libraries of the installed pyre that its clients link against
+pyre.libraries := pyre-h5 pyre journal
 
 
 # end of file
