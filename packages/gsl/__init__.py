@@ -26,46 +26,43 @@ try:
     from . import libgsl as gsl
 # if this fails
 except ImportError:
-    # not much to do...
-    msg = "could not load the 'gsl' extension module"
-    # complain
+    # indicate that there is no runtime support
     import journal
+    journal.warning("gsl").log("could not load the 'gsl' extension module; bindings unavailable")
+    # and that the bindings are not available
+    gsl = None
+# otherwise, we have bindings and hence GSL support
+else:
+    # get the framework
+    import pyre
+    # register the package
+    package = pyre.executive.registerPackage(name="gsl", file=__file__)
+    # record the layout
+    home, prefix, defaults = package.layout()
 
-    raise journal.error("gsl").log(msg)
+    # otherwise, all is well;
+    # pull in the administrivia
+    version = gsl.version
+    copyright = gsl.copyright
 
-# get the framework
-import pyre
+    def license():
+        print(gsl.license())
 
-# register the package
-package = pyre.executive.registerPackage(name="gsl", file=__file__)
-# record the layout
-home, prefix, defaults = package.layout()
+    # wrappers
+    from .Histogram import Histogram as histogram
+    from .Matrix import Matrix as matrix
+    from .Permutation import Permutation as permutation
+    from .RNG import RNG as rng
+    from .Vector import Vector as vector
 
-# otherwise, all is well;
-# pull in the administrivia
-version = gsl.version
-copyright = gsl.copyright
+    # the blas and eigen flag enumerations, straight from the extension
+    Transpose = gsl.Transpose
+    Triangle = gsl.Triangle
+    Diagonal = gsl.Diagonal
+    Side = gsl.Side
+    EigenOrder = gsl.EigenOrder
 
-
-def license():
-    print(gsl.license())
-
-
-# wrappers
-from .Histogram import Histogram as histogram
-from .Matrix import Matrix as matrix
-from .Permutation import Permutation as permutation
-from .RNG import RNG as rng
-from .Vector import Vector as vector
-
-# the blas and eigen flag enumerations, straight from the extension
-Transpose = gsl.Transpose
-Triangle = gsl.Triangle
-Diagonal = gsl.Diagonal
-Side = gsl.Side
-EigenOrder = gsl.EigenOrder
-
-# other interfaces
-from . import blas, pdf, linalg, stats
+    # other interfaces
+    from . import blas, pdf, linalg, stats
 
 # end of file
