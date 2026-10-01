@@ -32,9 +32,9 @@ except ImportError:
     if not os.path.exists(_mm_pyre):
         # form the source url
         _pyre_url = f"{_pyre_repo}/{_pyre_release}/{_pyre_boot}"
-        # show me
-        print(f"downloading '{_pyre_url}")
-        # and grab the archive from the wed
+        # let the user know, on stderr, so the output of commands such as {--activate} stays clean
+        print(f"mm: downloading '{_pyre_url}'", file=sys.stderr)
+        # and grab the archive from the web
         with urllib.request.urlopen(url=_pyre_url) as istream:
             # open the local file
             with open(_mm_pyre, "wb") as ostream:
