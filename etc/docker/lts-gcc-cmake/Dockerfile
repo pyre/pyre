@@ -39,6 +39,9 @@ RUN apt dist-upgrade -y
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 #  - {cmake} drives the build; {gcc}/{g++}/{gfortran} are the toolchain
 #  - {libhdf5-dev} is the serial hdf5
+#  - {libopenmpi-dev}, {libgsl-dev}, and {libpq-dev} bring in the optional packages pyre has
+#    support for, so their libraries, bindings, and tests get built
+#  - {postgresql} is the server the postgres tests talk to
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
         curl git vim zip unzip \
@@ -47,8 +50,15 @@ RUN DEBIAN_FRONTEND=noninteractive \
         gcc g++ gfortran make \
         python3 python3-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev libhdf5-dev libgsl-dev
+        libopenmpi-dev libhdf5-dev libgsl-dev libpq-dev \
+        postgresql
 
+
+# the postgres server: the package creates a cluster; start it once to give {root}, the user the
+# tests run as, a role that can create and drop the databases the tests use
+RUN service postgresql start && \
+        su postgres -c "createuser --superuser root" && \
+        service postgresql stop
 
 # allow passwordless {ssh localhost} as root
 RUN mkdir -p -m 700 /root/.ssh && \
@@ -94,9 +104,8 @@ ENV PYBIND11_DIR=${pybind11_dir}
 
 # go to the source directory; {pyre} is bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
-# configure with cmake, build and install, then run the test suite;
-# the postgres suites need a running server this image does not have, so they are excluded
-CMD service ssh start && \
+# start the postgres server, configure with cmake, build and install, then run the test suite
+CMD service ssh start && service postgresql start && \
         mkdir -p ${BUILDDIR} && cd ${BUILDDIR} && \
         cmake \
             -DCMAKE_INSTALL_PREFIX=${INSTALLDIR} \
@@ -107,7 +116,7 @@ CMD service ssh start && \
             -DPYRE_MPI_OVERSUBSCRIBE=ON \
             /usr/local/src/pyre && \
         make -j2 install && \
-        ctest --output-on-failure -E postgres
+        ctest --output-on-failure
 
 
 # end of file
