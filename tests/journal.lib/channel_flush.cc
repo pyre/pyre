@@ -31,8 +31,8 @@ main()
     channel_t channel("channel");
 
     // inject something
-    channel << pyre::journal::note("time", "now") << "hello world!" << pyre::journal::newline
-            << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << pyre::journal::note("time", "now") << "hello world!"
+            << pyre::journal::newline << pyre::journal::endl;
 
     // all done
     return 0;

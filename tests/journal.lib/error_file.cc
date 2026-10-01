@@ -29,7 +29,7 @@ main()
     // carefully
     try {
         // inject something into the channel
-        channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+        channel << pyre::journal::at() << pyre::journal::note("time", "now")
                 << "error channel:" << pyre::journal::newline << "    hello world!"
                 << pyre::journal::endl;
         // errors are fatal by default, so we shouldn't be able to get here

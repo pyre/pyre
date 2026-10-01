@@ -31,7 +31,7 @@ main()
     // errors are fatal by default, so attempt to
     try {
         // inject something into the channel; no exception should be raised
-        channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+        channel << pyre::journal::at() << pyre::journal::note("time", "now")
                 << "error channel:" << pyre::journal::newline << "    hello world!"
                 << pyre::journal::endl;
         // if the error triggered an exception

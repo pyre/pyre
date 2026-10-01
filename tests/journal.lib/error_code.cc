@@ -29,12 +29,14 @@ main()
     try {
         // inject something into the channel
         channel
+            // where
+            << pyre::journal::at()
             // add the code
             << pyre::journal::code(10)
             // say something
             << "hello world!"
-            // and flush
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
         // errors are fatal by default, so we shouldn't be able to get here
         throw std::logic_error("unreachable");
         // if all goes well

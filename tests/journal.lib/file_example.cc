@@ -31,7 +31,7 @@ main()
     channel.activate();
 
     // inject something
-    channel << pyre::journal::at(__HERE__) << "hello world!" << pyre::journal::endl;
+    channel << pyre::journal::at() << "hello world!" << pyre::journal::endl;
 
     // all done
     return 0;

@@ -27,12 +27,14 @@ main()
 
     // inject something into the channel
     channel
+        // where
+        << pyre::journal::at()
         // add the code
         << pyre::journal::code(10)
         // say something
         << "hello world!"
-        // and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // all done
     return 0;

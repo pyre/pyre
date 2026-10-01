@@ -22,7 +22,7 @@ main()
     channel.device<pyre::journal::trash_t>();
 
     // inject something into the channel
-    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+    channel << pyre::journal::at() << pyre::journal::note("time", "now")
             << "warning channel:" << pyre::journal::newline << "    hello world!"
             << pyre::journal::endl;
 

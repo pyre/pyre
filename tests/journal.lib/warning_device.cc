@@ -28,6 +28,8 @@ main()
 
     // inject something into the channel; there should be no output to the screen
     channel
+        // where
+        << pyre::journal::at()
         // some metadata
         << pyre::journal::note("time", "now")
         // a message with a newline
@@ -38,8 +40,8 @@ main()
         // another message
         << "hello world!"
         << pyre::journal::newline
-        // and a flush with location warningrmation
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // all done
     return 0;

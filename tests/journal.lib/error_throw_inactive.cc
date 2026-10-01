@@ -13,7 +13,7 @@
 
 // alias
 using trash_t = pyre::journal::trash_t;
-using error_t = pyre::journal::error_t;
+using myerror_t = pyre::journal::error_t;
 
 
 // an inactive error channel hands back the exception it would have raised
@@ -21,7 +21,7 @@ int
 main()
 {
     // make a channel
-    error_t channel("tests.journal.error");
+    myerror_t channel("tests.journal.error");
     // send the output to the trash
     channel.device<trash_t>();
     // and turn it off
@@ -30,11 +30,11 @@ main()
     // carefully
     try {
         // raise what the channel hands back
-        throw channel << pyre::journal::at(__HERE__) << "nasty bug:" << pyre::journal::newline
+        throw channel << pyre::journal::at() << "nasty bug:" << pyre::journal::newline
                       << "    hello world!" << pyre::journal::endl;
     }
     // if it is the right exception
-    catch (const error_t::exception_type & error) {
+    catch (const myerror_t::exception_type & error) {
         // verify it carries the page
         assert(error.page().size() == 2);
         assert(error.page()[0] == "nasty bug:");

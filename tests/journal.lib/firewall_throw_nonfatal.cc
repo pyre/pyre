@@ -30,7 +30,7 @@ main()
     // carefully
     try {
         // raise what the channel hands back
-        throw channel << pyre::journal::at(__HERE__) << "nasty bug:" << pyre::journal::newline
+        throw channel << pyre::journal::at() << "nasty bug:" << pyre::journal::newline
                       << "    hello world!" << pyre::journal::endl;
     }
     // if it is the right exception

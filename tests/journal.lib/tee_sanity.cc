@@ -39,7 +39,7 @@ main()
     // by routing the standard output to it
     auto original = std::cout.rdbuf(console.rdbuf());
     // inject something; the console gets a copy, and so does the file
-    channel << pyre::journal::at(__HERE__) << "hello world!" << pyre::journal::endl;
+    channel << pyre::journal::at() << "hello world!" << pyre::journal::endl;
     // restore the standard output
     std::cout.rdbuf(original);
     // check that the message made it to the console

@@ -19,7 +19,7 @@ main()
     // inject the manipulators
     channel
         // location
-        << pyre::journal::at(__HERE__)
+        << pyre::journal::at()
         // notes
         << pyre::journal::note("time", "now")
         // message

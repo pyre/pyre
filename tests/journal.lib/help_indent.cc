@@ -24,7 +24,7 @@ main()
     // inject something into the channel
     channel
         // location
-        << pyre::journal::at(__HERE__)
+        << pyre::journal::at()
         // some metadata
         << pyre::journal::note("time", "now")
         // a structured message

@@ -35,6 +35,8 @@ main()
 
     // inject something into the channel
     channel
+        // where
+        << pyre::journal::at()
         // pick a color from one of the supported color tables
         << pyre::journal::x11("purple")
         // and say something
@@ -49,8 +51,8 @@ main()
         << "color"
         // reset the color to whatever it was before
         << pyre::journal::ansi("normal")
-        // and flush
-        << pyre::journal::endl(__HERE__);
+        // flush
+        << pyre::journal::endl;
 
     // all done
     return 0;
