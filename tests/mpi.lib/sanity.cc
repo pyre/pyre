@@ -36,7 +36,8 @@ main(int argc, char * argv[])
     channel.deactivate();
 
     // and say something
-    channel << "[" << wrank << "/" << wsize << "]: hello world!" << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "[" << wrank << "/" << wsize << "]: hello world!"
+            << pyre::journal::endl;
 
     // finalize mpi
     MPI_Finalize();
