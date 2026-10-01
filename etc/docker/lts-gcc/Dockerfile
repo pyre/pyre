@@ -35,8 +35,8 @@ RUN apt dist-upgrade -y
 #  - {openssh}, {zip}, {unzip} are needed for some of the tests
 #  - {gcc}/{g++}/{gfortran} are the toolchain; {libhdf5-dev} is the serial hdf5
 #  - {libopenmpi-dev}, {libgsl-dev}, and {libpq-dev} bring in the optional packages pyre has
-#    support for, so their libraries and bindings get built; the postgres tests also need a
-#    live server, so without one only the build is exercised
+#    support for, so their libraries and bindings get built
+#  - {postgresql} is the server the postgres tests talk to
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
         curl git vim zip unzip \
@@ -44,8 +44,15 @@ RUN DEBIAN_FRONTEND=noninteractive \
         gcc g++ gfortran make \
         python3 python3-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev libhdf5-dev libgsl-dev libpq-dev
+        libopenmpi-dev libhdf5-dev libgsl-dev libpq-dev \
+        postgresql
 
+
+# the postgres server: the package creates a cluster; start it once to give {root}, the user the
+# tests run as, a role that can create and drop the databases the tests use
+RUN service postgresql start && \
+        su postgres -c "createuser --superuser root" && \
+        service postgresql stop
 
 # allow passwordless {ssh localhost} as root
 RUN mkdir -p -m 700 /root/.ssh && \
@@ -94,7 +101,7 @@ ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 # go to the source directory; {mm} and {pyre} are bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
 # discover packages, build, and test the mounted working tree
-CMD service ssh start && ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
+CMD service ssh start && service postgresql start && ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
 
 
 # end of file
