@@ -113,6 +113,21 @@ order it must happen, with the reason for each step and how to check it.
      Before the tag it answers the next patch version with a `devN` suffix; a `LookupError`, or
      a warning that git archive did not support describe output, means the entries were not
      found
+   - **every wheel of the matrix builds.** `pypi-wheels` builds the wheels on the runners the
+     release uses, and uploads only when a release is published, so a run started by hand
+     rehearses the whole matrix without touching PyPI:
+
+     ```
+     gh workflow run pypi-wheels.yaml --ref main
+     ```
+
+     Its wheels are kept as artifacts of the run. Download one for macOS and one for linux, e.g.
+     with `gh run download <run> -n pyre-wheels-cp313-manylinux_x86_64`, and check each on a
+     machine of its kind with `etc/release/wheel-check.sh {wheel} {python} {c++ compiler}`: in a
+     fresh environment it imports every compiled extension the wheel ships, reports the bindings
+     the packages publish and which implementation of the journal answers, makes a project with
+     `smith.pyre` from the templates, and builds and runs a toy against the headers and libraries
+     the wheel installs
    - the `pypi-testpypi` workflow (`workflow_dispatch`, `ref: main`) uploads an sdist to
      TestPyPI; this is the only exercise of the trusted publishing path before the real one
 
@@ -232,7 +247,9 @@ order it must happen, with the reason for each step and how to check it.
 
     Then confirm that `https://pypi.org/project/pyre/` shows the version and the expected
     files, and that `pip install pyre==X.Y.Z` in a fresh environment installs a wheel that
-    imports with its extensions loaded, on at least one platform. A wheel cell that fails
+    imports with its extensions loaded, on at least one platform: `pip download pyre==X.Y.Z
+    --no-deps` fetches the wheel for the host, and `etc/release/wheel-check.sh` runs the same
+    checks on it as on the rehearsal. A wheel cell that fails
     leaves the others in place; fix the cell and rerun the workflow by hand
     (`workflow_dispatch`); the uploads skip files already present. A wheel that uploaded but
     does not work cannot be replaced under its name: delete the file on pypi.org (each file
