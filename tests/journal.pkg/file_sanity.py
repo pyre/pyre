@@ -20,7 +20,7 @@ def test():
     device = File(path=filename)
 
     # check its name
-    assert device.name == "log"
+    assert device.name == "file"
     # and the path
     assert device.path == filename
 
