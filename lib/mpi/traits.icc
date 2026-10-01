@@ -33,14 +33,16 @@ pyre::mpi::CommunicatorHandle::free(handle_type & communicator) noexcept -> void
         auto channel = pyre::journal::firewall_t("pyre.mpi.communicator.free");
         // and complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "mpi refused to free a communicator"
             << pyre::journal::newline
             // details
             << "status: "
             << status
-            // where, and flush
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
     }
 
     // all done
@@ -66,14 +68,16 @@ pyre::mpi::GroupHandle::free(handle_type & group) noexcept -> void
         auto channel = pyre::journal::firewall_t("pyre.mpi.group.free");
         // and complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "mpi refused to free a process group"
             << pyre::journal::newline
             // details
             << "status: "
             << status
-            // where, and flush
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
     }
 
     // all done

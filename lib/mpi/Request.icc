@@ -169,14 +169,16 @@ pyre::mpi::Request::_abandon() noexcept -> void
         auto channel = pyre::journal::firewall_t("pyre.mpi.request.free");
         // and complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "mpi refused to free a request"
             << pyre::journal::newline
             // details
             << "status: "
             << status
-            // where, and flush
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
     }
 
     // all done
