@@ -23,8 +23,8 @@ main()
     channel.device<pyre::journal::trash_t>();
 
     // try injecting something into the channel
-    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
-            << "    hello world!" << pyre::journal::endl;
+    channel << pyre::journal::at() << pyre::journal::note("time", "now") << "    hello world!"
+            << pyre::journal::endl;
 
     // verify that the buffer is empty
     assert(channel.entry().buffer().str().empty());

@@ -32,7 +32,7 @@ main()
     severity_t channel("channel");
 
     // inject something
-    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now") << "hello world!"
+    channel << pyre::journal::at() << pyre::journal::note("time", "now") << "hello world!"
             << pyre::journal::newline << pyre::journal::endl;
 
     // all done

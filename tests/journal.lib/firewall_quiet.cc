@@ -28,7 +28,7 @@ main()
     // firewalls are fatal by default, so attempt
     try {
         // inject something into the channel
-        channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+        channel << pyre::journal::at() << pyre::journal::note("time", "now")
                 << "nasty bug:" << pyre::journal::newline << "    hello world!"
                 << pyre::journal::endl;
         // unreachable

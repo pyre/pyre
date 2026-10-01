@@ -29,7 +29,7 @@ main()
     // use a {debug_t} to build a document and its metadata
     debug_t channel("memo");
     // put some stuff in it; careful not to flush so we don't lose everything
-    channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+    channel << pyre::journal::at() << pyre::journal::note("time", "now")
             << pyre::journal::note("device", "null") << "simon says:" << pyre::journal::newline
             << "    hello world!" << pyre::journal::newline;
 

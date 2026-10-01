@@ -23,9 +23,8 @@ main()
     channel.device<pyre::journal::trash_t>();
 
     // try injecting something into the channel
-    channel << pyre::journal::note("application", "debug_flush")
-            << pyre::journal::note("time", "now") << "    hello world!"
-            << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << pyre::journal::note("application", "debug_flush")
+            << pyre::journal::note("time", "now") << "    hello world!" << pyre::journal::endl;
 
     // all done
     return 0;

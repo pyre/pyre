@@ -9,6 +9,7 @@
 #include <pyre/journal.h>
 // support
 #include <cassert>
+#include <source_location>
 
 
 // channel stub
@@ -30,7 +31,7 @@ main()
     // inject something; avoid flushing by using {endl}
     channel
         // locator
-        << pyre::journal::at(__HERE__)
+        << pyre::journal::at()
         // indentation level
         << pyre::journal::indent(2)
         // detail level
@@ -47,12 +48,14 @@ main()
     // and the detail level
     assert(channel.detail() == 4);
 
+    // the compiler's view of where we are, in the same function as the locator
+    const auto here = std::source_location::current();
     // get the metadata
     auto meta = channel.entry().notes();
     // verify that our decorations are present
-    assert(meta["filename"] == __FILE__);
-    assert(meta["line"] == "33");
-    assert(meta["function"] == __func__);
+    assert(meta["filename"] == here.file_name());
+    assert(meta["line"] == "34");
+    assert(meta["function"] == here.function_name());
     assert(meta["time"] == "now");
 
     // all done

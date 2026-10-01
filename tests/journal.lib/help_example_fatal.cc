@@ -28,7 +28,7 @@ main()
     // we've asked for this to fail, so carefully
     try {
         // inject something into the channel
-        channel << pyre::journal::at(__HERE__) << pyre::journal::note("time", "now")
+        channel << pyre::journal::at() << pyre::journal::note("time", "now")
                 << "help channel:" << pyre::journal::newline << "    hello world!"
                 << pyre::journal::endl;
         // unreachable

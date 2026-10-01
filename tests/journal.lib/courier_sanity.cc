@@ -9,6 +9,8 @@
 #include <pyre/journal.h>
 // support
 #include <cassert>
+#include <source_location>
+#include <string>
 #include <unistd.h>
 
 
@@ -48,7 +50,7 @@ main()
 
     // make a channel and log something
     info_t channel("test.courier");
-    channel << pyre::journal::at(__HERE__) << "hello world" << pyre::journal::endl;
+    channel << pyre::journal::at() << "hello world" << pyre::journal::endl;
 
     // the record made it out
     assert(courier->seq() == 1);
@@ -73,7 +75,9 @@ main()
     assert(line.find("\"channel\":\"test.courier\"") != std::string::npos);
     assert(line.find("\"severity\":\"info\"") != std::string::npos);
     assert(line.find("\"filename\":\"") != std::string::npos);
-    assert(line.find("\"function\":\"main\"") != std::string::npos);
+    // the function is this one, as the compiler names it
+    const std::string function = std::source_location::current().function_name();
+    assert(line.find("\"function\":\"" + function + "\"") != std::string::npos);
     // the record is an object
     assert(line.substr(line.size() - 3) == "}}\n");
 
