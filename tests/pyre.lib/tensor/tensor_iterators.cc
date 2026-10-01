@@ -50,7 +50,7 @@ main(int argc, char * argv[])
     channel << pyre::journal::newline;
 
     // flush
-    channel << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << pyre::journal::endl;
 
 
     // all done
