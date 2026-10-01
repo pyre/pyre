@@ -264,6 +264,46 @@ function(pyre_test_python_testcase_journal testfile)
 endfunction()
 
 
+# register a python script as a pair of test cases, one for each implementation of journal, that
+# also need the environment variables in {env}; use a path relative to {PROJECT_SOURCE_DIR}
+function(pyre_test_python_testcase_journal_env testfile env)
+  # generate the name of the testcase
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+
+  # we run the test cases in their local directory, so we need the base name
+  get_filename_component(base ${testfile} NAME)
+  # get the relative path to the test case local directory so we can set the working dir
+  get_filename_component(dir ${testfile} DIRECTORY)
+
+  # go through the implementations
+  foreach(flavor libjournal python)
+    # the bindings to the c++ library are on unless this is the pure python run
+    if(flavor STREQUAL "python")
+      # turn them off
+      set(switch off)
+    else()
+      # leave them on
+      set(switch on)
+    endif()
+    # set up the harness
+    add_test(NAME ${testname}.${flavor}
+      COMMAND ${Python_EXECUTABLE} ./${base} ${ARGN})
+    # register the runtime environment requirements
+    set_property(TEST ${testname}.${flavor} PROPERTY ENVIRONMENT
+      ${env}
+      JOURNAL_LIBJOURNAL=${switch}
+      PYTHONPATH=${PYRE_DEST_FULL_PACKAGES}
+      )
+    # launch from the location of the testcase
+    set_property(TEST ${testname}.${flavor} PROPERTY
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
+      )
+  endforeach()
+
+  # all done
+endfunction()
+
+
 # register a python script as a test case; use a path relative to {PROJECT_SOURCE_DIR}
 function(pyre_test_pyre_driver driver case)
   # generate the name of the testcase
