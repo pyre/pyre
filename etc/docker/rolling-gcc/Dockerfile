@@ -36,6 +36,8 @@ RUN apt dist-upgrade -y
 #  - {gcc}/{g++}/{gfortran} are the toolchain
 #  - {libhdf5-openmpi-dev} makes this cell the place where the PARALLEL hdf5 is the one
 #    on offer; the serial {libhdf5-dev} is deliberately absent
+#  - {libpq-dev} brings in the postgres client library, and {postgresql} is the server the
+#    postgres tests talk to
 RUN DEBIAN_FRONTEND=noninteractive \
         apt install -y \
         git vim zip unzip \
@@ -43,8 +45,15 @@ RUN DEBIAN_FRONTEND=noninteractive \
         gcc g++ gfortran make \
         python3 python3-dev \
         python3-pybind11 python3-yaml python3-numpy \
-        libopenmpi-dev libhdf5-openmpi-dev libgsl-dev
+        libopenmpi-dev libhdf5-openmpi-dev libgsl-dev libpq-dev \
+        postgresql
 
+
+# the postgres server: the package creates a cluster; start it once to give {root}, the user the
+# tests run as, a role that can create and drop the databases the tests use
+RUN service postgresql start && \
+        su postgres -c "createuser --superuser root" && \
+        service postgresql stop
 
 # allow passwordless {ssh localhost} as root
 RUN mkdir -p -m 700 /root/.ssh && \
@@ -93,7 +102,7 @@ ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 # go to the source directory; {mm} and {pyre} are bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
 # discover packages, build, and test the mounted working tree
-CMD service ssh start && ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
+CMD service ssh start && service postgresql start && ${MM} --setup && ${MM} --jobs=2 && ${MM} --jobs=2 tests
 
 
 # end of file
