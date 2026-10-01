@@ -56,11 +56,13 @@ main(int argc, char * argv[])
     int value = result->value();
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the value
         << "add: value=" << value
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // check it
     assert((value == 6));
 
@@ -70,11 +72,13 @@ main(int argc, char * argv[])
     value = result->value();
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the value
         << "add: value=" << value
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // check it gain
     assert((value == 9));
 

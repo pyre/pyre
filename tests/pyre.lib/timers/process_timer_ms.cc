@@ -47,11 +47,13 @@ main()
     // channel.activate();
     // and show me
     channel
+        // where
+        << pyre::journal::at()
         // show me the sum
         << "sum: " << sum
         << pyre::journal::newline
         // show me the elapsed time
-        << "elapsed time: " << timer.ms() << pyre::journal::endl(__HERE__);
+        << "elapsed time: " << timer.ms() << pyre::journal::endl;
 
     // all done
     return 0;

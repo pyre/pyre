@@ -49,7 +49,7 @@ main()
     // activate it
     // channel.activate();
     // and show me
-    channel << "elapsed time: " << proxy.sec() << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "elapsed time: " << proxy.sec() << pyre::journal::endl;
 
     // all done
     return 0;

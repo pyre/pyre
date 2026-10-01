@@ -41,7 +41,7 @@ main()
     // activate it
     // channel.activate();
     // show me
-    channel << "elapsed time: " << t.us() << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << "elapsed time: " << t.us() << pyre::journal::endl;
 
     // all done
     return 0;

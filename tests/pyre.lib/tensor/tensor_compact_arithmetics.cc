@@ -151,7 +151,7 @@ main(int argc, char * argv[])
     }
 
     // flush
-    channel << pyre::journal::endl(__HERE__);
+    channel << pyre::journal::at() << pyre::journal::endl;
 
 
     // all done

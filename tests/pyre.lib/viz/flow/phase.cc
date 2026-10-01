@@ -103,11 +103,13 @@ main(int argc, char * argv[])
     auto img = image->read();
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the value
         << "bmp: " << img.cells() << " bytes of data at " << img.where()
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // open a file
     auto stream = std::ofstream("pyre_viz_flow_phase.bmp", std::ios::out | std::ios::binary);

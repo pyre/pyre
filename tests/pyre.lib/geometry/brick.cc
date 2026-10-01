@@ -32,7 +32,7 @@ main()
     // make a channel
     pyre::journal::debug_t info("pyre.geometry");
     // show me
-    info << pyre::journal::at(__HERE__) << "[" << cube << "]" << pyre::journal::endl;
+    info << pyre::journal::at() << "[" << cube << "]" << pyre::journal::endl;
 
     // all done
     return 0;
