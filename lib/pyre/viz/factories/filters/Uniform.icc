@@ -188,7 +188,7 @@ pyre::viz::factories::filters::Uniform<signalT, binT>::make(
     }
 
     // go over the cells
-    for (auto cell = 0ul; cell < cells; ++cell) {
+    for (decltype(cells) cell = 0; cell < cells; ++cell) {
         // compute the signal bin
         bin[cell] = std::trunc(signal[cell] * _bins);
     }
