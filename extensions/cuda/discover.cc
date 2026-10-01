@@ -46,9 +46,8 @@ pyre::extensions::cuda::discover(PyObject *, PyObject * args)
         // make a channel
         pyre::journal::warning_t channel("cuda");
         // complain
-        channel << pyre::journal::at(__HERE__)
-                << "while getting device count: " << cudaGetErrorName(status) << " (" << status
-                << ")" << pyre::journal::endl;
+        channel << pyre::journal::at() << "while getting device count: " << cudaGetErrorName(status)
+                << " (" << status << ")" << pyre::journal::endl;
         // and pretend there are no CUDA capable devices
         return PyTuple_New(0);
     }
@@ -233,7 +232,7 @@ coresPerProcessor(int major, int minor)
     // create a firewall
     pyre::journal::firewall_t channel("cuda");
     // complain
-    channel << pyre::journal::at(__HERE__) << "core count for generation (" << major << "," << minor
+    channel << pyre::journal::at() << "core count for generation (" << major << "," << minor
             << ") is unknown" << pyre::journal::endl;
 
     // return junk

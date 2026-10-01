@@ -39,7 +39,7 @@ pyre::extensions::cuda::setDevice(PyObject *, PyObject * args)
         // make an error channel
         pyre::journal::error_t error("cuda");
         // show me
-        error << pyre::journal::at(__HERE__) << "while reserving device " << did << ": "
+        error << pyre::journal::at() << "while reserving device " << did << ": "
               << cudaGetErrorName(status) << " (" << status << ")" << pyre::journal::endl;
 
         // create an exception object
@@ -77,7 +77,7 @@ pyre::extensions::cuda::resetDevice(PyObject *, PyObject * args)
         // make an error channel
         pyre::journal::error_t error("cuda");
         // show me
-        error << pyre::journal::at(__HERE__)
+        error << pyre::journal::at()
               << "while resetting the current device: " << cudaGetErrorName(status) << " ("
               << status << ")" << pyre::journal::endl;
 
