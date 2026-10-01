@@ -16,6 +16,20 @@ if(PYRE_MPI_OVERSUBSCRIBE)
 endif()
 
 
+# test drivers exist to check, so they keep their asserts in every configuration: they compile
+# with {DEBUG}, as mm compiles its test drivers, and undo the {NDEBUG} that the {Release} and
+# {RelWithDebInfo} configurations put in the compiler flags; the target options follow those
+# flags on the command line, so the {-UNDEBUG} has the last word
+function(pyre_test_checks target)
+  # turn the developer checks on
+  target_compile_definitions(${target} PRIVATE DEBUG)
+  # and take back the {NDEBUG} of the release configurations
+  target_compile_options(${target} PRIVATE -UNDEBUG)
+
+  # all done
+endfunction()
+
+
 # generate a unique test case name that incorporate the command line arguments
 # adapted from code by @rtburns-jpl
 function(pyre_test_testcase testcase testfile)
@@ -333,6 +347,8 @@ function(pyre_test_driver testfile)
   add_executable(${target} ${testfile})
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
+  # that keep their checks in every configuration
+  pyre_test_checks(${target})
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal)
 
@@ -411,6 +427,8 @@ function(pyre_test_driver_mpi testfile slots)
   add_executable(${target} ${testfile})
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_MPI)
+  # that keep their checks in every configuration
+  pyre_test_checks(${target})
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal MPI::MPI_CXX)
 
@@ -440,6 +458,8 @@ function(pyre_test_driver_cuda testfile)
   add_executable(${target} ${testfile})
   # with some macros
   target_compile_definitions(${target} PRIVATE PYRE_CORE WITH_CUDA)
+  # that keep their checks in every configuration
+  pyre_test_checks(${target})
   # link against my libraries
   target_link_libraries(${target} PUBLIC pyre journal cuda)
 
