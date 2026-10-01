@@ -24,11 +24,13 @@ pyre::viz::factories::filters::Parametric<signalT, parametricT>::create(
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.parametric");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "parametric '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::viz::factories::filters::Parametric<signalT, parametricT>::~Parametric()
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.parametric");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "parametric '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;
@@ -151,6 +155,8 @@ pyre::viz::factories::filters::Parametric<signalT, parametricT>::make(
         auto channel = pyre::journal::error_t("pyre.viz.factories.filters.parametric");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "parametric " << this->name() << "' at " << this << ":"
             << pyre::journal::newline
@@ -178,7 +184,7 @@ pyre::viz::factories::filters::Parametric<signalT, parametricT>::make(
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
         // and bail, just in case errors aren't fatal
         return self;
     }

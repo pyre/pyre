@@ -24,11 +24,13 @@ pyre::viz::factories::colormaps::Gray<signalT, redT, greenT, blueT>::create(cons
     auto channel = pyre::journal::debug_t("pyre.viz.factories.colormaps.gray.create");
     // show me
     channel
+        // where
+        << pyre::journal::at()
         // the factory
         << "gray '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
     // return it
     return ref;
 }
@@ -164,6 +166,8 @@ pyre::viz::factories::colormaps::Gray<signalT, redT, greenT, blueT>::make(
         auto channel = pyre::journal::error_t("pyre.viz.factories.colormaps.gray");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "gray factory at " << this << ":"
             << pyre::journal::newline
@@ -198,7 +202,7 @@ pyre::viz::factories::colormaps::Gray<signalT, redT, greenT, blueT>::make(
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
         // and bail, just in case errors aren't fatal
         return self;
     }

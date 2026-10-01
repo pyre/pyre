@@ -24,11 +24,13 @@ pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::create(const name_t
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.polarsaw");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "polarsaw '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::~PolarSaw()
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.polarsaw");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "polarsaw '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;
@@ -126,6 +130,8 @@ pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::make(
         auto channel = pyre::journal::error_t("pyre.viz.factories.filters.polarsaw");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "polarsaw " << this->name() << "' at " << this << ":"
             << pyre::journal::newline
@@ -153,7 +159,7 @@ pyre::viz::factories::filters::PolarSaw<signalT, polarsawT>::make(
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
         // and bail, just in case errors aren't fatal
         return self;
     }

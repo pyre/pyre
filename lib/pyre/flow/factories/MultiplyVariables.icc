@@ -24,11 +24,13 @@ pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resu
     auto channel = pyre::journal::debug_t("pyre.flow.factories.multiply");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "var multiply '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resu
     auto channel = pyre::journal::debug_t("pyre.flow.factories.multiply");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "var multiply '" << this->name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;

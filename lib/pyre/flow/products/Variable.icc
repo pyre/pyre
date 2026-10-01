@@ -29,11 +29,13 @@ pyre::flow::products::Variable<valueT>::~Variable()
     auto channel = pyre::journal::debug_t("pyre.flow.products.variable");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "variable " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;

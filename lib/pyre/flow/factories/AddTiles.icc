@@ -24,11 +24,13 @@ pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::cre
     auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "tile add '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::~Ad
     auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "tile add '" << this->name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;
@@ -89,6 +93,8 @@ pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::mak
         auto channel = pyre::journal::error_t("pyre.flow.factories.add");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // who
             << "tile add factory at " << this << ":"
             << pyre::journal::newline
@@ -119,7 +125,7 @@ pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::mak
             // outdent
             << pyre::journal::outdent
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
     }
 
     // go through its data

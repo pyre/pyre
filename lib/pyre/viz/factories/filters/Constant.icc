@@ -24,11 +24,13 @@ pyre::viz::factories::filters::Constant<constantT>::create(const name_type & nam
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.constant");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "constant '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return ref;
@@ -42,11 +44,13 @@ pyre::viz::factories::filters::Constant<constantT>::~Constant()
     auto channel = pyre::journal::debug_t("pyre.viz.factories.filters.constant");
     // let me know
     channel
+        // where
+        << pyre::journal::at()
         // mark
         << "constant '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
-        << pyre::journal::endl(__HERE__);
+        << pyre::journal::endl;
 
     // all done
     return;

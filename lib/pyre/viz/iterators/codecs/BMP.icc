@@ -191,6 +191,8 @@ pyre::viz::iterators::codecs::BMP::encode(iteratorT & source, bool topdown) cons
         pyre::journal::firewall_t channel("pyre.viz.bmp");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the insertion cursor is at " << cur << "instead of " << _payloadOffset
             << pyre::journal::newline
@@ -198,7 +200,7 @@ pyre::viz::iterators::codecs::BMP::encode(iteratorT & source, bool topdown) cons
             << "after injecting the header of a " << _height << "x" << _width
             << " BMP"
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
     }
 
     // encode the data at each pixel location; the payload is packed line by line
@@ -226,6 +228,8 @@ pyre::viz::iterators::codecs::BMP::encode(iteratorT & source, bool topdown) cons
         pyre::journal::firewall_t channel("pyre.viz.bmp");
         // complain
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the insertion cursor is at " << cur << "instead of " << _bitmapSz
             << pyre::journal::newline
@@ -233,7 +237,7 @@ pyre::viz::iterators::codecs::BMP::encode(iteratorT & source, bool topdown) cons
             << "after injecting the payload of a " << _height << "x" << _width
             << " BMP"
             // flush
-            << pyre::journal::endl(__HERE__);
+            << pyre::journal::endl;
     }
 
     // all done
