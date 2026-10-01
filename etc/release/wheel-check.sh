@@ -76,10 +76,10 @@ for package, attribute in (("pyre.h5", "libh5"), ("gsl", "gsl"), ("mpi", "libmpi
     # carefully, since a package may refuse to import without its bindings
     try:
         module = importlib.import_module(package)
-        print(f"  {package}.{attribute:<14} {getattr(module, attribute, None) is not None}")
+        print(f"  {f'{package}.{attribute}':<20}{getattr(module, attribute, None) is not None}")
     # and report the ones that do
     except Exception as error:
-        print(f"  {package}.{attribute:<14} FAILED: {type(error).__name__}: {error}")
+        print(f"  {f'{package}.{attribute}':<20}FAILED: {type(error).__name__}: {error}")
 
 # the implementation of the journal that answers: the bindings, or the pure python one
 print(f"journal implementation: {type(journal.info('check')).__module__}")
