@@ -28,6 +28,8 @@ main()
         auto channel = pyre::journal::error_t("pyre.consumer.version");
         // with the two versions side by side
         channel
+            // where
+            << pyre::journal::at()
             // what
             << "the installed library and headers disagree about the version"
             << pyre::journal::newline
@@ -37,8 +39,8 @@ main()
             << "headers: " << std::get<0>(headers) << "." << std::get<1>(headers) << "."
             << std::get<2>(headers) << "."
             << std::get<3>(headers)
-            // where
-            << pyre::journal::endl(__HERE__);
+            // flush
+            << pyre::journal::endl;
         // and fail
         return 1;
     }
