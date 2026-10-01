@@ -74,6 +74,25 @@
     exercised on three database families, the crib sheet should retire, and with it a
     whole class of silent staleness
 
+- tests:
+
+  - move the C++ test drivers to Catch2: 242 drivers in {journal.lib}, {pyre.lib}, {h5.lib},
+    {mpi.lib}, {chroma.lib}, and {cuda.lib} check their results with 1092 {assert}s, which a
+    build that defines {NDEBUG} compiles away; mm keeps them live in every mode since mm#66,
+    by compiling test drivers with {DEBUG}, but that is a workaround: Catch2's {REQUIRE} and
+    {CHECK} do not depend on the build mode, report what failed, and stay silent on success.
+    mm already supports it: {<suite>.runner := catch2} compiles a suite into one binary, with
+    {extern := catch2}; see {examples/step09} in the mm repository. Catch2 v3, which the
+    runner needs, ships with ubuntu 25.10 and later, debian trixie, conda, and macports, so
+    the CI images need checking before a suite switches. Migrate suite by suite, keeping a
+    driver's single behavior as a single Catch2 test case
+
+  - until then, the cmake build still compiles the test drivers with {NDEBUG} in its
+    {Release} and {RelWithDebInfo} configurations, since cmake adds it to those flags and
+    mm#66 only changes mm builds; the {Release} legs of {pr-cmake} run tests whose asserts
+    check nothing. Either give the test targets the {Debug} disposition, e.g. by removing
+    {NDEBUG} from their compile definitions, or let the Catch2 migration retire the question
+
 - docker:
 
   - stand up a postgres server in the rolling cell, maybe others, maybe all of them, so the
