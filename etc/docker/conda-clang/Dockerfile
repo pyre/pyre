@@ -50,6 +50,18 @@ COPY etc/docker/${instance}/pyre-env.yaml pyre-env.yaml
 RUN /root/.local/bin/micromamba env create --quiet --yes --file pyre-env.yaml --prefix=/root/.local/envs/${env}
 
 
+# the postgres server refuses to run as root, so it gets a user of its own, which needs to reach
+# the binaries inside the environment; create the cluster, and start it once to give {root}, the
+# user the tests run as, a role that can create and drop the databases the tests use
+ENV PGDATA=/var/lib/postgresql/data
+ENV PGBIN=/root/.local/envs/${env}/bin
+RUN useradd --system --create-home --home-dir /var/lib/postgresql postgres && \
+        chmod o+x /root /root/.local /root/.local/envs && \
+        su postgres -c "${PGBIN}/initdb" && \
+        su postgres -c "${PGBIN}/pg_ctl --wait --log=/var/lib/postgresql/server.log start" && \
+        su postgres -c "${PGBIN}/createuser --superuser root" && \
+        su postgres -c "${PGBIN}/pg_ctl --wait stop"
+
 # allow passwordless {ssh localhost} as root
 RUN mkdir -p -m 700 /root/.ssh && \
         ssh-keygen -q -t ed25519 -N "" -f /root/.ssh/id_ed25519 && \
@@ -97,11 +109,17 @@ WORKDIR ${srcdir}/pyre
 ENV MAMBA_EXE=/root/.local/bin/micromamba
 ENV MAMBA_ROOT_PREFIX=/root/.local
 
+# let openmpi launch as root
+ENV OMPI_ALLOW_RUN_AS_ROOT=1
+ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+
 # run the CMD under bash for the micromamba shell hook
 SHELL ["/bin/bash", "-c"]
 
-# activate the environment, discover packages, build, and test the mounted working tree
+# start the postgres server, activate the environment, discover packages, build, and test the
+# mounted working tree
 CMD service ssh start && \
+    su postgres -c "${PGBIN}/pg_ctl --wait --log=/var/lib/postgresql/server.log start" && \
     eval "$(/root/.local/bin/micromamba shell hook --shell bash /root/.local)" && \
     micromamba activate pyre-dev && \
     ${MM} --setup && ${MM} && ${MM} tests
