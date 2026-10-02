@@ -1,7 +1,9 @@
+; -*- emacs-lisp -*-
+; -*- coding: utf-8 -*-
 ;
 ; michael a.g. aïvázis <michael.aivazis@para-sim.com>
 ; (c) 1998-2026 all rights reserved
-;
+
 
 ;; requirements
 (require 'font-lock)
@@ -208,5 +210,6 @@
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.pfg$" . pyre-mode))
+
 
 ; end of file

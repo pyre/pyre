@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -34,5 +34,6 @@
 // multiplication
 #include "factories/MultiplyTiles.h"
 #include "factories/MultiplyVariables.h"
+
 
 // end of file

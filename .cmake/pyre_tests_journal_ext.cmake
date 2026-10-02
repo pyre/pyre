@@ -1,4 +1,5 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
@@ -152,5 +153,6 @@ pyre_test_python_cleanup(firewall_file_mode.log tests/journal.ext/firewall_file_
 pyre_test_python_cleanup(help_file_mode.log tests/journal.ext/help_file_mode.py)
 pyre_test_python_cleanup(info_file_mode.log tests/journal.ext/info_file_mode.py)
 pyre_test_python_cleanup(warning_file_mode.log tests/journal.ext/warning_file_mode.py)
+
 
 # end of file

@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // externals
 var path = require('path')
 
@@ -29,5 +30,6 @@ module.exports = {
     babel: path.join(config, 'babelrc'),
     webpack: path.join(config, 'webpack.js'),
 }
+
 
 // end of file

@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 export default {
     // the top level flex container
     layout : {
@@ -11,5 +12,6 @@ export default {
         flexDirection: "column",
     },
 }
+
 
 // end of file

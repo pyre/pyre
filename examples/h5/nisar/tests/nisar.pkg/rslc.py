@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>

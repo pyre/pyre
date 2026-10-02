@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -29,7 +29,7 @@ def test():
         assert False
     except reader.DecodingError as error:
         assert str(error) == (
-            "file='sample-badNode.pml', line=11, column=53: decoding error: mismatched tag"
+            "file='sample-badNode.pml', line=13, column=53: decoding error: mismatched tag"
         )
 
     return m, reader

@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // get the colors
 import { wheel, semantic } from 'palette'
 
@@ -39,5 +40,6 @@ export default {
         fontSize: "100%",
     },
 }
+
 
 // end of file

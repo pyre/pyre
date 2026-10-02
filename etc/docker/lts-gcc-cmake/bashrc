@@ -1,8 +1,10 @@
 #!/bin/bash
+# -*- bash -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
 
 # the system profile
 if [ -r /etc/profile ]; then
@@ -37,5 +39,6 @@ export SRCDIR=@SRCDIR@
 # the cmake build and install locations, matching the {Dockerfile} recipe
 export BUILDDIR=/tmp/build
 export INSTALLDIR=/tmp/install
+
 
 # end of file

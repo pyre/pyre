@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -503,5 +503,6 @@ pyre::h5::py::attribute(py::module & m)
     // all done
     return;
 }
+
 
 // end of file

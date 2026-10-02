@@ -14,4 +14,5 @@ describe-name: $Format:%(describe:tags=true,match=v[0-9]*)$
 # setuptools_scm reads this file the way it reads the headers of a mail message: the entries end at
 # the first line that is not one, so they come first and the preamble follows them
 
+
 # end of file

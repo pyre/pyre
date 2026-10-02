@@ -1,4 +1,5 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
@@ -19,5 +20,6 @@ pyre_test_driver_cuda(tests/cuda.lib/grid_pinned_sanity.cc)
 # cuda tests mapped memory
 pyre_test_driver_cuda(tests/cuda.lib/mapped.cc)
 pyre_test_driver_cuda(tests/cuda.lib/grid_mapped_sanity.cc)
+
 
 # end of file

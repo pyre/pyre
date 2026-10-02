@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -27,7 +27,7 @@ def test():
         reader.read(stream=open("sample-blank.xml"), document=document)
         assert False
     except reader.ParsingError as error:
-        assert str(error) == "file='sample-blank.xml', line=10, column=0: no element found"
+        assert str(error) == "file='sample-blank.xml', line=12, column=0: no element found"
 
     return document
 

@@ -1,4 +1,6 @@
 # -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
@@ -36,5 +38,6 @@ lib/pyre/h5:
 lib/pyre/h5.h:
     # should be skipped unless {libhdf5} is available
     require: hdf5
+
 
 # end of file

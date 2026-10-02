@@ -1,6 +1,9 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # the component that owns the facility we are configuring
 subject:
@@ -10,5 +13,6 @@ subject:
 # but the nested facility of the instance it names is bound to something that isn't
 "test.fields.basic # broken":
     discretization: no_such_discretization
+
 
 # end of file

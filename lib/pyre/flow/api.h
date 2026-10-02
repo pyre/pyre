@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -60,5 +60,6 @@ namespace pyre::flow::factories {
     template <class op1T, class op2T = op1T, class resultT = op1T>
     using multiply_tiles_t = Multiply<products::Tile, op1T, op2T, resultT>;
 } // namespace pyre::flow::factories
+
 
 // end of file

@@ -1,8 +1,10 @@
 #!/bin/bash
+# -*- bash -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
 
 # the system profile
 if [ -r /etc/profile ]; then
@@ -64,5 +66,6 @@ mm.clear() {
 if [ -r "${SRCDIR}/mm/etc/bash_completion/mm" ]; then
     source "${SRCDIR}/mm/etc/bash_completion/mm"
 fi
+
 
 # end of file

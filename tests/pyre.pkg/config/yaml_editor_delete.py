@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -65,6 +66,7 @@ qed.app:
     nexus.services.web:
         address: ip4:0.0.0.0:8005
 
+
 # end of file
 """,
     ),
@@ -91,6 +93,7 @@ qed.app:
     shell: web
     nexus.services.web:
         address: ip4:0.0.0.0:8005
+
 
 # end of file
 """,
@@ -119,6 +122,7 @@ qed.app:
     shell: web
     nexus.services.web:
         address: ip4:0.0.0.0:8005
+
 
 # end of file
 """,
@@ -152,6 +156,7 @@ qed.app:
     nexus.services.web:
         port: 8080
 
+
 # end of file
 """,
     ),
@@ -179,6 +184,7 @@ qed.app:
     shell: web
     nexus.services.web:
         address: ip4:0.0.0.0:8005
+
 
 # end of file
 """,

@@ -1,7 +1,9 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 #
 # gsl extension: these drivers import the {libgsl} bindings directly, bypassing the {gsl}

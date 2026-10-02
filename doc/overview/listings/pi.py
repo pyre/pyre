@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # get access to the random munber generator functions
 import random
@@ -23,5 +24,6 @@ for i in range(N):
         interior += 1
 # print the result:
 print("π: {:.8f}".format(4 * interior / N))
+
 
 # end of file

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -29,7 +29,7 @@ def test():
         assert False
     except reader.DecodingError as error:
         assert str(error) == (
-            "file='sample-badRoot.pml', line=10, column=0: decoding error: unknown tag 'Config'"
+            "file='sample-badRoot.pml', line=12, column=0: decoding error: unknown tag 'Config'"
         )
 
     return m, reader

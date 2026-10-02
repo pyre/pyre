@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -80,5 +80,6 @@ main(int argc, char * argv[])
     // all done
     return 0;
 }
+
 
 // end of file

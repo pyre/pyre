@@ -1,6 +1,9 @@
+; -*- pyre -*-
+; -*- coding: utf-8 -*-
 ;
 ; michael a.g. aïvázis <michael.aivazis@para-sim.com>
 ; (c) 1998-2026 all rights reserved
+
 
 mm:
     ; resolve external dependencies straight from the installed fedora packages
@@ -22,5 +25,6 @@ mm:
     ; the ubuntu {config.mm} that lives there would override the rpm discoveries
     ; the name of the make utility
     make = make
+
 
 ; end of file

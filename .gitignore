@@ -1,7 +1,9 @@
+# -*- gitignore -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # ignore rules
 
@@ -46,5 +48,6 @@
 /tests/pyre.pkg/filesystem/sample.zip
 /tests/pyre.pkg/h5/api/writer.h5
 /tests/pyre.pkg/primitives/scratch/
+
 
 # end of file

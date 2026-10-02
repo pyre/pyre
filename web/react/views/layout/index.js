@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // externals
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
@@ -27,5 +28,6 @@ const Layout = () => (
 
 // publish
 export default Layout
+
 
 // end of file

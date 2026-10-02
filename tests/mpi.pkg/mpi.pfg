@@ -1,7 +1,8 @@
+; -*- pyre -*-
+; -*- coding: utf-8 -*-
 ;
 ; michael a.g. aïvázis <michael.aivazis@para-sim.com>
 ; (c) 1998-2026 all rights reserved
-;
 
 
 ; for the application in {mpirun.py}
@@ -21,5 +22,6 @@ mpi.application # slurm:
   shell.tasks = 8
   shell.queue = batch
   ; shell.submit = no
+
 
 ; end of file

@@ -1,8 +1,9 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
+
 
 #include <iostream>
 #include <gsl/gsl_rng.h>
@@ -33,5 +34,6 @@ main(int, char *[])
     std::cout << "pi: " << 4. * interior / N << std::endl;
     return 0;
 }
+
 
 // end of file

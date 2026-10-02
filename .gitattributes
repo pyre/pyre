@@ -4,7 +4,9 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
+
 # git archive fills in the placeholders in the version record of a tarball
 .git_archival.txt export-subst
+
 
 # end of file

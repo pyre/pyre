@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -67,16 +67,16 @@ def test():
 
     # the first
     error = sink.errors[0]
-    # is at line 7, column 31
+    # is at line 9, column 31
     assert error.locator.source == filename
-    assert error.locator.line == 6
+    assert error.locator.line == 8
     assert error.locator.column == 31
 
     # the second
     error = sink.errors[1]
-    # is at line 8, column 24
+    # is at line 10, column 24
     assert error.locator.source == filename
-    assert error.locator.line == 7
+    assert error.locator.line == 9
     assert error.locator.column == 24
 
     return

@@ -1,7 +1,9 @@
-# -*- Makefile -*-
+# -*- makefile -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # external dependencies
 # system tools
@@ -42,5 +44,6 @@ gcc.driver := gcc-$(suiteVersion)
 g++.driver := g++-$(suiteVersion)
 # the python driver
 python3.driver := python$(python.version)
+
 
 # end of file

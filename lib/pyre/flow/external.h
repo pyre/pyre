@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -22,5 +22,6 @@ namespace pyre::flow {
     // strings
     using string_t = std::string;
 } // namespace pyre::flow
+
 
 // end of file

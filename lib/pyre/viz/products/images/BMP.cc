@@ -1,8 +1,9 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
+
 
 // externals
 #include "../external.h"
@@ -74,5 +75,6 @@ pyre::viz::products::images::BMP::dump() -> ref_type
     // all done
     return self;
 }
+
 
 // end of file

@@ -1,7 +1,9 @@
-# -*- Makefile -*-
+# -*- makefile -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # libtorch rules for mm
 
@@ -16,5 +18,6 @@ extern.libtorch.info:
 	@${call log.var,"dependencies",$(libtorch.dependencies)}
 	@${call log.var,"c++ compile line",${call extern.compile.options,c++,libtorch}}
 	@${call log.var,"c++ link line",${call extern.link.options,c++,libtorch}}
+
 
 # end of file

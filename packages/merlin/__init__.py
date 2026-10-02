@@ -1,4 +1,4 @@
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -109,5 +109,6 @@ def version():
 
 # this is expected to be here
 __version__ = meta.version
+
 
 # end of file
