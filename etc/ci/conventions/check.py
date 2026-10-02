@@ -27,8 +27,8 @@ every pull request; running them before pushing saves a round trip
 # the checks, in the order they run
 CHECKS = ("spelling", "python", "cxx", "preambles", "commits")
 
-# the files whose preambles and closing markers are not checked, by extension: binaries, and
-# formats that cannot carry comments
+# the files whose preambles and closing markers are not checked, by extension, unless they carry
+# a preamble anyway: binaries, and formats that cannot carry comments
 OPAQUE = (
     ".png",
     ".jpg",
@@ -209,12 +209,8 @@ def preambles(*, root: str, base: str | None) -> list:
     """
     # the complaints
     problems = []
-    # the files, minus the opaque ones and the exemptions of the repository
-    files = [
-        name
-        for name in tracked(root=root, exempt=exemptions(root=root))
-        if not name.endswith(OPAQUE)
-    ]
+    # the files, minus the exemptions of the repository
+    files = tracked(root=root, exempt=exemptions(root=root))
     # the files touched since the base, when there is one
     touched = set(changed(root=root, base=base)) if base else set()
     # the current year
@@ -230,6 +226,13 @@ def preambles(*, root: str, base: str | None) -> list:
         # a file that is not text
         except UnicodeDecodeError:
             # has no preamble to check
+            continue
+        # an opaque format is checked only when the file carries a preamble anyway, as a
+        # makefile named for the data it builds or a python source named for its role does
+        if name.endswith(OPAQUE) and not any(
+            COPYRIGHT_LINE.match(line) for line in text.split("\n")[:15]
+        ):
+            # the rest are left alone
             continue
         # check its layout
         problems.extend(f"{name}: {problem}" for problem in layout(name=name, text=text))
