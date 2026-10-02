@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,10 +9,12 @@
 # externals
 import argparse
 import datetime
+import fnmatch
 import os
 import re
 import subprocess
 import sys
+import tomllib
 
 # the description of the program, for the help screen
 DESCRIPTION = """
@@ -25,26 +27,47 @@ every pull request; running them before pushing saves a round trip
 # the checks, in the order they run
 CHECKS = ("spelling", "python", "cxx", "preambles", "commits")
 
-# the sources whose preambles and closing markers are checked, by extension
-SOURCES = (
-    ".py",
-    ".h",
-    ".icc",
-    ".cc",
-    ".cpp",
-    ".cu",
-    ".js",
-    ".ts",
-    ".tsx",
-    ".mm",
-    ".yaml",
-    ".cmake",
+# the files whose preambles and closing markers are not checked, by extension: binaries, and
+# formats that cannot carry comments
+OPAQUE = (
+    ".png",
+    ".jpg",
+    ".gif",
+    ".ico",
+    ".svg",
+    ".pdf",
+    ".graffle",
+    ".numbers",
+    ".nb",
+    ".odb",
+    ".ttf",
+    ".woff",
+    ".woff2",
+    ".dylib",
+    ".json",
+    ".ipynb",
+    ".csv",
+    ".txt",
+    ".dict",
+    ".dat",
+    ".data",
+    ".pub",
+    ".plist",
 )
 # the c++ sources clang-format looks after
 CXX = (".h", ".icc", ".cc", ".cpp", ".cu")
-# the trees that are exempt from the preamble and c++ formatting checks: project templates hold
-# substitution markers that are not valid c++ until they are expanded
-EXEMPT = ("templates/",)
+# the copyright line, with whatever comment marker precedes it
+COPYRIGHT_LINE = re.compile(r"^(?P<prefix>.*?)\(c\) 1998-\d{4} all rights reserved$")
+# the lines that open a block comment preamble, and the ones that close it
+OPENERS = ("<!--", "{/*", "/*")
+CLOSERS = ("-->", "*/}", "*/")
+# the lines that may precede the preamble: interpreters, xml declarations and doctypes, along
+# with their indented continuations, the magic line of environment modules, and the mode line of
+# a stylesheet, which sits outside its block
+PRELUDE = re.compile(r"^(#!|<\?xml |<!doctype |\s+\S|#%Module|/\*\s+-\*- [a-z]+ -\*-\s+\*/$)")
+# the mode line; the mode is in lower case, unless it carries variables, like the image name of
+# a dockerfile, whose double marker it keeps
+MODE = re.compile(r"^#?(?P<marker>.*?)-\*- (?P<mode>[a-z0-9+\-]+|[a-z\-]+: .+) -\*-$")
 
 # a commit subject names the area it touches, then says what the commit does: an area is a
 # path, a package, or a c++ namespace, and several can be listed separated by commas
@@ -87,7 +110,7 @@ def run(*, command: list, cwd: str) -> subprocess.CompletedProcess:
 
 def tracked(*, root: str, extensions: tuple = (), exempt: tuple = ()) -> list:
     """
-    The files git tracks under {root}, narrowed to {extensions} and outside the {exempt} trees
+    The files git tracks under {root}, narrowed to {extensions} and outside the {exempt} patterns
     """
     # ask git
     names = run(command=["git", "ls-files"], cwd=root).stdout.split("\n")
@@ -97,9 +120,28 @@ def tracked(*, root: str, extensions: tuple = (), exempt: tuple = ()) -> list:
         for name in names
         if name
         and (not extensions or name.endswith(extensions))
-        and not name.startswith(exempt)
+        and not any(fnmatch.fnmatch(name, pattern) for pattern in exempt)
         and os.path.isfile(os.path.join(root, name))
     ]
+
+
+def exemptions(*, root: str) -> tuple:
+    """
+    The patterns of the files the preamble and c++ formatting checks leave alone, as listed in
+    the {exempt} table of {tool.conventions} in {pyproject.toml}
+    """
+    # the configuration of the repository
+    path = os.path.join(root, "pyproject.toml")
+    # a repository without one
+    if not os.path.isfile(path):
+        # exempts nothing
+        return ()
+    # read it
+    with open(path, mode="rb") as stream:
+        # all of it
+        configuration = tomllib.load(stream)
+    # hand off the patterns
+    return tuple(configuration.get("tool", {}).get("conventions", {}).get("exempt", []))
 
 
 def spelling(*, root: str, base: str | None) -> list:
@@ -149,7 +191,7 @@ def cxx(*, root: str, base: str | None) -> list:
     Check that every tracked c++ source is formatted by clang-format
     """
     # the files
-    files = tracked(root=root, extensions=CXX, exempt=EXEMPT)
+    files = tracked(root=root, extensions=CXX, exempt=exemptions(root=root))
     # check them
     result = run(command=["clang-format", "--dry-run", *files], cwd=root)
     # clang-format warns once per change it would make; one complaint per file is enough
@@ -162,41 +204,159 @@ def cxx(*, root: str, base: str | None) -> list:
 
 def preambles(*, root: str, base: str | None) -> list:
     """
-    Check that every tracked source opens with a copyright line and closes with an end of file
-    marker, and that the files touched since {base} carry the current year
+    Check that every tracked file opens with the standard preamble and closes with an end of
+    file marker, and that the files touched since {base} carry the current year
     """
     # the complaints
     problems = []
-    # the files
-    files = tracked(root=root, extensions=SOURCES, exempt=EXEMPT)
+    # the files, minus the opaque ones and the exemptions of the repository
+    files = [
+        name
+        for name in tracked(root=root, exempt=exemptions(root=root))
+        if not name.endswith(OPAQUE)
+    ]
     # the files touched since the base, when there is one
     touched = set(changed(root=root, base=base)) if base else set()
     # the current year
     year = str(datetime.date.today().year)
     # go through the files
     for name in files:
-        # read the file
-        with open(os.path.join(root, name), encoding="utf-8") as stream:
-            # as lines
-            lines = stream.read().split("\n")
+        # attempt to
+        try:
+            # read the file
+            with open(os.path.join(root, name), encoding="utf-8") as stream:
+                # all of it
+                text = stream.read()
+        # a file that is not text
+        except UnicodeDecodeError:
+            # has no preamble to check
+            continue
+        # check its layout
+        problems.extend(f"{name}: {problem}" for problem in layout(name=name, text=text))
         # the copyright line sits in the preamble, near the top
         copyright = next(
-            (COPYRIGHT.search(line) for line in lines[:12] if COPYRIGHT.search(line)), None
+            (COPYRIGHT.search(line) for line in text.split("\n")[:15] if COPYRIGHT.search(line)),
+            None,
         )
-        # a file without one
-        if copyright is None:
-            # is missing its preamble
-            problems.append(f"{name}: no '(c) 1998-{year} all rights reserved' in its preamble")
         # a file touched by the work
-        elif name in touched and copyright.group(1) != year:
+        if copyright is not None and name in touched and copyright.group(1) != year:
             # carries the current year
             problems.append(f"{name}: touched, but its copyright ends in {copyright.group(1)}")
-        # the last line that says anything
-        last = next((line.strip() for line in reversed(lines) if line.strip()), "")
-        # is the closing marker, in the comment syntax of the file
-        if not last.lower().removesuffix("*/").strip().endswith("end of file"):
-            # or else the file is not closed
-            problems.append(f"{name}: does not end with an 'end of file' marker")
+    # hand off the complaints
+    return problems
+
+
+def layout(*, name: str, text: str) -> list:
+    """
+    Check the preamble and postamble of the file {name}, whose contents are {text}: the mode,
+    coding, spacer, author and copyright lines, two blank lines before the body, and two more
+    before the end of file marker
+    """
+    # an empty file
+    if not text:
+        # has no preamble to speak of
+        return ["no preamble"]
+    # the complaints
+    problems = []
+    # the file ends with a single newline
+    if not text.endswith("\n") or text.endswith("\n\n"):
+        # or else its last line is not where it should be
+        problems.append("does not end with exactly one newline")
+    # split into lines, without the empty one after the final newline
+    lines = text.rstrip("\n").split("\n")
+    # the copyright line sits in the preamble, near the top
+    idx = next((i for i, line in enumerate(lines[:15]) if COPYRIGHT_LINE.match(line)), None)
+    # a file without one
+    if idx is None:
+        # is missing its preamble, and nothing else can be said about it
+        return problems + ["no '(c) 1998-YYYY all rights reserved' in its preamble"]
+    # the comment marker is whatever precedes the copyright
+    prefix = COPYRIGHT_LINE.match(lines[idx]).group("prefix")
+    # a block comment preamble opens on a line of its own
+    opener = next((i for i in range(idx - 1, -1, -1) if lines[i].strip() in OPENERS), None)
+    # the comment lines start right after the opener, or with the first line that carries the
+    # marker, past the lines that may precede the preamble
+    start = opener + 1 if opener is not None else 0
+    # skip the prelude of a line comment preamble
+    while opener is None and start < idx and PRELUDE.match(lines[start]):
+        # one line at a time
+        start += 1
+    # every line before the comment, other than the opener, belongs in the prelude
+    prelude = [line for line in lines[: opener if opener is not None else start] if line]
+    # so anything else
+    if not all(PRELUDE.match(line) for line in prelude):
+        # is out of place
+        problems.append("unexpected lines above the preamble")
+    # the comment lines, through the copyright
+    comment = lines[start : idx + 1]
+    # the marker, without its trailing space
+    marker = prefix.rstrip()
+    # the mode line can sit in the prelude of a stylesheet
+    moded = any("-*-" in line for line in prelude)
+    # otherwise, it opens the comment
+    if not moded:
+        # get it
+        mode = MODE.match(comment[0]) if comment else None
+        # it must be there, in lower case
+        if not mode or not comment[0].startswith(marker):
+            # or else the language of the file is not recorded
+            problems.append("the preamble does not open with a lower case mode line")
+        # move on
+        comment = comment[1:]
+    # the rest of the comment: coding, spacer, at least one author, and the copyright
+    expected = [f"{prefix}-*- coding: utf-8 -*-", marker]
+    # compare
+    if comment[:2] != expected or len(comment) < 4 or any(not line.strip() for line in comment[2:]):
+        # the preamble has lines missing, extra, or out of order
+        problems.append("the preamble is not mode, coding, spacer, author, and copyright")
+    # past the copyright
+    nxt = idx + 1
+    # a block comment closes on the next line
+    if opener is not None:
+        # make sure it does
+        if nxt >= len(lines) or lines[nxt].strip() not in CLOSERS:
+            # or else the preamble runs on
+            problems.append("the preamble block does not close after the copyright")
+        # and move past it
+        nxt += 1
+    # count the blank lines after the preamble
+    blanks = 0
+    # by walking down
+    while nxt + blanks < len(lines) and not lines[nxt + blanks]:
+        # one at a time
+        blanks += 1
+    # the first line of the body
+    body = lines[nxt + blanks] if nxt + blanks < len(lines) else ""
+    # a c++ header keeps its code guard next to the preamble, as does a markdown document
+    gap = 1 if body.startswith("// code guard") or name.endswith(".md") else 2
+    # check
+    if blanks != gap:
+        # and complain
+        problems.append(f"{blanks} blank lines after the preamble, instead of {gap}")
+    # the last line
+    last = lines[-1]
+    # is the closing marker
+    if "end of file" not in last:
+        # or else the file is not closed
+        problems.append("does not end with an 'end of file' marker")
+        # and its spacing means nothing
+        return problems
+    # count the blank lines before it
+    blanks = 0
+    # by walking up
+    while blanks < len(lines) - 1 and not lines[-2 - blanks]:
+        # one at a time
+        blanks += 1
+    # black puts a single blank line after imports, so python decides for itself
+    allowed = (1, 2) if name.endswith(".py") else (2,)
+    # a file with no body shares the blank lines after the preamble
+    if len(lines) - 1 - blanks == nxt:
+        # so its count is the one that matters
+        allowed = (blanks,)
+    # check
+    if blanks not in allowed:
+        # and complain
+        problems.append(f"{blanks} blank lines before the end of file marker, instead of 2")
     # hand off the complaints
     return problems
 

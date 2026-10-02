@@ -1,6 +1,9 @@
 # -*- toml -*-
+# -*- coding: utf-8 -*-
+#
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # build time
 [build-system]
@@ -69,6 +72,24 @@ ignore-words = "etc/ci/conventions/codespell-words.txt"
 exclude-file = "etc/ci/conventions/codespell-lines.txt"
 ignore-regex = "\\b[a-z]+[A-Z][A-Za-z0-9]*\\b"
 
+# the files the preamble and c++ formatting checks of {etc/ci/conventions/check.py} leave alone,
+# as patterns: project templates hold substitution markers that are not valid sources until they
+# are expanded, an envi header must open with the word {ENVI}, the legal documents are kept as
+# they are written, and the stand-ins for executables and headers that the external package
+# tests look for are empty on purpose; the legacy {Make.mm} files are left as they are, since mm
+# discovers the build by convention and no longer reads them
+[tool.conventions]
+exempt = [
+    "templates/*",
+    "*Make.mm",
+    "tests/pyre.pkg/envi/*.hdr",
+    "ACKNOWLEDGMENTS",
+    "COPYRIGHT",
+    "LICENSE",
+    "tests/pyre.pkg/externals/*/bin/*",
+    "tests/pyre.pkg/externals/prefix/include/eigen3/Eigen/Core",
+]
+
 # versioning: derive the version from the most recent git tag; an untagged commit yields
 # {X.Y.Z.devN} without the local {+gHASH} suffix, which the package indices refuse, so a dry
 # run from a branch can be uploaded to TestPyPI
@@ -84,5 +105,6 @@ local_scheme = "no-local-version"
 where = ["packages"]
 include = ["pyre*", "journal*", "merlin*", "mpi*", "gsl*", "survey*", "cuda*"]
 namespaces = false
+
 
 # end of file

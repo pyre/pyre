@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -82,7 +82,10 @@ def scaffold(*, root: str) -> None:
     write(
         root=root,
         name="pyproject.toml",
-        text='[tool.black]\nline-length = 100\n\n[tool.codespell]\nignore-words = "words.txt"\n',
+        text=preamble(comment="#", language="toml")
+        + '\n\n[tool.black]\nline-length = 100\n\n[tool.codespell]\nignore-words = "words.txt"\n'
+        + '\n[tool.conventions]\nexempt = ["vendor/*"]\n'
+        + "\n\n# end of file\n",
     )
     # an empty list of known good words
     write(root=root, name="words.txt", text="")
@@ -92,7 +95,7 @@ def scaffold(*, root: str) -> None:
     write(
         root=root,
         name="good.py",
-        text=preamble(comment="#", language="Python")
+        text=preamble(comment="#", language="python")
         + '\n\ndef answer():\n    """\n    The answer\n    """\n    # hand it off\n    return 42\n'
         + "\n\n# end of file\n",
     )
@@ -100,7 +103,7 @@ def scaffold(*, root: str) -> None:
     write(
         root=root,
         name="good.cc",
-        text=preamble(comment="//", language="C++")
+        text=preamble(comment="//", language="c++")
         + "\n\n// the answer\nint\nanswer()\n{\n    // hand it off\n    return 42;\n}\n\n\n// end of file\n",
     )
     # commit them
@@ -184,14 +187,14 @@ def violations() -> None:
         write(
             root=root,
             name="bad.py",
-            text=preamble(comment="#", language="Python")
+            text=preamble(comment="#", language="python")
             + f"\n\n# {MISSPELLING} answer\nx=[1,2 ,3]\n",
         )
         # a c++ source that is not formatted
         write(
             root=root,
             name="bad.cc",
-            text=preamble(comment="//", language="C++")
+            text=preamble(comment="//", language="c++")
             + "\nint answer(){return 42;}\n\n\n// end of file\n",
         )
         # an existing file touched without bringing its year up to date
@@ -221,6 +224,100 @@ def violations() -> None:
         expect(report=report, check="preambles", needle="good.cc: touched")
         expect(report=report, check="commits", needle="is not of the form")
         expect(report=report, check="commits", needle="has a body")
+    # all done
+    return
+
+
+def layouts() -> None:
+    """
+    Each departure from the standard preamble and postamble layout is caught, and the files the
+    repository exempts are left alone
+    """
+    # the departures, by file, with what the checker says about each
+    cases = {
+        # a mode in mixed case
+        "upper.py": (
+            preamble(comment="#", language="Python") + "\n\nx = 1\n\n\n# end of file\n",
+            "lower case mode line",
+        ),
+        # no coding line
+        "coding.sh": (
+            "# -*- bash -*-\n#\n# michael a.g. aïvázis\n# (c) 1998-2026 all rights reserved\n"
+            + "\n\necho\n\n\n# end of file\n",
+            "mode, coding, spacer, author, and copyright",
+        ),
+        # a single blank line after the preamble
+        "tight.yaml": (
+            preamble(comment="#", language="yaml") + "\nkey: value\n\n\n# end of file\n",
+            "1 blank lines after the preamble",
+        ),
+        # a single blank line before the closing marker of a c++ source
+        "short.cc": (
+            preamble(comment="//", language="c++") + "\n\nint x = 0;\n\n// end of file\n",
+            "1 blank lines before the end of file marker",
+        ),
+        # two blank lines between the preamble and the code guard of a header
+        "guard.h": (
+            preamble(comment="//", language="c++")
+            + "\n\n// code guard\n#pragma once\n\n\n// end of file\n",
+            "2 blank lines after the preamble, instead of 1",
+        ),
+        # extra blank lines at the end
+        "trail.toml": (
+            preamble(comment="#", language="toml") + "\n\nkey = 1\n\n\n# end of file\n\n",
+            "exactly one newline",
+        ),
+    }
+    # the departures the checker must not flag: a header with its code guard, a markdown
+    # document, a dockerfile, a script, a stylesheet, and a file the repository exempts
+    fine = {
+        "guard.icc": preamble(comment="//", language="c++")
+        + "\n// code guard\n#pragma once\n\n\n// end of file\n",
+        "doc.md": "<!--\n-*- markdown -*-\n-*- coding: utf-8 -*-\n\n"
+        + "michael a.g. aïvázis <michael.aivazis@para-sim.com>\n"
+        + f"(c) 1998-{YEAR} all rights reserved\n-->\n\n# title\n\n\n<!-- end of file -->\n",
+        "Dockerfile": '## -*- docker-image-name: "x:y" -*-\n'
+        + preamble(comment="#", language="x").split("\n", 1)[1]
+        + "\n\nFROM ubuntu\n\n\n# end of file\n",
+        "run.sh": "#!/bin/bash\n"
+        + preamble(comment="#", language="bash")
+        + "\n\necho\n\n\n# end of file\n",
+        "look.css": "/*  -*- css -*-  */\n/*\n * -*- coding: utf-8 -*-\n *\n"
+        + " * michael a.g. aïvázis <michael.aivazis@para-sim.com>\n"
+        + f" * (c) 1998-{YEAR} all rights reserved\n */\n\n\na {{\n}}\n\n\n/* end of file */\n",
+        "vendor/theirs.js": "// no preamble here\n",
+    }
+    # in a scratch directory
+    with tempfile.TemporaryDirectory() as root:
+        # lay out the repository
+        scaffold(root=root)
+        # add the files
+        for name, text in [(name, text) for name, (text, _) in cases.items()] + list(fine.items()):
+            # one by one
+            write(root=root, name=name, text=text)
+        # and let git know about them
+        git("add", *cases, *fine, cwd=root)
+        # check the preambles
+        result = subprocess.run(
+            [sys.executable, CHECKER, "--only", "preambles"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        # every departure was caught
+        for name, (_, needle) in cases.items():
+            # with the right complaint on its own line
+            if not any(
+                f"{name}: " in line and needle in line for line in result.stdout.split("\n")
+            ):
+                # or else the checker missed it
+                raise SelfTestError(f"'{name}' was not flagged for '{needle}':\n{result.stdout}")
+        # and nothing else was
+        for name in fine:
+            # by name
+            if f"{name}: " in result.stdout:
+                # or else the checker complains about good work
+                raise SelfTestError(f"'{name}' was flagged:\n{result.stdout}")
     # all done
     return
 
@@ -270,6 +367,8 @@ def main() -> int:
         clean()
         # one full of violations
         violations()
+        # one with every kind of preamble departure
+        layouts()
         # and one with commits by a bot
         bots()
     # if the checker misbehaved
