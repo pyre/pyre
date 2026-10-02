@@ -1,8 +1,9 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
 
 # build the journal extension
 pyre_journalModule()
@@ -18,5 +19,6 @@ pyre_gslModule()
 pyre_h5Module()
 # postgres
 pyre_postgresModule()
+
 
 # end of file

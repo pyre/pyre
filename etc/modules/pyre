@@ -1,8 +1,10 @@
 #%Module 1.0
+# -*- tcl -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
 
 # Module file created by config on $(TODAY)
 
@@ -25,5 +27,6 @@ prepend-path PYRE_LIBDIR "EXPORT_LIBDIR"
 prepend-path PATH "EXPORT_BINDIR"
 prepend-path LD_LIBRARY_PATH "EXPORT_LIBDIR"
 prepend-path PYTHONPATH "EXPORT_PKGDIR"
+
 
 # end of file

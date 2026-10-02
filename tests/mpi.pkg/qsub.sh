@@ -1,8 +1,11 @@
 #!/bin/bash
+# -*- bash -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
+
 #PBS -j oe
 #PBS -N ip
 #PBS -V
@@ -16,3 +19,6 @@ nprocs=$(wc -l < ${PBS_NODEFILE})
 cd ${PBS_O_WORKDIR}
 # execute
 mpirun python3.3 ip.py
+
+
+# end of file

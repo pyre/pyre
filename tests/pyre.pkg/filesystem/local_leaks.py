@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -47,5 +47,6 @@ if __name__ == "__main__":
 
     # print("Node extent:", len(Node.pyre_extent))
     assert len(Node.pyre_extent) == 0
+
 
 # end of file

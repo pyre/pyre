@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // externals
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -66,5 +67,6 @@ const Documentation = () => (
 
 //   publish
 export default Documentation
+
 
 // end of file

@@ -1,4 +1,4 @@
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -87,5 +87,6 @@ else:
 
     # other interfaces
     from . import blas, pdf, linalg, stats
+
 
 # end of file

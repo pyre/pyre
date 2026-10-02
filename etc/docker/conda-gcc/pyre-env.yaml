@@ -1,7 +1,9 @@
 # -*- yaml -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # the conda-forge build environment; {name} must not be a {.mm} project name like {pyre}
 name: pyre-dev
@@ -38,5 +40,6 @@ dependencies:
   - openmpi
   # numpy, for the gsl test suite
   - numpy
+
 
 # end of file

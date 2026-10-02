@@ -1,4 +1,5 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
@@ -120,5 +121,6 @@ function(pyre_kernel_target kernelobject driverfile)
     add_library("${kernelobject}" STATIC ${cudafile})
   # all done
 endfunction()
+
 
 # end of file

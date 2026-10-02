@@ -1,8 +1,9 @@
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # the base class
 from .MemoryType import MemoryType as type
@@ -60,5 +61,6 @@ float32 = float
 float64 = double
 complex64 = complexFloat
 complex128 = complexDouble
+
 
 # end of file

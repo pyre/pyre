@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // get webpack
 var webpack = require('webpack')
 // access to environment variables
@@ -79,5 +80,6 @@ module.exports = {
     plugins: plugins,
     devtool: devtool,
 }
+
 
 // end of file

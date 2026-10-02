@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // colors
 import { wheel, semantic } from "palette"
 
@@ -27,5 +28,6 @@ export default {
         padding: "0.0em 0.0em",
     },
 }
+
 
 // end of file

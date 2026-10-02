@@ -1,4 +1,4 @@
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -92,5 +92,6 @@ complex128 = complexDouble
 # standard types - strings
 c_s1 = std.c_s1
 fortran_s1 = std.fortran_s1
+
 
 # end of file

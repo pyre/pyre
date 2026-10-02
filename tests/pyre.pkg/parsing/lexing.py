@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -49,6 +49,9 @@ def test():
         Simple.whitespace,
         Simple.comment,
         Simple.whitespace,
+        Simple.comment,
+        Simple.whitespace,
+        Simple.whitespace,
         Simple.whitespace,
         Simple.whitespace,
         Simple.identifier,
@@ -64,11 +67,15 @@ def test():
         Simple.terminator,
         Simple.whitespace,
         Simple.whitespace,
+        Simple.whitespace,
         Simple.comment,
         Simple.whitespace,
         Simple.finish,
     )
 
+    # the scanner produced exactly as many tokens as expected
+    assert len(sink.cache) == len(expected)
+    # each of the expected kind
     for token, klass in zip(sink.cache, expected):
         # print(token)
         assert isinstance(token, klass)

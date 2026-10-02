@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -9,5 +9,6 @@
 
 // get the canonical header
 #include "../external.h"
+
 
 // end of file

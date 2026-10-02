@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -62,5 +62,6 @@ public:
 
 // get the inline definitions
 #include "Binary.icc"
+
 
 // end of file

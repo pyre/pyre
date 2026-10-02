@@ -1,4 +1,5 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
@@ -223,5 +224,6 @@ pyre_test_driver_cleanup(firewall_file_mode.log tests/journal.lib/firewall_file_
 pyre_test_driver_cleanup(help_file_mode.log tests/journal.lib/help_file_mode.cc)
 pyre_test_driver_cleanup(info_file_mode.log tests/journal.lib/info_file_mode.cc)
 pyre_test_driver_cleanup(warning_file_mode.log tests/journal.lib/warning_file_mode.cc)
+
 
 # end of file

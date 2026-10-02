@@ -1,8 +1,9 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
 
 # cmake setup
 # v3.18 is needed to pass Development.Module to FindPython

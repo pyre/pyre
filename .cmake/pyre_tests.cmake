@@ -1,4 +1,5 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
@@ -470,5 +471,6 @@ function(pyre_test_driver_cuda testfile)
 
   # all done
 endfunction()
+
 
 # end of file

@@ -4,6 +4,7 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
+
 # check a pull request against the conventions of the repository: spelling, the formatting of
 # python and c++ sources, file preambles and closing markers, and the commits it adds; the
 # checks are the ones in {etc/ci/conventions/check.py}, which contributors run locally too

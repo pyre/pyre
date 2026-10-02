@@ -1,7 +1,9 @@
 ## -*- docker-image-name: "pyre:conda-gcc" -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # a plain ubuntu base; the conda-forge toolchain is distro-independent
 FROM ubuntu:24.04

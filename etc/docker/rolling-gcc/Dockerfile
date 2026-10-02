@@ -1,7 +1,9 @@
 ## -*- docker-image-name: "pyre:rolling-gcc" -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # the latest ubuntu release; the official {rolling} tag is multi-arch, so it resolves to the host
 # architecture with no emulation, and ships GNU make >= 4.4 so no make-from-source is needed

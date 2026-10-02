@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -47,6 +48,7 @@ def test():
 
 # what the edits should produce
 expected = """# -*- yaml -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
@@ -78,9 +80,11 @@ qed.app:
     nexus.services.web:
         address: ip4:0.0.0.0:8005
 
+
 local:
     uri: file:/tmp/data
     expanded: []
+
 
 # end of file
 """

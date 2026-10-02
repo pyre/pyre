@@ -1,9 +1,11 @@
-/*  -*- CSS -*-  */
+/*  -*- css -*-  */
 /*
+ * -*- coding: utf-8 -*-
+ *
  * michael a.g. aïvázis <michael.aivazis@para-sim.com>
  * (c) 1998-2026 all rights reserved
- *
  */
+
 
 * {
     margin: 0.0em;
@@ -40,5 +42,6 @@ a:active {
     color: #aab141;
     text-decoration: none;
 }
+
 
 /* end of file */

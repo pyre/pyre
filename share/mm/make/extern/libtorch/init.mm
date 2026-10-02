@@ -1,7 +1,9 @@
-# -*- Makefile -*-
+# -*- makefile -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # add to extern list unless already present
 extern += ${if ${filter libtorch,$(extern)},,libtorch}
@@ -32,5 +34,6 @@ libtorch.libraries ?= torch torch_cpu c10 ${if $(libtorch.cuda),torch_cuda c10_c
 
 # my dependencies
 libtorch.dependencies :=
+
 
 # end of file

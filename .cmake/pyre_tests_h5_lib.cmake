@@ -1,7 +1,9 @@
 # -*- cmake -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 #
 # h5 library: these drivers exercise the {pyre::h5} wrappers over the hdf5 c api without ever

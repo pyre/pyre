@@ -1,6 +1,9 @@
 # -*- apache -*-
+# -*- coding: utf-8 -*-
+#
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # pyre virtual host definition file
 
@@ -42,5 +45,6 @@
     CustomLog /var/log/apache2/access-pyre.log combined
 
 </VirtualHost>
+
 
 # end of file

@@ -1,8 +1,9 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
+
 
 #include <portinfo>
 #include <Python.h>
@@ -97,5 +98,6 @@ pyre::extensions::cuda::resetDevice(PyObject *, PyObject * args)
     Py_INCREF(Py_None);
     return Py_None;
 }
+
 
 // end of file

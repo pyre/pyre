@@ -1,9 +1,9 @@
+-- -*- sql -*-
 -- -*- coding: utf-8 -*-
 --
--- michael a.g. aïvázis
--- orthologue
+-- michael a.g. aïvázis <michael.aivazis@para-sim.com>
 -- (c) 1998-2026 all rights reserved
---
+
 
 -- sample database from "Postgresql" by Douglas & Douglas
 
@@ -55,5 +55,6 @@ INSERT INTO rentals
     ('AB-67472', '2001-11-25', 3),
     ('OW-41221', '2001-11-25', 1),
     ('MC-68873', '2001-11-20', 3);
+
 
 -- end of file

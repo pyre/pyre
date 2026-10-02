@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // styling
 import styles from 'views/styles'
 // colors
@@ -28,5 +29,6 @@ export default {
         ...styles.sections.logo,
     },
 }
+
 
 // end of file

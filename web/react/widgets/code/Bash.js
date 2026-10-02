@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // externals
 import React from 'react'
 import Highlight from 'react-syntax-highlighter'
@@ -27,5 +28,6 @@ const Python = ({children}) => (
 
 // and publish
 export default Python
+
 
 // end of file

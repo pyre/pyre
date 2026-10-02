@@ -1,8 +1,9 @@
-! -*- F90 -*-
+! -*- f90 -*-
+! -*- coding: utf-8 -*-
 !
 ! michael a.g. aïvázis <michael.aivazis@para-sim.com>
 ! (c) 1998-2026 all rights reserved
-!
+
 
 program sanity
 
@@ -14,5 +15,6 @@ program sanity
     call MPI_Finalize(status)
 
     end
+
 
 ! end of file

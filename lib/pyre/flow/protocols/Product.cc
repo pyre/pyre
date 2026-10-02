@@ -1,8 +1,9 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
+
 
 // support
 #include "../public.h"
@@ -126,5 +127,6 @@ pyre::flow::protocols::Product::make() -> product_ref_type
     // all done
     return self;
 }
+
 
 // end of file

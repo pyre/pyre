@@ -1,8 +1,9 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
+
 
 // this a slightly augmented python interpreter
 // it contains Py_break, a function that enables the debugging of extensions
@@ -77,5 +78,6 @@ _widen(const char * arg)
     return _Py_char2wchar(arg, 0);
 #endif
 }
+
 
 // end of file

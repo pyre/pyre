@@ -1,7 +1,9 @@
 ## -*- docker-image-name: "pyre:fedora-gcc" -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # the current fedora release: a modern rpm/dnf instance; the official tag is multi-arch, so
 # it resolves to the host architecture with no emulation

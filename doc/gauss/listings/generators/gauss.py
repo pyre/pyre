@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -45,5 +45,6 @@ def count(iterable):  # @\label{line:driver:generators:count}@
 # main
 if __name__ == "__main__":
     gauss()
+
 
 # end of file

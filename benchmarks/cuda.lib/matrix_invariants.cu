@@ -1,7 +1,9 @@
 // -*- c++ -*-
+// -*- coding: utf-8 -*-
 //
 // sebastiaan van paasen
 // (c) 1998-2026 all rights reserved
+
 
 // function to compute the invariants of a 3x3 tensor
 __global__ void
@@ -71,5 +73,6 @@ computeInvariantsMapped(
     // all done
     return;
 }
+
 
 // end of file

@@ -5,6 +5,7 @@
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
 
+
 # check what a pyre wheel delivers, in a throwaway environment that holds nothing but python: the
 # compiled extensions it ships and the bindings the packages publish, which implementation of the
 # journal answers, the templates {smith.pyre} uses, and a toy built against the headers and the

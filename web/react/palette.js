@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 const wheel = {
     // greys
     "obsidian": "#000",
@@ -66,5 +67,6 @@ const theme = {
 
 // publish
 export { wheel, semantic, theme }
+
 
 // end of file

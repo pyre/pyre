@@ -1,4 +1,4 @@
-// -*- C++ -*-
+// -*- c++ -*-
 // -*- coding: utf-8 -*-
 //
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -91,5 +91,6 @@ private:
 
 // get the inline definitions
 #include "Power.icc"
+
 
 // end of file

@@ -4,6 +4,7 @@
 // michael a.g. aïvázis <michael.aivazis@para-sim.com>
 // (c) 1998-2026 all rights reserved
 
+
 // externals
 import { createResponsiveStateReducer } from 'redux-responsive'
 
@@ -17,5 +18,6 @@ const reducer = createResponsiveStateReducer(null, {
 
 // publish
 export default reducer
+
 
 // end of file

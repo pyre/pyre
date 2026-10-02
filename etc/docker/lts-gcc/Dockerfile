@@ -1,7 +1,9 @@
 ## -*- docker-image-name: "pyre:lts-gcc" -*-
+# -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
+
 
 # the current ubuntu LTS; the official tag is multi-arch, so it resolves to the host
 # architecture with no emulation

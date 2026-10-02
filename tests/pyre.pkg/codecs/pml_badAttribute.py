@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Python -*-
+# -*- python -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
@@ -29,7 +29,7 @@ def test():
         assert False
     except reader.DecodingError as error:
         assert str(error) == (
-            "file='sample-badAttribute.pml', line=11, column=2: decoding error:"
+            "file='sample-badAttribute.pml', line=13, column=2: decoding error:"
             " node 'bind': unknown attribute 'property'"
         )
 
