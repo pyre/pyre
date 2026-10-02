@@ -89,12 +89,14 @@
     the CI images need checking before a suite switches. Migrate suite by suite, keeping a
     driver's single behavior as a single Catch2 test case
 
-  - mpi launches hang on macOS (found 2026-10-02): {mpiexec -np 1 tests/mpi.lib/sanity} never
-    returns, while the same driver run as a singleton and {mpiexec -np 2 /usr/bin/true} both
-    finish at once, so the launcher starts processes but {MPI_Init} in a pyre driver does not
-    complete; every suite that launches through mpiexec hangs with it ({mpi.lib}, {mpi.ext},
-    {mpi.pkg}, and the {gsl.pkg} partition, collect, and broadcast tests); open mpi 5.0.10
-    with prterun; not caused by the preamble sweep, whose edits to these drivers are comments
+  - mpi launches hang on macOS while a VPN is up (found 2026-10-02): {mpiexec -np 1
+    tests/mpi.lib/sanity} never returns, while the same driver run as a singleton and {mpiexec
+    -np 2 /usr/bin/true} both finish at once; with the VPN down the whole suite passes, {mpi.lib},
+    {mpi.ext}, {mpi.pkg}, and the {gsl.pkg} partition, collect, and broadcast tests included. open
+    mpi 5.0.10 wires its ranks over every interface it finds; restricting the test launches to the
+    loopback ({--mca btl_tcp_if_include lo0 --mca oob_tcp_if_include lo0}, or their linux
+    spelling) would make them independent of the network; it belongs with the launcher
+    vocabulary that is moving to mm ({mpi.launch})
 
 - docker:
 
