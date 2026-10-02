@@ -77,11 +77,13 @@ ignore-regex = "\\b[a-z]+[A-Z][A-Za-z0-9]*\\b"
 # are expanded, an envi header must open with the word {ENVI}, the legal documents are kept as
 # they are written, and the stand-ins for executables and headers that the external package
 # tests look for are empty on purpose; the legacy {Make.mm} files are left as they are, since mm
-# discovers the build by convention and no longer reads them
+# discovers the build by convention and no longer reads them; the git archive description puts
+# its preamble after the keys setuptools_scm reads, since they must come first
 [tool.conventions]
 exempt = [
     "templates/*",
     "*Make.mm",
+    ".git_archival.txt",
     "tests/pyre.pkg/envi/*.hdr",
     "ACKNOWLEDGMENTS",
     "COPYRIGHT",

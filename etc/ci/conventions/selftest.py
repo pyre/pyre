@@ -262,6 +262,11 @@ def layouts() -> None:
             + "\n\n// code guard\n#pragma once\n\n\n// end of file\n",
             "2 blank lines after the preamble, instead of 1",
         ),
+        # a makefile named for the data it builds, whose extension is otherwise left alone
+        "build.data": (
+            preamble(comment="#", language="makefile") + "\nall:\n\n\n# end of file\n",
+            "1 blank lines after the preamble",
+        ),
         # extra blank lines at the end
         "trail.toml": (
             preamble(comment="#", language="toml") + "\n\nkey = 1\n\n\n# end of file\n\n",
@@ -286,6 +291,7 @@ def layouts() -> None:
         + " * michael a.g. aïvázis <michael.aivazis@para-sim.com>\n"
         + f" * (c) 1998-{YEAR} all rights reserved\n */\n\n\na {{\n}}\n\n\n/* end of file */\n",
         "vendor/theirs.js": "// no preamble here\n",
+        "values.csv": "1,2,3\n",
     }
     # in a scratch directory
     with tempfile.TemporaryDirectory() as root:
