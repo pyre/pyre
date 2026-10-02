@@ -236,6 +236,7 @@ define test.staging.target =
         ${eval $(_trgt).doc ?=}
         ${eval $(_trgt).cases ?= $($(1).cases)}
         ${eval $(_trgt).clean ?=}
+        ${eval $(_trgt).products ?=}
         ${eval $(_trgt).pre ?=}
         ${eval $(_trgt).post ?=}
         ${eval $(_trgt).assertions ?= $($(1).assertions)}

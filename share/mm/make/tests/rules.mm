@@ -226,6 +226,31 @@ $(1).info.runner:
 endef
 
 
+# target factory for the files a driver produces: one run of the driver, in its own directory,
+# makes all of them, and only when they are missing or older than {source}; the suite
+# prerequisites and the driver startup only order the run, so they cannot make the products
+# stale, yet whatever external state {pre} prepares is in place before the driver runs
+#   usage: test.workflows.target.products {target} {testsuite} {source} {launcher}
+define test.workflows.target.products =
+
+    # local variables
+    ${eval _home := ${dir $($(1).source)}}
+    ${eval _products := ${addprefix $(_home),$($(1).products)}}
+    # a driver that runs several cases would write its products once per case
+    ${if $($(1).cases),${error test driver '$(1)' names both cases and products},}
+
+# the products, made together by a single run of the driver
+$(_products) &: $(3) | $($(2).prerequisites) $(1).pre
+	@${call log.action,generate,${subst $($(2).home),,$(_products)}}
+	@$(cd) $(_home) ; $($(1).harness) $(4) $($(1).argv)
+
+# running the test case means bringing its products up to date
+$(1).cases: $(_products)
+
+# all done
+endef
+
+
 # build targets
 # target factory that builds a target for an interpreted test case
 #   usage: test.workflows.target.interpreted {target} {testsuite}
@@ -253,23 +278,17 @@ ${if $($(1).post),\
     ${eval $($(1).post) :: $($(1).pre) $(1).cases} \
 }
 
-# invoking the driver for each registered test case
-$(1).cases: $($($(1).suite).prerequisites) $(1).pre
-	@$(cd) $${dir $($(1).source)} ; \
-        ${if $($(1).cases), \
-            ${foreach case, $($(1).cases), \
-                ${call log.action,test,$($(case).harness) $(_tag) $($(case).argv)}; \
-                $($(case).harness) $(_launcher) $($(case).argv); \
-                }, \
-	    ${call log.action,test,$(_tag)}; \
-                $($(1).harness) $(_launcher) $($(1).argv) \
-        }
+# the test case: bring the products of the driver up to date, or invoke it for each case
+${if $($(1).products), \
+    ${eval ${call test.workflows.target.products,$(1),$(2),$($(1).source),$(_launcher)}}, \
+    ${eval ${call test.workflows.target.interpreted.cases,$(1)}} \
+}
 
 # clean up; double colon, since it may be used as a {post} rule
 $(1).clean::
-	@${if $($(1).clean), \
+	@${if ${strip $($(1).clean) $($(1).products)}, \
             ${call log.action,clean,$(1)}; \
-            $(rm.force-recurse) ${addprefix $($(1).home),$($(1).clean)}, \
+            $(rm.force-recurse) ${addprefix $($(1).home),$($(1).clean) $($(1).products)}, \
         }
 
 # show info
@@ -277,6 +296,7 @@ $(1).info:
 	@${call log.sec,$(1),"a test driver in test suite '$(2)' of project '$($(2).project)'"}
 	@${call log.var,source,$($(1).source)}
 	@${call log.var,interpreted,yes}
+	@${call log.var,products,$($(1).products)}
 	@${call log.var,language,$($(1).language)}
 	@${call log.var,compiler,$(compiler.$($(1).language))}
 	@${call log.sec,$(log.indent)cases,}
@@ -289,6 +309,23 @@ $(1).info:
 # just in case...
 .PHONY: $(1) $(1).cases $(1).clean
 
+# all done
+endef
+
+
+# the rule that invokes an interpreted driver for each registered test case
+#   usage: test.workflows.target.interpreted.cases {target}
+define test.workflows.target.interpreted.cases =
+$(1).cases: $($($(1).suite).prerequisites) $(1).pre
+	@$(cd) $${dir $($(1).source)} ; \
+        ${if $($(1).cases), \
+            ${foreach case, $($(1).cases), \
+                ${call log.action,test,$($(case).harness) $(_tag) $($(case).argv)}; \
+                $($(case).harness) $(_launcher) $($(case).argv); \
+                }, \
+	    ${call log.action,test,$(_tag)}; \
+                $($(1).harness) $(_launcher) $($(1).argv) \
+        }
 # all done
 endef
 
@@ -323,6 +360,8 @@ define test.workflows.target.staged =
     ${eval _modules := $($(1).stage.modules)}
     ${eval _launcher := $(compiler.$($(1).language)) $(_staged)}
     ${eval _harness := ${if $($(1).harness),$($(1).harness) $(_launcher),$(_launcher)}}
+    # a staged driver runs from a copy, so the files it writes do not land where its products live
+    ${if $($(1).products),${error staged test driver '$(1)' cannot name products},}
 
 # the aggregator
 $(1): $(1).pre $(1).stage $(1).cases $(1).post
@@ -429,21 +468,17 @@ $($(1).base): $($($(1).suite).prerequisites) $($(1).source)
             ${call test.mode,$(1)} }
 
 
-$(1).cases: $(1).driver $(1).pre
-	@$(cd) $${dir $($(1).source)} ; \
-	${if $($(1).cases), \
-            ${foreach case, $($(1).cases), \
-                ${call log.action,test,$($(case).harness) $(_base) $($(case).argv)}; \
-                $($(case).harness) $($(1).base) $($(case).argv); \
-                }, \
-	    ${call log.action,test,$($(1).harness) $(_base) $($(1).argv)}; \
-                $($(1).harness) $($(1).base) $($(1).argv); \
-        }
+# the test case: bring the products of the driver up to date, or run it for each case
+${if $($(1).products), \
+    ${eval ${call test.workflows.target.products,$(1),$(2),$($(1).base),$($(1).base)}} \
+    ${eval $(1).cases: $(1).driver}, \
+    ${eval ${call test.workflows.target.compiled.cases,$(1)}} \
+}
 
 # clean up; double colon, since it may be used as a {post} rule
 $(1).clean::
 	@${call log.action,clean,$(_tag)}
-	$(rm.force-recurse) ${addprefix $($(1).home),$($(1).clean)} $($(1).base) \
+	$(rm.force-recurse) ${addprefix $($(1).home),$($(1).clean) $($(1).products)} $($(1).base) \
             ${foreach case,$($(1).cases),$($(case).clean)} \
             ${call $(compiler.$($(1).language)).clean,$($(1).base)} \
             ${call platform.clean,$($(1).base)}
@@ -453,6 +488,7 @@ $(1).info:
 	@${call log.sec,$(1),"a test driver in test suite '$(2)' of project '$($(2).project)'"}
 	@${call log.var,source,$($(1).source)}
 	@${call log.var,compiled,yes}
+	@${call log.var,products,$($(1).products)}
 	@${call log.var,language,$($(1).language)}
 	@${call log.var,compiler,$(compiler.$($(1).language))}
 	@${call log.var,extern,$($(1).extern)}
@@ -468,6 +504,23 @@ $(1).info:
 # just in case...
 .PHONY: $(1) $(1).driver $(1).cases $(1).clean
 
+# all done
+endef
+
+
+# the rule that runs a compiled driver for each registered test case
+#   usage: test.workflows.target.compiled.cases {target}
+define test.workflows.target.compiled.cases =
+$(1).cases: $(1).driver $(1).pre
+	@$(cd) $${dir $($(1).source)} ; \
+	${if $($(1).cases), \
+            ${foreach case, $($(1).cases), \
+                ${call log.action,test,$($(case).harness) $(_base) $($(case).argv)}; \
+                $($(case).harness) $($(1).base) $($(case).argv); \
+                }, \
+	    ${call log.action,test,$($(1).harness) $(_base) $($(1).argv)}; \
+                $($(1).harness) $($(1).base) $($(1).argv); \
+        }
 # all done
 endef
 
