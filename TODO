@@ -1,8 +1,9 @@
+# -*- text -*-
 # -*- coding: utf-8 -*-
 #
 # michael a.g. aïvázis <michael.aivazis@para-sim.com>
 # (c) 1998-2026 all rights reserved
-#
+
 
 - gate for 1.13.0 (collected 2026-07-31, so nothing important slips):
 
@@ -87,6 +88,13 @@
     runner needs, ships with ubuntu 25.10 and later, debian trixie, conda, and macports, so
     the CI images need checking before a suite switches. Migrate suite by suite, keeping a
     driver's single behavior as a single Catch2 test case
+
+  - mpi launches hang on macOS (found 2026-10-02): {mpiexec -np 1 tests/mpi.lib/sanity} never
+    returns, while the same driver run as a singleton and {mpiexec -np 2 /usr/bin/true} both
+    finish at once, so the launcher starts processes but {MPI_Init} in a pyre driver does not
+    complete; every suite that launches through mpiexec hangs with it ({mpi.lib}, {mpi.ext},
+    {mpi.pkg}, and the {gsl.pkg} partition, collect, and broadcast tests); open mpi 5.0.10
+    with prterun; not caused by the preamble sweep, whose edits to these drivers are comments
 
 - docker:
 
@@ -205,6 +213,15 @@
 - weaver:
 
   - i want my own rst, and my own sphinx...
+
+  - the preambles the weaver writes predate the standard layout: mixed case modes ({Python},
+    {C++}, {Makefile}, {LaTeX}, {F90}, {SQL}, {C}), an affiliation line under the author, one
+    blank line between the preamble and the body and between the body and the marker, and a
+    trailing commented spacer; bring {Mill._header}, {Mill.render}, and the {languageMarker}
+    defaults to the standard: a lower case mode, the coding line, a spacer, the author, the
+    copyright, two blank lines on either side of the body; then audit the layout of every
+    template under {templates/}, which the preamble check exempts because of their
+    substitution markers, against the same standard
 
 - help: make
 
