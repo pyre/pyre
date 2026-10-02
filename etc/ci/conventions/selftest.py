@@ -290,6 +290,12 @@ def layouts() -> None:
         "look.css": "/*  -*- css -*-  */\n/*\n * -*- coding: utf-8 -*-\n *\n"
         + " * michael a.g. aïvázis <michael.aivazis@para-sim.com>\n"
         + f" * (c) 1998-{YEAR} all rights reserved\n */\n\n\na {{\n}}\n\n\n/* end of file */\n",
+        "_complete": "#compdef complete\n"
+        + preamble(comment="#", language="zsh")
+        + "\n\n_arguments\n\n\n# end of file\n",
+        "page.html": "<!DOCTYPE html>\n\n<!--\n-*- html -*-\n-*- coding: utf-8 -*-\n\n"
+        + "michael a.g. aïvázis <michael.aivazis@para-sim.com>\n"
+        + f"(c) 1998-{YEAR} all rights reserved\n-->\n\n\n<html>\n</html>\n\n\n<!-- end of file -->\n",
         "vendor/theirs.js": "// no preamble here\n",
         "values.csv": "1,2,3\n",
     }

@@ -62,9 +62,11 @@ COPYRIGHT_LINE = re.compile(r"^(?P<prefix>.*?)\(c\) 1998-\d{4} all rights reserv
 OPENERS = ("<!--", "{/*", "/*")
 CLOSERS = ("-->", "*/}", "*/")
 # the lines that may precede the preamble: interpreters, xml declarations and doctypes, along
-# with their indented continuations, the magic line of environment modules, and the mode line of
-# a stylesheet, which sits outside its block
-PRELUDE = re.compile(r"^(#!|<\?xml |<!doctype |\s+\S|#%Module|/\*\s+-\*- [a-z]+ -\*-\s+\*/$)")
+# with their indented continuations, the magic lines of environment modules and zsh completion
+# functions, and the mode line of a stylesheet, which sits outside its block
+PRELUDE = re.compile(
+    r"^(#!|<\?xml |(?i:<!doctype )|\s+\S|#%Module|#compdef |/\*\s+-\*- [a-z]+ -\*-\s+\*/$)"
+)
 # the mode line; the mode is in lower case, unless it carries variables, like the image name of
 # a dockerfile, whose double marker it keeps
 MODE = re.compile(r"^#?(?P<marker>.*?)-\*- (?P<mode>[a-z0-9+\-]+|[a-z\-]+: .+) -\*-$")
