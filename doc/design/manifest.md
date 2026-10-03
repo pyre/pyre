@@ -281,9 +281,9 @@ A tool that moves arrays between the two formats, in both directions, built on t
   the chunks whose filters a zarr codec reproduces. The deflate filter of HDF5 writes a zlib
   stream (RFC 1950), not the gzip container (RFC 1952) that the `gzip` codec of the core
   specification expects, so deflate maps to `numcodecs.zlib`; shuffle maps to
-  `numcodecs.shuffle`, and the fletcher checksum to `numcodecs.fletcher32`. These are extension
-  codecs, not core ones: zarr-python supports them, and whether other readers, such as
-  tensorstore, zarrs, and zarrita, do is to be checked.
+  `numcodecs.shuffle`, and the fletcher checksum to `numcodecs.fletcher32`. These are not core
+  codecs, and not in the registry of extensions either; how far each reader supports them is
+  the subject of the section on the interoperability of zarr.
 - **HDF5 to zarr, materialized.** Copy the chunks into a zarr store, unchanged when the codecs
   match and recompressed when they do not, optionally rechunked, and with the chunks of fill left
   out.
@@ -406,6 +406,46 @@ range. All of this is Python: fsspec or obstore does the input and output.
    implementations that a user selects in configuration?
 4. Does the endpoint of `File._pyre_ros3` become configurable, so that the services compatible
    with S3 are reachable through the library as well?
+
+
+## The interoperability of zarr
+
+Zarr is one specification with many implementations, maintained by different groups, and they
+do not support the same things. The specification keeps a small core and leaves the rest to
+extensions, and it requires a reader to refuse an array that uses an extension it does not
+recognize. What a zarr store written by pyre can promise its readers therefore depends on which
+extensions it uses. As of October 2026:
+
+- The core data types are the booleans, the integers, `float32`, `float64`, optionally
+  `float16`, `complex64`, `complex128`, and raw bits. Strings and structured types are
+  extensions.
+- The core codecs are `bytes`, `transpose`, `gzip`, `zstd`, `blosc`, `crc32c`, and
+  `sharding_indexed`. TensorStore, zarrs, and zarr-python implement them.
+- The codecs that reproduce the filters of HDF5, `numcodecs.zlib`, `numcodecs.shuffle`, and
+  `numcodecs.fletcher32`, are not in the registry of extensions. The module of numcodecs that
+  defined them for zarr 3 is deprecated, and they now live in zarr-python. TensorStore does not
+  implement them, zarrs marks them experimental, and zarrs has an open defect in its fletcher32
+  that rejects valid HDF5 chunks of odd length.
+- zarr-python 3 dropped the object types, the ragged arrays, and several stores of version 2,
+  and silently corrupted padded structured types on writing until a fix in September 2026.
+- NASA and OGC have endorsed version 2 of the specification, not version 3.
+
+The evidence, with its sources, and its consequences for the archives of long missions are in a
+separate report on the longevity of mission products in HDF5 and zarr. For the bridge and the
+schema, it leads to four rules:
+
+1. **Write the core.** The zarr writers of the bridge and of the schema use only the core data
+   types and the core codecs, unless a client asks otherwise, and say so when they cannot: a
+   compound cell, a string, or an HDF5 enumeration is reported, not written as an extension
+   silently. This is another reason for native complex types and the floor of HDF5 2.
+2. **The virtual export is for zarr-python.** It carries the filters of the HDF5 file into zarr
+   as the numcodecs codecs, so its readers are limited to those that implement them. The
+   materialized copy, which recompresses into `gzip` or `zstd`, is the one for readers in
+   general.
+3. **Test with two implementations.** The tests of the bridge read what pyre writes with
+   zarr-python and with zarrs or TensorStore, and a disagreement is a defect.
+4. **Record what wrote the data.** A saved manifest, and every store the bridge writes, records
+   the codecs used and the versions of the software that wrote it.
 
 
 ## Lenses
