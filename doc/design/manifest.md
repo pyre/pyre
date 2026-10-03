@@ -48,6 +48,44 @@ products; it is slow because it is Python walking objects one call at a time, an
 reused because it is tied to qed's readers.
 
 
+## The floor of HDF5
+
+Recommendation: **all of `pyre::h5` moves to HDF5 2 as its floor**, pending an investigation of
+the consequences. `lib/h5/external.h` enforces 1.14.4 today. The floor applies to the whole of
+`pyre::h5` and not to the manifest alone, because the manifest lives in the same library, and a
+second floor behind compile time guards would split it in two.
+
+The reason is the native complex datatype of HDF5 2. Complex cells are stored today as compounds
+with two members, `r` and `i`, which is a convention that every reader has to recognize, rather
+than a type the library knows. With native complex types:
+
+- `datatype<std::complex<float>>` and its siblings describe a complex type, instead of building a
+  compound;
+- the description of the cell that the manifest and the schema share has a complex class of its
+  own;
+- complex cells map to `complex64` and `complex128`, which are data types of the core zarr
+  specification, so they cross the bridge without a convention.
+
+The investigation settles the following, and the recommendation stands or falls with its
+findings:
+
+- **Existing products.** Products written before HDF5 2, NISAR among them, store complex cells as
+  compounds, and must keep reading. The manifest and the lenses recognize both forms. Whether the
+  library converts between a native complex type and a compound of two members of the same
+  floating type, so that old products read into native cells, is to be confirmed.
+- **Integer pairs.** The native complex types of HDF5 2 are expected to take floating components
+  only. The raw samples of the L0b products are pairs of integers, which remain compounds, as
+  befits pairs of samples rather than complex numbers.
+- **Availability.** HDF5 2 on conda-forge, for the builds and for the feedstock of pyre; in the
+  packages of the linux distributions that the docker containers and CI use, which lag; and in
+  Homebrew and MacPorts.
+- **Coexistence.** h5py in the same environment as pyre, since two versions of HDF5 in one
+  process cause trouble.
+- **The other changes of HDF5 2.** The build of the library and its installed layout, which
+  affect the discovery of the package by mm and by the cmake build, and the ros3 driver, on
+  which pyre's access to S3 depends.
+
+
 ## The manifest
 
 `pyre::h5::Manifest` is built from an open `File` in one pass, and holds:
@@ -287,9 +325,11 @@ it. Most of it does not depend on HDF5:
 
 A schema that serves both formats separates three things:
 
-1. **The cell**, described without HDF5: class, size, byte order, and sign. This is the same
-   record the manifest keeps for each dataset, so the two share it. Each format maps it to its
-   own types: an HDF5 datatype, or a zarr data type and its `bytes` codec.
+1. **The cell**, described without HDF5: class, size, byte order, and sign, with complex a
+   class of its own. This is the same record the manifest keeps for each dataset, so the two
+   share it. Each format maps it to its own types: an HDF5 datatype, or a zarr data type and its
+   `bytes` codec. A complex cell maps to the native complex types of HDF5 2, and to `complex64`
+   or `complex128` in zarr.
 2. **The storage**, as plain data: the shape of the chunks, the filters or codecs, the fill
    value, and the page size where the format has one. A writer for either format reads them; a
    format that cannot honor one reports it.
@@ -299,7 +339,8 @@ A schema that serves both formats separates three things:
 Some types do not cross. HDF5 enumerations and references have no zarr counterpart; compound
 types and variable length strings exist in zarr only through its extensions of the data types,
 whose support in zarr-python is to be checked. A schema that uses them is tied to HDF5, and the
-zarr writer says so when it is asked to write one.
+zarr writer says so when it is asked to write one. Complex cells stored as compounds of two
+members are among them, which is one reason for the floor of HDF5 2.
 
 With one schema, the bridge copies a product in either direction through the same description,
 the lens built from a schema checks a zarr store against the product specification as it checks
@@ -321,7 +362,8 @@ fetches by range. `File._pyre_ros3` builds the address of the object as
 `https://{bucket}.s3.{region}.amazonaws.com/{key}`, so pyre reaches AWS and nothing else: the
 services that speak the S3 protocol at other endpoints, such as Cloudflare R2, MinIO, Ceph, and
 Wasabi, need the endpoint to be configurable, and Google Cloud Storage and Azure Blob Storage are
-not reachable at all.
+not reachable at all. The ros3 driver of HDF5 2 is part of the investigation that the floor of
+HDF5 2 calls for.
 
 **What zarr has.** Zarr is defined over an abstract key value store, and storage is whatever
 implements it. zarr-python 3 has local, memory, and zip stores; `FsspecStore`, which reaches S3
@@ -424,6 +466,9 @@ per product and saves it.
 
 ## Order of work
 
+The investigation of the floor of HDF5 2 comes first, and its findings decide the floor against
+which the steps below are built.
+
 1. `Manifest` with the file, the objects, and the storage, and its tests on files written by the
    tests with known layouts, including hard links, compact and contiguous datasets, and a paged
    file.
@@ -488,9 +533,12 @@ In total: about a month for the core, a month and a half to two months with the 
 and the work in qed and qef, and three and a half to four and a half months for everything except
 the format walk, with the shared schema and the h5 writer ahead of the copies of the bridge.
 
-Step 1 needs `H5Ovisit3` and the object tokens, from HDF5 1.12, and `H5Dchunk_iter`, from 1.14.
-Both are within the floor of 1.14.4 that `lib/h5/external.h` already enforces, so the manifest
-raises no new requirement on the library.
+The investigation of the floor of HDF5 2 is three to five days. Moving `pyre::h5` to the new
+floor, should it stand, is estimated after the investigation, since its cost depends on what it
+finds: the changes to the description of complex cells and their tests, the containers and the
+CI environments, and the discovery of the package by both builds. The manifest itself needs
+nothing past 1.14: `H5Ovisit3` and the object tokens are from HDF5 1.12, and `H5Dchunk_iter`
+from 1.14.
 
 
 <!-- end of file -->
