@@ -254,6 +254,55 @@ size, and the treatment of fill, which the manifest and the assay can evaluate b
 written.
 
 
+## One schema for both formats
+
+Neither format says what a product must contain. The zarr specification defines the metadata of
+an array and of a group, and nothing about how they are arranged; HDF5 is the same. Both leave
+structure to conventions carried in attributes: NetCDF-4 with CF and HDF-EOS on the HDF5 side,
+CF as xarray writes it, OME-Zarr, GeoZarr, and the multiscales convention on the zarr side.
+OME-Zarr publishes JSON Schemas for its attributes, so its metadata can be validated, but no
+convention tells a writer which arrays to store and how. The closest tool in the zarr ecosystem
+is pydantic-zarr, which models a hierarchy as `GroupSpec` and `ArraySpec` objects, validates an
+existing store against them, and creates an empty hierarchy from them. It describes structure
+only, and only in Python.
+
+pyre's h5 schema already does more: a product is a tree of typed descriptors with names,
+documentation, optional members, and dimensions, and visitors read, write, validate, and render
+it. Most of it does not depend on HDF5:
+
+- `Group`, `Dataset`, and `Dimension`, the `Schema` metaclass that harvests them, and the
+  `Resolver` and `Viewer` visitors describe a hierarchy of groups and arrays, which is the data
+  model of zarr as much as that of HDF5;
+- the cells are the exception. `Dataset` takes a memory type and a disk type, and the disk types
+  are `libh5.types` objects, so every leaf of a schema holds an HDF5 datatype;
+- the storage hints are another: `typed.Array` carries a chunking strategy and builds a
+  `libh5.DataSpace` for the writer;
+- the visitors that move data, `Reader`, `Writer`, `Assembler`, and `Explorer`, call `libh5`
+  directly.
+
+A schema that serves both formats separates three things:
+
+1. **The cell**, described without HDF5: class, size, byte order, and sign. This is the same
+   record the manifest keeps for each dataset, so the two share it. Each format maps it to its
+   own types: an HDF5 datatype, or a zarr data type and its `bytes` codec.
+2. **The storage**, as plain data: the shape of the chunks, the filters or codecs, the fill
+   value, and the page size where the format has one. A writer for either format reads them; a
+   format that cannot honor one reports it.
+3. **The visitors**, one set per format: the existing ones over `libh5`, and a reader and writer
+   over zarr, which is an optional dependency and lives in its own package.
+
+Some types do not cross. HDF5 enumerations and references have no zarr counterpart; compound
+types and variable length strings exist in zarr only through its extensions of the data types,
+whose support in zarr-python is to be checked. A schema that uses them is tied to HDF5, and the
+zarr writer says so when it is asked to write one.
+
+With one schema, the bridge copies a product in either direction through the same description,
+the lens built from a schema checks a zarr store against the product specification as it checks
+an HDF5 file, and the specification of a product such as NISAR is written once. `pyre.h5.schema`
+is a published interface with clients outside the repository, so the separation keeps its
+current spelling working: the HDF5 disk types remain valid descriptions of a cell.
+
+
 ## Lenses
 
 The manifest is generic: it knows shapes, cells, and bytes, not what a dataset means. Meaning comes
@@ -305,6 +354,9 @@ per product and saves it.
    reductions a census keeps?
 5. **The family of lenses.** `pyre.h5.lenses` for the protocol, with the generic lens as its
    default, and `qef.nisar.lenses.*` for the products?
+6. **The home of the schema.** Once it no longer depends on HDF5, does the schema stay in
+   `pyre.h5.schema`, with the zarr visitors beside it, or move to a package of its own that both
+   formats use?
 
 
 ## Order of work
@@ -351,7 +403,11 @@ Step 7 carries most of the uncertainty, and is estimated in weeks:
 - the materialized copy from HDF5 to zarr, with a zarr v3 writer, the choice between copying and
   recompressing, rechunking, and leaving out the chunks of fill: one to two weeks;
 - the copy from zarr to HDF5: one to two weeks once pyre's h5 writer is complete. The writer is
-  not finished, and is a prerequisite whose own cost may exceed that of the copy.
+  not finished, and is a prerequisite whose own cost may exceed that of the copy;
+- one schema for both formats: three to five days for the description of the cell shared with
+  the manifest, two to three for the storage hints, and one to two weeks for the zarr reader and
+  writer, with the tests that keep the existing spelling of `pyre.h5.schema` working. It precedes
+  the copies of the bridge, which then go through it.
 
 Some of the work the design implies is not in the order above:
 
@@ -366,8 +422,8 @@ Some of the work the design implies is not in the order above:
   built from an h5 schema that reports the mismatches with the specification, three to five days.
 
 In total: about a month for the core, a month and a half to two months with the Kerchunk export
-and the work in qed and qef, and three to four months for everything except the format walk,
-with the h5 writer ahead of the copy from zarr to HDF5.
+and the work in qed and qef, and three and a half to four and a half months for everything except
+the format walk, with the shared schema and the h5 writer ahead of the copies of the bridge.
 
 Step 1 sets a floor on the HDF5 version: `H5Ovisit3` and the object tokens need 1.12, and
 `H5Dchunk_iter` needs 1.14. The CI environments should be checked against it before the work
