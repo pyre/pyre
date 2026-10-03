@@ -322,4 +322,56 @@ per product and saves it.
 qed moves to the manifest once step 3 is done; the NISAR lens and the census follow in qef.
 
 
+## Estimates
+
+The estimates are in focused working days for one developer who knows pyre's h5 layer, and
+include the comments, the tests, and the entries in the cmake build that every contribution
+carries. For scale, `qed/pkg/readers/pages.py`, which the first four steps replace, is about 900
+lines of Python.
+
+| step | work | days |
+|------|------|------|
+| 1 | `Manifest`: the walk by object token, the dataset records, the storage sorted by address, the page index, the grid index, and test files with known layouts | 5–7 |
+| 2 | the queries, checked against `pages.py` and then on the GCOV fixture; `cost`, the region to chunks to pages to bytes, is the only new one | 3–4 |
+| 3 | the bindings with numpy views through the buffer protocol, and `pyre.h5.manifest` over the existing ros3 support | 2–3 |
+| 4 | `Assay`: the policy, reading the chunks through the library, and the uniformity records | 3–4 |
+| 5 | the lens protocol and the generic lens, once open question 5 is settled | 1–2 |
+| 6 | saving and loading: compound records, a version, and the stamp of the source | 3–4 |
+
+Steps 1 through 6 come to between three and a half and five weeks, and qed can move to the
+manifest after two to two and a half of them. The entity tag in the stamp of step 6 is not
+available through the library; recording it takes a request to the store, outside HDF5.
+
+Step 7 carries most of the uncertainty, and is estimated in weeks:
+
+- the virtual export as a Kerchunk manifest, whose reference format is JSON or parquet: under a
+  week;
+- the virtual export as an Icechunk manifest: one to two weeks through the Icechunk Python
+  library, longer if pyre writes its binary format itself;
+- the materialized copy from HDF5 to zarr, with a zarr v3 writer, the choice between copying and
+  recompressing, rechunking, and leaving out the chunks of fill: one to two weeks;
+- the copy from zarr to HDF5: one to two weeks once pyre's h5 writer is complete. The writer is
+  not finished, and is a prerequisite whose own cost may exceed that of the copy.
+
+Some of the work the design implies is not in the order above:
+
+- reading chunks without the library, with concurrent range requests and pyre's own deflate,
+  shuffle, and fletcher decoders: one and a half to two weeks. The client for the store is an
+  optional dependency, so it gets a library and an extension of its own;
+- the recording driver of option 2 for the metadata: about a week. The format walk of option 3
+  is four to eight weeks, plus upkeep with every new version of the format, which is the case for
+  answering open question 1 with no;
+- in the clients: moving qed to the manifest, three to five days; the NISAR lens in qef, about a
+  week; building and saving a manifest per product in the census, two to three days; a lens
+  built from an h5 schema that reports the mismatches with the specification, three to five days.
+
+In total: about a month for the core, a month and a half to two months with the Kerchunk export
+and the work in qed and qef, and three to four months for everything except the format walk,
+with the h5 writer ahead of the copy from zarr to HDF5.
+
+Step 1 sets a floor on the HDF5 version: `H5Ovisit3` and the object tokens need 1.12, and
+`H5Dchunk_iter` needs 1.14. The CI environments should be checked against it before the work
+starts.
+
+
 <!-- end of file -->
