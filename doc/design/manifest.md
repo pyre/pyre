@@ -240,7 +240,12 @@ A tool that moves arrays between the two formats, in both directions, built on t
 
 - **HDF5 to zarr, virtually.** Write the manifest of a file as a Kerchunk or Icechunk manifest.
   Nothing is copied; zarr readers fetch the chunks from the HDF5 file by range. This works for
-  the chunks whose filters a zarr codec reproduces, which includes deflate and shuffle.
+  the chunks whose filters a zarr codec reproduces. The deflate filter of HDF5 writes a zlib
+  stream (RFC 1950), not the gzip container (RFC 1952) that the `gzip` codec of the core
+  specification expects, so deflate maps to `numcodecs.zlib`; shuffle maps to
+  `numcodecs.shuffle`, and the fletcher checksum to `numcodecs.fletcher32`. These are extension
+  codecs, not core ones: zarr-python supports them, and whether other readers, such as
+  tensorstore, zarrs, and zarrita, do is to be checked.
 - **HDF5 to zarr, materialized.** Copy the chunks into a zarr store, unchanged when the codecs
   match and recompressed when they do not, optionally rechunked, and with the chunks of fill left
   out.
