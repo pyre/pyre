@@ -308,6 +308,64 @@ is a published interface with clients outside the repository, so the separation 
 current spelling working: the HDF5 disk types remain valid descriptions of a cell.
 
 
+## Cloud storage
+
+Status: **open**. This section collects what is known and is expected to change as the work
+proceeds.
+
+**What pyre has.** pyre reads HDF5 from S3 through the ros3 driver of the library, which pyre
+requires at 1.14.4 or newer, the release that repaired it. `pyre.h5.read` accepts an `s3://`
+uri and a dictionary of credentials with the region, the access key, the secret key, and the
+session token; an empty key and secret open the object anonymously. The driver reads only, and
+fetches by range. `File._pyre_ros3` builds the address of the object as
+`https://{bucket}.s3.{region}.amazonaws.com/{key}`, so pyre reaches AWS and nothing else: the
+services that speak the S3 protocol at other endpoints, such as Cloudflare R2, MinIO, Ceph, and
+Wasabi, need the endpoint to be configurable, and Google Cloud Storage and Azure Blob Storage are
+not reachable at all.
+
+**What zarr has.** Zarr is defined over an abstract key value store, and storage is whatever
+implements it. zarr-python 3 has local, memory, and zip stores; `FsspecStore`, which reaches S3
+and the services compatible with it through `s3fs`, Google Cloud Storage through `gcsfs`, Azure
+Blob Storage and ADLS through `adlfs`, and HTTP for reading; and `ObjectStore`, which reaches S3,
+Google Cloud Storage, Azure, and HTTP through `obstore`, the Python binding of the Rust
+`object_store` crate. Icechunk has a storage layer of its own over S3, Google Cloud Storage,
+Azure, R2, Tigris, and local disks, and adds transactions and versioned snapshots. Credentials go
+through the usual mechanisms of each backend. Two features exist for object stores: consolidated
+metadata, which puts the metadata of a whole hierarchy in one object so that opening a store does
+not cost a request per node, and sharding, which packs many chunks into one object read by
+range. All of this is Python: fsspec or obstore does the input and output.
+
+**What the manifest needs.**
+
+- **Reading through the library.** Building a manifest of a file in the cloud, and the assay,
+  go through the library and so through its drivers. For S3 that is ros3; reaching the other
+  clouds through the library needs a driver for each.
+- **Reading chunks without the library.** With the address and size of every chunk in the
+  manifest, a reader fetches byte ranges and decodes them itself. This needs a client for the
+  store in C++. It is an optional dependency, so it lives in a library and an extension of its
+  own, and the core never links it.
+- **Writing.** ros3 is read only. An HDF5 file headed for the cloud is written locally and then
+  uploaded, as a single object or in parts; the paged strategy and the page size are chosen
+  before the upload, since they cannot be changed after. Zarr writes to the store directly, one
+  object per chunk or per shard.
+- **Saved manifests.** A manifest saved next to the file it describes, or a Kerchunk or Icechunk
+  manifest exported from it, lives in the same store, and needs the same client to be written
+  and read.
+
+**Questions.**
+
+1. Which clouds must be reached: AWS only, AWS and the services compatible with S3, or Google
+   Cloud Storage and Azure too?
+2. The client for the store in C++: a small one of pyre's own over HTTP with the AWS signature,
+   the AWS SDK, or a binding to the Rust `object_store`, which already covers every cloud zarr
+   reaches? The answer decides what the optional dependency is.
+3. The credentials: the dictionary `pyre.h5.read` takes today, or a component with a protocol,
+   so that profiles, environment variables, instance roles, and anonymous access are
+   implementations that a user selects in configuration?
+4. Does the endpoint of `File._pyre_ros3` become configurable, so that the services compatible
+   with S3 are reachable through the library as well?
+
+
 ## Lenses
 
 The manifest is generic: it knows shapes, cells, and bytes, not what a dataset means. Meaning comes
@@ -430,9 +488,9 @@ In total: about a month for the core, a month and a half to two months with the 
 and the work in qed and qef, and three and a half to four and a half months for everything except
 the format walk, with the shared schema and the h5 writer ahead of the copies of the bridge.
 
-Step 1 sets a floor on the HDF5 version: `H5Ovisit3` and the object tokens need 1.12, and
-`H5Dchunk_iter` needs 1.14. The CI environments should be checked against it before the work
-starts.
+Step 1 needs `H5Ovisit3` and the object tokens, from HDF5 1.12, and `H5Dchunk_iter`, from 1.14.
+Both are within the floor of 1.14.4 that `lib/h5/external.h` already enforces, so the manifest
+raises no new requirement on the library.
 
 
 <!-- end of file -->
