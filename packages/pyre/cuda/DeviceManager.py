@@ -19,6 +19,13 @@ from pyre.patterns.Singleton import Singleton
 # local
 from .exceptions import Error
 
+# the runtime errors that mean the machine has no devices to offer, rather than that something
+# went wrong: no device the driver can see, and no driver at all
+_absent = (
+    cudart.cudaError_t.cudaErrorNoDevice,
+    cudart.cudaError_t.cudaErrorInsufficientDriver,
+)
+
 # the number of cores per streaming multiprocessor, by compute capability; the runtime does not
 # report it, so it comes from this table
 _coresPerProcessor = {
@@ -176,6 +183,24 @@ class DeviceManager(metaclass=Singleton):
         # the class of the property sheets
         from .Device import Device
 
+        # ask the runtime whether it can reach any devices
+        outcome = cudart.cudaGetDeviceCount()
+        # a machine without devices, or without a driver to reach them
+        if outcome[0] in _absent:
+            # has none to describe
+            self.devices = []
+            # so count none
+            self.count = 0
+            # make a channel
+            channel = journal.warning("pyre.cuda.discovery")
+            # ask the runtime for the name of the reason
+            _, name = cudart.cudaGetErrorName(outcome[0])
+            # and say why
+            channel.log(f"no cuda devices: {name.decode()}")
+            # all done
+            return
+        # any other failure is an error
+        _check(outcome)
         # describe each attached device
         self.devices = [_sheet(Device, device) for device in cuda.core.Device.get_all_devices()]
         # and count them
