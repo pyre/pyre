@@ -19,8 +19,8 @@ class Gray(pyre.flow.factory, family="pyre.viz.colormaps.gray", implements=Color
     """
 
     # the input
-    signal = pyre.viz.tile.input()
-    signal.doc = "the input signal, a stream of values in [0,1]"
+    data = pyre.viz.tile.input()
+    data.doc = "the input signal, a stream of values in [0,1]"
 
     # the outputs
     red = pyre.viz.tile.output()
