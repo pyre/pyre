@@ -23,6 +23,7 @@ tile = tiles.tile
 codec = codecs.codec
 colormap = colormaps.colormap
 filter = filters.filter
+selector = selectors.selector
 
 
 # end of file
