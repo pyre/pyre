@@ -30,9 +30,9 @@ class BMP(pyre.flow.factory, family="pyre.viz.codecs.bmp", implements=Codec):
     blue.doc = "the blue channel"
 
     # the output
-    bmp = pyre.viz.raster.output()
-    bmp.default = pyre.viz.rasters.bmp
-    bmp.doc = "the BMP encoded signal"
+    image = pyre.viz.raster.output()
+    image.default = pyre.viz.rasters.bmp
+    image.doc = "the BMP encoded signal"
 
 
 # end of file
