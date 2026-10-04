@@ -28,6 +28,9 @@ class Editor:
     # exceptions
     from ..exceptions import EditingError, MissingBackendError
 
+    # the number of columns that set a level of the tree apart from the one above it
+    indentation = 4
+
     # interface
     @classmethod
     def available(cls):
@@ -86,18 +89,21 @@ class Editor:
             self._give(node=value, token=token, fallback=(container, key))
             # all done
             return self
-        # otherwise, the entry goes at the end of the container; the comment block that trails
-        # the current tail, or the one held for the container while it was empty, belongs
-        # after the new entry; a new top level section is set apart from the one before it by
-        # the blank lines that opened the block, which stay behind
+        # otherwise, the entry goes at the end of the container; the part of the comment block
+        # that trails the current tail and belongs to the levels above the container, or the
+        # block held for the container while it was empty, goes after the new entry; a new top
+        # level section is set apart from the one before it by the blank lines that opened
+        # that part, which stay behind
         tail, _ = self._tail(node=container)
         residue = container is self.document and tail is not container
         # a document that does not end with such a block has no blank lines to leave behind, so
         # find out how it sets its sections apart while it is still in its original state
         gap = self._gap() if residue else 0
-        token = self._take(node=container, residue=residue) or self._release(node=container)
+        token = self._take(
+            node=container, residue=residue, column=self._column(container=container)
+        ) or self._release(node=container)
         # if this is a new section and nothing was left behind to set it apart
-        if residue and not self._trails(node=container):
+        if residue and not self._separated(node=container):
             # separate it from the section before it the way the document separates the rest
             self._space(node=container, blanks=gap)
         # add the entry
@@ -191,9 +197,12 @@ class Editor:
             raise self.EditingError(codec=self, reason=f"the entry at {path} is not a list")
         # convert the value into a form that keeps comments
         value = self._adopt(value=value)
-        # the comment block that trails the current tail, or the one held for the list while
-        # it was empty, belongs after the new item
-        token = self._take(node=target) or self._release(node=target)
+        # the part of the comment block that trails the current tail and belongs to the levels
+        # above the list, or the block held for the list while it was empty, goes after the
+        # new item
+        token = self._take(node=target, column=self._column(container=target)) or self._release(
+            node=target
+        )
         # add the item
         target.append(value)
         # and place the comment after it
@@ -341,7 +350,7 @@ class Editor:
         # keep the quoting of the original
         backend.preserve_quotes = True
         # lay out new entries the way pyre configuration files are indented
-        backend.indent(mapping=4, sequence=4, offset=4)
+        backend.indent(mapping=self.indentation, sequence=self.indentation, offset=self.indentation)
         # and never fold a long scalar onto the next line: a folded uri with a colon in it
         # reads back as a key, and the document is lost
         backend.width = 2**16
@@ -556,13 +565,16 @@ class Editor:
         # lists keep it first, mappings third
         return 0 if isinstance(container, self.Seq) else 2
 
-    def _take(self, node, residue=False, fallback=None):
+    def _take(self, node, residue=False, fallback=None, column=None):
         """
         Detach and return the comment block that trails the deepest last entry of {node}, or
         the one at {fallback}, a container and key, when {node} has no entries
 
-        With {residue} set, the blank lines that open the block stay behind, to set the old
-        tail apart from the new top level section about to follow it
+        With {column} set, the block is making room for a new entry in a container whose
+        entries start at {column}: only the part that belongs to the levels above the container
+        moves, and the rest stays with the old tail. With {residue} set, the blank lines that
+        open the part that moves stay behind as well, to set the old tail apart from the new
+        top level section about to follow it
         """
         # find the tail
         container, key = self._tail(node=node)
@@ -576,7 +588,7 @@ class Editor:
             container, key = fallback
         # an empty collection at the tail holds its block until its first entry arrives; an
         # entry that follows the collection takes the block from there
-        held = self._unhold(node=container[key], residue=residue)
+        held = self._unhold(node=container[key], residue=residue, column=column)
         # if it held one
         if held is not None:
             # that is the block
@@ -595,17 +607,20 @@ class Editor:
         if token is None:
             # there is nothing to take
             return None
-        # the block moves, and whatever should stay behind takes its place
-        slot[position] = self._leftover(token=token, residue=residue)
-        # hand off the token
-        return token
+        # split the block into the part that stays behind and the part that moves
+        stay, move = self._divide(token=token, residue=residue, column=column)
+        # what stays takes the place of the block
+        slot[position] = stay
+        # and what moves is handed off
+        return move
 
-    def _unhold(self, node, residue=False):
+    def _unhold(self, node, residue=False, column=None):
         """
         Detach and return the block held for {node} while it is an empty collection waiting
         for its first entry
 
-        With {residue} set, the blank lines that open the block stay behind, held for {node}
+        With {column} and {residue} set, whatever stays behind when the block is split, as in
+        {_take}, stays held for {node}
         """
         # anything but an empty collection holds nothing
         if not isinstance(node, (self.Map, self.Seq)) or len(node):
@@ -619,40 +634,136 @@ class Editor:
             return None
         # unpack it
         fallback, token = held
-        # the blank lines that stay behind, if any
-        leftover = self._leftover(token=token, residue=residue)
-        # if there are some
-        if leftover is not None:
-            # hold them in place of the block
-            self._held[id(node)] = (fallback, leftover)
+        # split the block into the part that stays behind and the part that moves
+        stay, move = self._divide(token=token, residue=residue, column=column)
+        # if something stays
+        if stay is not None:
+            # hold it in place of the block
+            self._held[id(node)] = (fallback, stay)
         # otherwise
         else:
             # nothing is held any more
             del self._held[id(node)]
-        # hand off the block
-        return token
+        # hand off what moves
+        return move
 
-    def _leftover(self, token, residue):
+    def _divide(self, token, residue, column):
         """
-        Build the part of the block in {token} that stays behind when the block moves: the blank
-        lines that open it, when {residue} asks for them and there are any, or nothing
+        Split the block in {token} into the part that stays behind when the block makes room for
+        a new entry and the part that moves after it, either of which may be nothing
 
-        The blank lines that open the block separate the old tail from whatever follows it; the
-        block itself moves, blank lines and all
+        The backend files every comment after the last entry of a collection with the deepest
+        entry that precedes it, so a block mixes lines that belong to every level of the tree
+        from that entry up: an entry commented out of a list sits at the column of the items of
+        the list, the closing comment of the document at the left margin. Without a {column},
+        the whole block moves. With one, the new entry goes into a container whose entries start
+        at {column}: it follows the lines of its own level and of the levels below it, which
+        stay, and precedes the lines of the levels above it, which move. At the top level, where
+        a section commented out and the closing comment both sit at the margin, the part that
+        moves starts at the first line at the margin that opens the block or follows an empty
+        line. A comment on the line of the entry itself describes the entry, and always stays.
+        With {residue} set, the empty lines that open the part that moves stay behind as well,
+        to set the old tail apart from the new section; the part that moves keeps them too, to
+        set the new section apart from what follows it
         """
+        # without a column
+        if column is None:
+            # nothing stays behind
+            return None, token
         # get the text
         text = token.value
-        # count the newlines that open it, past the one that ends the line of the value
-        blanks = len(text) - len(text.lstrip("\n"))
-        # if the blank lines are not wanted, or there are none
-        if not residue or blanks < 2:
-            # nothing stays behind
-            return None
-        # otherwise, leave a copy of them behind
-        leftover = copy.copy(token)
-        leftover.value = "\n" * blanks
-        # and hand it off
-        return leftover
+        # the comment on the line of the entry ends with the first newline
+        cut = text.find("\n")
+        # if there is nothing past it
+        if cut < 0:
+            # it all stays
+            return token, None
+        # split the comment on the line of the entry from the lines of the block
+        inline = text[:cut]
+        lines = text[cut + 1 :].splitlines(keepends=True)
+        # find the line that starts the part that moves; when every line belongs to the
+        # container or the levels below it, the part that moves is just the empty lines at the
+        # end, which set the container apart from whatever follows it
+        start = self._start(lines=lines, column=column)
+        start = len(lines) if start is None else start
+        # back up over the empty lines that open the part that moves
+        first = start
+        while first > 0 and not lines[first - 1].strip():
+            # one line at a time
+            first -= 1
+        # the lines that stay, the empty lines between them and the part that moves, and the
+        # lines of the part that moves
+        kept = "".join(lines[:first])
+        blanks = "".join(lines[first:start])
+        moving = "".join(lines[start:])
+        # what stays: the comment on the line of the entry, the lines of the lower levels, and
+        # the empty lines when they set a new section apart
+        staying = inline + "\n" + kept + (blanks if residue else "")
+        # a part that stays with nothing in it but the end of the line of the entry is nothing
+        stay = None
+        # otherwise
+        if staying != "\n":
+            # make a token for it
+            stay = copy.copy(token)
+            # and give it the text
+            stay.value = staying
+        # a part that moves with no lines at all
+        if not blanks and not moving:
+            # is nothing
+            return stay, None
+        # otherwise, it opens with the newline that ends the line of the entry it will trail,
+        # followed by its empty lines and its own lines
+        token.value = "\n" + blanks + moving
+        # hand off both
+        return stay, token
+
+    def _start(self, lines, column):
+        """
+        Find the index of the first of {lines} that belongs to a level above a container whose
+        entries start at {column}, or nothing when they all belong to it or the levels below
+        """
+        # go through the lines
+        for index, line in enumerate(lines):
+            # empty lines belong to no level
+            if not line.strip():
+                # so skip them
+                continue
+            # the column of the line
+            indent = len(line) - len(line.lstrip(" "))
+            # a line to the left of the entries of the container belongs to a level above it
+            if indent < column:
+                # so it starts the part that moves
+                return index
+            # at the top level, a line at the margin that opens the block or follows an empty
+            # line starts a part of its own, such as the closing comment of the document
+            if column == 0 and indent == 0 and (index == 0 or not lines[index - 1].strip()):
+                # so it starts the part that moves
+                return index
+        # all the lines belong to the container or the levels below it
+        return None
+
+    def _column(self, container):
+        """
+        Find the column where the entries of {container} start
+        """
+        # the entries of the document start at the margin
+        if container is self.document:
+            # so that's easy
+            return 0
+        # a container that was read from the text knows where it started
+        column = container.lc.col
+        # if it does
+        if column is not None:
+            # that's it
+            return column
+        # otherwise, it was made by the editor, which indents it under the entry that holds it
+        parent = self._parent(target=container)
+        # a container that is filed nowhere is not part of the document
+        if parent is None:
+            # so it starts at the margin
+            return 0
+        # one level deeper than the container that holds it
+        return self._column(container=parent[0]) + self.indentation
 
     def _give(self, node, token, fallback):
         """
@@ -896,10 +1007,10 @@ class Editor:
         # all done
         return
 
-    def _trails(self, node):
+    def _separated(self, node):
         """
-        Check whether a comment block, or the blank lines one left behind, trails the deepest
-        last entry of {node}
+        Check whether empty lines set the deepest last entry of {node} apart from whatever is
+        added after it: the end of a block that trails it, or the blank lines one left behind
         """
         # find the tail
         container, key = self._tail(node=node)
@@ -916,12 +1027,15 @@ class Editor:
             return True
         # get the record
         slot = container.ca.items.get(key)
-        # and check the position of the trailing comment
-        return slot is not None and slot[self._position(container=container)] is not None
+        # and the trailing comment
+        token = None if slot is None else slot[self._position(container=container)]
+        # check whether it ends with an empty line
+        return token is not None and token.value.endswith("\n\n")
 
     def _space(self, node, blanks):
         """
-        Place {blanks} empty lines after the deepest last entry of {node}
+        Place {blanks} empty lines after the deepest last entry of {node}, past whatever trails
+        it already
         """
         # nothing to place
         if blanks < 1:
@@ -937,10 +1051,17 @@ class Editor:
         from ruamel.yaml.error import CommentMark
         from ruamel.yaml.tokens import CommentToken
 
-        # the newline that ends the line of the entry, then the empty lines
-        token = CommentToken("\n" * (blanks + 1), CommentMark(0), None)
-        # place it
-        self._slot(container=container, key=key)[self._position(container=container)] = token
+        # get the record and the position
+        slot = self._slot(container=container, key=key)
+        position = self._position(container=container)
+        # if something already trails the entry, e.g. comments that belong to its level
+        if slot[position] is not None:
+            # the empty lines go after it
+            slot[position].value += "\n" * blanks
+            # all done
+            return
+        # otherwise, the newline that ends the line of the entry, then the empty lines
+        slot[position] = CommentToken("\n" * (blanks + 1), CommentMark(0), None)
         # all done
         return
 
