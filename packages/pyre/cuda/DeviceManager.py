@@ -131,10 +131,9 @@ def _sheet(factory: type, device: cuda.core.Device) -> typing.Any:
     sheet.maxGrid = (props.max_grid_dim_x, props.max_grid_dim_y, props.max_grid_dim_z)
     # the largest block
     sheet.maxThreadBlock = (props.max_block_dim_x, props.max_block_dim_y, props.max_block_dim_z)
-    # the amount of global memory comes from the current device
-    device.set_current()
-    # so ask for it
-    sheet.globalMemory = _check(cudart.cudaMemGetInfo())[1]
+    # the amount of global memory, read without making the device current, which would leave
+    # a context on every device that is described
+    sheet.globalMemory = _check(cudart.cudaGetDeviceProperties(device.device_id)).totalGlobalMem
     # hand off the sheet
     return sheet
 
