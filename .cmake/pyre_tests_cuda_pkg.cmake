@@ -10,6 +10,7 @@
 pyre_test_python_testcase(tests/cuda.pkg/sanity.py)
 pyre_test_python_testcase(tests/cuda.pkg/extension.py)
 pyre_test_python_testcase(tests/cuda.pkg/manager.py)
+pyre_test_python_testcase(tests/cuda.pkg/manager_nodevice.py)
 pyre_test_python_testcase(tests/cuda.pkg/exceptions.py)
 pyre_test_python_testcase(tests/cuda.pkg/grid_managed.py)
 pyre_test_python_testcase(tests/cuda.pkg/grid_interface.py)
