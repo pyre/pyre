@@ -22,6 +22,7 @@ tile = tiles.tile
 # factories
 codec = codecs.codec
 colormap = colormaps.colormap
+filter = filters.filter
 
 
 # end of file
