@@ -76,8 +76,8 @@ public:
 
     // element access
     // the fast path: the caller guarantees that {axis} is in range
-    constexpr auto operator[](size_type) noexcept -> reference;
-    constexpr auto operator[](size_type) const noexcept -> const_reference;
+    PYRE_HOST_DEVICE constexpr auto operator[](size_type) noexcept -> reference;
+    PYRE_HOST_DEVICE constexpr auto operator[](size_type) const noexcept -> const_reference;
 
     // bounds-checked element access; throws {std::out_of_range}
     constexpr auto at(size_type) -> reference;

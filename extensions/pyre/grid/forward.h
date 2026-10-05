@@ -13,4 +13,11 @@
 #include <pyre/py/grid/forward.h>
 
 
+// the classes of these bindings
+namespace pyre::py::grid {
+    // the engine that reaches the cells of grids on host storage
+    class HostEngine;
+} // namespace pyre::py::grid
+
+
 // end of file

@@ -9,11 +9,14 @@
 
 
 // externals
+#include <bit>
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 // the type-erased closures lift cells into python and describe blocks to the buffer
 // protocol, so this layer depends on pybind11 by construction; it is the python-support
@@ -26,6 +29,8 @@
 #include <pyre/memory.h>
 // the buffer protocol description of a cell type
 #include <pyre/py/memory/format.h>
+// the structures of the dlpack exchange protocol
+#include "dlpack.h"
 
 
 // type aliases

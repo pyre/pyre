@@ -10,6 +10,7 @@
 
 // support
 #include "cuda/memory.h"
+#include "cuda/grid.h"
 
 
 // end of file

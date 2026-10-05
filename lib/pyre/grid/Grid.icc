@@ -34,7 +34,7 @@ constexpr pyre::grid::Grid<P, S>::Grid(
 
 // accessors
 template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
-[[nodiscard]] constexpr auto
+[[nodiscard]] PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Grid<P, S>::packing() const noexcept -> const packing_type &
 {
     // let clients inspect my addressing scheme, but not disturb it
@@ -42,7 +42,7 @@ pyre::grid::Grid<P, S>::packing() const noexcept -> const packing_type &
 }
 
 template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
-[[nodiscard]] constexpr auto
+[[nodiscard]] PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Grid<P, S>::storage() const noexcept -> const storage_type &
 {
     // let clients inspect where my cells live, but not disturb it
@@ -50,8 +50,9 @@ pyre::grid::Grid<P, S>::storage() const noexcept -> const storage_type &
 }
 
 // the address of my first cell
+PYRE_HOST_DEVICE_NOCHECK
 template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
-[[nodiscard]] constexpr auto
+[[nodiscard]] PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Grid<P, S>::data() const noexcept
     requires concepts::ContiguousStorage<storage_type>
 {
@@ -63,8 +64,9 @@ pyre::grid::Grid<P, S>::data() const noexcept
 // interface - reaching a cell
 
 // the cell named by an index, trusting the caller
+PYRE_HOST_DEVICE_NOCHECK
 template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
-[[nodiscard]] constexpr auto
+[[nodiscard]] PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Grid<P, S>::operator[](const index_type & idx) const -> reference
 {
     // ask my packing where this index lives, and hand back whatever cell is there
@@ -72,8 +74,9 @@ pyre::grid::Grid<P, S>::operator[](const index_type & idx) const -> reference
 }
 
 // the cell at a given offset, trusting the caller
+PYRE_HOST_DEVICE_NOCHECK
 template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
-[[nodiscard]] constexpr auto
+[[nodiscard]] PYRE_HOST_DEVICE constexpr auto
 pyre::grid::Grid<P, S>::operator[](difference_type off) const -> reference
 {
     // my storage measures displacements the same way my packing does, so the offset travels

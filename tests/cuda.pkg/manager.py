@@ -7,23 +7,18 @@
 
 
 """
-Sanity check: verify that the device manager is accessible
+Verify that the device manager finds the attached devices
 """
 
 
 def test():
-    # access the cuda module
-    import cuda
+    # access the package
+    import pyre.cuda
 
-    # show me
-    # print(cuda.manager)
-    # make sure there is a manager
-    assert cuda.manager
-
-    # show me
-    # print("CUDA capable devices:")
-    # for device in cuda.manager.devices:
-    # device.dump(indent='  ')
+    # the tests run where the driver sees a device, so the manager finds at least one
+    assert pyre.cuda.manager.count > 0
+    # and describes each of them
+    assert len(pyre.cuda.manager.devices) == pyre.cuda.manager.count
 
     # all done
     return
@@ -31,6 +26,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

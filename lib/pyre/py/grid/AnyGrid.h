@@ -53,6 +53,22 @@ public:
     auto writable() const -> bool;
     // which storage strategy backs me, kept for clients that care how my cells are held
     auto strategy() const -> const string_t &;
+    // the address of my first cell, as an integer, for code that takes raw pointers
+    auto address() const -> std::uintptr_t;
+
+    // dlpack support
+public:
+    // the {(device_type, device_id)} pair that says where my cells live
+    auto dlpackDevice() const -> std::pair<std::int32_t, std::int32_t>;
+    // a capsule with the dlpack description of my cells: a versioned tensor, or the legacy
+    // kind when {versioned} is false, for consumers that predate versioning
+    auto dlpack(bool versioned) const -> py::capsule;
+
+    // cuda array interface support
+public:
+    // the version 3 cuda array interface description of my cells; only grids on storage the
+    // device can reach have one, the rest raise an {AttributeError}
+    auto cudaArrayInterface() const -> py::dict;
 
     // item access
 public:
@@ -117,6 +133,46 @@ namespace pyre::py::grid {
     template <class gridT>
     auto anyGrid(const gridT & grid, string_t strategy) -> AnyGrid;
 } // namespace pyre::py::grid
+
+
+// the translations of my storage and my cells into the terms of the exchange protocols
+namespace pyre::py::grid::interop {
+    // what keeps the cells and the layout of an exported tensor alive
+    struct Exported {
+        // the handle that owns the cells
+        std::shared_ptr<void> owner;
+        // the extent along each axis
+        std::vector<std::int64_t> shape;
+        // the distance between consecutive cells along each axis, in cells
+        std::vector<std::int64_t> strides;
+    };
+
+    // the dlpack device of the memory a storage strategy holds
+    inline auto deviceType(const string_t & strategy) -> DLDeviceType;
+
+    // the dlpack type of a cell, from its buffer protocol format
+    inline auto dataType(string_t format) -> DLDataType;
+
+    // fill in the description of a block of cells
+    inline auto describe(
+        DLTensor & tensor, void * data, DLDevice device, DLDataType dtype, Exported & exported)
+        -> void;
+
+    // release a versioned tensor and what it kept alive
+    inline auto releaseVersioned(DLManagedTensorVersioned * tensor) -> void;
+
+    // release a legacy tensor and what it kept alive
+    inline auto releaseLegacy(DLManagedTensor * tensor) -> void;
+
+    // the destructor of a capsule with a versioned tensor
+    inline auto destroyVersioned(PyObject * capsule) -> void;
+
+    // the destructor of a capsule with a legacy tensor
+    inline auto destroyLegacy(PyObject * capsule) -> void;
+
+    // the cuda array interface spelling of a cell type, from its buffer protocol format
+    inline auto typeString(const string_t & format) -> string_t;
+} // namespace pyre::py::grid::interop
 
 
 // the inline implementations

@@ -7,18 +7,21 @@
 
 
 """
-Sanity check: verify that the package is accessible
+Verify that the package is accessible
 """
 
 
 def test():
-    import cuda
+    # access the package
+    import pyre.cuda
 
+    # all done
     return
 
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
