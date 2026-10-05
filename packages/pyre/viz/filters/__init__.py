@@ -85,4 +85,52 @@ def power():
     return Power
 
 
+@pyre.foundry(implements=filter, tip="the filter that sorts a signal into geometric bins")
+def geometric():
+    """
+    The filter that sorts a signal into bins whose widths grow geometrically
+    """
+    # pull the implementation
+    from .Geometric import Geometric
+
+    # and publish it
+    return Geometric
+
+
+@pyre.foundry(implements=filter, tip="the filter that maps magnitudes onto a sawtooth")
+def logsaw():
+    """
+    The filter that maps magnitudes onto a sawtooth that repeats at every doubling
+    """
+    # pull the implementation
+    from .LogSaw import LogSaw
+
+    # and publish it
+    return LogSaw
+
+
+@pyre.foundry(implements=filter, tip="the filter that maps phases onto a sawtooth")
+def polarsaw():
+    """
+    The filter that maps phases onto a sawtooth that repeats every twelfth of a turn
+    """
+    # pull the implementation
+    from .PolarSaw import PolarSaw
+
+    # and publish it
+    return PolarSaw
+
+
+@pyre.foundry(implements=filter, tip="the filter that sorts a signal into uniform bins")
+def uniform():
+    """
+    The filter that sorts a signal into bins of equal width
+    """
+    # pull the implementation
+    from .Uniform import Uniform
+
+    # and publish it
+    return Uniform
+
+
 # end of file
