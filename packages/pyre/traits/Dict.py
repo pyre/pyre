@@ -172,8 +172,11 @@ class Dict(Slotted):
         key = slot.key
         # get my name
         tag = nameserver.getName(key)
-        # the priority of all these assignments
+        # the priority of the overall trait value assigned at the end of this method
         initPriority = nameserver.priority.user
+        # the priority for rebuilding entries below; {defaults} always replaces a node's
+        # factory, which {user} can't guarantee over the {command} priority raw values arrive at
+        entryPriority = nameserver.priority.defaults
 
         # make a key based map
         catalog = KeyMap(schema=schema, factory=traitFactory, key=key)
@@ -187,7 +190,7 @@ class Dict(Slotted):
             # make a locator
             locator = tracking.simple("while adding entry {!r} to {.name!r}".format(name, self))
             # and store them
-            catalog.insert(name=name, value=value, priority=initPriority(), locator=locator)
+            catalog.insert(name=name, value=value, priority=entryPriority(), locator=locator)
 
         # grab all deferred assignments to this key
         for assignment, priority in configurator.retrieveDeferredAssignments(key=key):
