@@ -12,6 +12,7 @@ from . import tiles
 # factories
 from . import colormaps
 from . import filters
+from . import operators
 from . import selectors
 from . import codecs
 
@@ -23,6 +24,7 @@ tile = tiles.tile
 codec = codecs.codec
 colormap = colormaps.colormap
 filter = filters.filter
+operator = operators.operator
 selector = selectors.selector
 
 
