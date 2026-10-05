@@ -27,6 +27,28 @@ class Matrix(gsl.Matrix):
     # constants
     defaultFormat = "+16.7"
 
+    upperTriangular = gsl.Triangle.upper
+    lowerTriangular = gsl.Triangle.lower
+
+    # flag that controls whether the diagonal entries are assumed to be unity
+    unitDiagonal = gsl.Diagonal.unit
+    nonUnitDiagonal = gsl.Diagonal.nonUnit
+
+    # operation flags for some of the blas primitives
+    opNoTrans = gsl.Transpose.noTranspose
+    opTrans = gsl.Transpose.transpose
+    opConjTrans = gsl.Transpose.conjugateTranspose
+
+    # flag to control the order of operands in some matrix multiplication routines
+    sideRight = gsl.Side.right
+    sideLeft = gsl.Side.left
+
+    # sort type for eigensystems
+    sortValueAscending = gsl.EigenOrder.valueAscending
+    sortValueDescending = gsl.EigenOrder.valueDescending
+    sortMagnitudeAscending = gsl.EigenOrder.magnitudeAscending
+    sortMagnitudeDescending = gsl.EigenOrder.magnitudeDescending
+
     # class methods
     # mpi support
     @classmethod
