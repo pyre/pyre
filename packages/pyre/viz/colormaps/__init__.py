@@ -73,4 +73,16 @@ def hsl():
     return HSL
 
 
+@pyre.foundry(implements=colormap, tip="the RGB colormap")
+def rgb():
+    """
+    The colormap that paints three signals into the three color channels
+    """
+    # pull the implementation
+    from .RGB import RGB
+
+    # and publish it
+    return RGB
+
+
 # end of file
