@@ -85,7 +85,8 @@ pyre::flow::factories::filters::Parametric<signalT, parametricT>::signal() -> si
 
 template <class signalT, class parametricT>
 auto
-pyre::flow::factories::filters::Parametric<signalT, parametricT>::parametric() -> parametric_ref_type
+pyre::flow::factories::filters::Parametric<signalT, parametricT>::parametric()
+    -> parametric_ref_type
 {
     // look up the product bound to my {signal} slot and return it
     return std::dynamic_pointer_cast<parametric_type>(output("parametric"));

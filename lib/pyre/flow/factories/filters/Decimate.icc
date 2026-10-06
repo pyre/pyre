@@ -108,7 +108,8 @@ pyre::flow::factories::filters::Decimate<signalT>::level(int level) -> factory_r
 
 template <class signalT>
 auto
-pyre::flow::factories::filters::Decimate<signalT>::signal(signal_ref_type signal) -> factory_ref_type
+pyre::flow::factories::filters::Decimate<signalT>::signal(signal_ref_type signal)
+    -> factory_ref_type
 {
     // bind {tile} to my slot
     addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
