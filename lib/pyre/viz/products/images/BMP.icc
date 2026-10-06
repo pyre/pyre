@@ -34,7 +34,7 @@ pyre::viz::products::images::BMP::BMP(
     // individual lines are padded out to the nearest DWORD
     _padBytesPerLine { static_cast<int>((4 - (shape[1] * _pixelSz) % 4) % 4) },
     // the size of the pixel payload
-    _payloadSz { static_cast<int>(shape.cells() * _pixelSz + shape[1] * _padBytesPerLine) },
+    _payloadSz { static_cast<int>(shape.cells() * _pixelSz + shape[0] * _padBytesPerLine) },
     // the total bitmap size
     _bitmapSz { _payloadOffset + _payloadSz },
     // the data buffer with the encoded image
