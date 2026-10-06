@@ -40,7 +40,7 @@ pyre::viz::products::images::BMP::dump() -> ref_type
     // build a reference
     auto self = std::dynamic_pointer_cast<BMP>(ref());
     // unpack my shape
-    auto [width, height] = _shape;
+    auto [height, width] = _shape;
     // and build a view over my buffer
     auto view = read();
     // make a channel
