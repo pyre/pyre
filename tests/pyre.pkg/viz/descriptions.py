@@ -50,7 +50,7 @@ def test():
             "hl": (["hue", "luminosity"], ["red", "green", "blue"]),
             "hsb": (["hue", "saturation", "brightness"], ["red", "green", "blue"]),
             "hsl": (["hue", "saturation", "luminosity"], ["red", "green", "blue"]),
-            "rgb": (["redSource", "greenSource", "blueSource"], ["red", "green", "blue"]),
+            "oklch": (["lightness", "chroma", "hue"], ["red", "green", "blue"]),
         },
         # the codecs
         pyre.viz.codecs: {
