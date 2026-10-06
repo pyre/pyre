@@ -8,7 +8,7 @@
 #pragma once
 
 
-// my api, along with my forward declarations and the external packages
+// the api of {pyre::viz::products::images}, with its declarations and the external packages
 #include "api.h"
 
 // my classes

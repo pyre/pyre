@@ -8,7 +8,7 @@
 #pragma once
 
 
-// my dependencies
+// the forward declarations of {pyre::viz::iterators::filters}
 #include "forward.h"
 
 

@@ -8,7 +8,7 @@
 #pragma once
 
 
-// my dependencies
+// the forward declarations of {pyre::flow::factories::selectors}
 #include "forward.h"
 
 
