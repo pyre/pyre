@@ -26,6 +26,8 @@ namespace pyre::viz::factories::colormaps {
     template <
         class hueT, class saturationT, class luminosityT, class redT, class greenT, class blueT>
     class HSL;
+    template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+    class OKLCH;
     // a factory for complex inputs
     template <class signalT, class redT, class greenT, class blueT>
     class Complex;

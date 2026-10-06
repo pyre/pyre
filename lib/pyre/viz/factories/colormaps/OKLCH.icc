@@ -1,0 +1,304 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "OKLCH.h"
+
+
+// factory
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::create(
+    const name_type & name) -> factory_ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<OKLCH>(sentinel_type(), name);
+    // make a channel
+    auto channel = pyre::journal::debug_t("pyre.viz.factories.colormaps.oklch.create");
+    // show me
+    channel
+        // where
+        << pyre::journal::at()
+        // the factory
+        << "oklch '" << ref->name() << "' at " << ref.get() << ": create"
+        << pyre::journal::newline
+        // flush
+        << pyre::journal::endl;
+    // return it
+    return ref;
+}
+
+// constructor
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::OKLCH(
+    sentinel_type sentinel, const name_type & name) :
+    // superclass
+    super_type(sentinel, name)
+{}
+
+// destructor
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::~OKLCH()
+{}
+
+// accessors
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::lightness()
+    -> lightness_ref_type
+{
+    // look up the product bound to my {lightness} slot and return it
+    return std::dynamic_pointer_cast<lightness_type>(input("lightness"));
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::chroma()
+    -> chroma_ref_type
+{
+    // look up the product bound to my {chroma} slot and return it
+    return std::dynamic_pointer_cast<chroma_type>(input("chroma"));
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::hue()
+    -> hue_ref_type
+{
+    // look up the product bound to my {hue} slot and return it
+    return std::dynamic_pointer_cast<hue_type>(input("hue"));
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::red()
+    -> red_ref_type
+{
+    // look up the product bound to my {red} slot and return it
+    return std::dynamic_pointer_cast<red_type>(output("red"));
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::green()
+    -> green_ref_type
+{
+    // look up the product bound to my {green} slot and return it
+    return std::dynamic_pointer_cast<green_type>(output("green"));
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::blue()
+    -> blue_ref_type
+{
+    // look up the product bound to my {blue} slot and return it
+    return std::dynamic_pointer_cast<blue_type>(output("blue"));
+}
+
+// mutators
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::lightness(
+    lightness_ref_type lightness) -> factory_ref_type
+{
+    // connect my {lightness} slot
+    addInput("lightness", std::static_pointer_cast<pyre::flow::product_t>(lightness));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<OKLCH>(ref());
+    // and return it
+    return self;
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::chroma(
+    chroma_ref_type chroma) -> factory_ref_type
+{
+    // connect my {chroma} slot
+    addInput("chroma", std::static_pointer_cast<pyre::flow::product_t>(chroma));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<OKLCH>(ref());
+    // and return it
+    return self;
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::hue(
+    hue_ref_type hue) -> factory_ref_type
+{
+    // connect my {hue} slot
+    addInput("hue", std::static_pointer_cast<pyre::flow::product_t>(hue));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<OKLCH>(ref());
+    // and return it
+    return self;
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::red(
+    red_ref_type red) -> factory_ref_type
+{
+    // connect my {red} slot
+    addOutput("red", std::static_pointer_cast<pyre::flow::product_t>(red));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<OKLCH>(ref());
+    // and return it
+    return self;
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::green(
+    green_ref_type green) -> factory_ref_type
+{
+    // connect my {green} slot
+    addOutput("green", std::static_pointer_cast<pyre::flow::product_t>(green));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<OKLCH>(ref());
+    // and return it
+    return self;
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::blue(
+    blue_ref_type blue) -> factory_ref_type
+{
+    // connect my {blue} slot
+    addOutput("blue", std::static_pointer_cast<pyre::flow::product_t>(blue));
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<OKLCH>(ref());
+    // and return it
+    return self;
+}
+
+template <class lightnessT, class chromaT, class hueT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>::make(
+    const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
+{
+    // chain up
+    auto self = super_type::make(slot, product);
+
+    // get my data
+    auto l = lightness();
+    auto c = chroma();
+    auto h = hue();
+    // get my color channels
+    auto r = red();
+    auto g = green();
+    auto b = blue();
+
+    // the bound products must be shape compatible; the current implementation only requires
+    // that products have the same number of cells
+    auto pixels = l->shape().cells();
+    // verify consistency
+    bool ok =
+        // check c
+        pixels == c->shape().cells() &&
+        // check h
+        pixels == h->shape().cells() &&
+        // check r
+        pixels == r->shape().cells() &&
+        // check g
+        pixels == g->shape().cells() &&
+        // check b
+        pixels == b->shape().cells();
+    // if something is off
+    if (!ok) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.viz.factories.colormaps.oklch");
+        // complain
+        channel
+            // where
+            << pyre::journal::at()
+            // who
+            << "oklch factory at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "shape mismatch in the input and output slots"
+            << pyre::journal::newline
+            // inputs
+            << "inputs "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // lightness
+            << "lightness: " << l->shape()
+            << pyre::journal::newline
+            // chroma
+            << "chroma: " << c->shape()
+            << pyre::journal::newline
+            // hue
+            << "hue: " << h->shape()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // outputs
+            << "outputs: "
+            << pyre::journal::newline
+            // indent
+            << pyre::journal::indent
+            // details
+            // red
+            << "red: " << r->shape()
+            << pyre::journal::newline
+            // green
+            << "green: " << g->shape()
+            << pyre::journal::newline
+            // blue
+            << "blue: " << b->shape()
+            << pyre::journal::newline
+            // outdent
+            << pyre::journal::outdent
+            // flush
+            << pyre::journal::endl;
+        // and bail, just in case errors aren't fatal
+        return self;
+    }
+
+    // get the data buffers
+    // inputs
+    auto lData = l->read();
+    auto cData = c->read();
+    auto hData = h->read();
+    // outputs
+    auto rData = r->write();
+    auto gData = g->write();
+    auto bData = b->write();
+
+    // color convert
+    for (auto pixel = 0; pixel < pixels; ++pixel) {
+        // read
+        auto lValue = lData[pixel];
+        auto cValue = cData[pixel];
+        auto hValue = hData[pixel];
+        // project to rgb
+        auto [rValue, gValue, bValue] = pyre::chroma::rgb::oklch(lValue, cValue, hValue);
+        // and write
+        rData[pixel] = rValue;
+        gData[pixel] = gValue;
+        bData[pixel] = bValue;
+    }
+
+    // mark all products as clean
+    r->clean();
+    g->clean();
+    b->clean();
+
+    // all done
+    return self;
+}
+
+
+// end of file
