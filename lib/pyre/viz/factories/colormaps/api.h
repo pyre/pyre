@@ -34,6 +34,11 @@ namespace pyre::viz::factories::colormaps {
         class greenT = hueT, class blueT = hueT>
     using hsl_t = HSL<hueT, saturationT, luminosityT, redT, greenT, blueT>;
 
+    template <
+        class lightnessT, class chromaT = lightnessT, class hueT = lightnessT,
+        class redT = lightnessT, class greenT = lightnessT, class blueT = lightnessT>
+    using oklch_t = OKLCH<lightnessT, chromaT, hueT, redT, greenT, blueT>;
+
     // complex data
     template <class signalT, class redT, class greenT = redT, class blueT = redT>
     using complex_t = Complex<signalT, redT, greenT, blueT>;
