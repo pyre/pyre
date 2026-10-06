@@ -7,8 +7,16 @@
 // code guard
 #pragma once
 
-// get the canonical header
-#include "../api.h"
+
+// my dependencies
+#include "forward.h"
+
+
+// the api of each sub-namespace
+#include "codecs/api.h"
+#include "colormaps/api.h"
+#include "filters/api.h"
+#include "selectors/api.h"
 
 
 // end of file

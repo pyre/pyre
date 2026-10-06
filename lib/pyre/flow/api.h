@@ -32,34 +32,10 @@ namespace pyre::flow {
 
 } // namespace pyre::flow
 
-// products
-namespace pyre::flow::products {
-    // atoms
-    template <typename valueT>
-    using var_t = Variable<valueT>;
-    // tiles
-    template <class gridT>
-    using tile_t = Tile<gridT>;
-} // namespace pyre::flow::products
-
-// factories
-namespace pyre::flow::factories {
-    // addition
-    // atoms
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using add_variables_t = Add<products::Variable, op1T, op2T, resultT>;
-    // tiles
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using add_tiles_t = Add<products::Tile, op1T, op2T, resultT>;
-
-    // multiplication
-    // atoms
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using multiply_variables_t = Multiply<products::Variable, op1T, op2T, resultT>;
-    // tiles
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using multiply_tiles_t = Multiply<products::Tile, op1T, op2T, resultT>;
-} // namespace pyre::flow::factories
+// the api of each sub-namespace
+#include "protocols/api.h"
+#include "products/api.h"
+#include "factories/api.h"
 
 
 // end of file

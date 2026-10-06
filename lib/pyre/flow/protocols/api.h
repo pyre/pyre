@@ -12,8 +12,4 @@
 #include "forward.h"
 
 
-// the api of each sub-namespace
-#include "images/api.h"
-
-
 // end of file
