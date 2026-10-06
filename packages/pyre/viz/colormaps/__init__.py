@@ -49,7 +49,7 @@ def hsb():
     return HSB
 
 
-@pyre.foundry(implements=colormap, tip="the HSL colormap")
+@pyre.foundry(implements=colormap, tip="the HL colormap")
 def hl():
     """
     The HL colormap
@@ -73,16 +73,16 @@ def hsl():
     return HSL
 
 
-@pyre.foundry(implements=colormap, tip="the RGB colormap")
-def rgb():
+@pyre.foundry(implements=colormap, tip="the OKLCH colormap")
+def oklch():
     """
-    The colormap that paints three signals into the three color channels
+    The OKLCH colormap
     """
     # pull the implementation
-    from .RGB import RGB
+    from .OKLCH import OKLCH
 
     # and publish it
-    return RGB
+    return OKLCH
 
 
 # end of file
