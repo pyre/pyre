@@ -11,7 +11,7 @@
 // my dependencies
 #include "forward.h"
 
-// encode three color channels into a microsoft bitmap
+// map hue and luminosity onto the three color channels
 template <class hueT, class luminosityT, class redT, class greenT, class blueT>
 class pyre::viz::factories::colormaps::HL : public pyre::flow::factory_t {
     // type aliases

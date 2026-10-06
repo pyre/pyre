@@ -208,7 +208,7 @@ pyre::viz::factories::colormaps::HSB<hueT, saturationT, brightnessT, redT, green
     bool ok =
         // check s
         pixels == s->shape().cells() &&
-        // check l
+        // check v
         pixels == v->shape().cells() &&
         // check r
         pixels == r->shape().cells() &&
