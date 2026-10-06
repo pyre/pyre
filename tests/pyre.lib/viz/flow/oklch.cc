@@ -9,6 +9,7 @@
 #include <portinfo>
 // STL
 #include <cassert>
+#include <cmath>
 // support
 #include <pyre/journal.h>
 #include <pyre/viz.h>
@@ -86,6 +87,14 @@ main(int argc, char * argv[])
 
     // the color the kernel makes of these inputs, the same one the {oklch} iterator uses
     auto [r, g, b] = pyre::chroma::rgb::oklch(l, c, h);
+    // the kernel is inlined at two different places, and a compiler that contracts multiplications
+    // and additions differently at each may disagree in the last bits, so compare within a margin
+    const double tolerance = 1.0e-5;
+    // that says whether a channel carries the expected value
+    auto close = [tolerance](double value, double expected) -> bool {
+        // within the margin
+        return std::abs(value - expected) <= tolerance;
+    };
     // get the color channels
     auto & rData = red->read();
     auto & gData = green->read();
@@ -93,11 +102,11 @@ main(int argc, char * argv[])
     // every pixel of every channel must carry it
     for (auto pixel = 0; pixel < shape.cells(); ++pixel) {
         // check the red channel
-        assert(rData[pixel] == static_cast<pixel_t>(r));
+        assert(close(rData[pixel], r));
         // the green channel
-        assert(gData[pixel] == static_cast<pixel_t>(g));
+        assert(close(gData[pixel], g));
         // and the blue channel
-        assert(bData[pixel] == static_cast<pixel_t>(b));
+        assert(close(bData[pixel], b));
     }
 
     // open a file
