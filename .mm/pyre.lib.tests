@@ -26,7 +26,7 @@ tests.pyre.lib.viz.iterators.clean += \
 tests.pyre.lib.viz.flow.clean += \
     pyre_viz_flow_amplitude.bmp pyre_viz_flow_bmp.bmp pyre_viz_flow_complex.bmp \
     pyre_viz_flow_decimate.bmp pyre_viz_flow_gray.bmp pyre_viz_flow_hl.bmp pyre_viz_flow_hsb.bmp \
-    pyre_viz_flow_hsl.bmp pyre_viz_flow_amplitude.bmp pyre_viz_flow_imaginary.bmp \
+    pyre_viz_flow_hsl.bmp pyre_viz_flow_imaginary.bmp pyre_viz_flow_oklch.bmp \
     pyre_viz_flow_phase.bmp pyre_viz_flow_real.bmp
 
 # test case configuration
