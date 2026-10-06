@@ -21,5 +21,9 @@
 #include "MultiplyTiles.h"
 #include "MultiplyVariables.h"
 
+// the public headers of each sub-namespace
+#include "filters/public.h"
+#include "selectors/public.h"
+
 
 // end of file

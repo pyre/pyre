@@ -27,7 +27,7 @@ using parametric_storage_t = pyre::memory::heap_t<parametric_cell_t>;
 using parametric_grid_t = pyre::grid::grid_t<packing_t, parametric_storage_t>;
 using parametric_t = pyre::flow::products::tile_t<parametric_grid_t>;
 // the factory
-using filter_t = pyre::viz::factories::filters::parametric_t<signal_t, parametric_t>;
+using filter_t = pyre::flow::factories::filters::parametric_t<signal_t, parametric_t>;
 
 // driver
 int

@@ -29,7 +29,7 @@ using channel_t = pyre::flow::products::tile_t<channel_grid_t>;
 // image
 using image_t = pyre::viz::products::images::bmp_t;
 // selector
-using phase_t = pyre::viz::factories::selectors::phase_t<signal_t, channel_t>;
+using phase_t = pyre::flow::factories::selectors::phase_t<signal_t, channel_t>;
 // color map
 using colormap_t = pyre::viz::factories::colormaps::hsb_t<channel_t>;
 // encoder

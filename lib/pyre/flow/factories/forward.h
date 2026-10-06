@@ -36,5 +36,9 @@ namespace pyre::flow::factories {
     class Multiply<products::Variable, op1T, op2T, resultT>;
 } // namespace pyre::flow::factories
 
+// the per-namespace forward declarations
+#include "filters/forward.h"
+#include "selectors/forward.h"
+
 
 // end of file

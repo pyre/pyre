@@ -28,7 +28,7 @@ using bin_storage_t = pyre::memory::heap_t<bin_cell_t>;
 using bin_grid_t = pyre::grid::grid_t<packing_t, bin_storage_t>;
 using bin_t = pyre::flow::products::tile_t<bin_grid_t>;
 // the factory
-using geometric_t = pyre::viz::factories::filters::geometric_t<signal_t, bin_t>;
+using geometric_t = pyre::flow::factories::filters::geometric_t<signal_t, bin_t>;
 
 // driver
 int

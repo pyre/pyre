@@ -27,7 +27,7 @@ using logsaw_storage_t = pyre::memory::heap_t<logsaw_cell_t>;
 using logsaw_grid_t = pyre::grid::grid_t<packing_t, logsaw_storage_t>;
 using logsaw_t = pyre::flow::products::tile_t<logsaw_grid_t>;
 // the factory
-using filter_t = pyre::viz::factories::filters::logsaw_t<signal_t, logsaw_t>;
+using filter_t = pyre::flow::factories::filters::logsaw_t<signal_t, logsaw_t>;
 
 // driver
 int

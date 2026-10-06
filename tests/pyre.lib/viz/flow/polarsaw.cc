@@ -27,7 +27,7 @@ using polarsaw_storage_t = pyre::memory::heap_t<polarsaw_cell_t>;
 using polarsaw_grid_t = pyre::grid::grid_t<packing_t, polarsaw_storage_t>;
 using polarsaw_t = pyre::flow::products::tile_t<polarsaw_grid_t>;
 // the factory
-using filter_t = pyre::viz::factories::filters::polarsaw_t<signal_t, polarsaw_t>;
+using filter_t = pyre::flow::factories::filters::polarsaw_t<signal_t, polarsaw_t>;
 
 // driver
 int

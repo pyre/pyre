@@ -27,7 +27,7 @@ using power_storage_t = pyre::memory::heap_t<power_cell_t>;
 using power_grid_t = pyre::grid::grid_t<packing_t, power_storage_t>;
 using power_t = pyre::flow::products::tile_t<power_grid_t>;
 // the factory
-using filter_t = pyre::viz::factories::filters::power_t<signal_t, power_t>;
+using filter_t = pyre::flow::factories::filters::power_t<signal_t, power_t>;
 
 // driver
 int
