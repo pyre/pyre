@@ -140,7 +140,8 @@ pyre::flow::factories::filters::Power<signalT, powerT>::scale(double scale) -> f
 
 template <class signalT, class powerT>
 auto
-pyre::flow::factories::filters::Power<signalT, powerT>::exponent(double exponent) -> factory_ref_type
+pyre::flow::factories::filters::Power<signalT, powerT>::exponent(double exponent)
+    -> factory_ref_type
 {
     // adjust
     _exponent = exponent;
