@@ -8,9 +8,6 @@
 #pragma once
 
 
-// viz leans on flow
-#include "flow.h"
-
 // publish the interface
 // the api is in "viz/api.h"
 #include "viz/public.h"
