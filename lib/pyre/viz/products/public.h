@@ -7,8 +7,12 @@
 // code guard
 #pragma once
 
-// get the canonical header
-#include "../externals.h"
+
+// my api, along with my forward declarations and the external packages
+#include "api.h"
+
+// the public headers of each sub-namespace
+#include "images/public.h"
 
 
 // end of file

@@ -8,12 +8,12 @@
 #pragma once
 
 
-// my dependencies
-#include "forward.h"
+// my api, along with my forward declarations and the external packages
+#include "api.h"
 
-
-// the api of each sub-namespace
-#include "images/api.h"
+// my classes
+#include "Tile.h"
+#include "Variable.h"
 
 
 // end of file

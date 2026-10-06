@@ -5,12 +5,8 @@
 // (c) 1998-2026 all rights reserved
 
 
-// externals
-#include "../externals.h"
-// forward declarations
-#include "../forward.h"
-// type aliases
-#include "../api.h"
+// my api, along with my forward declarations and the external packages
+#include "api.h"
 
 // my class declaration
 #include "BMP.h"

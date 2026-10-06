@@ -12,8 +12,12 @@
 #include "forward.h"
 
 
-// the api of each sub-namespace
-#include "images/api.h"
+// iterators
+// codecs
+namespace pyre::viz::iterators::codecs {
+    // microsoft bmp
+    using bmp_t = BMP;
+} // namespace pyre::viz::iterators::codecs
 
 
 // end of file

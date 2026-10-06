@@ -12,8 +12,12 @@
 #include "forward.h"
 
 
-// the api of each sub-namespace
-#include "images/api.h"
+// products
+// images
+namespace pyre::viz::products::images {
+    // microsoft bitmaps
+    using bmp_t = BMP;
+} // namespace pyre::viz::products::images
 
 
 // end of file

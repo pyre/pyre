@@ -7,8 +7,14 @@
 // code guard
 #pragma once
 
-// get the canonical header
-#include "../externals.h"
+
+// my api, along with my forward declarations and the external packages
+#include "api.h"
+
+// my classes
+#include "Node.h"
+#include "Factory.h"
+#include "Product.h"
 
 
 // end of file
