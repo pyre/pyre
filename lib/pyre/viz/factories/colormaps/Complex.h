@@ -11,7 +11,7 @@
 // my dependencies
 #include "forward.h"
 
-// encode three color channels into a microsoft bitmap
+// map a complex signal onto the three color channels: its phase sets the hue, its amplitude the brightness
 template <class signalT, class redT, class greenT, class blueT>
 class pyre::viz::factories::colormaps::Complex : public pyre::flow::factory_t {
     // type aliases
