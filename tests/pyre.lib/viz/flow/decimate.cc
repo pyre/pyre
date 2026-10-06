@@ -30,7 +30,7 @@ using channel_t = pyre::flow::products::tile_t<color_grid_t>;
 // the image
 using image_t = pyre::viz::products::images::bmp_t;
 // the decimator
-using decimated_t = pyre::viz::factories::filters::decimate_t<signal_t>;
+using decimated_t = pyre::flow::factories::filters::decimate_t<signal_t>;
 // the colormap
 using color_t = pyre::viz::factories::colormaps::complex_t<signal_t, channel_t>;
 // the codec

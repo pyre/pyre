@@ -28,7 +28,7 @@ using cycle_storage_t = pyre::memory::heap_t<cycle_cell_t>;
 using cycle_grid_t = pyre::grid::grid_t<packing_t, cycle_storage_t>;
 using cycle_t = pyre::flow::products::tile_t<cycle_grid_t>;
 // the factory
-using filter_t = pyre::viz::factories::filters::cycle_t<signal_t, cycle_t>;
+using filter_t = pyre::flow::factories::filters::cycle_t<signal_t, cycle_t>;
 
 // driver
 int

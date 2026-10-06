@@ -28,7 +28,7 @@ using affine_storage_t = pyre::memory::heap_t<affine_cell_t>;
 using affine_grid_t = pyre::grid::grid_t<packing_t, affine_storage_t>;
 using affine_t = pyre::flow::products::tile_t<affine_grid_t>;
 // the factory
-using filter_t = pyre::viz::factories::filters::affine_t<signal_t, affine_t>;
+using filter_t = pyre::flow::factories::filters::affine_t<signal_t, affine_t>;
 
 // driver
 int

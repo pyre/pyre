@@ -15,8 +15,6 @@
 // the api of each sub-namespace
 #include "codecs/api.h"
 #include "colormaps/api.h"
-#include "filters/api.h"
-#include "selectors/api.h"
 
 
 // end of file

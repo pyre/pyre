@@ -14,8 +14,6 @@
 // the public headers of each sub-namespace
 #include "codecs/public.h"
 #include "colormaps/public.h"
-#include "filters/public.h"
-#include "selectors/public.h"
 
 
 // end of file

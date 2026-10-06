@@ -31,5 +31,9 @@ namespace pyre::flow::factories {
     using multiply_tiles_t = Multiply<products::Tile, op1T, op2T, resultT>;
 } // namespace pyre::flow::factories
 
+// the api of each sub-namespace
+#include "filters/api.h"
+#include "selectors/api.h"
+
 
 // end of file
