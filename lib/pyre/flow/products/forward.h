@@ -9,7 +9,7 @@
 
 
 // my dependencies
-#include "../external.h"
+#include "../externals.h"
 
 
 // forward declarations

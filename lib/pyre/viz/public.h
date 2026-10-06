@@ -9,7 +9,7 @@
 
 
 // external packages
-#include "external.h"
+#include "externals.h"
 // set up the namespace
 #include "forward.h"
 

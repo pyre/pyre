@@ -9,7 +9,7 @@
 
 
 // my dependencies
-#include "external.h"
+#include "externals.h"
 // the per-namespace forward declarations
 #include "protocols/forward.h"
 #include "products/forward.h"

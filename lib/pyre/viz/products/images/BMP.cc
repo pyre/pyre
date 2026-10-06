@@ -6,7 +6,7 @@
 
 
 // externals
-#include "../external.h"
+#include "../externals.h"
 // forward declarations
 #include "../forward.h"
 // type aliases

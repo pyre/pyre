@@ -8,7 +8,7 @@
 #pragma once
 
 // get the canonical header
-#include "../external.h"
+#include "../externals.h"
 
 
 // end of file
