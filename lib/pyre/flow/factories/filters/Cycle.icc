@@ -204,7 +204,7 @@ pyre::flow::factories::filters::Cycle<signalT, cycleT>::make(
             // by shifting it over
             phase += 1;
         }
-        // scale it and and store it
+        // scale it and store it
         cycle[cell] = low + phase * delta;
     }
     // all done

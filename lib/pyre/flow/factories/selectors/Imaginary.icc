@@ -71,7 +71,7 @@ auto
 pyre::flow::factories::selectors::Imaginary<signalT, imaginaryT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
-    // connect my {hue} slot
+    // connect my {signal} slot
     addInput("signal", std::static_pointer_cast<pyre::flow::protocols::Product>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Imaginary>(ref());
@@ -84,7 +84,7 @@ auto
 pyre::flow::factories::selectors::Imaginary<signalT, imaginaryT>::imaginary(
     imaginary_ref_type imaginary) -> factory_ref_type
 {
-    // connect my {red} slot
+    // connect my {imaginary} slot
     addOutput("imaginary", std::static_pointer_cast<pyre::flow::protocols::Product>(imaginary));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Imaginary>(ref());
