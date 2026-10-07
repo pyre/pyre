@@ -43,11 +43,13 @@ pyre_test_driver(tests/pyre.lib/grid/grid_heap_chunked.cc)
 pyre_test_driver(tests/pyre.lib/grid/grid_heap_iteration.cc)
 pyre_test_driver(tests/pyre.lib/grid/grid_heap_slice.cc)
 pyre_test_driver(tests/pyre.lib/grid/grid_map_access.cc)
+pyre_test_driver(tests/pyre.lib/grid/grid_map_foreign.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_access.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_arithmetic.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_cartesian.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_enum.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_fill.cc)
+pyre_test_driver(tests/pyre.lib/grid/index_from_shape.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_from_tuple.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_iterator.cc)
 pyre_test_driver(tests/pyre.lib/grid/index_sanity.cc)
@@ -94,6 +96,9 @@ pyre_test_driver(tests/pyre.lib/memory/map_offset_past.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_read.cc)
 pyre_test_driver(tests/pyre.lib/memory/map_write.cc)
 pyre_test_driver(tests/pyre.lib/memory/memory_sanity.cc)
+pyre_test_driver(tests/pyre.lib/memory/ordered_complex.cc)
+pyre_test_driver(tests/pyre.lib/memory/ordered_heap.cc)
+pyre_test_driver(tests/pyre.lib/memory/ordered_sanity.cc)
 pyre_test_driver(tests/pyre.lib/memory/paged_access.cc)
 pyre_test_driver(tests/pyre.lib/memory/paged_oob.cc)
 pyre_test_driver(tests/pyre.lib/memory/paged_poison.cc)
@@ -218,6 +223,8 @@ pyre_test_driver(tests/pyre.lib/viz/iterators/amplitude.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/affine.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/amplitude.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/bmp.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/bmp_padding.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/bmp_walks.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/complex.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/constant.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/cycle.cc)
@@ -229,6 +236,7 @@ pyre_test_driver(tests/pyre.lib/viz/flow/hsb.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/hsl.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/imaginary.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/logsaw.cc)
+pyre_test_driver(tests/pyre.lib/viz/flow/oklch.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/parametric.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/phase.cc)
 pyre_test_driver(tests/pyre.lib/viz/flow/polarsaw.cc)
@@ -254,6 +262,7 @@ pyre_test_driver_cleanup(pyre_viz_flow_hl.bmp tests/pyre.lib/viz/flow/hl.cc)
 pyre_test_driver_cleanup(pyre_viz_flow_hsb.bmp tests/pyre.lib/viz/flow/hsb.cc)
 pyre_test_driver_cleanup(pyre_viz_flow_hsl.bmp tests/pyre.lib/viz/flow/hsl.cc)
 pyre_test_driver_cleanup(pyre_viz_flow_imaginary.bmp tests/pyre.lib/viz/flow/imaginary.cc)
+pyre_test_driver_cleanup(pyre_viz_flow_oklch.bmp tests/pyre.lib/viz/flow/oklch.cc)
 pyre_test_driver_cleanup(pyre_viz_flow_phase.bmp tests/pyre.lib/viz/flow/phase.cc)
 pyre_test_driver_cleanup(pyre_viz_flow_real.bmp tests/pyre.lib/viz/flow/real.cc)
 pyre_test_driver_cleanup(pyre_viz_iterators_amplitude.bmp tests/pyre.lib/viz/iterators/amplitude.cc)
@@ -273,61 +282,33 @@ pyre_test_driver(tests/pyre.lib/math/transcendental.cc)
 # tensor
 
 pyre_test_driver(tests/pyre.lib/tensor/tensor_concepts.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_contractions.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_canonical_arithmetics.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_canonical_basis.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_cayley_hamilton_theorem.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_compact_arithmetics.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_dot.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_dyadic.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_eigenvalues.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_eigenvalues_transformation.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_identities.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_diagonal_inverse.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_linear_system.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_iterators.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_literals.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_build.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_assignment.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_equal.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_norm.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_product.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_matrix_vector_product.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_fourth_order_contraction.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_print.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_symmetry.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_transpose.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/tensor_utilities.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/quaternion_composition.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/quaternion_from_rotation_matrix.cc)
-
 pyre_test_driver(tests/pyre.lib/tensor/quaternion_inverse.cc)
 
 
