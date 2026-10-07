@@ -41,6 +41,9 @@ pyre_test_python_testcase(tests/h5.ext/refusal.py)
 
 # the drivers leave their scratch products behind so they can be inspected; the harness
 # sweeps them, each after the driver that makes it
+pyre_test_python_cleanup(h5_ext_failed_open.h5 tests/h5.ext/failed_open.py)
+pyre_test_python_cleanup(h5_ext_handles.h5 tests/h5.ext/handles.py)
+pyre_test_python_cleanup("h5_ext_refusal.h5 h5_ext_refusal.log" tests/h5.ext/refusal.py)
 pyre_test_python_cleanup(h5_ext_acpl.h5 tests/h5.ext/acpl.py)
 pyre_test_python_cleanup(h5_ext_attribute_values.h5 tests/h5.ext/attribute_values.py)
 pyre_test_python_cleanup(h5_ext_dcpl_fill.h5 tests/h5.ext/dcpl_fill.py)

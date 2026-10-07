@@ -34,5 +34,10 @@ tests.journal.ext.help_file_mode.clean += "help_file_mode.log"
 tests.journal.ext.info_file_mode.clean += "info_file_mode.log"
 tests.journal.ext.warning_file_mode.clean += "warning_file_mode.log"
 
+# the fan out and tee drivers leave their logs behind so they can be inspected
+tests.journal.ext.splitter_fanout.clean += "splitter_fanout_ext_first.log"
+tests.journal.ext.splitter_fanout.clean += "splitter_fanout_ext_second.log"
+tests.journal.ext.tee_sanity.clean += "tee_sanity_ext.log" "tee_sanity_ext.out"
+
 
 # end of file

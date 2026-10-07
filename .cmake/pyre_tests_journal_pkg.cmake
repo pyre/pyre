@@ -171,6 +171,8 @@ pyre_test_python_cleanup(firewall_file_mode.log tests/journal.pkg/firewall_file_
 pyre_test_python_cleanup(help_file_mode.log tests/journal.pkg/help_file_mode.py)
 pyre_test_python_cleanup(info_file_mode.log tests/journal.pkg/info_file_mode.py)
 pyre_test_python_cleanup(warning_file_mode.log tests/journal.pkg/warning_file_mode.py)
+pyre_test_python_cleanup("splitter_fanout_pkg_first.log splitter_fanout_pkg_second.log" tests/journal.pkg/splitter_fanout.py)
+pyre_test_python_cleanup(tee_sanity_pkg.log tests/journal.pkg/tee_sanity.py)
 
 
 # end of file

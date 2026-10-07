@@ -42,5 +42,9 @@ tests.journal.pkg.info_file_mode.clean := info_file_mode.log
 tests.journal.pkg.warning_file_mode.clean := warning_file_mode.log
 tests.journal.pkg.help_file_mode.clean := help_file_mode.log
 
+# the fan out and tee drivers leave their logs behind so they can be inspected
+tests.journal.pkg.splitter_fanout.clean := splitter_fanout_pkg_first.log splitter_fanout_pkg_second.log
+tests.journal.pkg.tee_sanity.clean := tee_sanity_pkg.log
+
 
 # end of file

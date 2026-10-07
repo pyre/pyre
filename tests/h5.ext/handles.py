@@ -77,11 +77,6 @@ def test():
     # so do their handles
     assert f.handles() == {"file": 1}
 
-    # clean up
-    del f
-    gc.collect()
-    os.remove(uri)
-
     # all done
     return
 
