@@ -13,7 +13,7 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// map values in [0,1] onto [a,b]
+// map the phase of a complex signal onto [a,b]
 template <class signalT, class cycleT>
 class pyre::flow::factories::filters::Cycle : public pyre::flow::protocols::Factory {
     // type aliases

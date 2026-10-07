@@ -13,7 +13,7 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// encode three color channels into a microsoft bitmap
+// extract the real part of a complex signal
 template <class signalT, class realT>
 class pyre::flow::factories::selectors::Real : public pyre::flow::protocols::Factory {
     // type aliases

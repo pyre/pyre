@@ -13,7 +13,7 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// map values in [0,1] onto [a,b]
+// cut the signal into sawteeth of width pi/6 and map each one onto [0,1]
 template <class signalT, class polarsawT>
 class pyre::flow::factories::filters::PolarSaw : public pyre::flow::protocols::Factory {
     // type aliases
