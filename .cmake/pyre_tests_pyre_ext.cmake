@@ -45,5 +45,4 @@ pyre_test_python_testcase(tests/pyre.ext/memory/views.py)
 pyre_test_python_cleanup(memory_ordered_test.dat tests/pyre.ext/memory/ordered.py)
 
 
-
 # end of file
