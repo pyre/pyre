@@ -215,6 +215,16 @@
     16; a python only version would be ~110 h and fast enough for configuration files, but
     would leave the c++ clients out
 
+- viz and flow:
+
+  - the bmp codec factory ({pyre::viz::factories::codecs::BMP}) assumes its color tiles are in
+    c order: it walks them from {begin()}, which follows the packing order, i.e. memory order,
+    expecting to find the pixels of a given row next to each other; a tile in fortran order
+    would be cut into lines of {shape[1]} pixels taken down its columns (2026-10-07)
+    - the element-wise factories (parametric, gray, ...) pair cells by linear offset, so a
+      graph whose tiles mix packing orders would pair cells by memory position, not by index
+    - options: walk by row and column index, or require row major tiles and refuse others
+
 - traits:
 
   - treat them like components; some are: input and output streams have both configuration and
