@@ -159,7 +159,7 @@ pyre::flow::factories::filters::Parametric<signalT, parametricT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "parametric " << this->name() << "' at " << this << ":"
+            << "parametric '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"
