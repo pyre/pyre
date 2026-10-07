@@ -72,7 +72,7 @@ pyre::flow::factories::selectors::Real<signalT, realT>::signal(signal_ref_type s
     -> factory_ref_type
 {
     // connect my {hue} slot
-    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    addInput("signal", std::static_pointer_cast<pyre::flow::protocols::Product>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Real>(ref());
     // and return it
@@ -84,7 +84,7 @@ auto
 pyre::flow::factories::selectors::Real<signalT, realT>::real(real_ref_type real) -> factory_ref_type
 {
     // connect my {red} slot
-    addOutput("real", std::static_pointer_cast<pyre::flow::product_t>(real));
+    addOutput("real", std::static_pointer_cast<pyre::flow::protocols::Product>(real));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Real>(ref());
     // and return it

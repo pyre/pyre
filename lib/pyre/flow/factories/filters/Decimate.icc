@@ -112,7 +112,7 @@ pyre::flow::factories::filters::Decimate<signalT>::signal(signal_ref_type signal
     -> factory_ref_type
 {
     // bind {tile} to my slot
-    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    addInput("signal", std::static_pointer_cast<pyre::flow::protocols::Product>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Decimate>(ref());
     // and return it
@@ -125,7 +125,7 @@ pyre::flow::factories::filters::Decimate<signalT>::decimated(signal_ref_type dec
     -> factory_ref_type
 {
     // bind {decimated} to my slot
-    addOutput("decimated", std::static_pointer_cast<pyre::flow::product_t>(decimated));
+    addOutput("decimated", std::static_pointer_cast<pyre::flow::protocols::Product>(decimated));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Decimate>(ref());
     // and return it

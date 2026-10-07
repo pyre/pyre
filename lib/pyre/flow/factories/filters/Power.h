@@ -10,19 +10,18 @@
 
 // my dependencies
 #include "forward.h"
-// my base class, and the aliases of the flow protocols
+// my superclass
 #include "../../protocols/Factory.h"
-#include "../../api.h"
 
 // map signal to scale * (signal/mean)^exponent
 template <class signalT, class powerT>
-class pyre::flow::factories::filters::Power : public pyre::flow::factory_t {
+class pyre::flow::factories::filters::Power : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me
     using self_type = Power<signalT, powerT>;
     // my superclass
-    using super_type = pyre::flow::factory_t;
+    using super_type = pyre::flow::protocols::Factory;
     // my input slot
     using signal_type = signalT;
     // my output slot

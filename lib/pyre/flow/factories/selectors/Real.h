@@ -10,19 +10,18 @@
 
 // my dependencies
 #include "forward.h"
-// my base class, and the aliases of the flow protocols
+// my superclass
 #include "../../protocols/Factory.h"
-#include "../../api.h"
 
 // encode three color channels into a microsoft bitmap
 template <class signalT, class realT>
-class pyre::flow::factories::selectors::Real : public pyre::flow::factory_t {
+class pyre::flow::factories::selectors::Real : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me
     using self_type = Real<signalT, realT>;
     // my superclass
-    using super_type = pyre::flow::factory_t;
+    using super_type = pyre::flow::protocols::Factory;
     // my slots
     using signal_type = signalT;
     using real_type = realT;
