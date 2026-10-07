@@ -217,13 +217,16 @@
 
 - viz and flow:
 
-  - the bmp codec factory ({pyre::viz::factories::codecs::BMP}) assumes its color tiles are in
-    c order: it walks them from {begin()}, which follows the packing order, i.e. memory order,
-    expecting to find the pixels of a given row next to each other; a tile in fortran order
-    would be cut into lines of {shape[1]} pixels taken down its columns (2026-10-07)
-    - the element-wise factories (parametric, gray, ...) pair cells by linear offset, so a
-      graph whose tiles mix packing orders would pair cells by memory position, not by index
-    - options: walk by row and column index, or require row major tiles and refuse others
+  - walking a large grid through its iterators costs about 2.2 ns per cell, roughly 40 times a
+    pointer walk over its memory and 4 to 5 times indexing it, measured by
+    {tests/pyre.lib/viz/flow/bmp_walks.cc} on 512x512 tiles (2026-10-07); likely because the
+    shape and order of a canonical packing are runtime values, so every step loops over the axes
+    in order and carries, and every dereference computes the offset as a dot product with the
+    strides, which the optimizer cannot collapse into a pointer increment; anything that loops
+    over large grids through {begin()} pays for it; worth a look at what a packing could
+    precompute for the common case
+  - the bmp codec factory no longer does: it walks its channels in memory order, since tiles are
+      packed row major, and a firewall catches a tile that is not
 
 - traits:
 
