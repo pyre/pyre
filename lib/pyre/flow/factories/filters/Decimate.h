@@ -13,7 +13,7 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// generate a tile filled with a value
+// keep every 2^level cell of the signal along each axis
 template <class signalT>
 class pyre::flow::factories::filters::Decimate : public pyre::flow::protocols::Factory {
     // type aliases
@@ -22,7 +22,7 @@ public:
     using self_type = Decimate<signalT>;
     // my superclass
     using super_type = pyre::flow::protocols::Factory;
-    // both input and output sl;ots are the same type
+    // both input and output slots are the same type
     using signal_type = signalT;
 
     // ref to me

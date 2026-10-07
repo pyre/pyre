@@ -13,7 +13,7 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// map values in [0,1] onto [a,b]
+// map the fractional part of the log of the signal magnitude onto [0,1]
 template <class signalT, class logsawT>
 class pyre::flow::factories::filters::LogSaw : public pyre::flow::protocols::Factory {
     // type aliases

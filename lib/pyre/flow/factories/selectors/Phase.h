@@ -13,7 +13,7 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// encode three color channels into a microsoft bitmap
+// compute the phase of a complex signal, in radians
 template <class signalT, class phaseT>
 class pyre::flow::factories::selectors::Phase : public pyre::flow::protocols::Factory {
     // type aliases

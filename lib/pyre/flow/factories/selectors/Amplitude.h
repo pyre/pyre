@@ -15,7 +15,7 @@
 // the magnitude of a cell of any type
 #include "../../utilities.h"
 
-// encode three color channels into a microsoft bitmap
+// compute the amplitude of a complex signal
 template <class signalT, class amplitudeT>
 class pyre::flow::factories::selectors::Amplitude : public pyre::flow::protocols::Factory {
     // type aliases
