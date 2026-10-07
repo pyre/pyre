@@ -248,6 +248,7 @@ if(PYRE_BUILD_TESTING)
   # if we have MPI support
   if(MPI_FOUND)
     include(pyre_tests_mpi_pkg)
+    include(pyre_tests_mpi_ext)
     include(pyre_tests_mpi_lib)
   endif()
 
