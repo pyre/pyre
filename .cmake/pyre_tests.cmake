@@ -97,8 +97,9 @@ function(pyre_test_testcase_shell_fixture setup cleanup testfile)
 endfunction()
 
 
-# sweep the scratch {products} a python testcase leaves behind; the {products} come first,
-# for the same reason as above: the testcase command line arguments are in ${ARGN}
+# sweep the scratch {products} a python testcase leaves behind, files or folders; the
+# {products} come first, for the same reason as above: the testcase command line arguments are
+# in ${ARGN}
 function(pyre_test_python_cleanup products testfile)
   # generate the name of the testcase that makes the products
   pyre_test_testcase(testname ${testfile} ${ARGN})
@@ -107,7 +108,7 @@ function(pyre_test_python_cleanup products testfile)
 
   # register the sweep, running where the testcase ran
   add_test(NAME ${testname}.cleanup
-    COMMAND ${BASH_PROGRAM} -c "rm ${products}"
+    COMMAND ${BASH_PROGRAM} -c "rm -r ${products}"
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
     )
   # the sweep tears down the testcase's fixture
@@ -272,6 +273,34 @@ function(pyre_test_python_testcase_journal testfile)
     # launch from the location of the testcase
     set_property(TEST ${testname}.${flavor} PROPERTY
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
+      )
+  endforeach()
+
+  # all done
+endfunction()
+
+# sweep the scratch {products} a journal testcase leaves behind, once it has run against both
+# implementations of the journal; the counterpart of {pyre_test_python_testcase_journal}
+function(pyre_test_python_cleanup_journal products testfile)
+  # generate the name of the testcase that makes the products
+  pyre_test_testcase(testname ${testfile} ${ARGN})
+  # python testcases run in their source directory, so that's where the products land
+  get_filename_component(dir ${testfile} DIRECTORY)
+
+  # register the sweep, running where the testcase ran
+  add_test(NAME ${testname}.cleanup
+    COMMAND ${BASH_PROGRAM} -c "rm -r ${products}"
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/${dir}
+    )
+  # the sweep tears down the testcase's fixture
+  set_property(TEST ${testname}.cleanup PROPERTY
+    FIXTURES_CLEANUP ${testname}.fixture
+    )
+  # which the runs against both implementations advertise, so the sweep runs after both
+  foreach(flavor libjournal python)
+    # this one
+    set_property(TEST ${testname}.${flavor} APPEND PROPERTY
+      FIXTURES_REQUIRED ${testname}.fixture
       )
   endforeach()
 
