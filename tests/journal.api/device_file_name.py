@@ -12,19 +12,28 @@ def test():
     """
     # externals
     import os
-    import tempfile
+    import shutil
 
     # access
     import journal
 
-    # work in a scratch area, so nothing is left behind
-    with tempfile.TemporaryDirectory() as scratch:
-        # make a file device
-        device = journal.file(path=os.path.join(scratch, "device_file_name.log"))
-        # check its name
-        assert device.name == "file", device.name
-        # and let go of it, so the file is closed before the scratch area is cleaned up
-        del device
+    # the suite runs me once per implementation of the journal, possibly at the same time, so
+    # each run gets its own scratch area
+    implementation = "python" if os.environ.get("JOURNAL_LIBJOURNAL") == "off" else "libjournal"
+    # work in a scratch area next to this driver, where the products stay for inspection
+    scratch = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), f"device_file_name.{implementation}.scratch"
+    )
+    # start clean, by removing whatever a previous run left behind
+    shutil.rmtree(scratch, ignore_errors=True)
+    # and make it
+    os.makedirs(scratch)
+    # make a file device
+    device = journal.file(path=os.path.join(scratch, "device_file_name.log"))
+    # check its name
+    assert device.name == "file", device.name
+    # and let go of it, so the file is closed before the scratch area is cleaned up
+    del device
 
     # all done
     return
