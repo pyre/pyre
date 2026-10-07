@@ -32,6 +32,12 @@ pyre_test_python_testcase_mpi(tests/mpi.pkg/nonblocking.py 7)
 # {pyre.externals}; the launcher resolves through the package database engines
 pyre_test_python_testcase(tests/mpi.pkg/mpirun.py)
 pyre_test_python_testcase(tests/mpi.pkg/slurm.py)
+pyre_test_python_testcase(tests/mpi.pkg/launcher_hostfile.py)
+pyre_test_python_testcase(tests/mpi.pkg/launcher_hostfile_generic.py)
+pyre_test_python_testcase(tests/mpi.pkg/launcher_hostfile_mpich.py)
+pyre_test_python_testcase(tests/mpi.pkg/launcher_hostfile_openmpi.py)
+pyre_test_python_testcase(tests/mpi.pkg/launcher_missing.py)
+pyre_test_python_testcase(tests/mpi.pkg/trivial.py)
 # {ip} is a diagnostic that prints the hostname of every rank, so it violates the
 # silence-is-pass convention; run it by hand when the machine layout is in question
 # pyre_test_python_testcase(tests/mpi.pkg/ip.py)
