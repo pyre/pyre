@@ -133,7 +133,7 @@ pyre::flow::factories::filters::LogSaw<signalT, logsawT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "logsaw " << this->name() << "' at " << this << ":"
+            << "logsaw '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"

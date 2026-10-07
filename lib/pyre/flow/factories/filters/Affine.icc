@@ -158,7 +158,7 @@ pyre::flow::factories::filters::Affine<signalT, affineT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "affine " << this->name() << "' at " << this << ":"
+            << "affine '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"

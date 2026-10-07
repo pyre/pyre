@@ -156,7 +156,7 @@ pyre::flow::factories::filters::Uniform<signalT, binT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "uniform " << this->name() << "' at " << this << ":"
+            << "uniform '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"

@@ -204,7 +204,7 @@ pyre::flow::factories::filters::Power<signalT, powerT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "power " << this->name() << "' at " << this << ":"
+            << "power '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"

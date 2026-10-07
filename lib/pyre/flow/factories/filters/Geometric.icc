@@ -151,7 +151,7 @@ pyre::flow::factories::filters::Geometric<signalT, binT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "geometric " << this->name() << "' at " << this << ":"
+            << "geometric '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"

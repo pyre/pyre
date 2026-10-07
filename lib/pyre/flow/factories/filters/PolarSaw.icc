@@ -133,7 +133,7 @@ pyre::flow::factories::filters::PolarSaw<signalT, polarsawT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "polarsaw " << this->name() << "' at " << this << ":"
+            << "polarsaw '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"

@@ -151,13 +151,13 @@ pyre::flow::factories::filters::Decimate<signalT>::make(
     // if the input and output are not compatible
     if (!ok) {
         // make a channel
-        auto channel = pyre::journal::error_t("pyre.flow.factories.filters.logsaw");
+        auto channel = pyre::journal::error_t("pyre.flow.factories.filters.decimate");
         // complain
         channel
             // where
             << pyre::journal::at()
             // who
-            << "decimate " << this->name() << "' at " << this << ":"
+            << "decimate '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"

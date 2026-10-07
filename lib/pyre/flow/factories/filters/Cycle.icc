@@ -158,7 +158,7 @@ pyre::flow::factories::filters::Cycle<signalT, cycleT>::make(
             // where
             << pyre::journal::at()
             // who
-            << "cycle " << this->name() << "' at " << this << ":"
+            << "cycle '" << this->name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"
