@@ -199,12 +199,39 @@ pyre::viz::factories::codecs::BMP<redT, greenT, blueT>::make(
         return self;
     }
 
+    // the channels are walked in memory order, which finds the pixels of a line next to each
+    // other only in tiles packed row major, as tiles are
+    using red_order_type = typename red_type::packing_type::order_type;
+    using green_order_type = typename green_type::packing_type::order_type;
+    using blue_order_type = typename blue_type::packing_type::order_type;
+    // so if any of them is packed otherwise
+    if (r->read().packing().order() != red_order_type::c()
+        || g->read().packing().order() != green_order_type::c()
+        || b->read().packing().order() != blue_order_type::c()) {
+        // make a channel
+        auto channel = pyre::journal::firewall_t("pyre.viz.factories.codecs.bmp");
+        // and complain
+        channel
+            // where
+            << pyre::journal::at()
+            // who
+            << "bmp '" << this->name() << "' at " << this << ":"
+            << pyre::journal::newline
+            // what
+            << "the color channels must be packed in row major order"
+            << pyre::journal::newline
+            // flush
+            << pyre::journal::endl;
+        // and bail, just in case firewalls aren't fatal
+        return self;
+    }
+
     // unpack the shape
     auto [height, width] = r->shape();
-    // make iterators to the input channels
-    auto redData = r->read().begin();
-    auto greenData = g->read().begin();
-    auto blueData = b->read().begin();
+    // the first cell of each of the input channels
+    auto redData = r->read().data();
+    auto greenData = g->read().data();
+    auto blueData = b->read().data();
     // make an iterator to the image payload
     auto imageData = bmp->write().begin();
 
