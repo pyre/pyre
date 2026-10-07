@@ -34,6 +34,10 @@ pyre_test_python_testcase(tests/h5.ext/strided_tile.py)
 pyre_test_python_testcase(tests/h5.ext/courier.py)
 pyre_test_python_testcase(tests/h5.ext/transfer_list.py)
 pyre_test_python_testcase(tests/h5.ext/page_buffer.py)
+pyre_test_python_testcase(tests/h5.ext/channel_state.py)
+pyre_test_python_testcase(tests/h5.ext/failed_open.py)
+pyre_test_python_testcase(tests/h5.ext/handles.py)
+pyre_test_python_testcase(tests/h5.ext/refusal.py)
 
 # the drivers leave their scratch products behind so they can be inspected; the harness
 # sweeps them, each after the driver that makes it
