@@ -27,6 +27,9 @@ tests.pyre.pkg.h5.api.access_errors.clean := access_errors.h5 access_errors_junk
 tests.pyre.pkg.memory.ordered.clean := memory_ordered_test.dat
 tests.pyre.pkg.envi.write.clean := envi_write_test.hdr
 tests.pyre.pkg.config.yaml_editor_save.clean := yaml_editor_save.yaml
+tests.pyre.pkg.config.persist.clean := persist-state.yaml
+tests.pyre.pkg.filesystem.zip_open.clean := zip_open.zip
+tests.pyre.pkg.nexus.fork_leave.clean := fork_leave.retired.*
 tests.pyre.pkg.envi.cell.clean := envi_cell_test_0.dat envi_cell_test_0.hdr envi_cell_test_1.dat envi_cell_test_1.hdr
 tests.pyre.pkg.envi.offset.clean := \
     envi_offset_test_0.dat envi_offset_test_0.hdr envi_offset_test_1.dat envi_offset_test_1.hdr

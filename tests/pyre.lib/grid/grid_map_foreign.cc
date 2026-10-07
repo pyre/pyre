@@ -7,7 +7,6 @@
 
 // support
 #include <cassert>
-#include <cstdio>
 #include <fstream>
 // get the grid
 #include <pyre/grid.h>
@@ -117,8 +116,6 @@ main(int argc, char * argv[])
         assert((bytes == swapped(0x1234)));
     }
 
-    // done with the backing file
-    std::remove(uri);
 
     // all done
     return 0;

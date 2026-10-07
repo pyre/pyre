@@ -7,7 +7,6 @@
 
 // support
 #include <cassert>
-#include <cstdio>
 // get the grid
 #include <pyre/grid.h>
 // and the storage strategies
@@ -70,8 +69,6 @@ main(int argc, char * argv[])
     // the origin lands at the beginning of the file
     assert((grid[index_t { 0, 0, 0 }] == 0));
 
-    // done with the backing file
-    std::remove(uri);
 
     // all done
     return 0;

@@ -142,6 +142,8 @@ set_property(TEST tests.pyre.lib.memory.constmap_oob.cc PROPERTY
 
 # the drivers leave their scratch products behind so they can be inspected; sweep them
 # {filemap.dat} is built up by a chain of drivers, so the sweep waits for every link
+pyre_test_driver_cleanup(grid_map_access.data tests/pyre.lib/grid/grid_map_access.cc)
+pyre_test_driver_cleanup(grid_map_foreign.data tests/pyre.lib/grid/grid_map_foreign.cc)
 pyre_test_driver_cleanup(filemap.dat
   tests/pyre.lib/memory/filemap_create.cc
   tests/pyre.lib/memory/filemap_write.cc

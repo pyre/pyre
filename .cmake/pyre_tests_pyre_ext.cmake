@@ -29,7 +29,7 @@ pyre_test_python_testcase(tests/pyre.ext/grid/lifetime.py)
 
 # the drivers leave their scratch products behind so they can be inspected; sweep them
 pyre_test_python_cleanup(grid_map_test.dat tests/pyre.ext/grid/map.py)
-pyre_test_python_cleanup(grid_offset_test.dat tests/pyre.ext/grid/offset.py)
+pyre_test_python_cleanup("grid_offset_test.dat grid_offset_empty.dat" tests/pyre.ext/grid/offset.py)
 pyre_test_python_cleanup(grid_ordered_test.dat tests/pyre.ext/grid/ordered.py)
 pyre_test_python_cleanup(grid_readonly_test.dat tests/pyre.ext/grid/readonly.py)
 
