@@ -25,7 +25,7 @@ using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
 using index_t = grid_t::index_type;
 using shape_t = grid_t::shape_type;
 using byte_t = unsigned char;
-using timer_t = pyre::timers::wall_timer_t;
+using walltimer_t = pyre::timers::wall_timer_t;
 
 
 // the bytes of the pixel payload of a bitmap, line after line, each line padded to a multiple of
@@ -152,9 +152,9 @@ compare(shape_t shape, int trials, pyre::journal::debug_t & report) -> void
     auto viaIndices = std::vector<byte_t>(size);
 
     // the clocks
-    auto iteratorClock = timer_t("pyre.viz.flow.bmp.walks.iterators");
-    auto memoryClock = timer_t("pyre.viz.flow.bmp.walks.memory");
-    auto indexClock = timer_t("pyre.viz.flow.bmp.walks.indices");
+    auto iteratorClock = walltimer_t("pyre.viz.flow.bmp.walks.iterators");
+    auto memoryClock = walltimer_t("pyre.viz.flow.bmp.walks.memory");
+    auto indexClock = walltimer_t("pyre.viz.flow.bmp.walks.indices");
     // reset them
     iteratorClock.reset();
     memoryClock.reset();
