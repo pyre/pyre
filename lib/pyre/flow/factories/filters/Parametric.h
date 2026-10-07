@@ -10,19 +10,18 @@
 
 // my dependencies
 #include "forward.h"
-// my base class, and the aliases of the flow protocols
+// my superclass
 #include "../../protocols/Factory.h"
-#include "../../api.h"
 
 // map values in [a,b] onto [0,1]
 template <class signalT, class parametricT>
-class pyre::flow::factories::filters::Parametric : public pyre::flow::factory_t {
+class pyre::flow::factories::filters::Parametric : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me
     using self_type = Parametric<signalT, parametricT>;
     // my superclass
-    using super_type = pyre::flow::factory_t;
+    using super_type = pyre::flow::protocols::Factory;
     // my interval
     using interval_type = interval_t;
     // my input slot

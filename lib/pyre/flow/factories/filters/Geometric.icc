@@ -107,7 +107,7 @@ pyre::flow::factories::filters::Geometric<signalT, binT>::signal(signal_ref_type
     -> factory_ref_type
 {
     // bind {signal} to my slot
-    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    addInput("signal", std::static_pointer_cast<pyre::flow::protocols::Product>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Geometric>(ref());
     // and return it
@@ -119,7 +119,7 @@ auto
 pyre::flow::factories::filters::Geometric<signalT, binT>::bin(bin_ref_type bin) -> factory_ref_type
 {
     // bind {bin} to my slot
-    addOutput("bin", std::static_pointer_cast<pyre::flow::product_t>(bin));
+    addOutput("bin", std::static_pointer_cast<pyre::flow::protocols::Product>(bin));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Geometric>(ref());
     // and return it

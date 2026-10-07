@@ -10,19 +10,18 @@
 
 // my dependencies
 #include "forward.h"
-// my base class, and the aliases of the flow protocols
+// my superclass
 #include "../../protocols/Factory.h"
-#include "../../api.h"
 
 // generate a tile filled with a value
 template <class signalT>
-class pyre::flow::factories::filters::Decimate : public pyre::flow::factory_t {
+class pyre::flow::factories::filters::Decimate : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me
     using self_type = Decimate<signalT>;
     // my superclass
-    using super_type = pyre::flow::factory_t;
+    using super_type = pyre::flow::protocols::Factory;
     // both input and output sl;ots are the same type
     using signal_type = signalT;
 

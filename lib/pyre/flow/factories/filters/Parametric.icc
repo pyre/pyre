@@ -114,7 +114,7 @@ pyre::flow::factories::filters::Parametric<signalT, parametricT>::signal(signal_
     -> factory_ref_type
 {
     // bind {signal} to my slot
-    addInput("signal", std::static_pointer_cast<pyre::flow::product_t>(signal));
+    addInput("signal", std::static_pointer_cast<pyre::flow::protocols::Product>(signal));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Parametric>(ref());
     // and return it
@@ -127,7 +127,7 @@ pyre::flow::factories::filters::Parametric<signalT, parametricT>::parametric(
     parametric_ref_type parametric) -> factory_ref_type
 {
     // bind {parametric} to my slot
-    addOutput("parametric", std::static_pointer_cast<pyre::flow::product_t>(parametric));
+    addOutput("parametric", std::static_pointer_cast<pyre::flow::protocols::Product>(parametric));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Parametric>(ref());
     // and return it
