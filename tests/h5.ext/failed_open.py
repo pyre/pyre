@@ -41,8 +41,6 @@ def test():
     assert not libh5.valid(missing.hid)
     assert missing.get(path="/") is None
     assert missing.members() == []
-    # clean up
-    os.remove(uri)
     # all done
     return
 

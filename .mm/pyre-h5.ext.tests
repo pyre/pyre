@@ -31,5 +31,10 @@ tests.h5.ext.courier.clean := courier.h5
 tests.h5.ext.transfer_list.clean := transfer_list.h5
 tests.h5.ext.page_buffer.clean := page_buffer.h5
 
+# the drivers below leave their files behind so they can be inspected
+tests.h5.ext.failed_open.clean := h5_ext_failed_open.h5
+tests.h5.ext.handles.clean := h5_ext_handles.h5
+tests.h5.ext.refusal.clean := h5_ext_refusal.h5 h5_ext_refusal.log
+
 
 # end of file

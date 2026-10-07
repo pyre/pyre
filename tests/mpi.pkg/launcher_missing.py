@@ -41,10 +41,6 @@ def test():
     assert "could not find an mpi installation" in text
     assert "mpi.shells.mpirun.mpi" in text
     assert "prefix:" in text
-    # clean up
-    import os
-
-    os.remove(log)
     # all done
     return launcher
 

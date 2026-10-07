@@ -37,9 +37,6 @@ def test():
     assert "hello world!" in one
     # and the same message
     assert one == two
-    # clean up
-    os.remove(first)
-    os.remove(second)
     # all done
     return
 

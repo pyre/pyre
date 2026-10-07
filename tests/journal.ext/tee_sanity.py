@@ -58,9 +58,6 @@ def test():
     assert "hello world!" in open(capture, encoding="utf-8").read()
     # and to the file
     assert "hello world!" in open(path, encoding="utf-8").read()
-    # clean up
-    os.remove(capture)
-    os.remove(path)
     # all done
     return
 

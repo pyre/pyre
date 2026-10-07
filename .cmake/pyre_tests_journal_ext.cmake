@@ -154,6 +154,8 @@ pyre_test_python_cleanup(firewall_file_mode.log tests/journal.ext/firewall_file_
 pyre_test_python_cleanup(help_file_mode.log tests/journal.ext/help_file_mode.py)
 pyre_test_python_cleanup(info_file_mode.log tests/journal.ext/info_file_mode.py)
 pyre_test_python_cleanup(warning_file_mode.log tests/journal.ext/warning_file_mode.py)
+pyre_test_python_cleanup("splitter_fanout_ext_first.log splitter_fanout_ext_second.log" tests/journal.ext/splitter_fanout.py)
+pyre_test_python_cleanup("tee_sanity_ext.log tee_sanity_ext.out" tests/journal.ext/tee_sanity.py)
 
 
 # end of file

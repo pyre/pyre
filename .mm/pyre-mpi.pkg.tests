@@ -159,5 +159,8 @@ tests.mpi.pkg.nonblocking.cases := \
 # {parallel} has a harness
 tests.pyre-mpi.pkg.nonblocking.parallel.harness = $(pyre-mpi.pkg.harness) -np 7
 
+# the driver of the missing launcher leaves its log behind so it can be inspected
+tests.mpi.pkg.launcher_missing.clean := launcher_missing.log
+
 
 # end of file

@@ -91,10 +91,8 @@ def test():
     assert "retrieving the creation property list of" in text
     assert "H5" in text.split("the hdf5 library refused")[-1]
 
-    # clean up
+    # close the file
     f.close()
-    os.remove(uri)
-    os.remove(log)
     # all done
     return
 

@@ -37,6 +37,8 @@ pyre_test_python_testcase(tests/mpi.pkg/launcher_hostfile_generic.py)
 pyre_test_python_testcase(tests/mpi.pkg/launcher_hostfile_mpich.py)
 pyre_test_python_testcase(tests/mpi.pkg/launcher_hostfile_openmpi.py)
 pyre_test_python_testcase(tests/mpi.pkg/launcher_missing.py)
+# the driver leaves its log behind; sweep it
+pyre_test_python_cleanup(launcher_missing.log tests/mpi.pkg/launcher_missing.py)
 pyre_test_python_testcase(tests/mpi.pkg/trivial.py)
 # {ip} is a diagnostic that prints the hostname of every rank, so it violates the
 # silence-is-pass convention; run it by hand when the machine layout is in question
