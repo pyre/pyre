@@ -35,5 +35,10 @@ env_decor.libjournal.harness := JOURNAL_LIBJOURNAL=on JOURNAL_DECOR=3
 # the pure python implementation, with the same decoration
 env_decor.python.harness := JOURNAL_LIBJOURNAL=off JOURNAL_DECOR=3
 
+# the file device drivers work in a scratch folder of their own, left behind for inspection
+tests.journal.api.device_file_append.clean := device_file_append.*.scratch
+tests.journal.api.device_file_name.clean := device_file_name.*.scratch
+tests.journal.api.device_file_path.clean := device_file_path.*.scratch
+
 
 # end of file

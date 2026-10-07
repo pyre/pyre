@@ -42,6 +42,11 @@ pyre_test_python_testcase_journal(tests/journal.api/debug_shared.py)
 pyre_test_python_testcase_journal(tests/journal.api/device_file_append.py)
 pyre_test_python_testcase_journal(tests/journal.api/device_file_name.py)
 pyre_test_python_testcase_journal(tests/journal.api/device_file_path.py)
+# the file device drivers leave their scratch areas behind, one per implementation; sweep them
+# once both runs are done
+pyre_test_python_cleanup_journal("device_file_append.*.scratch" tests/journal.api/device_file_append.py)
+pyre_test_python_cleanup_journal("device_file_name.*.scratch" tests/journal.api/device_file_name.py)
+pyre_test_python_cleanup_journal("device_file_path.*.scratch" tests/journal.api/device_file_path.py)
 pyre_test_python_testcase_journal(tests/journal.api/device_init.py)
 pyre_test_python_testcase_journal_env(tests/journal.api/env_debug.py
   "JOURNAL_DEBUG=tests.journal.env.one,tests.journal.env.two")
