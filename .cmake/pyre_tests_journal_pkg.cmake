@@ -151,6 +151,8 @@ pyre_test_python_testcase(tests/journal.pkg/warning_loop.py)
 pyre_test_python_testcase(tests/journal.pkg/warning_quiet.py)
 pyre_test_python_testcase(tests/journal.pkg/warning_report.py)
 pyre_test_python_testcase(tests/journal.pkg/warning_sanity.py)
+pyre_test_python_testcase(tests/journal.pkg/api_settings.py)
+pyre_test_python_testcase(tests/journal.pkg/channel_location.py)
 
 # the drivers leave their scratch products behind so they can be inspected; sweep them
 pyre_test_python_cleanup(api_file.log tests/journal.pkg/api_file.py)
