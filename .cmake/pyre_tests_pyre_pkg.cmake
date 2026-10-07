@@ -557,7 +557,6 @@ pyre_test_python_testcase(tests/pyre.pkg/config/yaml_editor_save.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/recipe.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/recipe_owned.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/persist.py)
-pyre_test_python_cleanup(persist-state.yaml tests/pyre.pkg/config/persist.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/yaml_editor_levels.py)
 # reverted pending review; in mm's drivers.exclude
 # pyre_test_python_testcase(tests/pyre.pkg/config/configurator_locators.py)
