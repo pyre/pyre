@@ -12,6 +12,9 @@
 #include "forward.h"
 #include "../protocols/Product.h"
 
+// a product that holds a tile of cells in a grid; tiles are packed in row major order, the c
+// convention, and the factories that read and write them rely on it: they walk the cells of a tile
+// in memory order, and expect the cells of a line next to each other
 template <class gridT>
 class pyre::flow::products::Tile : public pyre::flow::protocols::Product {
     // type aliases
