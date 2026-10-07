@@ -224,8 +224,6 @@ def empty():
             assert False, f"{request} was accepted"
     # the refused product was never made
     assert not os.path.exists(fresh)
-    # clean up
-    os.remove(blank)
     # all done
     return
 

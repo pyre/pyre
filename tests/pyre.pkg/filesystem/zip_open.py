@@ -16,11 +16,14 @@ def test():
     import zipfile
     import pyre.filesystem
 
-    # the name of the zipfile
-    archive = "/tmp/sample.zip"
+    # the name of the zipfile, next to this driver, where it stays for inspection
+    archive = "zip_open.zip"
+    # the contents of this directory, taken before the archive appears in it, and without
+    # the archive a previous run left behind
+    names = [name for name in os.listdir(".") if name != archive]
     # build the archive
     target = zipfile.ZipFile(file=archive, mode="w")
-    for filename in os.listdir("."):
+    for filename in names:
         target.write(filename)
     target.close()
 
@@ -34,9 +37,6 @@ def test():
     assert contents[0] == b"#!/usr/bin/env python3\n"
     # check the last line
     assert contents[-1] == b"# end of file\n"
-
-    # remove the zipfile
-    os.unlink(archive)
 
     return home
 

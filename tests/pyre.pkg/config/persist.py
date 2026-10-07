@@ -126,8 +126,6 @@ def test():
         "persist.copy.tool",
     ]
 
-    # clean up
-    uri.unlink()
     # all done
     return bench
 

@@ -132,8 +132,6 @@ def test():
     # and left without running the exit handler it inherited
     assert not os.path.exists(inherited(pid=member))
 
-    # clean up after the member
-    os.remove(retired(pid=member))
     # all done
     return staff
 
