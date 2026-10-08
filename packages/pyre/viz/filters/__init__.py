@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Filter import Filter as filter
+from ..protocols.Filter import Filter as filter
 
 
 # the implementations

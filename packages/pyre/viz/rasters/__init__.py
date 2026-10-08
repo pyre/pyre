@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Raster import Raster as raster
+from ..protocols.Raster import Raster as raster
 
 
 # the implementations

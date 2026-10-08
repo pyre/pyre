@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Filter import Filter
+from ..protocols.Filter import Filter
 
 
 # the filter that maps phases onto a sawtooth that repeats every twelfth of a turn

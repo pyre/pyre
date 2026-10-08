@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Codec import Codec as codec
+from ..protocols.Codec import Codec as codec
 
 
 # the implementations

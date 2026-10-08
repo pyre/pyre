@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Selector import Selector as selector
+from ..protocols.Selector import Selector as selector
 
 
 # the implementations

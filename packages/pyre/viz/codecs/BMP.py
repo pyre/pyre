@@ -9,7 +9,7 @@
 import pyre
 
 # protocol
-from .Codec import Codec
+from ..protocols.Codec import Codec
 
 
 # a factory of microsoft BMP v2 rasters

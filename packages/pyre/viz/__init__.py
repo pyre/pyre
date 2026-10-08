@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# the protocols of the products and the factories
+from . import protocols
+
 # products
 from . import rasters
 from . import tiles

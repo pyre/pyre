@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Colormap import Colormap as colormap
+from ..protocols.Colormap import Colormap as colormap
 
 
 # the implementations
