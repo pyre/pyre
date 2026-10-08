@@ -19,10 +19,7 @@ public:
     using self_type = Product;
     // my superclass
     using super_type = Node;
-    // pair the factory slot name with a reference to the factory
-    // ideally, these should be weak pointers but the STL doesn't seem to support
-    // placing weak pointers in sets; so tearing down the workflow is the user's responsibility,
-    // until an alternative is found
+    // a binding: the name of the factory slot, and the factory that reads or writes me through it
     using slot_type = std::tuple<name_type, factory_ref_type>;
     // my bindings
     using connections_type = std::set<slot_type>;
@@ -35,7 +32,7 @@ public:
 public:
     // destructor
     virtual ~Product();
-    // constructor; not usable directly. call {create} instead
+    // constructor. not usable directly; call {create} instead
     inline Product(sentinel_type, const name_type & name, bool stale);
 
     // accessors
