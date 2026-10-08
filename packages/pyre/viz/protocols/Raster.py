@@ -22,7 +22,7 @@ class Raster(pyre.flow.specification, family="pyre.viz.rasters"):
         The default raster
         """
         # use BMP as the default raster
-        from .BMP import BMP
+        from ..rasters.BMP import BMP
 
         # and return it
         return BMP

@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Filter import Filter
+from ..protocols.Filter import Filter
 
 
 # a source of a constant signal

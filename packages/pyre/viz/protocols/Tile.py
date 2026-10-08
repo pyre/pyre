@@ -22,7 +22,7 @@ class Tile(pyre.flow.specification, family="pyre.viz.tiles"):
         Provide a default strategy for storing data tiles
         """
         # use the heap
-        from .Heap import Heap
+        from ..tiles.Heap import Heap
 
         # publish
         return Heap

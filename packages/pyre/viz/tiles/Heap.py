@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Tile import Tile
+from ..protocols.Tile import Tile
 
 
 # data tiles on the heap

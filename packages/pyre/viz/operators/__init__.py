@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Operator import Operator as operator
+from ..protocols.Operator import Operator as operator
 
 
 # the implementations

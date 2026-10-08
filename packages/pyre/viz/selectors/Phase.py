@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Selector import Selector
+from ..protocols.Selector import Selector
 
 
 # the selector of the phase of a complex signal

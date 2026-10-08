@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Tile import Tile as tile
+from ..protocols.Tile import Tile as tile
 
 
 # the implementations

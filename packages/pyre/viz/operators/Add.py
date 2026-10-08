@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Operator import Operator
+from ..protocols.Operator import Operator
 
 
 # the cell-wise sum of two signals

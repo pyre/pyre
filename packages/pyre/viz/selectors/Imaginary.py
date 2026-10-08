@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Selector import Selector
+from ..protocols.Selector import Selector
 
 
 # the selector of the imaginary part of a complex signal

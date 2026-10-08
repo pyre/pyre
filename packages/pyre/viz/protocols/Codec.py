@@ -22,7 +22,7 @@ class Codec(pyre.flow.producer, family="pyre.viz.codecs"):
         The default encoder
         """
         # use BMP as the default codec
-        from .BMP import BMP
+        from ..codecs.BMP import BMP
 
         # and return it
         return BMP

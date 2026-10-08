@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Colormap import Colormap
+from ..protocols.Colormap import Colormap
 
 
 # a map well suited to rendering complex values

@@ -9,7 +9,7 @@
 import pyre
 
 # the protocol
-from .Raster import Raster
+from ..protocols.Raster import Raster
 
 
 # a microsoft v2 BMP raster
