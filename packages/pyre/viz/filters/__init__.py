@@ -61,18 +61,6 @@ def decimate():
     return Decimate
 
 
-@pyre.foundry(implements=filter, tip="the filter that maps an interval onto [0,1]")
-def parametric():
-    """
-    The filter that maps an interval onto [0,1]
-    """
-    # pull the implementation
-    from .Parametric import Parametric
-
-    # and publish it
-    return Parametric
-
-
 @pyre.foundry(implements=filter, tip="the filter that applies a power law")
 def power():
     """

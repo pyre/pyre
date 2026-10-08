@@ -24,6 +24,7 @@ from .Selector import Selector as selector
 from .Filter import Filter as filter
 from .Operator import Operator as operator
 from .Colormap import Colormap as colormap
-from .Codec import Codec as codec
+from .Normalizer import Normalizer as normalizer
+from .Encoder import Encoder as encoder
 
 # end of file

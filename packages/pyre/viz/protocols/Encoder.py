@@ -10,7 +10,7 @@ import pyre
 
 
 # the protocol for all image encoders
-class Codec(pyre.flow.producer, family="pyre.viz.codecs"):
+class Encoder(pyre.flow.producer, family="pyre.viz.encoders"):
     """
     The image encoder protocol
     """
@@ -21,8 +21,8 @@ class Codec(pyre.flow.producer, family="pyre.viz.codecs"):
         """
         The default encoder
         """
-        # use BMP as the default codec
-        from ..codecs.BMP import BMP
+        # use BMP as the default encoder
+        from ..encoders.BMP import BMP
 
         # and return it
         return BMP

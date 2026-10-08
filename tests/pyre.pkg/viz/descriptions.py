@@ -27,7 +27,6 @@ def test():
             "decimate": (["signal"], ["decimated"]),
             "geometric": (["signal"], ["bin"]),
             "logsaw": (["signal"], ["logsaw"]),
-            "parametric": (["signal"], ["parametric"]),
             "polarsaw": (["signal"], ["polarsaw"]),
             "power": (["signal"], ["power"]),
             "uniform": (["signal"], ["bin"]),
@@ -52,8 +51,12 @@ def test():
             "hsl": (["hue", "saturation", "luminosity"], ["red", "green", "blue"]),
             "oklch": (["lightness", "chroma", "hue"], ["red", "green", "blue"]),
         },
-        # the codecs
-        pyre.viz.codecs: {
+        # the normalizers
+        pyre.viz.normalizers: {
+            "parametric": (["signal"], ["parametric"]),
+        },
+        # the encoders
+        pyre.viz.encoders: {
             "bmp": (["red", "green", "blue"], ["image"]),
         },
     }
@@ -70,7 +73,7 @@ def test():
 
     # the settings that the c++ factories take, with their defaults
     assert pyre.viz.filters.decimate().level == 0
-    assert pyre.viz.filters.parametric().interval == (0, 1)
+    assert pyre.viz.normalizers.parametric().interval == (0, 1)
     assert pyre.viz.colormaps.hl().threshold == 0.4
     assert pyre.viz.filters.geometric().bins == 10
     assert pyre.viz.filters.geometric().ratio == 2

@@ -9,11 +9,17 @@
 import pyre
 
 # the protocol
-from ..protocols.Filter import Filter
+from ..protocols.Normalizer import Normalizer
+
+# the specifications of my slots
+from ..protocols.Real import Real
+from ..protocols.Unit import Unit
 
 
-# the filter that maps an interval onto [0,1]
-class Parametric(pyre.flow.factory, family="pyre.viz.filters.parametric", implements=Filter):
+# the normalizer that maps an interval onto [0,1]
+class Parametric(
+    pyre.flow.factory, family="pyre.viz.normalizers.parametric", implements=Normalizer
+):
     """
     The filter that maps the values of a signal in its {interval} onto [0,1], the way the
     colormaps expect them
@@ -24,11 +30,11 @@ class Parametric(pyre.flow.factory, family="pyre.viz.filters.parametric", implem
     interval.doc = "the range of values that maps onto [0,1]"
 
     # the input
-    signal = pyre.viz.tile.input()
+    signal = Real.input()
     signal.doc = "the input signal"
 
     # the output
-    parametric = pyre.viz.tile.output()
+    parametric = Unit.output()
     parametric.doc = "the signal with its {interval} mapped onto [0,1]"
 
 

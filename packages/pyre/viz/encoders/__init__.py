@@ -9,11 +9,11 @@
 import pyre
 
 # the protocol
-from ..protocols.Codec import Codec as codec
+from ..protocols.Encoder import Encoder as encoder
 
 
 # the implementations
-@pyre.foundry(implements=codec, tip="an encoder that produces microsoft v2 BMP rasters")
+@pyre.foundry(implements=encoder, tip="an encoder that produces microsoft v2 BMP rasters")
 def bmp():
     """ """
     # pull the implementation
