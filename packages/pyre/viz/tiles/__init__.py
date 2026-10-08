@@ -11,6 +11,13 @@ import pyre
 # the protocol
 from ..protocols.Tile import Tile as tile
 
+# its refinements, by what the cells hold
+from ..protocols.Complex import Complex as complex
+from ..protocols.Real import Real as real
+from ..protocols.Magnitude import Magnitude as magnitude
+from ..protocols.Unit import Unit as unit
+from ..protocols.Channel import Channel as channel
+
 
 # the implementations
 @pyre.foundry(implements=tile, tip="a tile with dynamically allocated memory")

@@ -9,6 +9,13 @@
 # tiles
 from .Tile import Tile as tile
 
+# refined by what their cells hold
+from .Complex import Complex as complex
+from .Real import Real as real
+from .Magnitude import Magnitude as magnitude
+from .Unit import Unit as unit
+from .Channel import Channel as channel
+
 # and rasters
 from .Raster import Raster as raster
 

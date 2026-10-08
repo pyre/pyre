@@ -973,6 +973,7 @@ pyre_test_python_testcase(tests/pyre.pkg/flow/sanity.py)
 # pyre/viz
 #
 pyre_test_python_testcase(tests/pyre.pkg/viz/descriptions.py)
+pyre_test_python_testcase(tests/pyre.pkg/viz/specifications.py)
 
 
 #
