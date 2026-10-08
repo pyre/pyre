@@ -9,11 +9,11 @@
 import pyre
 
 # the protocol
-from ..protocols.Operator import Operator
+from ..protocols.Binary import Binary
 
 
 # the cell-wise product of two signals
-class Multiply(pyre.flow.factory, family="pyre.viz.operators.multiply", implements=Operator):
+class Multiply(pyre.flow.factory, family="pyre.viz.operators.multiply", implements=Binary):
     """
     The operator that multiplies two signals, sample by sample
     """

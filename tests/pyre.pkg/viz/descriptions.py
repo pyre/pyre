@@ -35,11 +35,11 @@ def test():
         # the operators
         pyre.viz.operators: {
             "add": (["op1", "op2"], ["sum"]),
+            "amplitude": (["signal"], ["amplitude"]),
             "multiply": (["op1", "op2"], ["product"]),
         },
         # the selectors
         pyre.viz.selectors: {
-            "amplitude": (["signal"], ["amplitude"]),
             "imaginary": (["signal"], ["imaginary"]),
             "phase": (["signal"], ["phase"]),
             "real": (["signal"], ["real"]),

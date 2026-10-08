@@ -13,6 +13,18 @@ from ..protocols.Operator import Operator as operator
 
 
 # the implementations
+@pyre.foundry(implements=operator, tip="the amplitude of each sample of a complex signal")
+def amplitude():
+    """
+    The amplitude of each sample of a complex signal
+    """
+    # pull the implementation
+    from .Amplitude import Amplitude
+
+    # and publish it
+    return Amplitude
+
+
 @pyre.foundry(implements=operator, tip="the cell-wise sum of two signals")
 def add():
     """
