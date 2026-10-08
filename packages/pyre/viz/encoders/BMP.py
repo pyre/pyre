@@ -9,24 +9,27 @@
 import pyre
 
 # protocol
-from ..protocols.Codec import Codec
+from ..protocols.Encoder import Encoder
+
+# the specifications of my slots
+from ..protocols.Channel import Channel
 
 
 # a factory of microsoft BMP v2 rasters
-class BMP(pyre.flow.factory, family="pyre.viz.codecs.bmp", implements=Codec):
+class BMP(pyre.flow.factory, family="pyre.viz.encoders.bmp", implements=Encoder):
     """
-    A codec that encodes its {red}, {green} and {blue} channels into a
+    An encoder that encodes its {red}, {green} and {blue} channels into a
     microsoft v2 BMP bitmap
     """
 
     # the inputs
-    red = pyre.viz.tile.input()
+    red = Channel.input()
     red.doc = "the red channel"
 
-    green = pyre.viz.tile.input()
+    green = Channel.input()
     green.doc = "the green channel"
 
-    blue = pyre.viz.tile.input()
+    blue = Channel.input()
     blue.doc = "the blue channel"
 
     # the output

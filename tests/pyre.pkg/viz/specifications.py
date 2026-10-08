@@ -9,7 +9,8 @@
 """
 Check that the tile specifications refine one another by inheritance, by what their cells hold,
 and that a slot typed by a refinement takes a tile of any storage strategy, since what a tile
-holds is a declaration of the slot, not a property of the storage
+holds is a declaration of the slot, not a property of the storage; and that the components of
+the amplitude pipeline type their slots by them, from complex samples to an image
 """
 
 
@@ -64,6 +65,42 @@ def test():
     scaled = tiles.heap()(name="scaled")
     scale.scaled = scaled
     assert scale.scaled is scaled
+
+    # the components of the amplitude pipeline type their slots by the specifications, in order
+    stages = [
+        # complex samples to magnitudes
+        (pyre.viz.operators.amplitude, {"signal": tiles.complex, "amplitude": tiles.magnitude}),
+        # reals to unit values
+        (pyre.viz.normalizers.parametric, {"signal": tiles.real, "parametric": tiles.unit}),
+        # unit values to color channels
+        (
+            pyre.viz.colormaps.gray,
+            {
+                "data": tiles.unit,
+                "red": tiles.channel,
+                "green": tiles.channel,
+                "blue": tiles.channel,
+            },
+        ),
+        # color channels to an image
+        (
+            pyre.viz.encoders.bmp,
+            {
+                "red": tiles.channel,
+                "green": tiles.channel,
+                "blue": tiles.channel,
+                "image": pyre.viz.raster,
+            },
+        ),
+    ]
+    # go through them
+    for foundry, slots in stages:
+        # get the component
+        component = foundry()
+        # check each slot
+        for slot, spec in slots.items():
+            # against its specification
+            assert component.pyre_trait(alias=slot).protocol is spec, (component, slot)
 
     # all done
     return

@@ -11,6 +11,10 @@ import pyre
 # the protocol
 from ..protocols.Colormap import Colormap
 
+# the specifications of my slots
+from ..protocols.Unit import Unit
+from ..protocols.Channel import Channel
+
 
 # the gray colormap
 class Gray(pyre.flow.factory, family="pyre.viz.colormaps.gray", implements=Colormap):
@@ -19,17 +23,17 @@ class Gray(pyre.flow.factory, family="pyre.viz.colormaps.gray", implements=Color
     """
 
     # the input
-    data = pyre.viz.tile.input()
+    data = Unit.input()
     data.doc = "the input signal, a stream of values in [0,1]"
 
     # the outputs
-    red = pyre.viz.tile.output()
+    red = Channel.output()
     red.doc = "the red channel"
 
-    green = pyre.viz.tile.output()
+    green = Channel.output()
     green.doc = "the green channel"
 
-    blue = pyre.viz.tile.output()
+    blue = Channel.output()
     blue.doc = "the blue channel"
 
 

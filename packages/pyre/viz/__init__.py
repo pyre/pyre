@@ -14,19 +14,21 @@ from . import tiles
 
 # factories
 from . import colormaps
+from . import encoders
 from . import filters
+from . import normalizers
 from . import operators
 from . import selectors
-from . import codecs
 
 # easy access to the protocols
 # products
 raster = rasters.raster
 tile = tiles.tile
 # factories
-codec = codecs.codec
 colormap = colormaps.colormap
+encoder = encoders.encoder
 filter = filters.filter
+normalizer = normalizers.normalizer
 operator = operators.operator
 selector = selectors.selector
 
