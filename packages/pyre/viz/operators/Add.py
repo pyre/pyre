@@ -9,11 +9,11 @@
 import pyre
 
 # the protocol
-from ..protocols.Operator import Operator
+from ..protocols.Binary import Binary
 
 
 # the cell-wise sum of two signals
-class Add(pyre.flow.factory, family="pyre.viz.operators.add", implements=Operator):
+class Add(pyre.flow.factory, family="pyre.viz.operators.add", implements=Binary):
     """
     The operator that adds two signals, sample by sample
     """
