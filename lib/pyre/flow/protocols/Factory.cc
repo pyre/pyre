@@ -56,6 +56,8 @@ pyre::flow::protocols::Factory::addInput(const name_type & slot, product_ref_typ
     product->addReader(slot, ref());
     // add the binding to my pile
     _inputs.insert({ slot, product });
+    // what i compute depends on my inputs, so everything downstream of me is stale
+    flush();
     // return a reference to me
     return ref();
 };
@@ -326,14 +328,12 @@ pyre::flow::protocols::Factory::bind(const name_type & name, product_ref_type pr
     unbind(name);
     // an input
     if (description->reads()) {
-        // is bound
+        // is bound, which makes everything downstream of me stale
         addInput(name, product);
-        // and, since what i compute depends on my inputs, makes me stale
-        flush();
         // all done
         return true;
     }
-    // an output is bound, which makes it stale
+    // an output is bound, which makes it and everything downstream of it stale
     addOutput(name, product);
     // all done
     return true;

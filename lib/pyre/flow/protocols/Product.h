@@ -50,8 +50,14 @@ public:
 
     // mutators
 public:
-    inline auto dirty() -> void;
+    // mark me as fresh; only my writers know when that is true
     inline auto clean() -> void;
+
+    // mutators
+protected:
+    // mark me as stale, without telling anybody downstream; everybody else marks me through
+    // {flush}, so that a stale product always has stale products downstream of it
+    inline auto dirty() -> void;
 
     // interface
 public:
@@ -66,7 +72,8 @@ public:
     inline auto ref() -> product_ref_type;
     // ask my factories to remake me
     virtual auto make() -> product_ref_type;
-    // invalidate me and my upstream graph
+    // mark me and everything downstream of me as stale; a flush stops at a product that is stale
+    // already, since everything downstream of it is stale too
     virtual auto flush() -> void override;
 
     // implementation details - data

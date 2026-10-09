@@ -69,8 +69,7 @@ public:
     // bindings and settings by name, checked against my descriptions
 public:
     // bind my slot {name} to {product}, replacing whatever was bound to it; false, and nothing
-    // bound, if i have no such slot or {product} is not one it takes; binding an input flushes
-    // me, since what i compute depends on my inputs
+    // bound, if i have no such slot or {product} is not one it takes
     auto bind(const name_type & name, product_ref_type product) -> bool;
     // undo the binding of my slot {name}; false if i have no such slot or it is not bound
     auto unbind(const name_type & name) -> bool;
@@ -81,7 +80,9 @@ public:
 
     // flow protocol
 public:
-    // bindings
+    // bindings; binding an input flushes me, since what i compute depends on my inputs, and
+    // binding an output flushes the product, since its contents are not mine yet; undoing a
+    // binding flushes nothing, since what i computed stays valid until a replacement is bound
     virtual auto addInput(const name_type & slot, product_ref_type product) -> factory_ref_type;
     virtual auto addOutput(const name_type & slot, product_ref_type product) -> factory_ref_type;
 

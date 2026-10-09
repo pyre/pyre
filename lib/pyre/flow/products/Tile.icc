@@ -157,6 +157,9 @@ template <class gridT>
 auto
 pyre::flow::products::Tile<gridT>::write() -> grid_type &
 {
+    // whatever is computed from my cells is about to be out of date; nobody can tell when the
+    // writing is over, so say so now
+    flush();
     // grant access to my data
     return _data;
 }

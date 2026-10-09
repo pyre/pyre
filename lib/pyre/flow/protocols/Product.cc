@@ -84,6 +84,11 @@ pyre::flow::protocols::Product::flush() -> void
         << pyre::journal::newline
         // flush
         << pyre::journal::endl;
+    // if i am stale already, so is everything downstream of me
+    if (_stale) {
+        // so there is nothing to do
+        return;
+    }
     // chain up
     Node::flush();
     // mark me
@@ -146,3 +151,5 @@ pyre::flow::protocols::Product::make() -> product_ref_type
 
 
 // end of file
+            // ask it to refresh me
+            factory->make(slot, self);
