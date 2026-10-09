@@ -54,7 +54,7 @@ public:
 public:
     // my name
     inline auto name() const -> const name_type &;
-    // the name of the type of my values: "int", "double", or "interval"
+    // the name of the type of my values: "int", "double", "pair", or "interval"
     inline auto type() const -> const name_type &;
 
     // interface
@@ -70,7 +70,8 @@ private:
     template <class valueT>
     static inline auto typeName() -> name_type;
     // extract a value of type {valueT} from {value}, widening an integer where a floating
-    // point value is expected; nothing if {value} holds something else
+    // point value is expected, and a pair of integers where an interval is; nothing if {value}
+    // holds something else
     template <class valueT>
     static inline auto extract(const value_type & value) -> std::optional<valueT>;
 

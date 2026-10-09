@@ -108,6 +108,11 @@ pyre::flow::protocols::Setting::typeName() -> name_type
         // likewise
         return "double";
     }
+    // pairs of integers
+    else if constexpr (std::is_same_v<valueT, pair_t>) {
+        // likewise
+        return "pair";
+    }
     // intervals
     else if constexpr (std::is_same_v<valueT, interval_t>) {
         // likewise
@@ -116,7 +121,7 @@ pyre::flow::protocols::Setting::typeName() -> name_type
     // and nothing else can be described
     else {
         // so refuse to compile
-        static_assert(!sizeof(valueT), "settings hold integers, doubles, or intervals");
+        static_assert(!sizeof(valueT), "settings hold integers, doubles, pairs, or intervals");
     }
 }
 
@@ -137,6 +142,16 @@ pyre::flow::protocols::Setting::extract(const value_type & value) -> std::option
         if (std::holds_alternative<int>(value)) {
             // widened
             return static_cast<double>(std::get<int>(value));
+        }
+    }
+    // an interval
+    if constexpr (std::is_same_v<valueT, interval_t>) {
+        // takes a pair of integers
+        if (std::holds_alternative<pair_t>(value)) {
+            // unpack it
+            auto [low, high] = std::get<pair_t>(value);
+            // and widen it
+            return interval_t(low, high);
         }
     }
     // anything else does not fit
