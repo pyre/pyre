@@ -27,6 +27,10 @@ pyre::py::viz::__init__(py::module & m)
 
     // add the bitmap bindings
     bmp(viz);
+    // the image products
+    images(viz);
+    // and the factories
+    factories(viz);
 
     // all done
     return;
