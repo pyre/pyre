@@ -15,6 +15,16 @@ class Device(pyre.patterns.named):
     Base class for journal devices
     """
 
+    # properties
+    @property
+    def foreign(self) -> bool:
+        """
+        Whether i am implemented outside the journal's own language; in the pure python journal,
+        no device is
+        """
+        # never
+        return False
+
     # interface
     def alert(self, entry):
         """

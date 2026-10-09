@@ -12,7 +12,8 @@ from .Device import Device
 # a device that forwards every entry it receives to each of the devices attached to it
 class Splitter(Device):
     """
-    Journal device that forwards every entry to each of the devices attached to it
+    Journal device that forwards every entry to each of the devices attached to it; empty
+    attachments receive nothing
     """
 
     # constants
@@ -28,12 +29,24 @@ class Splitter(Device):
         # and enable chaining
         return self
 
+    def detach(self, device):
+        """
+        Remove every attachment of {device} from the set i forward to
+        """
+        # keep everything else, in order
+        self.outputs = [output for output in self.outputs if output is not device]
+        # and enable chaining
+        return self
+
     def alert(self, entry):
         """
         Generate an alert
         """
         # go through my devices
         for output in self.outputs:
+            # skip the empty attachments
+            if output is None:
+                continue
             # and hand each one the entry
             output.alert(entry)
         # all done
@@ -45,6 +58,9 @@ class Splitter(Device):
         """
         # go through my devices
         for output in self.outputs:
+            # skip the empty attachments
+            if output is None:
+                continue
             # and hand each one the entry
             output.help(entry)
         # all done
@@ -56,6 +72,9 @@ class Splitter(Device):
         """
         # go through my devices
         for output in self.outputs:
+            # skip the empty attachments
+            if output is None:
+                continue
             # and hand each one the entry
             output.memo(entry)
         # all done
