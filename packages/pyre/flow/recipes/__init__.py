@@ -18,4 +18,8 @@ from .Product import Product as product
 # the recipe
 from .Recipe import Recipe as recipe
 
+# staging
+from .Plan import Plan as plan
+from .Graph import Graph as graph
+
 # end of file

@@ -179,6 +179,45 @@ class Recipe:
         # filter my bindings
         return [b for b in self.bindings if b.product == product and self.writes(binding=b)]
 
+    def ordered(self) -> list:
+        """
+        My factories, each one after the factories that make its inputs, in the order they were
+        added wherever the data does not decide
+        """
+        # the factories, in the order they were added
+        pending = list(self.factories())
+        # the factories each one waits for, by name: the makers of its inputs, other than itself
+        upstream = {
+            node.name: {
+                writer.factory
+                for reader in self.bindings
+                if reader.factory == node.name and self.reads(binding=reader)
+                for writer in self.writers(product=reader.product)
+                if writer.factory != node.name
+            }
+            for node in pending
+        }
+        # the factories in flow order
+        ordered = []
+        # and the names of the ones that have their places
+        placed = set()
+        # until every factory has a place
+        while pending:
+            # the first one whose upstream factories all have their places goes next; a cycle
+            # leaves none, and then the first one in line breaks it
+            ready = next(
+                (node for node in pending if upstream[node.name] <= placed),
+                pending[0],
+            )
+            # place it
+            ordered.append(ready)
+            # remember that it has its place
+            placed.add(ready.name)
+            # and take it out of line
+            pending.remove(ready)
+        # hand off the order
+        return ordered
+
     def reads(self, binding: Binding) -> bool:
         """
         Check whether the factory of {binding} reads its product
@@ -234,6 +273,17 @@ class Recipe:
                 refined = spec
         # hand it off
         return refined
+
+    def stage(self, *, catalog=None, products: dict | None = None):
+        """
+        Choose a c++ engine from {catalog} for every one of my factories, given the types of the
+        {products} that are pinned, and hand back the plan that realizes graphs of them
+        """
+        # the plan knows how
+        from .Plan import Plan
+
+        # stage me
+        return Plan.stage(recipe=self, catalog=catalog, products=products)
 
     # factories of recipes
     @classmethod
