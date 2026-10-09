@@ -13,6 +13,7 @@ from . import rasters
 from . import tiles
 
 # factories
+from . import readers
 from . import colormaps
 from . import encoders
 from . import filters
@@ -26,6 +27,7 @@ from . import slicers
 raster = rasters.raster
 tile = tiles.tile
 # factories
+reader = readers.reader
 colormap = colormaps.colormap
 encoder = encoders.encoder
 filter = filters.filter
