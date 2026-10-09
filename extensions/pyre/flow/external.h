@@ -35,6 +35,12 @@ namespace pyre::py::flow {
     template <typename cellT>
     using tile_t =
         pyre::flow::products::tile_t<pyre::grid::grid_t<packing_t, pyre::memory::heap_t<cellT>>>;
+    // a grid over read-only cells of type {cellT} that live elsewhere, such as in a python buffer
+    template <typename cellT>
+    using viewgrid_t = pyre::grid::grid_t<packing_t, pyre::memory::constview_t<cellT>>;
+    // a raster: a tile over such a grid, which shares the cells rather than copies them
+    template <typename cellT>
+    using raster_t = pyre::flow::products::tile_t<viewgrid_t<cellT>>;
     // the type-erased grid
     using anygrid_t = pyre::py::grid::AnyGrid;
 } // namespace pyre::py::flow

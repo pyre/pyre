@@ -28,6 +28,15 @@ pyre::py::flow::factories(py::module &)
         .registerFactory<pyre::flow::factories::selectors::amplitude_t<complex64_t, float64_t>>();
     // filters
     catalog.registerFactory<pyre::flow::factories::filters::parametric_t<float64_t, float32_t>>();
+    // sources: a window of a raster, copied into a tile of the same cells
+    catalog.registerFactory<
+        pyre::flow::factories::sources::slice_t<raster_t<pyre::memory::float32_t>, float32_t>>();
+    catalog.registerFactory<
+        pyre::flow::factories::sources::slice_t<raster_t<pyre::memory::float64_t>, float64_t>>();
+    catalog.registerFactory<pyre::flow::factories::sources::slice_t<
+        raster_t<pyre::memory::complex64_t>, complex64_t>>();
+    catalog.registerFactory<pyre::flow::factories::sources::slice_t<
+        raster_t<pyre::memory::complex128_t>, tile_t<pyre::memory::complex128_t>>>();
 
     // all done
     return;

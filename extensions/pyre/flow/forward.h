@@ -20,8 +20,10 @@ namespace pyre::py::flow {
     void descriptions(py::module &);
     // the catalog and its entries
     void catalog(py::module &);
-    // the tiles, and the factories of {pyre::flow}, which go in the catalog as well
+    // the tiles, the rasters over python buffers, and the factories of {pyre::flow}, which go in
+    // the catalog as well
     void tiles(py::module &);
+    void rasters(py::module &);
     void factories(py::module &);
 } // namespace pyre::py::flow
 
