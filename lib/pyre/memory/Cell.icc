@@ -162,7 +162,7 @@ struct pyre::memory::CellName<pyre::memory::float32_t> {
     // the name
     inline static auto name() -> string_t { return "Float"; }
     // c++ decl string
-    inline static auto decl() -> string_t { return "std::float_t"; }
+    inline static auto decl() -> string_t { return "float"; }
 };
 
 template <>
@@ -170,7 +170,7 @@ struct pyre::memory::CellName<pyre::memory::float64_t> {
     // the name
     inline static auto name() -> string_t { return "Double"; }
     // c++ decl string
-    inline static auto decl() -> string_t { return "std::double_t"; }
+    inline static auto decl() -> string_t { return "double"; }
 };
 
 template <>
@@ -178,7 +178,7 @@ struct pyre::memory::CellName<pyre::memory::complex64_t> {
     // the name
     inline static auto name() -> string_t { return "ComplexFloat"; }
     // c++ decl string
-    inline static auto decl() -> string_t { return "std::complex<std::float_t>"; }
+    inline static auto decl() -> string_t { return "std::complex<float>"; }
 };
 
 template <>
@@ -186,7 +186,7 @@ struct pyre::memory::CellName<pyre::memory::complex128_t> {
     // the name
     inline static auto name() -> string_t { return "ComplexDouble"; }
     // c++ decl string
-    inline static auto decl() -> string_t { return "std::complex<std::double_t>"; }
+    inline static auto decl() -> string_t { return "std::complex<double>"; }
 };
 
 // byte ordered cells carry the name of the scalar they wrap, tagged with their order
