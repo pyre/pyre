@@ -48,9 +48,9 @@ public:
 
     // factory
 public:
-    // make a tile and fill it and leave it uninitialized
+    // make a tile whose cells are left uninitialized, so it starts stale
     inline static auto create(const name_type & name, shape_type shape) -> ref_type;
-    // make a tile and fill it with a given value
+    // make a tile with every cell set to {value}, so it starts fresh
     inline static auto create(const name_type & name, shape_type shape, cell_type value)
         -> ref_type;
 
