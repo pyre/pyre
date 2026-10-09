@@ -57,9 +57,9 @@ main()
         // unsigned integral types
         std::uint8_t,
         // floats
-        std::float_t, std::double_t,
+        float, double,
         // complex
-        std::complex<std::float_t>, std::complex<std::double_t>>;
+        std::complex<float>, std::complex<double>>;
     // the list of storage strategies
     using strategies_t = pyre::typelists::templates_t<
         // read/write
@@ -77,35 +77,34 @@ main()
                 // read/write
                 // heaps
                 pyre::memory::heap_t<std::int8_t>, pyre::memory::heap_t<std::uint8_t>,
-                pyre::memory::heap_t<std::float_t>, pyre::memory::heap_t<std::double_t>,
-                pyre::memory::heap_t<std::complex<std::float_t>>,
-                pyre::memory::heap_t<std::complex<std::double_t>>,
+                pyre::memory::heap_t<float>, pyre::memory::heap_t<double>,
+                pyre::memory::heap_t<std::complex<float>>,
+                pyre::memory::heap_t<std::complex<double>>,
                 // maps
                 pyre::memory::map_t<std::int8_t>, pyre::memory::map_t<std::uint8_t>,
-                pyre::memory::map_t<std::float_t>, pyre::memory::map_t<std::double_t>,
-                pyre::memory::map_t<std::complex<std::float_t>>,
-                pyre::memory::map_t<std::complex<std::double_t>>,
+                pyre::memory::map_t<float>, pyre::memory::map_t<double>,
+                pyre::memory::map_t<std::complex<float>>, pyre::memory::map_t<std::complex<double>>,
                 // views
                 pyre::memory::view_t<std::int8_t>, pyre::memory::view_t<std::uint8_t>,
-                pyre::memory::view_t<std::float_t>, pyre::memory::view_t<std::double_t>,
-                pyre::memory::view_t<std::complex<std::float_t>>,
-                pyre::memory::view_t<std::complex<std::double_t>>,
+                pyre::memory::view_t<float>, pyre::memory::view_t<double>,
+                pyre::memory::view_t<std::complex<float>>,
+                pyre::memory::view_t<std::complex<double>>,
                 // read-only
                 // heaps
                 pyre::memory::constheap_t<std::int8_t>, pyre::memory::constheap_t<std::uint8_t>,
-                pyre::memory::constheap_t<std::float_t>, pyre::memory::constheap_t<std::double_t>,
-                pyre::memory::constheap_t<std::complex<std::float_t>>,
-                pyre::memory::constheap_t<std::complex<std::double_t>>,
+                pyre::memory::constheap_t<float>, pyre::memory::constheap_t<double>,
+                pyre::memory::constheap_t<std::complex<float>>,
+                pyre::memory::constheap_t<std::complex<double>>,
                 // maps
                 pyre::memory::constmap_t<std::int8_t>, pyre::memory::constmap_t<std::uint8_t>,
-                pyre::memory::constmap_t<std::float_t>, pyre::memory::constmap_t<std::double_t>,
-                pyre::memory::constmap_t<std::complex<std::float_t>>,
-                pyre::memory::constmap_t<std::complex<std::double_t>>,
+                pyre::memory::constmap_t<float>, pyre::memory::constmap_t<double>,
+                pyre::memory::constmap_t<std::complex<float>>,
+                pyre::memory::constmap_t<std::complex<double>>,
                 // views
                 pyre::memory::constview_t<std::int8_t>, pyre::memory::constview_t<std::uint8_t>,
-                pyre::memory::constview_t<std::float_t>, pyre::memory::constview_t<std::double_t>,
-                pyre::memory::constview_t<std::complex<std::float_t>>,
-                pyre::memory::constview_t<std::complex<std::double_t>>>>,
+                pyre::memory::constview_t<float>, pyre::memory::constview_t<double>,
+                pyre::memory::constview_t<std::complex<float>>,
+                pyre::memory::constview_t<std::complex<double>>>>,
         "mismatch in the strategy expansions");
 
     // packings
@@ -127,275 +126,227 @@ main()
             pyre::typelists::types_t<
                 pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::heap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::heap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::heap_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::map_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::map_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::map_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::map_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::map_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::view_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::view_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::view_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::view_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::view_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::view_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::view_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::view_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::view_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::view_t<std::complex<double>>>,
 
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<1>, pyre::memory::constheap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<1>, pyre::memory::constheap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::constheap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::constheap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::constheap_t<std::float_t>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::constheap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::constheap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>,
-                    pyre::memory::constheap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>,
-                    pyre::memory::constheap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::constheap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<1>, pyre::memory::constmap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<1>, pyre::memory::constmap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::constmap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::constmap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::constmap_t<std::float_t>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::constmap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::constmap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>,
-                    pyre::memory::constmap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>,
-                    pyre::memory::constmap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::constmap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<1>, pyre::memory::constview_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<1>, pyre::memory::constview_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::constview_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<1>, pyre::memory::constview_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::constview_t<std::float_t>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::constview_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>, pyre::memory::constview_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>,
-                    pyre::memory::constview_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<1>,
-                    pyre::memory::constview_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<1>, pyre::memory::constview_t<std::complex<double>>>,
 
                 pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::map_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::map_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::map_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::map_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::map_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::view_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::view_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::view_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::view_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::view_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::view_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::view_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::view_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::view_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::view_t<std::complex<double>>>,
 
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<2>, pyre::memory::constheap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<2>, pyre::memory::constheap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::constheap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::constheap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::constheap_t<std::float_t>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::constheap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::constheap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>,
-                    pyre::memory::constheap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>,
-                    pyre::memory::constheap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::constheap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<2>, pyre::memory::constmap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<2>, pyre::memory::constmap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::constmap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::constmap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::constmap_t<std::float_t>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::constmap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::constmap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>,
-                    pyre::memory::constmap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>,
-                    pyre::memory::constmap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::constmap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<2>, pyre::memory::constview_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<2>, pyre::memory::constview_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::constview_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::constview_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::constview_t<std::float_t>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::constview_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>, pyre::memory::constview_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>,
-                    pyre::memory::constview_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<2>,
-                    pyre::memory::constview_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<2>, pyre::memory::constview_t<std::complex<double>>>,
 
                 pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::heap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::heap_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::map_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::map_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::map_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::map_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::map_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::view_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::view_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::view_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::view_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::view_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::view_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::view_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::view_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::view_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::view_t<std::complex<double>>>,
 
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<3>, pyre::memory::constheap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<3>, pyre::memory::constheap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::constheap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::constheap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::constheap_t<std::float_t>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::constheap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::constheap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>,
-                    pyre::memory::constheap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>,
-                    pyre::memory::constheap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::constheap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<3>, pyre::memory::constmap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<3>, pyre::memory::constmap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::constmap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::constmap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::constmap_t<std::float_t>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::constmap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::constmap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>,
-                    pyre::memory::constmap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>,
-                    pyre::memory::constmap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::constmap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<3>, pyre::memory::constview_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<3>, pyre::memory::constview_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::constview_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<3>, pyre::memory::constview_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::constview_t<std::float_t>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::constview_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>, pyre::memory::constview_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>,
-                    pyre::memory::constview_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<3>,
-                    pyre::memory::constview_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<3>, pyre::memory::constview_t<std::complex<double>>>,
 
                 pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::heap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::heap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::heap_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::map_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::map_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::map_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::map_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::map_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::map_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::map_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::map_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::map_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::map_t<std::complex<double>>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::view_t<std::int8_t>>,
                 pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::view_t<std::uint8_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::view_t<std::float_t>>,
-                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::view_t<std::double_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::view_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::view_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::view_t<std::complex<std::float_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::view_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::view_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::view_t<std::complex<double>>>,
 
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<4>, pyre::memory::constheap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<4>, pyre::memory::constheap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::constheap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::constheap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::constheap_t<std::float_t>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::constheap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::constheap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>,
-                    pyre::memory::constheap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>,
-                    pyre::memory::constheap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::constheap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<4>, pyre::memory::constmap_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<4>, pyre::memory::constmap_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::constmap_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::constmap_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::constmap_t<std::float_t>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::constmap_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::constmap_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>,
-                    pyre::memory::constmap_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>,
-                    pyre::memory::constmap_t<std::complex<std::double_t>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::constmap_t<std::complex<double>>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<4>, pyre::memory::constview_t<std::int8_t>>,
                 pyre::grid::grid_t<
                     pyre::grid::canonical_t<4>, pyre::memory::constview_t<std::uint8_t>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::constview_t<float>>,
+                pyre::grid::grid_t<pyre::grid::canonical_t<4>, pyre::memory::constview_t<double>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::constview_t<std::float_t>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::constview_t<std::complex<float>>>,
                 pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>, pyre::memory::constview_t<std::double_t>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>,
-                    pyre::memory::constview_t<std::complex<std::float_t>>>,
-                pyre::grid::grid_t<
-                    pyre::grid::canonical_t<4>,
-                    pyre::memory::constview_t<std::complex<std::double_t>>>>>,
+                    pyre::grid::canonical_t<4>, pyre::memory::constview_t<std::complex<double>>>>>,
         "mismatch in grids_t");
 
     // all done

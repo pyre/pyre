@@ -75,7 +75,7 @@ main(int argc, char * argv[])
     assert(entry.settings().size() == 1);
     assert(entry.settings()[0].name() == "interval");
     // a tile's entry spells the type of its cells
-    assert(catalog.product(float64_t::declSelf())->cell() == "std::double_t");
+    assert(catalog.product(float64_t::declSelf())->cell() == "double");
     // while the image, which is no grid of cells, has none
     assert(catalog.product(image_t::declSelf())->cell().empty());
     // while a type it does not know has no entry

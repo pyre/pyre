@@ -39,7 +39,7 @@ main()
     static_assert(std::is_same_v<nxo_t, nil_t>, "mismatch in nxo_t");
 
     // make a non empty list of length two
-    using real_t = pyre::typelists::types_t<std::float_t, std::double_t>;
+    using real_t = pyre::typelists::types_t<float, double>;
 
     // one x nil
     using oxn_t = pyre::typelists::cartesian_t<real_t, nil_t>::type;
@@ -57,8 +57,8 @@ main()
     static_assert(
         std::is_same_v<
             oxl_t, pyre::typelists::types_t<
-                       pyre::typelists::types_t<std::uint8_t, std::float_t>,
-                       pyre::typelists::types_t<std::uint8_t, std::double_t>>>,
+                       pyre::typelists::types_t<std::uint8_t, float>,
+                       pyre::typelists::types_t<std::uint8_t, double>>>,
         "mismatch in oxl_t");
 
     // list x one
@@ -67,8 +67,8 @@ main()
     static_assert(
         std::is_same_v<
             lxo_t, pyre::typelists::types_t<
-                       pyre::typelists::types_t<std::float_t, std::uint8_t>,
-                       pyre::typelists::types_t<std::double_t, std::uint8_t>>>,
+                       pyre::typelists::types_t<float, std::uint8_t>,
+                       pyre::typelists::types_t<double, std::uint8_t>>>,
         "mismatch in lxo_t");
 
     // a deeper example

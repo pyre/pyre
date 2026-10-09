@@ -46,34 +46,32 @@ main()
 
 #if NYI
     // a list of length one
-    using one_t = types_t<std::float_t>;
+    using one_t = types_t<float>;
     // merge
     using ox1_t = merge_t<std::uint8_t, one_t>::type;
     // check
     static_assert(
-        std::is_same_v<ox1_t, types_t<types_t<std::uint8_t, std::float_t>>>, "mismatch in ox1_t");
+        std::is_same_v<ox1_t, types_t<types_t<std::uint8_t, float>>>, "mismatch in ox1_t");
 
     // a list of length two
-    using two_t = types_t<std::float_t, std::double_t>;
+    using two_t = types_t<float, double>;
     // merge
     using ox2_t = merge_t<std::uint8_t, two_t>::type;
     // check
     static_assert(
-        std::is_same_v<
-            ox2_t,
-            types_t<types_t<std::uint8_t, std::float_t>, types_t<std::uint8_t, std::double_t>>>,
+        std::is_same_v<ox2_t, types_t<types_t<std::uint8_t, float>, types_t<std::uint8_t, double>>>,
         "mismatch in ox2_t");
 
     // a list of length three
-    using three_t = types_t<std::uint64_t, std::float_t, std::double_t>;
+    using three_t = types_t<std::uint64_t, float, double>;
     // merge
     using ox3_t = merge_t<std::uint8_t, three_t>::type;
     // check
     static_assert(
         std::is_same_v<
             ox3_t, types_t<
-                       types_t<std::uint8_t, std::uint64_t>, types_t<std::uint8_t, std::float_t>,
-                       types_t<std::uint8_t, std::double_t>>>,
+                       types_t<std::uint8_t, std::uint64_t>, types_t<std::uint8_t, float>,
+                       types_t<std::uint8_t, double>>>,
         "mismatch in ox3_t");
 #endif
 

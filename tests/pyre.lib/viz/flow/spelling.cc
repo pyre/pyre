@@ -46,13 +46,13 @@ main(int argc, char * argv[])
     const auto complex64 =
         "pyre::flow::products::tile_t<pyre::grid::grid_t<"
         "pyre::grid::canonical_t<2>, "
-        "pyre::memory::heap_t<std::complex<std::float_t>>>>";
+        "pyre::memory::heap_t<std::complex<float>>>>";
     const auto float64 =
         "pyre::flow::products::tile_t<pyre::grid::grid_t<"
-        "pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::double_t>>>";
+        "pyre::grid::canonical_t<2>, pyre::memory::heap_t<double>>>";
     const auto float32 =
         "pyre::flow::products::tile_t<pyre::grid::grid_t<"
-        "pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::float_t>>>";
+        "pyre::grid::canonical_t<2>, pyre::memory::heap_t<float>>>";
     // a tile spells its declaration with the one of its grid
     assert(complex64_t::declSelf() == complex64);
     assert(float64_t::declSelf() == float64);

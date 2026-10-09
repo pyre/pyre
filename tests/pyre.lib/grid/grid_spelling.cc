@@ -34,7 +34,7 @@ main(int argc, char * argv[])
     // the grid spells its declaration with the ones of its two strategies
     assert(
         grid_t::declSelf()
-        == "pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::double_t>>");
+        == "pyre::grid::grid_t<pyre::grid::canonical_t<2>, pyre::memory::heap_t<double>>");
     // and its readable name likewise
     assert(grid_t::className() == "GridCanonical2DHeapDouble");
     // all done
