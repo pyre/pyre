@@ -12,6 +12,75 @@
 #include "Decimate.h"
 
 
+// simulate my c++ declaration
+template <class signalT>
+auto
+pyre::flow::factories::filters::Decimate<signalT>::declSelf() -> string_type
+{
+    // the type alias, with the declarations of my slots
+    return "pyre::flow::factories::filters::decimate_t<" + signal_type::declSelf() + ">";
+}
+
+
+// the human readable form of my class name
+template <class signalT>
+auto
+pyre::flow::factories::filters::Decimate<signalT>::className() -> string_type
+{
+    // my kind
+    return "Decimate";
+}
+
+
+// the descriptions of my slots
+template <class signalT>
+auto
+pyre::flow::factories::filters::Decimate<signalT>::declSlots() -> const slots_type &
+{
+    // my slots, in the order i declare them
+    static const slots_type table {
+        slot_type::input<signal_type>("signal"),
+        slot_type::output<signal_type>("decimated"),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my settings
+template <class signalT>
+auto
+pyre::flow::factories::filters::Decimate<signalT>::declSettings() -> const settings_type &
+{
+    // my settings
+    static const settings_type table {
+        setting_type::of<self_type>("level", &self_type::level, &self_type::level),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my slots
+template <class signalT>
+auto
+pyre::flow::factories::filters::Decimate<signalT>::slots() const -> const slots_type &
+{
+    // the ones of my type
+    return declSlots();
+}
+
+
+// the descriptions of my settings
+template <class signalT>
+auto
+pyre::flow::factories::filters::Decimate<signalT>::settings() const -> const settings_type &
+{
+    // the ones of my type
+    return declSettings();
+}
+
+
 // factory
 template <class signalT>
 auto
