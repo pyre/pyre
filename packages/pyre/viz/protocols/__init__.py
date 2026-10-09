@@ -19,6 +19,9 @@ from .Channel import Channel as channel
 # and rasters
 from .Raster import Raster as raster
 
+# what a reader finds in a file
+from .Datasets import Datasets as datasets
+
 # the protocols of the factories
 from .Selector import Selector as selector
 from .Filter import Filter as filter
@@ -27,5 +30,6 @@ from .Colormap import Colormap as colormap
 from .Normalizer import Normalizer as normalizer
 from .Encoder import Encoder as encoder
 from .Slicer import Slicer as slicer
+from .Reader import Reader as reader
 
 # end of file
