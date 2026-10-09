@@ -34,6 +34,7 @@ namespace pyre::flow::factories {
 // the api of each sub-namespace
 #include "filters/api.h"
 #include "selectors/api.h"
+#include "sources/api.h"
 
 
 // end of file

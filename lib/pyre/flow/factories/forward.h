@@ -38,6 +38,7 @@ namespace pyre::flow::factories {
 
 // the per-namespace forward declarations
 #include "filters/forward.h"
+#include "sources/forward.h"
 #include "selectors/forward.h"
 
 

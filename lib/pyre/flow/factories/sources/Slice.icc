@@ -1,0 +1,275 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Slice.h"
+
+
+// simulate my c++ declaration
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::declSelf() -> string_type
+{
+    // the type alias, with the declarations of my slots
+    return "pyre::flow::factories::sources::slice_t<" + source_type::declSelf() + ", "
+         + slice_type::declSelf() + ">";
+}
+
+
+// the human readable form of my class name
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::className() -> string_type
+{
+    // my kind
+    return "Slice";
+}
+
+
+// the descriptions of my slots
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::declSlots() -> const slots_type &
+{
+    // my slots, in the order i declare them
+    static const slots_type table {
+        slot_type::input<source_type>("source"),
+        slot_type::output<slice_type>("slice"),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my settings
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::declSettings() -> const settings_type &
+{
+    // my settings
+    static const settings_type table {
+        setting_type::of<self_type>("origin", &self_type::origin, &self_type::origin),
+        setting_type::of<self_type>("stride", &self_type::stride, &self_type::stride),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my slots
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::slots() const -> const slots_type &
+{
+    // the ones of my type
+    return declSlots();
+}
+
+
+// the descriptions of my settings
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::settings() const -> const settings_type &
+{
+    // the ones of my type
+    return declSettings();
+}
+
+
+// factory
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::create(
+    const name_type & name, pair_type origin, pair_type stride) -> factory_ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Slice>(sentinel_type(), name, origin, stride);
+    // hand it off
+    return ref;
+}
+
+
+// destructor
+template <class sourceT, class sliceT>
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::~Slice()
+{}
+
+
+// constructor
+template <class sourceT, class sliceT>
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::Slice(
+    sentinel_type sentinel, const name_type & name, pair_type origin, pair_type stride) :
+    // superclass
+    super_type(sentinel, name),
+    // members
+    _origin { origin },
+    _stride { stride }
+{}
+
+
+// the location of the window
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::origin() const -> pair_type
+{
+    // easy enough
+    return _origin;
+}
+
+
+// the distance between the cells it samples
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::stride() const -> pair_type
+{
+    // easy enough
+    return _stride;
+}
+
+
+// the product bound to my {source} slot
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::source() -> source_ref_type
+{
+    // look it up and cast it to its type
+    return std::dynamic_pointer_cast<source_type>(input("source"));
+}
+
+
+// the product bound to my {slice} slot
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::slice() -> slice_ref_type
+{
+    // look it up and cast it to its type
+    return std::dynamic_pointer_cast<slice_type>(output("slice"));
+}
+
+
+// move the window
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::origin(pair_type origin) -> factory_ref_type
+{
+    // record the new origin
+    _origin = origin;
+    // what i make is out of date
+    flush();
+    // hand off a reference to me
+    return std::dynamic_pointer_cast<Slice>(ref());
+}
+
+
+// change the distance between the cells it samples
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::stride(pair_type stride) -> factory_ref_type
+{
+    // record the new stride
+    _stride = stride;
+    // what i make is out of date
+    flush();
+    // hand off a reference to me
+    return std::dynamic_pointer_cast<Slice>(ref());
+}
+
+
+// bind my {source} slot
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::source(source_ref_type source)
+    -> factory_ref_type
+{
+    // bind it, which flushes me
+    addInput("source", std::static_pointer_cast<pyre::flow::protocols::Product>(source));
+    // hand off a reference to me
+    return std::dynamic_pointer_cast<Slice>(ref());
+}
+
+
+// bind my {slice} slot
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::slice(slice_ref_type slice)
+    -> factory_ref_type
+{
+    // bind it, which makes it stale
+    addOutput("slice", std::static_pointer_cast<pyre::flow::protocols::Product>(slice));
+    // hand off a reference to me
+    return std::dynamic_pointer_cast<Slice>(ref());
+}
+
+
+// copy the window into my tile
+template <class sourceT, class sliceT>
+auto
+pyre::flow::factories::sources::Slice<sourceT, sliceT>::make(
+    const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
+{
+    // chain up
+    auto self = super_type::make(slot, product);
+    // the raster
+    const auto & raster = this->source()->read();
+    // and the tile
+    auto & tile = this->slice()->write();
+    // unpack the window
+    const auto [line, sample] = _origin;
+    const auto [lineStride, sampleStride] = _stride;
+    // the shape of the tile, which is the shape of the window
+    const auto shape = tile.packing().shape();
+    const auto lines = static_cast<int>(shape[0]);
+    const auto samples = static_cast<int>(shape[1]);
+    // and of the raster
+    const auto extent = raster.packing().shape();
+    // the last cell the window samples along each axis
+    const auto lastLine = (line + lines - 1) * lineStride;
+    const auto lastSample = (sample + samples - 1) * sampleStride;
+    // a window that does not fit inside the raster
+    if (line < 0 || sample < 0 || lastLine >= static_cast<int>(extent[0])
+        || lastSample >= static_cast<int>(extent[1])) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.flow.factories.sources.slice");
+        // complain
+        channel
+            // where
+            << pyre::journal::at()
+            // what
+            << "slice '" << name() << "': the window does not fit in its raster"
+            << pyre::journal::newline
+            << pyre::journal::indent
+            // the window
+            << "origin: (" << line << ", " << sample << "), stride: (" << lineStride << ", "
+            << sampleStride << "), shape: (" << lines << ", " << samples << ")"
+            << pyre::journal::newline
+            // the raster
+            << "raster: (" << extent[0] << ", " << extent[1] << ")" << pyre::journal::outdent
+            << pyre::journal::endl;
+        // and leave the tile as it is
+        return self;
+    }
+    // the index of a cell of the raster
+    using index_type = typename source_type::grid_type::index_type;
+    // go through the lines of the tile
+    for (int row = 0; row < lines; ++row) {
+        // and the cells of each line
+        for (int column = 0; column < samples; ++column) {
+            // the cell of the raster that lands here
+            auto index = index_type { (line + row) * lineStride, (sample + column) * sampleStride };
+            // copy it
+            tile[row * samples + column] = raster[index];
+        }
+    }
+    // all done
+    return self;
+}
+
+
+// end of file
