@@ -93,10 +93,20 @@ namespace pyre::py::flow {
 void
 pyre::py::flow::rasters(py::module & m)
 {
-    // real cells
+    // signed integers
+    bindRaster<pyre::memory::int8_t>(m);
+    bindRaster<pyre::memory::int16_t>(m);
+    bindRaster<pyre::memory::int32_t>(m);
+    bindRaster<pyre::memory::int64_t>(m);
+    // unsigned integers
+    bindRaster<pyre::memory::uint8_t>(m);
+    bindRaster<pyre::memory::uint16_t>(m);
+    bindRaster<pyre::memory::uint32_t>(m);
+    bindRaster<pyre::memory::uint64_t>(m);
+    // floating point
     bindRaster<pyre::memory::float32_t>(m);
     bindRaster<pyre::memory::float64_t>(m);
-    // complex cells
+    // complex
     bindRaster<pyre::memory::complex64_t>(m);
     bindRaster<pyre::memory::complex128_t>(m);
 
@@ -115,6 +125,14 @@ pyre::py::flow::rasters(py::module & m)
             }
             // try the cell types, one at a time
             for (auto raster : {
+                     makeRaster<pyre::memory::int8_t>(info, name),
+                     makeRaster<pyre::memory::int16_t>(info, name),
+                     makeRaster<pyre::memory::int32_t>(info, name),
+                     makeRaster<pyre::memory::int64_t>(info, name),
+                     makeRaster<pyre::memory::uint8_t>(info, name),
+                     makeRaster<pyre::memory::uint16_t>(info, name),
+                     makeRaster<pyre::memory::uint32_t>(info, name),
+                     makeRaster<pyre::memory::uint64_t>(info, name),
                      makeRaster<pyre::memory::float32_t>(info, name),
                      makeRaster<pyre::memory::float64_t>(info, name),
                      makeRaster<pyre::memory::complex64_t>(info, name),

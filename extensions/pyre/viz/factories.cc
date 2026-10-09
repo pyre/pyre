@@ -18,13 +18,23 @@ pyre::py::viz::factories(py::module &)
 {
     // the tiles
     using float32_t = pyre::py::flow::tile_t<pyre::memory::float32_t>;
+    using float64_t = pyre::py::flow::tile_t<pyre::memory::float64_t>;
 
     // get the catalog
     auto & catalog = pyre::py::flow::registry();
     // colormaps
+    // gray, in single precision, for the channels that paint a value
     catalog.registerFactory<pyre::viz::factories::colormaps::gray_t<float32_t>>();
+    // hue, saturation, and brightness, all in double precision, for the phase
+    catalog.registerFactory<pyre::viz::factories::colormaps::hsb_t<float64_t>>();
+    // and with a single precision brightness, for the complex channel
+    catalog.registerFactory<pyre::viz::factories::colormaps::hsb_t<
+        float64_t, float64_t, float32_t, float64_t, float64_t, float64_t>>();
     // codecs
+    // the bitmap of single precision colors
     catalog.registerFactory<pyre::viz::factories::codecs::bmp_t<float32_t>>();
+    // and of double precision ones
+    catalog.registerFactory<pyre::viz::factories::codecs::bmp_t<float64_t>>();
 
     // all done
     return;
