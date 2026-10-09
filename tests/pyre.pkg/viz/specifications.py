@@ -71,7 +71,7 @@ def test():
         # complex samples to magnitudes
         (pyre.viz.operators.amplitude, {"signal": tiles.complex, "amplitude": tiles.magnitude}),
         # reals to unit values
-        (pyre.viz.normalizers.parametric, {"signal": tiles.real, "parametric": tiles.unit}),
+        (pyre.viz.normalizers.parametric, {"signal": tiles.real, "normalized": tiles.unit}),
         # unit values to color channels
         (
             pyre.viz.colormaps.gray,

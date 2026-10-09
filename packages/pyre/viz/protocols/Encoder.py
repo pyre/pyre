@@ -8,12 +8,30 @@
 # support
 import pyre
 
+# the specifications of my slots
+from .Channel import Channel
+from .Raster import Raster
+
 
 # the protocol for all image encoders
 class Encoder(pyre.flow.producer, family="pyre.viz.encoders"):
     """
     The image encoder protocol
     """
+
+    # the inputs
+    red = Channel.input()
+    red.doc = "the red channel"
+
+    green = Channel.input()
+    green.doc = "the green channel"
+
+    blue = Channel.input()
+    blue.doc = "the blue channel"
+
+    # the output
+    image = Raster.output()
+    image.doc = "the encoded image"
 
     # framework hooks
     @classmethod
