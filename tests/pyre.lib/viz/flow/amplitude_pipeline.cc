@@ -226,7 +226,7 @@ main(int argc, char * argv[])
         // a magnitude of 5 in [0, 40] is an eighth of the way to white
         assert(std::abs(red->read()[5] - 0.125) < 1e-5);
 
-        // a rebinding of an input alone is another matter: a second signal, with twice the
+        // a rebinding of an input alone works the same way: a second signal, with twice the
         // magnitudes
         auto other = signal_t::create("other", shape, 0.0f);
         // filled
@@ -238,11 +238,13 @@ main(int argc, char * argv[])
         }
         // takes the place of the first one at the input of the selector
         selector->removeInput("signal");
-        selector->signal(other);
-        // which flushed nothing: the magnitudes still describe the first signal
+        // undoing the binding flushed nothing, since what was computed stays valid until a
+        // replacement is bound
         assert(!amplitude->stale() && !image->stale());
-        // the editor has to flush the factory it rebound, which makes its outputs stale
-        selector->flush();
+        // binding the replacement
+        selector->signal(other);
+        // flushes the selector, since what it computes depends on its inputs
+        assert(amplitude->stale() && image->stale());
         // so the next pull repaints
         image->read();
         // a magnitude of 10 in [0, 40] is a quarter of the way to white
