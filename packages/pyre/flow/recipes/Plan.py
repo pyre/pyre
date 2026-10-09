@@ -40,19 +40,39 @@ class Plan:
     @classmethod
     def tile(cls, *, catalog, cell: str) -> str:
         """
-        The declaration of the type of the tiles in {catalog} whose cells are of type {cell}, as
+        The declaration of the type of the tiles in {catalog} that own cells of type {cell}, as
         python names it: float32, float64, complex64, or complex128
+        """
+        # find it among the products the catalog can make
+        return cls.find(catalog=catalog, cell=cell, makes=True)
+
+    @classmethod
+    def raster(cls, *, catalog, cell: str) -> str:
+        """
+        The declaration of the type of the rasters in {catalog} that wrap cells of type {cell}
+        they do not own, as python names it: float32, float64, complex64, or complex128
+        """
+        # find it among the products the catalog cannot make
+        return cls.find(catalog=catalog, cell=cell, makes=False)
+
+    @classmethod
+    def find(cls, *, catalog, cell: str, makes: bool) -> str:
+        """
+        The declaration of the type of the products in {catalog} whose cells are of type {cell},
+        and which the catalog can make, or not, as {makes} says
         """
         # the spelling of the cell
         decl = cls.cells.get(cell)
         # go through the products of the catalog
         for entry in catalog.products.values():
-            # until the one whose cells are spelled this way
-            if decl is not None and entry.cell == decl:
+            # until the one whose cells are spelled this way, and which is made the right way
+            if decl is not None and entry.cell == decl and entry.makes == makes:
                 # hand it off
                 return entry.decl
-        # a cell type the catalog has no tiles of
-        raise UnresolvedProductError(node=cell, reason=f"the catalog has no tiles of {cell}")
+        # a cell type the catalog has no such products of
+        raise UnresolvedProductError(
+            node=cell, reason=f"the catalog has no such products of {cell}"
+        )
 
     @classmethod
     def stage(cls, *, recipe, catalog=None, products: dict | None = None):
@@ -198,21 +218,32 @@ class Plan:
         return entries
 
     # interface
-    def realize(self, *, shape: tuple) -> Graph:
+    def realize(self, *, shape: tuple, nodes: dict | None = None) -> Graph:
         """
         Make the nodes of my recipe for tiles of the given {shape}, apply the settings of the
-        factories, and bind them
+        factories, and bind them; {nodes} holds products made elsewhere, such as a raster over
+        the cells of a dataset, by the names of the products of my recipe they stand for
         """
         # unpack
         recipe, catalog, kinds = self.recipe, self.catalog, self.kinds
-        # the nodes, by name
-        nodes = {}
-        # make the products
+        # the nodes, by name, starting with the ones made elsewhere
+        nodes = dict(nodes or {})
+        # make the rest of the products
         for product in recipe.products():
+            # skipping the ones made elsewhere
+            if product.name in nodes:
+                # on to the next
+                continue
             # at the shape of the realization
-            nodes[product.name] = catalog.makeProduct(
-                decl=kinds[product.name], name=product.name, shape=shape
-            )
+            made = catalog.makeProduct(decl=kinds[product.name], name=product.name, shape=shape)
+            # a product the catalog cannot make
+            if made is None:
+                # must be made elsewhere
+                raise RealizationError(
+                    node=product.name, reason="the catalog cannot make it from a shape"
+                )
+            # file it
+            nodes[product.name] = made
         # make the factories
         for factory in recipe.factories():
             # one at a time
