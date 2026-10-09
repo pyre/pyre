@@ -10,6 +10,9 @@
 
 // get the common ones
 #include "../external.h"
+// the flow bindings, whose protocols and catalog the viz nodes join
+#include "../flow/external.h"
+#include "../flow/forward.h"
 // get the pyre parts
 #include <pyre/viz.h>
 
@@ -18,6 +21,8 @@
 namespace pyre::py::viz {
     // bitmaps
     using bmp_t = pyre::viz::iterators::codecs::bmp_t;
+    // the bitmap image products
+    using image_t = pyre::viz::products::images::bmp_t;
 
 } // namespace pyre::py::viz
 

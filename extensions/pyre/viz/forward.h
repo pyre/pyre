@@ -12,6 +12,9 @@
 namespace pyre::py::viz {
     // bitmaps
     void bmp(py::module &);
+    // the image products, and the factories of {pyre::viz}, which go in the catalog
+    void images(py::module &);
+    void factories(py::module &);
 } // namespace pyre::py::viz
 
 

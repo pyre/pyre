@@ -16,6 +16,7 @@
 #include "memory/__init__.h"
 #include "grid/__init__.h"
 #include "timers/__init__.h"
+#include "flow/__init__.h"
 #include "viz/__init__.h"
 #include "chroma/__init__.h"
 
@@ -34,6 +35,8 @@ PYBIND11_MODULE(pyre, m)
     pyre::py::grid::__init__(m);
     // timers
     pyre::py::timers::__init__(m);
+    // flow, whose protocols the viz nodes build on
+    pyre::py::flow::__init__(m);
     // viz
     pyre::py::viz::__init__(m);
     // chroma
