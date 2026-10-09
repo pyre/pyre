@@ -105,6 +105,15 @@ pyre::journal::py::chronicler(py::module & m)
             // the docstring
             "suppress all output from all channels")
 
+        // forget the foreign devices
+        .def_static(
+            "detachForeign",
+            // the implementation
+            &chronicler_t::detachForeign,
+            // the docstring
+            "detach every device implemented in python from the journal; the default device "
+            "becomes a console, and the channels fall back on the devices above them")
+
         // all done
         ;
 

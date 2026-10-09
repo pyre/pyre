@@ -14,6 +14,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
+// pyre is built against pybind11 3.0 or later
+static_assert(PYBIND11_VERSION_MAJOR >= 3, "pyre requires pybind11 3.0 or later");
 
 // make certain STL containers opaque
 PYBIND11_MAKE_OPAQUE(pyre::journal::page_t);

@@ -40,6 +40,14 @@ PYBIND11_MODULE(journal, m)
 
     // convenience functions at module level
     pyre::journal::py::api(m);
+
+    // detach the devices implemented in python while the interpreter can still release them; the
+    // journal outlives the interpreter, but its references to python objects must not
+    pybind11::module_::import("atexit").attr("register")(
+        pybind11::cpp_function(&pyre::journal::chronicler_t::detachForeign));
+
+    // all done
+    return;
 }
 
 
