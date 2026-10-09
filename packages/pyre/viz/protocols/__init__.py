@@ -26,5 +26,6 @@ from .Operator import Operator as operator
 from .Colormap import Colormap as colormap
 from .Normalizer import Normalizer as normalizer
 from .Encoder import Encoder as encoder
+from .Slicer import Slicer as slicer
 
 # end of file

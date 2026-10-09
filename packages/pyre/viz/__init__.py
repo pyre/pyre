@@ -19,6 +19,7 @@ from . import filters
 from . import normalizers
 from . import operators
 from . import selectors
+from . import slicers
 
 # easy access to the protocols
 # products
@@ -31,6 +32,7 @@ filter = filters.filter
 normalizer = normalizers.normalizer
 operator = operators.operator
 selector = selectors.selector
+slicer = slicers.slicer
 
 
 # end of file
