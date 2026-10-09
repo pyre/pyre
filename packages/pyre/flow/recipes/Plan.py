@@ -1,0 +1,278 @@
+# -*- python -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# support
+import pyre
+
+# the exceptions i raise
+from ..exceptions import (
+    NoComponentError,
+    NoEngineError,
+    RealizationError,
+    UnresolvedProductError,
+)
+
+# my parts
+from .Graph import Graph
+
+
+# a recipe staged against a catalog
+class Plan:
+    """
+    A recipe staged against a catalog of c++ engines: every node of the recipe has the
+    declaration of the type of the c++ node that stands for it, chosen so that each factory
+    takes the products its neighbors make; a plan realizes graphs for any tile shape
+    """
+
+    # the spellings of the cells that python names
+    cells = {
+        "float32": "std::float_t",
+        "float64": "std::double_t",
+        "complex64": "std::complex<std::float_t>",
+        "complex128": "std::complex<std::double_t>",
+    }
+
+    # factories
+    @classmethod
+    def tile(cls, *, catalog, cell: str) -> str:
+        """
+        The declaration of the type of the tiles in {catalog} whose cells are of type {cell}, as
+        python names it: float32, float64, complex64, or complex128
+        """
+        # the spelling of the cell
+        decl = cls.cells.get(cell)
+        # go through the products of the catalog
+        for entry in catalog.products.values():
+            # until the one whose cells are spelled this way
+            if decl is not None and entry.cell == decl:
+                # hand it off
+                return entry.decl
+        # a cell type the catalog has no tiles of
+        raise UnresolvedProductError(node=cell, reason=f"the catalog has no tiles of {cell}")
+
+    @classmethod
+    def stage(cls, *, recipe, catalog=None, products: dict | None = None):
+        """
+        Choose a c++ engine for every factory of {recipe} from {catalog}, so that the types of
+        the products agree on both sides of every binding; {products} pins the types of some
+        products, typically the sources, by the declarations of their types
+        """
+        # use the catalog of the extension, unless told otherwise
+        catalog = pyre.libpyre.flow.catalog() if catalog is None else catalog
+        # the types of the products that are pinned
+        kinds = dict(products or {})
+        # go through them
+        for name, decl in kinds.items():
+            # a type the catalog cannot make
+            if decl not in catalog.products:
+                # cannot be pinned
+                raise UnresolvedProductError(node=name, reason=f"the catalog cannot make {decl}")
+        # the factories, in the order the data flows through them
+        order = recipe.ordered()
+        # the engines that could do the work of each one
+        candidates = {node.name: cls.engines(node=node, catalog=catalog) for node in order}
+        # the factory that blocked the search the deepest, in case there is no solution
+        blocked = [None, -1]
+
+        # place the factories, one at a time, backing up when one cannot be placed
+        def solve(index: int, kinds: dict) -> dict | None:
+            """
+            Choose engines for the factories from {index} on, given the types in {kinds}
+            """
+            # if every factory has an engine
+            if index == len(order):
+                # the types are the answer
+                return kinds
+            # the factory to place
+            node = order[index]
+            # its bindings
+            bindings = [b for b in recipe.bindings if b.factory == node.name]
+            # go through the engines that could do its work
+            for entry in candidates[node.name]:
+                # its slots, by name
+                slots = {slot.name: slot for slot in entry.slots}
+                # an engine fits if it has every slot the recipe binds, taking the products of
+                # the types the neighbors settled on
+                if not all(
+                    b.slot in slots
+                    and kinds.get(b.product, slots[b.slot].product) == slots[b.slot].product
+                    for b in bindings
+                ):
+                    # this one does not
+                    continue
+                # the types with this engine in place
+                extended = dict(kinds)
+                # the engine settles the types of the products it is bound to
+                extended.update((b.product, slots[b.slot].product) for b in bindings)
+                # and its own
+                extended[node.name] = entry.decl
+                # place the rest
+                found = solve(index + 1, extended)
+                # if they fit
+                if found is not None:
+                    # this is the answer
+                    return found
+            # nothing fits here; if this is the deepest the search has been blocked
+            if index > blocked[1]:
+                # remember where
+                blocked[:] = [node.name, index]
+            # and back up
+            return None
+
+        # stage
+        kinds = solve(0, kinds)
+        # if there is no way
+        if kinds is None:
+            # say which factory could not be placed
+            raise NoEngineError(
+                node=blocked[0],
+                reason="no engine in the catalog takes the products its neighbors make",
+            )
+        # every product must have a type by now
+        for product in recipe.products():
+            # if this one does not
+            if product.name not in kinds:
+                # it is bound to nothing and was not pinned
+                raise UnresolvedProductError(
+                    node=product.name, reason="it is bound to no factory and was not pinned"
+                )
+        # make a plan and hand it off
+        return cls(recipe=recipe, catalog=catalog, kinds=kinds)
+
+    @classmethod
+    def component(cls, *, node):
+        """
+        The component class that does the work of the factory {node}: the class it is pinned to,
+        the class of the instance it is pinned to, or the default of its protocol
+        """
+        # get the pin
+        pin = node.pin
+        # a factory pinned to a class
+        if isinstance(pin, type):
+            # uses it
+            return pin
+        # one pinned to an instance
+        if pin is not None:
+            # uses its class
+            return type(pin)
+        # otherwise, ask the protocol for its preferred implementation
+        default = node.protocol.pyre_default()
+        # a foundry
+        if isinstance(default, pyre.foundry):
+            # hands out the class it stands for
+            default = default()
+        # a protocol with no preferred implementation
+        if default is None:
+            # leaves the factory without a component
+            raise NoComponentError(
+                node=node.name, reason=f"{node.protocol} has no default implementation"
+            )
+        # hand it off
+        return default
+
+    @classmethod
+    def engines(cls, *, node, catalog) -> list:
+        """
+        The entries of {catalog} that can do the work of the factory {node}, in a stable order
+        """
+        # the component that does the work
+        component = cls.component(node=node)
+        # the templates it names
+        templates = set(component.pyre_engines)
+        # the entries that instantiate them
+        entries = sorted(
+            (e for e in catalog.factories.values() if e.decl.split("<", 1)[0] in templates),
+            key=lambda entry: entry.decl,
+        )
+        # a component the catalog has no engines for
+        if not entries:
+            # cannot be staged
+            raise NoEngineError(
+                node=node.name, reason=f"the catalog has no engines for {component.__name__}"
+            )
+        # hand them off
+        return entries
+
+    # interface
+    def realize(self, *, shape: tuple) -> Graph:
+        """
+        Make the nodes of my recipe for tiles of the given {shape}, apply the settings of the
+        factories, and bind them
+        """
+        # unpack
+        recipe, catalog, kinds = self.recipe, self.catalog, self.kinds
+        # the nodes, by name
+        nodes = {}
+        # make the products
+        for product in recipe.products():
+            # at the shape of the realization
+            nodes[product.name] = catalog.makeProduct(
+                decl=kinds[product.name], name=product.name, shape=shape
+            )
+        # make the factories
+        for factory in recipe.factories():
+            # one at a time
+            made = catalog.makeFactory(decl=kinds[factory.name], name=factory.name)
+            # apply its settings
+            for name, value in self.settings(factory=factory, made=made).items():
+                # one at a time
+                if not made.set(setting=name, value=value):
+                    # a setting the engine refuses
+                    raise RealizationError(
+                        node=factory.name, reason=f"its engine refuses {name}={value!r}"
+                    )
+            # and file it
+            nodes[factory.name] = made
+        # the graph
+        graph = Graph(recipe=recipe, nodes=nodes)
+        # go through the bindings
+        for binding in recipe.bindings:
+            # bind
+            if not nodes[binding.factory].bind(slot=binding.slot, product=nodes[binding.product]):
+                # a binding the engine refuses leaves nothing behind
+                graph.dismantle()
+                # and is reported
+                raise RealizationError(
+                    node=binding.factory, reason=f"its engine refuses to bind '{binding.slot}'"
+                )
+        # hand off the graph
+        return graph
+
+    def settings(self, *, factory, made) -> dict:
+        """
+        The settings to apply to the engine {made} for the {factory} of my recipe: the values of
+        the traits of the instance it is pinned to, if any, overridden by the ones the recipe
+        records
+        """
+        # the settings
+        settings = {}
+        # a factory pinned to an instance
+        if factory.level == "instance":
+            # carries the values of the engine's settings in its traits
+            for setting in made.settings:
+                # one at a time
+                settings[setting.name] = getattr(factory.pin, setting.name)
+        # the recipe has the last word
+        settings.update(factory.settings)
+        # hand them off
+        return settings
+
+    # metamethods
+    def __init__(self, *, recipe, catalog, kinds: dict, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the recipe
+        self.recipe = recipe
+        # the catalog
+        self.catalog = catalog
+        # and the declarations of the types of its nodes, by name
+        self.kinds = kinds
+        # all done
+        return
+
+
+# end of file

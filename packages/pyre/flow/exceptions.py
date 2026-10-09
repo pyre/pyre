@@ -143,4 +143,49 @@ class IncompatibleBindingError(RecipeError):
         return
 
 
+class StagingError(RecipeError):
+    """
+    Base class for the errors raised while staging a recipe against a catalog
+    """
+
+    # public data
+    description = "while staging '{0.node}': {0.reason}"
+
+    # metamethods
+    def __init__(self, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the reason
+        self.reason = reason
+        # all done
+        return
+
+
+class NoComponentError(StagingError):
+    """
+    Exception raised when a factory of a recipe is pinned to nothing and its protocol has no
+    default component
+    """
+
+
+class NoEngineError(StagingError):
+    """
+    Exception raised when no instantiation in the catalog can do the work of a factory, given
+    the products its neighbors make
+    """
+
+
+class UnresolvedProductError(StagingError):
+    """
+    Exception raised when staging cannot tell the type of a product of a recipe
+    """
+
+
+class RealizationError(StagingError):
+    """
+    Exception raised when a staged recipe cannot be built into a graph: a node the catalog does
+    not make, a setting a factory refuses, or a binding it refuses
+    """
+
+
 # end of file
