@@ -12,6 +12,26 @@
 #include "Tile.h"
 
 
+// simulate my c++ declaration
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::declSelf() -> string_type
+{
+    // the type alias, with the declaration of my grid
+    return "pyre::flow::products::tile_t<" + grid_type::declSelf() + ">";
+}
+
+
+// the human readable form of my class name
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::className() -> string_type
+{
+    // my kind, and the name of my grid
+    return "Tile" + grid_type::className();
+}
+
+
 // factory
 template <class gridT>
 auto

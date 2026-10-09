@@ -29,6 +29,8 @@
 
 // the basic types, so we are on the same page as the packages they come from
 namespace pyre::viz {
+    // strings, as {flow} has them
+    using string_t = flow::string_t;
     // an interval is a pair of doubles, its two ends, as {flow} has it
     using interval_t = flow::interval_t;
     // color channels and {r,g,b} triplets come from {chroma}, the single source of color truth

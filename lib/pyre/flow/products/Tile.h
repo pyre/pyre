@@ -36,6 +36,15 @@ public:
 
     // shared pointers to my instances
     using ref_type = std::shared_ptr<Tile>;
+    // the spelling of types
+    using string_type = string_t;
+
+    // the spelling of my type
+public:
+    // simulate my c++ declaration
+    static inline auto declSelf() -> string_type;
+    // the human readable form of my class name
+    static inline auto className() -> string_type;
 
     // factory
 public:
