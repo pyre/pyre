@@ -24,6 +24,7 @@
 // the public headers of each sub-namespace
 #include "filters/public.h"
 #include "selectors/public.h"
+#include "sources/public.h"
 
 
 // end of file
