@@ -65,6 +65,9 @@ public:
     virtual auto settings() const -> const settings_type &;
     // the description of my slot {name}, or nothing if i have no such slot
     auto slot(const name_type & name) const -> const slot_type *;
+    // the input slots i cannot read: the described ones that are not bound, and the bound ones
+    // whose products have gone away
+    auto missing() const -> std::vector<name_type>;
 
     // bindings and settings by name, checked against my descriptions
 public:

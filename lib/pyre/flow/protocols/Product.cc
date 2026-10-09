@@ -136,11 +136,36 @@ pyre::flow::protocols::Product::make() -> product_ref_type
         });
         // go through the rest
         for (auto & [slot, writer] : _writers) {
-            // ask each one to refresh me, if it is still around
-            if (auto factory = writer.lock()) {
-                // by making me
-                factory->make(slot, self);
+            // get the factory
+            auto factory = writer.lock();
+            // the inputs it cannot read
+            auto lost = factory->missing();
+            // if there are any
+            if (!lost.empty()) {
+                // make a channel
+                auto channel = pyre::journal::error_t("pyre.flow.products.make");
+                // complain
+                channel
+                    // where
+                    << pyre::journal::at()
+                    // what
+                    << "cannot make '" << name() << "'"
+                    << pyre::journal::newline
+                    // why
+                    << "factory '" << factory->name() << "' cannot read its input slots"
+                    << pyre::journal::newline << pyre::journal::indent;
+                // go through the slots
+                for (const auto & input : lost) {
+                    // name each one
+                    channel << input << pyre::journal::newline;
+                }
+                // flush
+                channel << pyre::journal::outdent << pyre::journal::endl;
+                // and leave me stale
+                return self;
             }
+            // ask it to refresh me
+            factory->make(slot, self);
         }
         // mark me as clean
         clean();
@@ -151,5 +176,3 @@ pyre::flow::protocols::Product::make() -> product_ref_type
 
 
 // end of file
-            // ask it to refresh me
-            factory->make(slot, self);

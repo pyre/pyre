@@ -411,4 +411,31 @@ pyre::flow::protocols::Factory::set(const name_type & name, const setting_value_
 }
 
 
+// the input slots i cannot read
+auto
+pyre::flow::protocols::Factory::missing() const -> std::vector<name_type>
+{
+    // the slots
+    auto lost = std::vector<name_type>();
+    // go through the descriptions of my slots
+    for (const auto & description : slots()) {
+        // an input that is not bound
+        if (description.reads() && _inputs.count(description.name()) == 0) {
+            // cannot be read
+            lost.push_back(description.name());
+        }
+    }
+    // go through my bound inputs
+    for (const auto & [slot, input] : _inputs) {
+        // one whose product has gone away
+        if (input.expired()) {
+            // cannot be read either
+            lost.push_back(slot);
+        }
+    }
+    // hand them off
+    return lost;
+}
+
+
 // end of file
