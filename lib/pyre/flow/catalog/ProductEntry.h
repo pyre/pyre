@@ -34,7 +34,8 @@ public:
     // metamethods
 public:
     // constructor
-    inline ProductEntry(decl_type decl, name_type className, decl_type cell, maker_type make);
+    inline ProductEntry(
+        decl_type decl, name_type className, decl_type cell, bool makes, maker_type make);
     // destructor
     ~ProductEntry() = default;
     // entries are values: they copy and move freely
@@ -51,10 +52,14 @@ public:
     inline auto className() const -> const name_type &;
     // the declaration of the type of their cells; empty for products that are not grids of cells
     inline auto cell() const -> const decl_type &;
+    // whether i can make products from a shape; products that wrap cells they do not own come
+    // into a graph made by whoever owns the cells
+    inline auto makes() const -> bool;
 
     // interface
 public:
-    // make a product named {name} of the given {shape}
+    // make a product named {name} of the given {shape}; nothing for products that wrap cells they
+    // do not own, which come into a graph made by whoever owns the cells
     inline auto make(const name_type & name, shape_type shape) const -> product_ref_type;
 
     // implementation details - data
@@ -65,6 +70,8 @@ private:
     name_type _className;
     // the declaration of the type of their cells
     decl_type _cell;
+    // whether i can make them from a shape
+    bool _makes;
     // how to make one
     maker_type _make;
 };

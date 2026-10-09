@@ -77,7 +77,7 @@ public:
     // interface
 public:
     // make a product of the type declared as {decl}, named {name}, of the given {shape};
-    // nothing if i do not know the type
+    // nothing if i do not know the type, or if its products wrap cells they do not own
     inline auto makeProduct(const decl_type & decl, const name_type & name, shape_type shape) const
         -> product_ref_type;
     // make a factory of the type declared as {decl}, named {name}; nothing if i do not know

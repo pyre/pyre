@@ -21,9 +21,20 @@ pyre::flow::catalog::Catalog::registerProduct() -> const product_entry_type &
     auto make = [](const name_type & name, shape_type shape) -> product_ref_type {
         // a tile
         if constexpr (requires { typename productT::grid_type; }) {
-            // starts out with every cell set to the zero of its type, so nobody reads memory
-            // nobody wrote
-            return productT::create(name, shape, typename productT::cell_type {});
+            // its storage
+            using storage_type = typename productT::storage_type;
+            // one that owns its cells
+            if constexpr (
+                std::is_constructible_v<storage_type, typename storage_type::cell_count_type>) {
+                // starts out with every cell set to the zero of its type, so nobody reads memory
+                // nobody wrote
+                return productT::create(name, shape, typename productT::cell_type {});
+            }
+            // one that wraps cells it does not own, such as the ones of a memory mapped file
+            else {
+                // cannot be made from a shape
+                return nullptr;
+            }
         }
         // anything else
         else {
@@ -33,16 +44,22 @@ pyre::flow::catalog::Catalog::registerProduct() -> const product_entry_type &
     };
     // the declaration of the type of the cells
     auto cell = decl_type();
+    // and whether the products can be made from a shape, which all but some tiles can
+    auto makes = true;
     // which only tiles have
     if constexpr (requires { typename productT::grid_type; }) {
-        // so ask their storage
-        cell = productT::storage_type::declValue();
+        // their storage
+        using storage_type = typename productT::storage_type;
+        // knows the type of the cells
+        cell = storage_type::declValue();
+        // and whether it owns them
+        makes = std::is_constructible_v<storage_type, typename storage_type::cell_count_type>;
     }
     // the declaration of the type
     auto decl = productT::declSelf();
     // file the entry, replacing an earlier one
     auto [where, _] = _products.insert_or_assign(
-        decl, product_entry_type(decl, productT::className(), cell, make));
+        decl, product_entry_type(decl, productT::className(), cell, makes, make));
     // and hand it off
     return where->second;
 }
