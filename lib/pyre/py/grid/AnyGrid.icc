@@ -180,6 +180,19 @@ pyre::py::grid::AnyGrid::writable() const -> bool
 }
 
 
+// a view of my cells that python may read but not write
+inline auto
+pyre::py::grid::AnyGrid::readonly() const -> AnyGrid
+{
+    // a copy of me, which shares my cells and the handle that keeps them alive
+    auto view = *this;
+    // with writing turned off
+    view._writable = false;
+    // hand it off
+    return view;
+}
+
+
 // the storage strategy that holds my cells
 inline auto
 pyre::py::grid::AnyGrid::strategy() const -> const string_t &

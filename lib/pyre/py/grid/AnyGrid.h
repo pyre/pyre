@@ -53,6 +53,8 @@ public:
     auto writable() const -> bool;
     // which storage strategy backs me, kept for clients that care how my cells are held
     auto strategy() const -> const string_t &;
+    // a view of my cells that python may read but not write, sharing them and their keeper
+    auto readonly() const -> AnyGrid;
 
     // item access
 public:
