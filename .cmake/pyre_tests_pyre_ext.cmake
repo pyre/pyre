@@ -15,6 +15,12 @@ pyre_test_python_testcase(tests/pyre.ext/timers/wall_timer_example.py)
 pyre_test_python_testcase(tests/pyre.ext/timers/process_timer_instance.py)
 pyre_test_python_testcase(tests/pyre.ext/timers/process_timer_example.py)
 
+# the flow bindings test suite
+pyre_test_python_testcase(tests/pyre.ext/flow/catalog.py)
+pyre_test_python_testcase(tests/pyre.ext/flow/factories.py)
+pyre_test_python_testcase(tests/pyre.ext/flow/tiles.py)
+pyre_test_python_testcase(tests/pyre.ext/flow/amplitude.py)
+
 # the grid bindings test suite
 pyre_test_python_testcase(tests/pyre.ext/grid/sanity.py)
 pyre_test_python_testcase(tests/pyre.ext/grid/heap.py)
