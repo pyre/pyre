@@ -30,6 +30,7 @@ def test():
         pyre.viz.filter,
         pyre.viz.colormap,
         pyre.viz.encoder,
+        pyre.viz.slicer,
     ]
     # the templates the components name, by component
     named = {}
