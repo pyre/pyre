@@ -106,8 +106,11 @@ main(int argc, char * argv[])
     auto products =
         std::vector<product_ref_t> { signal, magnitude, normalized, red, green, blue, image };
 
-    // a product that nothing writes holds what was put in it, so it starts fresh
+    // a product starts fresh exactly when what it was made with is meaningful: a tile filled with
+    // a value holds that value
     assert(!signal->stale());
+    // while one whose cells were left uninitialized holds nothing yet
+    assert(float32_t::create("blank", shape)->stale());
 
     // the factories, wired one slot at a time, checking the rule after every binding
     auto selector = selector_t::create("amplitude");
