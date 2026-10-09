@@ -30,10 +30,10 @@ class Plan:
 
     # the spellings of the cells that python names
     cells = {
-        "float32": "std::float_t",
-        "float64": "std::double_t",
-        "complex64": "std::complex<std::float_t>",
-        "complex128": "std::complex<std::double_t>",
+        "float32": "float",
+        "float64": "double",
+        "complex64": "std::complex<float>",
+        "complex128": "std::complex<double>",
     }
 
     # factories
