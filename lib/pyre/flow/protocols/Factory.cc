@@ -100,8 +100,11 @@ pyre::flow::protocols::Factory::removeInput(const name_type & slot) -> factory_r
     auto self = ref();
     // find the product
     auto product = input(slot);
-    // detach me as a product readers
-    product->removeReader(slot, self);
+    // if it is still around
+    if (product) {
+        // detach me as one of its readers
+        product->removeReader(slot, self);
+    }
     // remove the binding from my pile
     _inputs.erase(slot);
 
@@ -223,9 +226,11 @@ pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type pr
         << pyre::journal::endl;
 
     // go through my inputs
-    for (auto & [slot, product] : _inputs) {
+    for (auto & [slot, input] : _inputs) {
+        // get the product, if it is still around
+        auto product = input.lock();
         // find the stale ones
-        if (product->stale()) {
+        if (product && product->stale()) {
             // show me
             channel
                 // where

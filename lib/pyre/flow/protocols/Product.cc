@@ -88,10 +88,18 @@ pyre::flow::protocols::Product::flush() -> void
     Node::flush();
     // mark me
     dirty();
-    // go through my readers
+    // forget the readers that have gone away
+    std::erase_if(_readers, [](const slot_type & binding) {
+        // which the expired references are
+        return std::get<1>(binding).expired();
+    });
+    // go through the rest
     for (auto & [slot, reader] : _readers) {
-        // and flush each one
-        reader->flush();
+        // and flush each one, if it is still around
+        if (auto factory = reader.lock()) {
+            // by asking it to flush
+            factory->flush();
+        }
     }
     // all done
     return;
@@ -116,10 +124,18 @@ pyre::flow::protocols::Product::make() -> product_ref_type
     auto self = ref();
     // if i'm stale
     if (_stale) {
-        // go through my writers
+        // forget the writers that have gone away
+        std::erase_if(_writers, [](const slot_type & binding) {
+            // which the expired references are
+            return std::get<1>(binding).expired();
+        });
+        // go through the rest
         for (auto & [slot, writer] : _writers) {
-            // ask each one to refresh me
-            writer->make(slot, self);
+            // ask each one to refresh me, if it is still around
+            if (auto factory = writer.lock()) {
+                // by making me
+                factory->make(slot, self);
+            }
         }
         // mark me as clean
         clean();
