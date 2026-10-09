@@ -48,6 +48,9 @@ pyre_test_python_cleanup_journal("device_file_append.*.scratch" tests/journal.ap
 pyre_test_python_cleanup_journal("device_file_name.*.scratch" tests/journal.api/device_file_name.py)
 pyre_test_python_cleanup_journal("device_file_path.*.scratch" tests/journal.api/device_file_path.py)
 pyre_test_python_testcase_journal(tests/journal.api/device_init.py)
+pyre_test_python_testcase_journal(tests/journal.api/entry_keywords.py)
+pyre_test_python_testcase_journal(tests/journal.api/entry_notes.py)
+pyre_test_python_testcase_journal(tests/journal.api/entry_page.py)
 pyre_test_python_testcase_journal_env(tests/journal.api/env_debug.py
   "JOURNAL_DEBUG=tests.journal.env.one,tests.journal.env.two")
 pyre_test_python_testcase_journal_env(tests/journal.api/env_decor.py "JOURNAL_DECOR=3")
