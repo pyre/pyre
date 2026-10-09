@@ -54,6 +54,15 @@ pyre::py::flow::catalog(py::module & m)
         &product_entry_t::className,
         // the docstring
         "the readable name of the class of my products");
+    // whether it can make its products from a shape
+    productEntry.def_property_readonly(
+        // the name
+        "makes",
+        // the implementation
+        &product_entry_t::makes,
+        // the docstring
+        "whether i can make my products from a shape; products that wrap cells they do not own "
+        "come into a graph made by whoever owns the cells");
     // the declaration of the type of its cells
     productEntry.def_property_readonly(
         // the name

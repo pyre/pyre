@@ -31,6 +31,8 @@ pyre::py::flow::__init__(py::module & m)
     catalog(flow);
     // the tiles
     tiles(flow);
+    // the rasters
+    rasters(flow);
     // and the factories
     factories(flow);
     // all done
