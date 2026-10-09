@@ -8,14 +8,22 @@
 # superclass
 from .Operator import Operator
 
+# the specification of my input
+from .Tile import Tile
+
 
 # the operators that take one input; a building block of the operators, with no family of its own,
 # so it takes no part in resolving names or in finding the components that implement the
 # operators
 class Unary(Operator):
     """
-    The protocol of the unary operators: pointwise functions of one input
+    The protocol of the unary operators: pointwise functions of one input; the output depends
+    on the operator
     """
+
+    # the input
+    signal = Tile.input()
+    signal.doc = "the values to operate on"
 
 
 # end of file

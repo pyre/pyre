@@ -34,8 +34,8 @@ class Parametric(
     signal.doc = "the input signal"
 
     # the output
-    parametric = Unit.output()
-    parametric.doc = "the signal with its {interval} mapped onto [0,1]"
+    normalized = Unit.output()
+    normalized.doc = "the signal with its {interval} mapped onto [0,1]"
 
 
 # end of file

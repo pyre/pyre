@@ -11,6 +11,9 @@ import pyre
 # the protocol
 from ..protocols.Colormap import Colormap
 
+# the specification of my outputs
+from ..protocols.Channel import Channel
+
 
 # the HSL color map
 class HSL(pyre.flow.factory, family="pyre.viz.colormaps.hsl", implements=Colormap):
@@ -29,13 +32,13 @@ class HSL(pyre.flow.factory, family="pyre.viz.colormaps.hsl", implements=Colorma
     luminosity.doc = "the luminosity channel"
 
     # the outputs
-    red = pyre.viz.tile.output()
+    red = Channel.output()
     red.doc = "the red channel"
 
-    green = pyre.viz.tile.output()
+    green = Channel.output()
     green.doc = "the green channel"
 
-    blue = pyre.viz.tile.output()
+    blue = Channel.output()
     blue.doc = "the blue channel"
 
 

@@ -53,7 +53,7 @@ def test():
         },
         # the normalizers
         pyre.viz.normalizers: {
-            "parametric": (["signal"], ["parametric"]),
+            "parametric": (["signal"], ["normalized"]),
         },
         # the encoders
         pyre.viz.encoders: {
