@@ -14,12 +14,12 @@
 #include "../../protocols/Factory.h"
 
 // map values in [a,b] onto [0,1]
-template <class signalT, class parametricT>
+template <class signalT, class normalizedT>
 class pyre::flow::factories::filters::Parametric : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me
-    using self_type = Parametric<signalT, parametricT>;
+    using self_type = Parametric<signalT, normalizedT>;
     // my superclass
     using super_type = pyre::flow::protocols::Factory;
     // my interval
@@ -27,13 +27,13 @@ public:
     // my input slot
     using signal_type = signalT;
     // my output slot
-    using parametric_type = parametricT;
+    using normalized_type = normalizedT;
 
     // ref to me
     using factory_ref_type = std::shared_ptr<Parametric>;
     // and to my products
     using signal_ref_type = std::shared_ptr<signal_type>;
-    using parametric_ref_type = std::shared_ptr<parametric_type>;
+    using normalized_ref_type = std::shared_ptr<normalized_type>;
 
     // factory
 public:
@@ -53,8 +53,8 @@ public:
     auto interval() const -> interval_type;
     // get the product bound to my {signal} slot
     auto signal() -> signal_ref_type;
-    // get the product bound to my {parametric} slot
-    auto parametric() -> parametric_ref_type;
+    // get the product bound to my {normalized} slot
+    auto normalized() -> normalized_ref_type;
 
     // mutators
 public:
@@ -62,8 +62,8 @@ public:
     auto interval(interval_type interval) -> factory_ref_type;
     // set the product bound to my {signal} slot
     auto signal(signal_ref_type) -> factory_ref_type;
-    // set the product bound to my {parametric} slot
-    auto parametric(parametric_ref_type) -> factory_ref_type;
+    // set the product bound to my {normalized} slot
+    auto normalized(normalized_ref_type) -> factory_ref_type;
 
     // flow protocol
 public:

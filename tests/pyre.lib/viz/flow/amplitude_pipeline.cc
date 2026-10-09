@@ -112,7 +112,7 @@ main(int argc, char * argv[])
         selector->amplitude(amplitude);
         // the normalizer reads the magnitudes and writes the normalized values
         normalizer->signal(amplitude);
-        normalizer->parametric(normalized);
+        normalizer->normalized(normalized);
         // the colormap reads the normalized values and paints the three channels
         colormap->data(normalized);
         colormap->red(red);
@@ -213,10 +213,10 @@ main(int argc, char * argv[])
         auto replacement = normalizer_t::create("replacement", { 0.0, 40.0 });
         // unbind the old one from both of its products
         normalizer->removeInput("signal");
-        normalizer->removeOutput("parametric");
+        normalizer->removeOutput("normalized");
         // and bind the new one in its place
         replacement->signal(amplitude);
-        replacement->parametric(normalized);
+        replacement->normalized(normalized);
         // binding its output flushed the normalized values, and everything downstream of them
         assert(normalized->stale() && image->stale());
         // so the next pull repaints
@@ -275,7 +275,7 @@ main(int argc, char * argv[])
         colormap->removeOutput("blue");
         // the normalizer that replaced the first one
         replacement->removeInput("signal");
-        replacement->removeOutput("parametric");
+        replacement->removeOutput("normalized");
         // and the selector
         selector->removeInput("signal");
         selector->removeOutput("amplitude");

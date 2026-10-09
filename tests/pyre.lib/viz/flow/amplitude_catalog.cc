@@ -154,7 +154,7 @@ makeCatalog() -> catalog_t
     catalog.factories["parametric(float64 -> float32)"] = {
         // the slots
         { { "signal", direction_t::input, "tile.float64" },
-          { "parametric", direction_t::output, "tile.float32" } },
+          { "normalized", direction_t::output, "tile.float32" } },
         // the settings
         { "interval" },
         // how to make one
@@ -253,7 +253,7 @@ amplitudeRecipe() -> recipe_t
         { "amplitude", "signal", "signal" },
         { "amplitude", "amplitude", "magnitude" },
         { "normalizer", "signal", "magnitude" },
-        { "normalizer", "parametric", "normalized" },
+        { "normalizer", "normalized", "normalized" },
         { "gray", "data", "normalized" },
         { "gray", "red", "red" },
         { "gray", "green", "green" },
@@ -425,7 +425,7 @@ handBuilt(shape_t shape) -> std::vector<char>
     selector->signal(signal);
     selector->amplitude(magnitude);
     normalizer->signal(magnitude);
-    normalizer->parametric(normalized);
+    normalizer->normalized(normalized);
     colormap->data(normalized);
     colormap->red(red);
     colormap->green(green);
@@ -452,7 +452,7 @@ handBuilt(shape_t shape) -> std::vector<char>
     colormap->removeOutput("green");
     colormap->removeOutput("blue");
     normalizer->removeInput("signal");
-    normalizer->removeOutput("parametric");
+    normalizer->removeOutput("normalized");
     selector->removeInput("signal");
     selector->removeOutput("amplitude");
     // and hand off the bytes
