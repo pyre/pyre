@@ -12,6 +12,79 @@
 #include "Parametric.h"
 
 
+// simulate my c++ declaration
+template <class signalT, class normalizedT>
+auto
+pyre::flow::factories::filters::Parametric<signalT, normalizedT>::declSelf() -> string_type
+{
+    // the type alias, with the declarations of my slots
+    return "pyre::flow::factories::filters::parametric_t<" + signal_type::declSelf() + ", "
+         + normalized_type::declSelf() + ">";
+}
+
+
+// the human readable form of my class name
+template <class signalT, class normalizedT>
+auto
+pyre::flow::factories::filters::Parametric<signalT, normalizedT>::className() -> string_type
+{
+    // my kind
+    return "Parametric";
+}
+
+
+// the descriptions of my slots
+template <class signalT, class normalizedT>
+auto
+pyre::flow::factories::filters::Parametric<signalT, normalizedT>::declSlots() -> const slots_type &
+{
+    // my slots, in the order i declare them
+    static const slots_type table {
+        slot_type::input<signal_type>("signal"),
+        slot_type::output<normalized_type>("normalized"),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my settings
+template <class signalT, class normalizedT>
+auto
+pyre::flow::factories::filters::Parametric<signalT, normalizedT>::declSettings()
+    -> const settings_type &
+{
+    // my settings
+    static const settings_type table {
+        setting_type::of<self_type>("interval", &self_type::interval, &self_type::interval),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my slots
+template <class signalT, class normalizedT>
+auto
+pyre::flow::factories::filters::Parametric<signalT, normalizedT>::slots() const
+    -> const slots_type &
+{
+    // the ones of my type
+    return declSlots();
+}
+
+
+// the descriptions of my settings
+template <class signalT, class normalizedT>
+auto
+pyre::flow::factories::filters::Parametric<signalT, normalizedT>::settings() const
+    -> const settings_type &
+{
+    // the ones of my type
+    return declSettings();
+}
+
+
 // factory
 template <class signalT, class normalizedT>
 auto

@@ -12,6 +12,77 @@
 #include "Amplitude.h"
 
 
+// simulate my c++ declaration
+template <class signalT, class amplitudeT>
+auto
+pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSelf() -> string_type
+{
+    // the type alias, with the declarations of my slots
+    return "pyre::flow::factories::selectors::amplitude_t<" + signal_type::declSelf() + ", "
+         + amplitude_type::declSelf() + ">";
+}
+
+
+// the human readable form of my class name
+template <class signalT, class amplitudeT>
+auto
+pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::className() -> string_type
+{
+    // my kind
+    return "Amplitude";
+}
+
+
+// the descriptions of my slots
+template <class signalT, class amplitudeT>
+auto
+pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSlots() -> const slots_type &
+{
+    // my slots, in the order i declare them
+    static const slots_type table {
+        slot_type::input<signal_type>("signal"),
+        slot_type::output<amplitude_type>("amplitude"),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my settings
+template <class signalT, class amplitudeT>
+auto
+pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSettings()
+    -> const settings_type &
+{
+    // i have none
+    static const settings_type table {};
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my slots
+template <class signalT, class amplitudeT>
+auto
+pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::slots() const
+    -> const slots_type &
+{
+    // the ones of my type
+    return declSlots();
+}
+
+
+// the descriptions of my settings
+template <class signalT, class amplitudeT>
+auto
+pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::settings() const
+    -> const settings_type &
+{
+    // the ones of my type
+    return declSettings();
+}
+
+
 // factory
 template <class signalT, class amplitudeT>
 auto
