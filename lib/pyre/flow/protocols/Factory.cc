@@ -268,4 +268,142 @@ pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type pr
 }
 
 
+// the descriptions of my slots
+auto
+pyre::flow::protocols::Factory::slots() const -> const slots_type &
+{
+    // a factory that does not describe its slots has none
+    static const slots_type none {};
+    // hand them off
+    return none;
+}
+
+
+// the descriptions of my settings
+auto
+pyre::flow::protocols::Factory::settings() const -> const settings_type &
+{
+    // a factory that does not describe its settings has none
+    static const settings_type none {};
+    // hand them off
+    return none;
+}
+
+
+// the description of my slot {name}
+auto
+pyre::flow::protocols::Factory::slot(const name_type & name) const -> const slot_type *
+{
+    // get my slots
+    const auto & table = slots();
+    // look for the one with this name
+    auto found = std::find_if(table.begin(), table.end(), [&name](const slot_type & slot) {
+        // by comparing names
+        return slot.name() == name;
+    });
+    // hand off its address, or nothing if it is not there
+    return found == table.end() ? nullptr : &*found;
+}
+
+
+// bind my slot {name} to {product}
+auto
+pyre::flow::protocols::Factory::bind(const name_type & name, product_ref_type product) -> bool
+{
+    // look up the slot
+    auto description = slot(name);
+    // a slot i do not have, or a product it does not take
+    if (description == nullptr || !description->accepts(product)) {
+        // binds nothing
+        return false;
+    }
+    // forget whatever the slot is bound to
+    unbind(name);
+    // an input
+    if (description->reads()) {
+        // is bound
+        addInput(name, product);
+        // and, since what i compute depends on my inputs, makes me stale
+        flush();
+        // all done
+        return true;
+    }
+    // an output is bound, which makes it stale
+    addOutput(name, product);
+    // all done
+    return true;
+}
+
+
+// undo the binding of my slot {name}
+auto
+pyre::flow::protocols::Factory::unbind(const name_type & name) -> bool
+{
+    // look up the slot
+    auto description = slot(name);
+    // a slot i do not have
+    if (description == nullptr) {
+        // has nothing to undo
+        return false;
+    }
+    // an input
+    if (description->reads()) {
+        // that is not bound
+        if (_inputs.count(name) == 0) {
+            // has nothing to undo
+            return false;
+        }
+        // otherwise, undo its binding
+        removeInput(name);
+        // all done
+        return true;
+    }
+    // an output that is not bound
+    if (_outputs.count(name) == 0) {
+        // has nothing to undo
+        return false;
+    }
+    // otherwise, undo its binding
+    removeOutput(name);
+    // all done
+    return true;
+}
+
+
+// read my setting {name}
+auto
+pyre::flow::protocols::Factory::get(const name_type & name) const
+    -> std::optional<setting_value_type>
+{
+    // go through my settings
+    for (const auto & setting : settings()) {
+        // until the one with this name
+        if (setting.name() == name) {
+            // read it
+            return setting.get(*this);
+        }
+    }
+    // a setting i do not have has no value
+    return std::nullopt;
+}
+
+
+// change my setting {name}
+auto
+pyre::flow::protocols::Factory::set(const name_type & name, const setting_value_type & value)
+    -> bool
+{
+    // go through my settings
+    for (const auto & setting : settings()) {
+        // until the one with this name
+        if (setting.name() == name) {
+            // change it
+            return setting.set(*this, value);
+        }
+    }
+    // a setting i do not have cannot be changed
+    return false;
+}
+
+
 // end of file

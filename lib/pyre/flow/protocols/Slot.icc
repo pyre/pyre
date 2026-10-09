@@ -1,0 +1,105 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Slot.h"
+
+
+// describe a slot that reads products of type {productT}
+template <class productT>
+auto
+pyre::flow::protocols::Slot::input(const name_type & name) -> self_type
+{
+    // a product fits if it is one of the type the factory reads
+    auto accepts = [](const product_ref_type & product) -> bool {
+        // which is decided by its actual type
+        return std::dynamic_pointer_cast<productT>(product) != nullptr;
+    };
+    // assemble the description and hand it off
+    return self_type(name, true, productT::declSelf(), accepts);
+}
+
+
+// describe a slot that writes products of type {productT}
+template <class productT>
+auto
+pyre::flow::protocols::Slot::output(const name_type & name) -> self_type
+{
+    // a product fits if it is one of the type the factory writes
+    auto accepts = [](const product_ref_type & product) -> bool {
+        // which is decided by its actual type
+        return std::dynamic_pointer_cast<productT>(product) != nullptr;
+    };
+    // assemble the description and hand it off
+    return self_type(name, false, productT::declSelf(), accepts);
+}
+
+
+// constructor
+pyre::flow::protocols::Slot::Slot(
+    name_type name, bool reads, decl_type product, accepts_type accepts) :
+    _name(std::move(name)),
+    _reads(reads),
+    _product(std::move(product)),
+    _accepts(std::move(accepts))
+{}
+
+
+// my name
+auto
+pyre::flow::protocols::Slot::name() const -> const name_type &
+{
+    // easy enough
+    return _name;
+}
+
+
+// whether my factory reads the product bound to me
+auto
+pyre::flow::protocols::Slot::reads() const -> bool
+{
+    // easy enough
+    return _reads;
+}
+
+
+// whether my factory writes the product bound to me
+auto
+pyre::flow::protocols::Slot::writes() const -> bool
+{
+    // the other way around
+    return !_reads;
+}
+
+
+// the declaration of the products i take
+auto
+pyre::flow::protocols::Slot::product() const -> const decl_type &
+{
+    // easy enough
+    return _product;
+}
+
+
+// check whether {product} is one of the products i take
+auto
+pyre::flow::protocols::Slot::accepts(const product_ref_type & product) const -> bool
+{
+    // no product fits nowhere
+    if (!product) {
+        // so refuse it
+        return false;
+    }
+    // otherwise, ask the check
+    return _accepts(product);
+}
+
+
+// end of file
