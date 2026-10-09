@@ -11,12 +11,15 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <functional>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <variant>
 #include <vector>
 
 // support
@@ -29,6 +32,8 @@ namespace pyre::flow {
     using string_t = std::string;
     // an interval is a pair of doubles, its two ends
     using interval_t = std::tuple<double, double>;
+    // the value of a setting of a factory, whatever its type
+    using setting_t = std::variant<int, double, interval_t>;
 } // namespace pyre::flow
 
 

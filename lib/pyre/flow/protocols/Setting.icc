@@ -1,0 +1,147 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Setting.h"
+
+
+// describe the setting {name} of factories of type {factoryT}
+template <class factoryT, class valueT, class resultT>
+auto
+pyre::flow::protocols::Setting::of(
+    const name_type & name, valueT (factoryT::*get)() const, resultT (factoryT::*set)(valueT))
+    -> self_type
+{
+    // reading the setting goes through the concrete factory
+    auto getter = [get](const Factory & factory) -> value_type {
+        // which {factory} must be, since the description came from its class
+        const auto & concrete = dynamic_cast<const factoryT &>(factory);
+        // read the value and hand it off
+        return value_type((concrete.*get)());
+    };
+    // so does changing it
+    auto setter = [set](Factory & factory, const value_type & value) -> bool {
+        // get the value in my type
+        auto typed = extract<valueT>(value);
+        // a value of some other type
+        if (!typed) {
+            // is refused
+            return false;
+        }
+        // reach the concrete factory
+        auto & concrete = dynamic_cast<factoryT &>(factory);
+        // change the setting, which flushes the factory
+        (concrete.*set)(*typed);
+        // all done
+        return true;
+    };
+    // assemble the description and hand it off
+    return self_type(name, typeName<valueT>(), getter, setter);
+}
+
+
+// constructor
+pyre::flow::protocols::Setting::Setting(
+    name_type name, name_type type, getter_type get, setter_type set) :
+    _name(std::move(name)),
+    _type(std::move(type)),
+    _get(std::move(get)),
+    _set(std::move(set))
+{}
+
+
+// my name
+auto
+pyre::flow::protocols::Setting::name() const -> const name_type &
+{
+    // easy enough
+    return _name;
+}
+
+
+// the name of the type of my values
+auto
+pyre::flow::protocols::Setting::type() const -> const name_type &
+{
+    // easy enough
+    return _type;
+}
+
+
+// read my value on {factory}
+auto
+pyre::flow::protocols::Setting::get(const Factory & factory) const -> value_type
+{
+    // ask the reader
+    return _get(factory);
+}
+
+
+// change my value on {factory}
+auto
+pyre::flow::protocols::Setting::set(Factory & factory, const value_type & value) const -> bool
+{
+    // ask the writer
+    return _set(factory, value);
+}
+
+
+// the name of the type {valueT}
+template <class valueT>
+auto
+pyre::flow::protocols::Setting::typeName() -> name_type
+{
+    // integers
+    if constexpr (std::is_same_v<valueT, int>) {
+        // are named so
+        return "int";
+    }
+    // floating point values
+    else if constexpr (std::is_same_v<valueT, double>) {
+        // likewise
+        return "double";
+    }
+    // intervals
+    else if constexpr (std::is_same_v<valueT, interval_t>) {
+        // likewise
+        return "interval";
+    }
+    // and nothing else can be described
+    else {
+        // so refuse to compile
+        static_assert(!sizeof(valueT), "settings hold integers, doubles, or intervals");
+    }
+}
+
+
+// extract a value of type {valueT} from {value}
+template <class valueT>
+auto
+pyre::flow::protocols::Setting::extract(const value_type & value) -> std::optional<valueT>
+{
+    // a value of the right type
+    if (std::holds_alternative<valueT>(value)) {
+        // is handed off as it is
+        return std::get<valueT>(value);
+    }
+    // a floating point setting
+    if constexpr (std::is_same_v<valueT, double>) {
+        // takes an integer
+        if (std::holds_alternative<int>(value)) {
+            // widened
+            return static_cast<double>(std::get<int>(value));
+        }
+    }
+    // anything else does not fit
+    return std::nullopt;
+}
+
+
+// end of file

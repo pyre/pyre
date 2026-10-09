@@ -11,6 +11,8 @@
 // my dependencies
 #include "forward.h"
 #include "Node.h"
+#include "Slot.h"
+#include "Setting.h"
 
 class pyre::flow::protocols::Factory : public Node {
     // type aliases
@@ -21,6 +23,13 @@ public:
     using super_type = Node;
     // connectors
     using connectors_type = std::map<name_type, product_ref_type>;
+    // the descriptions of my slots
+    using slot_type = Slot;
+    using slots_type = std::vector<slot_type>;
+    // the descriptions of my settings, and their values
+    using setting_type = Setting;
+    using settings_type = std::vector<setting_type>;
+    using setting_value_type = setting_type::value_type;
 
     // factory
 public:
@@ -43,6 +52,29 @@ public:
     // access to the full set of bindings
     inline auto inputs() const -> const connectors_type &;
     inline auto outputs() const -> const connectors_type &;
+
+    // introspection
+public:
+    // the descriptions of my slots; a factory that does not describe them has none, and binds
+    // nothing through {bind}
+    virtual auto slots() const -> const slots_type &;
+    // the descriptions of my settings; none, unless a factory describes them
+    virtual auto settings() const -> const settings_type &;
+    // the description of my slot {name}, or nothing if i have no such slot
+    auto slot(const name_type & name) const -> const slot_type *;
+
+    // bindings and settings by name, checked against my descriptions
+public:
+    // bind my slot {name} to {product}, replacing whatever was bound to it; false, and nothing
+    // bound, if i have no such slot or {product} is not one it takes; binding an input flushes
+    // me, since what i compute depends on my inputs
+    auto bind(const name_type & name, product_ref_type product) -> bool;
+    // undo the binding of my slot {name}; false if i have no such slot or it is not bound
+    auto unbind(const name_type & name) -> bool;
+    // read my setting {name}; nothing if i have no such setting
+    auto get(const name_type & name) const -> std::optional<setting_value_type>;
+    // change my setting {name}; false if i have no such setting or {value} is not of its type
+    auto set(const name_type & name, const setting_value_type & value) -> bool;
 
     // flow protocol
 public:

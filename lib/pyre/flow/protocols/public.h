@@ -13,6 +13,8 @@
 
 // my classes
 #include "Node.h"
+#include "Slot.h"
+#include "Setting.h"
 #include "Factory.h"
 #include "Product.h"
 
