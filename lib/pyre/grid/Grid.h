@@ -38,6 +38,15 @@ public:
     using const_pointer = typename S::const_pointer;
     using reference = typename S::reference;
     using const_reference = typename S::const_reference;
+    // the spelling of types
+    using string_type = string_t;
+
+    // the spelling of my type
+public:
+    // simulate my c++ declaration
+    static inline auto declSelf() -> string_type;
+    // the human readable form of my class name
+    static inline auto className() -> string_type;
 
     // metamethods
 public:

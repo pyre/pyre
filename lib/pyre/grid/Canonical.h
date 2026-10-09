@@ -35,6 +35,15 @@ public:
     using difference_type = std::ptrdiff_t;
     // iterator
     using iterator_type = IndexIterator<Rank>;
+    // the spelling of types
+    using string_type = string_t;
+
+    // the spelling of my type
+public:
+    // simulate my c++ declaration
+    static inline auto declSelf() -> string_type;
+    // the human readable form of my class name
+    static inline auto className() -> string_type;
 
     // metamethods
 public:
