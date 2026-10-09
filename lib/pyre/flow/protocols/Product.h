@@ -70,7 +70,8 @@ public:
 
     // build a reference to me
     inline auto ref() -> product_ref_type;
-    // ask my factories to remake me
+    // ask my factories to remake me; a factory that cannot read one of its inputs is reported on
+    // an error channel, and leaves me stale
     virtual auto make() -> product_ref_type;
     // mark me and everything downstream of me as stale; a flush stops at a product that is stale
     // already, since everything downstream of it is stale too
