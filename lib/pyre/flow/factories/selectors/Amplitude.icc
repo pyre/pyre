@@ -124,7 +124,7 @@ template <class signalT, class amplitudeT>
 auto
 pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::signal() -> signal_ref_type
 {
-    // look up the product bound to my {hue} slot and return it
+    // look up the product bound to my {signal} slot and return it
     return std::dynamic_pointer_cast<signal_type>(input("signal"));
 }
 
@@ -132,7 +132,7 @@ template <class signalT, class amplitudeT>
 auto
 pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::amplitude() -> amplitude_ref_type
 {
-    // look up the product bound to my {red} slot and return it
+    // look up the product bound to my {amplitude} slot and return it
     return std::dynamic_pointer_cast<amplitude_type>(output("amplitude"));
 }
 

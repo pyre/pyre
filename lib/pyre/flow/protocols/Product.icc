@@ -87,7 +87,7 @@ pyre::flow::protocols::Product::clean() -> void
 auto
 pyre::flow::protocols::Product::dirty() -> void
 {
-    // clear the flag
+    // raise the flag
     _stale = true;
     // all done
     return;
