@@ -166,5 +166,60 @@ hands back nothing that can be thrown:
 The `JOURNAL_DEBUG` environment variable is unrelated: it names the debug channels
 to activate when the application starts.
 
+## Devices
+
+A device is where entries end up. There are three places to install one, and a channel
+uses the first it finds: its own device, then the default of its severity, then the
+global default kept by the chronicler.
+
+```python
+# the global default
+journal.chronicler.device = journal.file(path="run.log")
+# the default of a severity
+journal.warning.setDefaultDevice(journal.cerr())
+# the device of one channel
+journal.info("qed.archives").device = journal.trash()
+```
+
+The stock devices are the console (`cout`), the error console (`cerr`), files (`file`),
+the trash can (`trash`), and the devices that forward entries to others: a splitter
+hands every entry to each of the devices attached to it, a tee is a splitter over the
+console and a set of files, and a courier ships entries to another process and can also
+hand them to a mirror (see `courier.md`). Forwarding devices nest: a splitter can feed
+another splitter, or be the mirror of a courier.
+
+```python
+log = journal.file(path="run.log")
+splitter = journal.splitter(outputs=[journal.cout()])
+splitter.attach(device=log)
+splitter.detach(device=log)
+courier.mirror = None
+```
+
+`attach` adds a device to a splitter, `detach` removes every attachment of a device,
+and the mirror of a courier can be replaced, or removed by setting it to `None`. A
+splitter skips empty attachments.
+
+### Devices implemented in python
+
+A device can be written in python by deriving from `journal.device` and implementing
+`alert`, `help` and `memo`. With the C++ journal, such a device is held by C++ state
+that outlives the interpreter, so the journal has to let go of it while the interpreter
+can still release it:
+
+- Every device says whether it is **foreign**, implemented outside C++; devices written
+  in python are, the stock ones are not.
+- `journal.chronicler.detachForeign()` walks every device the journal holds, including
+  the outputs of splitters and the mirrors of couriers at any depth, and lets go of the
+  foreign ones. A foreign global default is replaced by a console; a foreign device
+  anywhere else is forgotten, so the channels fall back on the devices above them.
+- The C++ journal calls `detachForeign` from an `atexit` hook registered when it is
+  imported. Hooks registered later, by pyre or by the application, run first, so they
+  can still log to python devices.
+
+What the journal cannot reach, it cannot release: C++ code of a client that keeps its
+own reference to a python device, or to a forwarding device that holds one, must let go
+of it before the interpreter shuts down.
+
 
 <!-- end of file -->

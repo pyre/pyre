@@ -166,7 +166,8 @@ a socket pair, or a connected Unix socket. Its behavior:
 - **It can mirror.** An optional second device receives every entry unchanged, before
   the courier ships it. This is how a process keeps its terminal output while also
   delivering elsewhere; a worker whose parent replays everything does not mirror, or
-  every line would print twice.
+  every line would print twice. The mirror can be replaced at any time, and setting it
+  to nothing stops the mirroring.
 - **It closes what it owns.** `close()` releases the descriptor; the courier is dead
   afterwards.
 
