@@ -11,12 +11,20 @@
 #include "forward.h"
 
 // augment the namespace
-namespace pyre::journal::py::trampoline {
-    // with the device trampoline
-    class Device;
-} // namespace pyre::journal::py::trampoline
+namespace pyre::journal::py {
+    // the trampolines derive from pybind11 classes, and pybind11 declares its whole namespace
+    // with hidden visibility; a class of default visibility with a hidden base draws a warning
+    // from gcc, and the trampolines never leave this module, so they are hidden the same way
+    namespace trampoline __attribute__((visibility("hidden"))) {
+        // the device trampoline
+        class Device;
+    } // namespace trampoline
+} // namespace pyre::journal::py
 
-class pyre::journal::py::trampoline::Device : public device_t {
+// a device implemented in python; its python half stays alive for as long as c++ holds the device
+class pyre::journal::py::trampoline::Device :
+    public device_t,
+    public py::trampoline_self_life_support {
     // pull the constructors
 public:
     using device_t::Device;
@@ -40,6 +48,13 @@ public:
         // the magic
         PYBIND11_OVERRIDE_PURE(device_t &, device_t, memo, std::ref(entry));
     };
+
+    // devices implemented in python are foreign to c++
+    auto foreign() const -> bool override
+    {
+        // always
+        return true;
+    }
 };
 
 
@@ -48,11 +63,19 @@ void
 pyre::journal::py::devices(py::module & m)
 {
     // the base device
-    py::class_<device_t, device_t::pointer_type, trampoline::Device>(m, "Device")
+    py::class_<device_t, py::smart_holder, trampoline::Device>(m, "Device")
         // constructor
         .def(py::init<string_t>(), "name"_a)
         // accessor
         .def_property_readonly("name", &device_t::name, "the name of the device")
+        // the marker of devices implemented outside c++
+        .def_property_readonly(
+            // the name
+            "foreign",
+            // the implementation
+            &device_t::foreign,
+            // the docstring
+            "whether the device is implemented in python, rather than c++")
         // the interface
         .def("alert", &device_t::alert, "entry"_a)
         .def("help", &device_t::help, "entry"_a)
@@ -61,35 +84,35 @@ pyre::journal::py::devices(py::module & m)
         ;
 
     // the trash can
-    py::class_<trash_t, device_t, trash_t::pointer_type>(m, "Trash")
+    py::class_<trash_t, device_t, py::smart_holder>(m, "Trash")
         // constructor
         .def(py::init<>())
         // done
         ;
 
     // the streams
-    py::class_<stream_t, stream_t::pointer_type, device_t>(m, "Stream")
+    py::class_<stream_t, py::smart_holder, device_t>(m, "Stream")
         // constructor
         .def(py::init<const stream_t::name_type &, stream_t::stream_type &>())
         // done
         ;
 
     // cout
-    py::class_<cout_t, cout_t::pointer_type, stream_t>(m, "Console")
+    py::class_<cout_t, py::smart_holder, stream_t>(m, "Console")
         // constructor
         .def(py::init<>())
         // done
         ;
 
     // cerr
-    py::class_<cerr_t, cerr_t::pointer_type, stream_t>(m, "ErrorConsole")
+    py::class_<cerr_t, py::smart_holder, stream_t>(m, "ErrorConsole")
         // constructor
         .def(py::init<>())
         // done
         ;
 
     // files
-    py::class_<file_t, file_t::pointer_type, device_t>(m, "File")
+    py::class_<file_t, py::smart_holder, device_t>(m, "File")
         // constructor
         .def(
             // the implementation; the {mode} is spelled as for {open}, and {a} appends
@@ -123,7 +146,7 @@ pyre::journal::py::devices(py::module & m)
         ;
 
     // splitters
-    py::class_<splitter_t, splitter_t::pointer_type, device_t>(m, "Splitter")
+    py::class_<splitter_t, py::smart_holder, device_t>(m, "Splitter")
         // constructor
         .def(
             // the implementation; the devices arrive as any iterable, as they do for the pure
@@ -157,6 +180,19 @@ pyre::journal::py::devices(py::module & m)
             "device"_a,
             // the docstring
             "add {device} to the set i forward to")
+        // detach a device
+        .def(
+            // the name
+            "detach",
+            // the implementation
+            [](splitter_t & self, device_t::pointer_type device) -> splitter_t & {
+                // remove it
+                return self.detach(device);
+            },
+            // the signature
+            "device"_a,
+            // the docstring
+            "remove every attachment of {device} from the set i forward to")
         // the attached devices
         .def_property_readonly(
             // the name
@@ -172,7 +208,7 @@ pyre::journal::py::devices(py::module & m)
         ;
 
     // tees
-    py::class_<tee_t, tee_t::pointer_type, splitter_t>(m, "Tee")
+    py::class_<tee_t, py::smart_holder, splitter_t>(m, "Tee")
         // constructor
         .def(
             // the implementation; the paths arrive as any iterable of strings, since the
@@ -197,7 +233,7 @@ pyre::journal::py::devices(py::module & m)
         ;
 
     // couriers
-    py::class_<courier_t, courier_t::pointer_type, device_t>(m, "Courier")
+    py::class_<courier_t, py::smart_holder, device_t>(m, "Courier")
         // constructor
         .def(
             // the implementation
@@ -217,12 +253,22 @@ pyre::journal::py::devices(py::module & m)
             "the descriptor the records are written to")
 
         // the mirror
-        .def_property_readonly(
+        .def_property(
             "mirror",
             // the getter
-            &courier_t::mirror,
+            [](const courier_t & self) -> courier_t::mirror_type {
+                // easy enough
+                return self.mirror();
+            },
+            // the setter
+            [](courier_t & self, device_t::pointer_type mirror) -> void {
+                // install the new mirror
+                self.mirror(mirror);
+                // all done
+                return;
+            },
             // the docstring
-            "the device that also gets every entry")
+            "the device that also gets every entry; {None} stops the mirroring")
 
         // the sequence number
         .def_property_readonly(

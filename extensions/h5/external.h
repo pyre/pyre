@@ -26,6 +26,8 @@
 #include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 #include <pybind11/operators.h>
+// pyre is built against pybind11 3.0 or later
+static_assert(PYBIND11_VERSION_MAJOR >= 3, "pyre requires pybind11 3.0 or later");
 // the hdf5 c api; the bindings no longer depend on the hdf5 c++ layer
 #include <hdf5.h>
 
