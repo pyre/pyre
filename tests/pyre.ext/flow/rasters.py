@@ -78,10 +78,10 @@ def test():
     except ValueError:
         # as expected
         pass
-    # nor does a buffer of cells it does not support
+    # nor does a buffer whose cells are not in the byte order of the host
     try:
-        # such as bytes
-        flow.raster(source=grid.heap(shape=[2, 2], cell="uint8"), name="bytes")
+        # such as big endian doubles on a little endian machine
+        flow.raster(source=grid.heap(shape=[2, 2], cell="float64be"), name="foreign")
         # so we can't get here
         assert False, "unreachable"
     # by raising
