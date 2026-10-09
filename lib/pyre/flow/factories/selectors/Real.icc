@@ -53,7 +53,7 @@ template <class signalT, class realT>
 auto
 pyre::flow::factories::selectors::Real<signalT, realT>::signal() -> signal_ref_type
 {
-    // look up the product bound to my {hue} slot and return it
+    // look up the product bound to my {signal} slot and return it
     return std::dynamic_pointer_cast<signal_type>(input("signal"));
 }
 
@@ -61,7 +61,7 @@ template <class signalT, class realT>
 auto
 pyre::flow::factories::selectors::Real<signalT, realT>::real() -> real_ref_type
 {
-    // look up the product bound to my {red} slot and return it
+    // look up the product bound to my {real} slot and return it
     return std::dynamic_pointer_cast<real_type>(output("real"));
 }
 

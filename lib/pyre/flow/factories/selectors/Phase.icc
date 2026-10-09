@@ -53,7 +53,7 @@ template <class signalT, class phaseT>
 auto
 pyre::flow::factories::selectors::Phase<signalT, phaseT>::signal() -> signal_ref_type
 {
-    // look up the product bound to my {hue} slot and return it
+    // look up the product bound to my {signal} slot and return it
     return std::dynamic_pointer_cast<signal_type>(input("signal"));
 }
 
@@ -61,7 +61,7 @@ template <class signalT, class phaseT>
 auto
 pyre::flow::factories::selectors::Phase<signalT, phaseT>::phase() -> phase_ref_type
 {
-    // look up the product bound to my {red} slot and return it
+    // look up the product bound to my {phase} slot and return it
     return std::dynamic_pointer_cast<phase_type>(output("phase"));
 }
 
