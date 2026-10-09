@@ -37,5 +37,8 @@ class BMP(pyre.flow.factory, family="pyre.viz.encoders.bmp", implements=Encoder)
     image.default = pyre.viz.rasters.bmp
     image.doc = "the BMP encoded signal"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::viz::factories::codecs::bmp_t",)
+
 
 # end of file

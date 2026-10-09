@@ -350,6 +350,9 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
     # private data
     pyre_inputTraits = ()
     pyre_outputTraits = ()
+    # the c++ templates whose instantiations can do my work when a recipe is staged; none,
+    # unless a factory names them
+    pyre_engines = ()
 
 
 # end of file

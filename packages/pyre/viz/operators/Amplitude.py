@@ -30,5 +30,8 @@ class Amplitude(pyre.flow.factory, family="pyre.viz.operators.amplitude", implem
     amplitude = Magnitude.output()
     amplitude.doc = "the amplitude of each sample"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::selectors::amplitude_t",)
+
 
 # end of file

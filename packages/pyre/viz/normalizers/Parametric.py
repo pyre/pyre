@@ -37,5 +37,8 @@ class Parametric(
     normalized = Unit.output()
     normalized.doc = "the signal with its {interval} mapped onto [0,1]"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::filters::parametric_t",)
+
 
 # end of file
