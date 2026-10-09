@@ -59,8 +59,8 @@ main(int argc, char * argv[])
     assert((inputs.size() == 2));
     assert((outputs.size() == 1));
     // and the slot contents
-    assert(inputs.find("op1")->second == op1);
-    assert(inputs.find("op2")->second == op2);
+    assert(inputs.find("op1")->second.lock() == op1);
+    assert(inputs.find("op2")->second.lock() == op2);
     assert(outputs.find("result")->second == result);
 
     // go through the cells in result

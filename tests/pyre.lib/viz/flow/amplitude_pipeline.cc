@@ -7,7 +7,7 @@
 
 // assemble the pipeline that paints the amplitude of a complex tile gray, the way an interactive
 // editor would: nodes dropped from a palette, slots bound one at a time, settings changed, a stage
-// swapped for another, and the whole thing taken apart; every observation an editor depends on is
+// swapped for another, and the whole thing let go; every observation an editor depends on is
 // an assertion, so this walk through the c++ api stays true as the api changes
 
 
@@ -59,12 +59,14 @@ upstream(const std::shared_ptr<product_t> & product, std::vector<std::string> & 
     names.push_back(product->name());
     // go through the factories that write it
     for (const auto & [slot, writer] : product->writers()) {
-        // record the factory
-        names.push_back(writer->name());
+        // the factory, which the product does not keep alive
+        auto factory = writer.lock();
+        // record it
+        names.push_back(factory->name());
         // and go through its inputs
-        for (const auto & [input, source] : writer->inputs()) {
+        for (const auto & [input, source] : factory->inputs()) {
             // each of which leads further upstream
-            upstream(source, names);
+            upstream(source.lock(), names);
         }
     }
     // all done
@@ -261,27 +263,11 @@ main(int argc, char * argv[])
         // 8. the record of the nodes, before the scope that holds them closes
         nodes = { signal, other,    amplitude,  normalized,  red,      green, blue,
                   image,  selector, normalizer, replacement, colormap, codec };
-        // the old normalizer is detached, and goes away with the scope
-        // everything else is bound to something, and factories and products hold each other, so
-        // taking the graph apart is the only way to let go of it; unbind the codec
-        codec->removeInput("red");
-        codec->removeInput("green");
-        codec->removeInput("blue");
-        codec->removeOutput("image");
-        // the colormap
-        colormap->removeInput("data");
-        colormap->removeOutput("red");
-        colormap->removeOutput("green");
-        colormap->removeOutput("blue");
-        // the normalizer that replaced the first one
-        replacement->removeInput("signal");
-        replacement->removeOutput("normalized");
-        // and the selector
-        selector->removeInput("signal");
-        selector->removeOutput("amplitude");
+        // factories own their outputs and refer to everything else weakly, so nothing holds
+        // the graph together but the references in this scope, which go away with it
     }
 
-    // with the graph taken apart, nothing outlives the scope
+    // so nothing outlives the scope, although no binding was undone
     for (const auto & node : nodes) {
         // every one of them is gone
         assert(node.expired());
