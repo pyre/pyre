@@ -26,7 +26,7 @@ dependencies:
   - python
   # pin the standard ABI, not the free-threaded build
   - python-gil
-  - pybind11
+  - pybind11 >=3
   - pyyaml
   # the round trip editor of yaml documents rides on it; optional, but the tests want it
   - ruamel.yaml
