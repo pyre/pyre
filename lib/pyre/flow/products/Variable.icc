@@ -89,6 +89,8 @@ template <typename valueT>
 auto
 pyre::flow::products::Variable<valueT>::write(cell_type value) -> ref_type
 {
+    // whatever is computed from my value is about to be out of date
+    flush();
     // record the new value
     _value = value;
     // build a self reference

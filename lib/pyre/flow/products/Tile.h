@@ -72,8 +72,9 @@ public:
 
     // interface
 public:
-    // value access by factories
+    // my cells, refreshed first if i am stale
     inline auto read() -> const grid_type &;
+    // my cells, for writing; whatever is computed from them is marked stale right away
     inline auto write() -> grid_type &;
 
     // implementation details - data
