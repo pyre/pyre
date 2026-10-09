@@ -36,6 +36,7 @@ namespace pyre::flow {
 #include "protocols/api.h"
 #include "products/api.h"
 #include "factories/api.h"
+#include "catalog/api.h"
 
 
 // end of file

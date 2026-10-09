@@ -1,0 +1,147 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Catalog.h"
+
+
+// file the products of type {productT}
+template <class productT>
+auto
+pyre::flow::catalog::Catalog::registerProduct() -> const product_entry_type &
+{
+    // the way to make one
+    auto make = [](const name_type & name, shape_type shape) -> product_ref_type {
+        // a tile
+        if constexpr (requires { typename productT::grid_type; }) {
+            // starts out with every cell set to the zero of its type, so nobody reads memory
+            // nobody wrote
+            return productT::create(name, shape, typename productT::cell_type {});
+        }
+        // anything else
+        else {
+            // is made with its own defaults
+            return productT::create(name, shape);
+        }
+    };
+    // the declaration of the type of the cells
+    auto cell = decl_type();
+    // which only tiles have
+    if constexpr (requires { typename productT::grid_type; }) {
+        // so ask their storage
+        cell = productT::storage_type::declValue();
+    }
+    // the declaration of the type
+    auto decl = productT::declSelf();
+    // file the entry, replacing an earlier one
+    auto [where, _] = _products.insert_or_assign(
+        decl, product_entry_type(decl, productT::className(), cell, make));
+    // and hand it off
+    return where->second;
+}
+
+
+// file the factories of type {factoryT}
+template <class factoryT>
+auto
+pyre::flow::catalog::Catalog::registerFactory() -> const factory_entry_type &
+{
+    // the way to make one
+    auto make = [](const name_type & name) -> factory_ref_type {
+        // with its own defaults
+        return factoryT::create(name);
+    };
+    // the declaration of the type
+    auto decl = factoryT::declSelf();
+    // file the entry, replacing an earlier one
+    auto [where, _] = _factories.insert_or_assign(
+        decl,
+        factory_entry_type(
+            decl, factoryT::className(), factoryT::declSlots(), factoryT::declSettings(), make));
+    // and hand it off
+    return where->second;
+}
+
+
+// the kinds of products i know
+auto
+pyre::flow::catalog::Catalog::products() const -> const products_type &
+{
+    // easy enough
+    return _products;
+}
+
+
+// the kinds of factories i know
+auto
+pyre::flow::catalog::Catalog::factories() const -> const factories_type &
+{
+    // easy enough
+    return _factories;
+}
+
+
+// the entry of the products whose type is declared as {decl}
+auto
+pyre::flow::catalog::Catalog::product(const decl_type & decl) const -> const product_entry_type *
+{
+    // look it up
+    auto found = _products.find(decl);
+    // hand off its address, or nothing if it is not there
+    return found == _products.end() ? nullptr : &found->second;
+}
+
+
+// the entry of the factories whose type is declared as {decl}
+auto
+pyre::flow::catalog::Catalog::factory(const decl_type & decl) const -> const factory_entry_type *
+{
+    // look it up
+    auto found = _factories.find(decl);
+    // hand off its address, or nothing if it is not there
+    return found == _factories.end() ? nullptr : &found->second;
+}
+
+
+// make a product of the type declared as {decl}
+auto
+pyre::flow::catalog::Catalog::makeProduct(
+    const decl_type & decl, const name_type & name, shape_type shape) const -> product_ref_type
+{
+    // look up the entry
+    auto entry = product(decl);
+    // a type i do not know
+    if (entry == nullptr) {
+        // makes nothing
+        return nullptr;
+    }
+    // otherwise, ask the entry
+    return entry->make(name, shape);
+}
+
+
+// make a factory of the type declared as {decl}
+auto
+pyre::flow::catalog::Catalog::makeFactory(const decl_type & decl, const name_type & name) const
+    -> factory_ref_type
+{
+    // look up the entry
+    auto entry = factory(decl);
+    // a type i do not know
+    if (entry == nullptr) {
+        // makes nothing
+        return nullptr;
+    }
+    // otherwise, ask the entry
+    return entry->make(name);
+}
+
+
+// end of file
