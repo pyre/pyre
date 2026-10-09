@@ -53,6 +53,10 @@ public:
     // make a tile with every cell set to {value}, so it starts fresh
     inline static auto create(const name_type & name, shape_type shape, cell_type value)
         -> ref_type;
+    // make a tile over the cells of {grid}, which it shares rather than copies, so it starts
+    // fresh; this is how a raster that lives elsewhere, such as a memory mapped file, enters a
+    // graph
+    inline static auto create(const name_type & name, grid_type grid) -> ref_type;
 
     // metamethods
 public:
@@ -61,6 +65,7 @@ public:
     // constructors; DON'T CALL
     inline Tile(sentinel_type, const name_type &, shape_type);
     inline Tile(sentinel_type, const name_type &, shape_type, cell_type);
+    inline Tile(sentinel_type, const name_type &, grid_type);
 
     // accessors
 public:

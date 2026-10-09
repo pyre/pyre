@@ -76,6 +76,18 @@ pyre::flow::products::Tile<gridT>::create(const name_type & name, shape_type sha
     return ref;
 }
 
+// make a tile over the cells of {grid}
+template <class gridT>
+auto
+pyre::flow::products::Tile<gridT>::create(const name_type & name, grid_type grid) -> ref_type
+{
+    // build an instance and wrap it in a shared pointer
+    auto ref = std::make_shared<Tile>(sentinel_type(), name, std::move(grid));
+    // hand it off
+    return ref;
+}
+
+
 // destructor
 template <class gridT>
 pyre::flow::products::Tile<gridT>::~Tile()
@@ -117,6 +129,15 @@ pyre::flow::products::Tile<gridT>::Tile(
     // initialize
     std::fill(_data.begin(), _data.end(), value);
 }
+
+template <class gridT>
+pyre::flow::products::Tile<gridT>::Tile(
+    sentinel_type sentinel, const name_type & name, grid_type grid) :
+    // base class: start out fresh, since my cells hold whatever {grid} holds
+    pyre::flow::protocols::Product(sentinel, name, false),
+    // members
+    _data { std::move(grid) }
+{}
 
 // accessors
 template <class gridT>
