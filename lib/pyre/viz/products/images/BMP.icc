@@ -12,6 +12,24 @@
 #include "BMP.h"
 
 
+// simulate my c++ declaration
+auto
+pyre::viz::products::images::BMP::declSelf() -> string_type
+{
+    // the type alias
+    return "pyre::viz::products::images::bmp_t";
+}
+
+
+// the human readable form of my class name
+auto
+pyre::viz::products::images::BMP::className() -> string_type
+{
+    // my kind
+    return "BMP";
+}
+
+
 // factory
 auto
 pyre::viz::products::images::BMP::create(const name_type & name, shape_type shape, bool topdown)
