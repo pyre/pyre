@@ -12,6 +12,76 @@
 #include "Uniform.h"
 
 
+// simulate my c++ declaration
+template <class signalT, class binT>
+auto
+pyre::flow::factories::filters::Uniform<signalT, binT>::declSelf() -> string_type
+{
+    // the type alias, with the declarations of my slots
+    return "pyre::flow::factories::filters::uniform_t<" + signal_type::declSelf() + ", "
+         + bin_type::declSelf() + ">";
+}
+
+
+// the human readable form of my class name
+template <class signalT, class binT>
+auto
+pyre::flow::factories::filters::Uniform<signalT, binT>::className() -> string_type
+{
+    // my kind
+    return "Uniform";
+}
+
+
+// the descriptions of my slots
+template <class signalT, class binT>
+auto
+pyre::flow::factories::filters::Uniform<signalT, binT>::declSlots() -> const slots_type &
+{
+    // my slots, in the order i declare them
+    static const slots_type table {
+        slot_type::input<signal_type>("signal"),
+        slot_type::output<bin_type>("bin"),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my settings
+template <class signalT, class binT>
+auto
+pyre::flow::factories::filters::Uniform<signalT, binT>::declSettings() -> const settings_type &
+{
+    // my settings
+    static const settings_type table {
+        setting_type::of<self_type>("bins", &self_type::bins, &self_type::bins),
+    };
+    // hand them off
+    return table;
+}
+
+
+// the descriptions of my slots
+template <class signalT, class binT>
+auto
+pyre::flow::factories::filters::Uniform<signalT, binT>::slots() const -> const slots_type &
+{
+    // the ones of my type
+    return declSlots();
+}
+
+
+// the descriptions of my settings
+template <class signalT, class binT>
+auto
+pyre::flow::factories::filters::Uniform<signalT, binT>::settings() const -> const settings_type &
+{
+    // the ones of my type
+    return declSettings();
+}
+
+
 // factory
 template <class signalT, class binT>
 auto
