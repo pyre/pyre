@@ -19,6 +19,7 @@ pyre_test_python_testcase(tests/pyre.ext/timers/process_timer_example.py)
 pyre_test_python_testcase(tests/pyre.ext/flow/catalog.py)
 pyre_test_python_testcase(tests/pyre.ext/flow/factories.py)
 pyre_test_python_testcase(tests/pyre.ext/flow/tiles.py)
+pyre_test_python_testcase(tests/pyre.ext/flow/rasters.py)
 pyre_test_python_testcase(tests/pyre.ext/flow/amplitude.py)
 
 # the grid bindings test suite
