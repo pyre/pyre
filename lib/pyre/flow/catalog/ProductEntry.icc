@@ -1,0 +1,62 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "ProductEntry.h"
+
+
+// constructor
+pyre::flow::catalog::ProductEntry::ProductEntry(
+    decl_type decl, name_type className, decl_type cell, maker_type make) :
+    _decl(std::move(decl)),
+    _className(std::move(className)),
+    _cell(std::move(cell)),
+    _make(std::move(make))
+{}
+
+
+// the declaration of the type of my products
+auto
+pyre::flow::catalog::ProductEntry::decl() const -> const decl_type &
+{
+    // easy enough
+    return _decl;
+}
+
+
+// the readable name of their class
+auto
+pyre::flow::catalog::ProductEntry::className() const -> const name_type &
+{
+    // easy enough
+    return _className;
+}
+
+
+// the declaration of the type of their cells
+auto
+pyre::flow::catalog::ProductEntry::cell() const -> const decl_type &
+{
+    // easy enough
+    return _cell;
+}
+
+
+// make a product named {name} of the given {shape}
+auto
+pyre::flow::catalog::ProductEntry::make(const name_type & name, shape_type shape) const
+    -> product_ref_type
+{
+    // ask the maker
+    return _make(name, shape);
+}
+
+
+// end of file

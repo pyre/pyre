@@ -1,0 +1,72 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "FactoryEntry.h"
+
+
+// constructor
+pyre::flow::catalog::FactoryEntry::FactoryEntry(
+    decl_type decl, name_type className, slots_type slots, settings_type settings,
+    maker_type make) :
+    _decl(std::move(decl)),
+    _className(std::move(className)),
+    _slots(std::move(slots)),
+    _settings(std::move(settings)),
+    _make(std::move(make))
+{}
+
+
+// the declaration of the type of my factories
+auto
+pyre::flow::catalog::FactoryEntry::decl() const -> const decl_type &
+{
+    // easy enough
+    return _decl;
+}
+
+
+// the readable name of their class
+auto
+pyre::flow::catalog::FactoryEntry::className() const -> const name_type &
+{
+    // easy enough
+    return _className;
+}
+
+
+// the descriptions of their slots
+auto
+pyre::flow::catalog::FactoryEntry::slots() const -> const slots_type &
+{
+    // easy enough
+    return _slots;
+}
+
+
+// the descriptions of their settings
+auto
+pyre::flow::catalog::FactoryEntry::settings() const -> const settings_type &
+{
+    // easy enough
+    return _settings;
+}
+
+
+// make a factory named {name}
+auto
+pyre::flow::catalog::FactoryEntry::make(const name_type & name) const -> factory_ref_type
+{
+    // ask the maker
+    return _make(name);
+}
+
+
+// end of file

@@ -21,6 +21,7 @@
 #include "protocols/public.h"
 #include "products/public.h"
 #include "factories/public.h"
+#include "catalog/public.h"
 
 
 // end of file

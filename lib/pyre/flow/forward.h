@@ -14,6 +14,7 @@
 #include "protocols/forward.h"
 #include "products/forward.h"
 #include "factories/forward.h"
+#include "catalog/forward.h"
 
 
 // end of file
