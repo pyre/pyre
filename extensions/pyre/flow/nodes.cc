@@ -101,15 +101,28 @@ pyre::py::flow::nodes(py::module & m)
         // the name
         "inputs",
         // the implementation
-        [](const factory_t & self) -> factory_t::connectors_type { return self.inputs(); },
+        [](const factory_t & self) -> factory_t::outputs_type {
+            // the products, by slot
+            auto inputs = factory_t::outputs_type();
+            // go through my inputs
+            for (const auto & [slot, input] : self.inputs()) {
+                // the ones whose products are still around
+                if (auto product = input.lock()) {
+                    // make the cut
+                    inputs.emplace(slot, product);
+                }
+            }
+            // hand them off
+            return inputs;
+        },
         // the docstring
-        "the products bound to my input slots, by slot name");
+        "the products bound to my input slots that are still around, by slot name");
     // the products bound to my outputs
     factory.def_property_readonly(
         // the name
         "outputs",
         // the implementation
-        [](const factory_t & self) -> factory_t::connectors_type { return self.outputs(); },
+        [](const factory_t & self) -> factory_t::outputs_type { return self.outputs(); },
         // the docstring
         "the products bound to my output slots, by slot name");
     // checked binding
