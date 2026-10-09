@@ -191,24 +191,6 @@ realize(const catalog_t & catalog, const recipe_t & recipe, shape_t shape) -> gr
 }
 
 
-// take a realized graph apart, so its nodes can be released
-auto
-dismantle(const recipe_t & recipe, graph_t & graph) -> void
-{
-    // go through the bindings
-    for (const auto & binding : recipe.bindings) {
-        // find the factory
-        auto factory = std::dynamic_pointer_cast<factory_t>(graph.at(binding.factory));
-        // and unbind the slot, whichever side of the factory it is on
-        factory->unbind(binding.slot);
-    }
-    // let go of the nodes
-    graph.clear();
-    // all done
-    return;
-}
-
-
 // fill a signal with magnitudes 0, 1, 2, ... at phases that vary with the cell
 auto
 fill(complex64_t & signal) -> void
@@ -349,8 +331,7 @@ main(int argc, char * argv[])
             auto magnitude = std::dynamic_pointer_cast<product_t>(graph.at("magnitude"));
             assert(normalizer->input("signal") == magnitude);
 
-            // take the graph apart
-            dismantle(recipe, graph);
+            // let the graph go, without undoing any binding
         }
         // and nothing outlives it
         for (const auto & node : nodes) {
