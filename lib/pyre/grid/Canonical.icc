@@ -120,6 +120,24 @@ pyre::grid::Canonical<Rank>::rank() noexcept -> size_type
     return Rank;
 }
 
+// simulate my c++ declaration
+template <std::size_t Rank>
+auto
+pyre::grid::Canonical<Rank>::declSelf() -> string_type
+{
+    // the type alias, and my rank
+    return "pyre::grid::canonical_t<" + std::to_string(Rank) + ">";
+}
+
+// the human readable form of my class name
+template <std::size_t Rank>
+auto
+pyre::grid::Canonical<Rank>::className() -> string_type
+{
+    // my kind, and my rank
+    return "Canonical" + std::to_string(Rank) + "D";
+}
+
 
 // mutator: reorder, returning a new {Canonical} with fresh strides and nudge
 template <std::size_t Rank>

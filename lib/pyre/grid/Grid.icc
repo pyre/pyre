@@ -32,6 +32,24 @@ constexpr pyre::grid::Grid<P, S>::Grid(
     _storage(std::make_from_tuple<storage_type>(std::move(sArgs)))
 {}
 
+// simulate my c++ declaration
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+auto
+pyre::grid::Grid<P, S>::declSelf() -> string_type
+{
+    // the type alias, with the declarations of my two strategies
+    return "pyre::grid::grid_t<" + packing_type::declSelf() + ", " + storage_type::declSelf() + ">";
+}
+
+// the human readable form of my class name
+template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
+auto
+pyre::grid::Grid<P, S>::className() -> string_type
+{
+    // my kind, and the names of my two strategies
+    return "Grid" + packing_type::className() + storage_type::className();
+}
+
 // accessors
 template <pyre::grid::concepts::PackingStrategy P, pyre::grid::concepts::StorageStrategy S>
 [[nodiscard]] constexpr auto
