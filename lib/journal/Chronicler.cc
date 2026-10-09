@@ -31,6 +31,8 @@
 #include "Stream.h"
 #include "Console.h"
 #include "Trash.h"
+#include "Splitter.h"
+#include "Courier.h"
 
 // access to {debug_t}
 // channel parts
@@ -40,11 +42,19 @@
 #include "Channel.h"
 // the {debug} channel
 #include "Debug.h"
+// the rest of the severities, whose devices get swept
+#include "Firewall.h"
+#include "Informational.h"
+#include "Warning.h"
+#include "Error.h"
+#include "Help.h"
 
 
 // aliases
 using console_t = pyre::journal::cout_t;
 using chronicler_t = pyre::journal::chronicler_t;
+using splitter_t = pyre::journal::splitter_t;
+using courier_t = pyre::journal::courier_t;
 
 
 // helpers
@@ -136,6 +146,120 @@ chronicler_t::quiet()
 {
     // make a trash can and install it as the default device
     device<trash_t>();
+    // all done
+    return;
+}
+
+
+// detach every foreign device from the journal
+void
+chronicler_t::detachForeign()
+{
+    // the devices already examined, so that shared and circular arrangements are walked once
+    visited_type visited;
+    // if the default device is foreign
+    if (_device && _device->foreign()) {
+        // replace it with a console, since every channel falls back on it
+        _device = std::make_shared<console_t>();
+    }
+    // otherwise
+    else {
+        // detach the foreign devices it forwards entries to
+        prune(_device, visited);
+    }
+    // sweep the developer channels, whether or not they are live in this build
+    sweepIndex(Debug<InventoryProxy>::index(), visited);
+    sweepIndex(Firewall<InventoryProxy>::index(), visited);
+    // and the user facing ones
+    sweepIndex(Informational<InventoryProxy>::index(), visited);
+    sweepIndex(Warning<InventoryProxy>::index(), visited);
+    sweepIndex(Error<InventoryProxy>::index(), visited);
+    sweepIndex(Help<InventoryProxy>::index(), visited);
+    // all done
+    return;
+}
+
+
+// detach the foreign devices from the default of a severity and from each of its channels
+void
+chronicler_t::sweepIndex(index_type & index, visited_type & visited)
+{
+    // start with the default device of the severity
+    sweepInventory(index, visited);
+    // go through its channels
+    for (auto & [name, inventory] : index) {
+        // and sweep each one
+        sweepInventory(inventory, visited);
+    }
+    // all done
+    return;
+}
+
+
+// detach a foreign device from the shared state of a channel
+void
+chronicler_t::sweepInventory(inventory_type & inventory, visited_type & visited)
+{
+    // get the device
+    auto device = inventory.device();
+    // if it is foreign
+    if (device && device->foreign()) {
+        // forget it, so the channel falls back on the device above it
+        inventory.device(nullptr);
+        // and we are done
+        return;
+    }
+    // otherwise, detach the foreign devices it forwards entries to
+    prune(device, visited);
+    // all done
+    return;
+}
+
+
+// detach the foreign devices among those a device forwards entries to
+void
+chronicler_t::prune(const device_type & device, visited_type & visited)
+{
+    // if there is no device, or it has been examined already
+    if (!device || !visited.insert(device.get()).second) {
+        // there is nothing to do
+        return;
+    }
+    // if it is a splitter
+    if (auto splitter = std::dynamic_pointer_cast<splitter_t>(device)) {
+        // copy its outputs, since detaching modifies them
+        auto outputs = splitter->outputs();
+        // go through them
+        for (const auto & output : outputs) {
+            // if this one is foreign
+            if (output && output->foreign()) {
+                // detach it
+                splitter->detach(output);
+                // and move on
+                continue;
+            }
+            // otherwise, detach the foreign devices it forwards entries to
+            prune(output, visited);
+        }
+        // and we are done
+        return;
+    }
+    // if it is a courier
+    if (auto courier = std::dynamic_pointer_cast<courier_t>(device)) {
+        // get its mirror
+        auto mirror = courier->mirror();
+        // if the mirror is foreign
+        if (mirror && mirror->foreign()) {
+            // stop the mirroring
+            courier->mirror(nullptr);
+            // and we are done
+            return;
+        }
+        // otherwise, detach the foreign devices the mirror forwards entries to
+        prune(mirror, visited);
+        // and we are done
+        return;
+    }
     // all done
     return;
 }

@@ -36,6 +36,9 @@ public:
 public:
     // accessor
     inline auto name() const -> const name_type &;
+    // whether i am implemented outside c++, by a runtime whose objects must not outlive it; the
+    // journal detaches foreign devices before that runtime goes away
+    virtual auto foreign() const -> bool;
 
     // abstract
     virtual auto alert(const entry_type &) -> Device & = 0;

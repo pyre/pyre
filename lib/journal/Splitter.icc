@@ -44,4 +44,15 @@ pyre::journal::Splitter::attach(output_type output) -> Splitter &
 }
 
 
+// remove every attachment of a device from the set
+auto
+pyre::journal::Splitter::detach(const output_type & output) -> Splitter &
+{
+    // drop it from the pile, as many times as it was attached
+    std::erase(_outputs, output);
+    // and enable chaining
+    return *this;
+}
+
+
 // end of file
