@@ -62,11 +62,8 @@ namespace pyre::py::flow {
             "write",
             // the implementation
             [](tile_type & self) -> anygrid_t {
-                // get my cells
+                // get my cells, which marks whatever is computed from them as stale
                 auto & grid = self.write();
-                // whatever reads them is about to be out of date; tell it now, since nothing
-                // will know when the writing is over
-                self.flush();
                 // hand off a view of them that python may write through
                 return pyre::py::grid::anyGrid(grid, "heap");
             },
