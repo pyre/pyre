@@ -77,6 +77,8 @@ public:
     virtual auto help(const entry_type &) -> Courier & override;
     // developer messages
     virtual auto memo(const entry_type &) -> Courier & override;
+    // replace the device that also gets every entry; an empty one stops the mirroring
+    inline auto mirror(mirror_type mirror) -> Courier &;
     // release the descriptor; nothing is delivered after this
     auto close() -> Courier &;
 

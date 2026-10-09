@@ -32,6 +32,12 @@ public:
 
     // device support
     using device_type = std::shared_ptr<Device>;
+    // the devices a walk over the installed devices has already examined
+    using visited_type = std::set<const Device *>;
+    // the per-severity shared state of the channels
+    using index_type = Index;
+    // the shared state of a channel
+    using inventory_type = Inventory;
 
     // channel names
     using name_type = name_t;
@@ -69,9 +75,24 @@ public:
 
     template <class deviceT, class... Args>
     static inline void device(Args &&... args);
+    // detach every foreign device from the journal, wherever it is installed: the default device,
+    // the defaults of the severities, the devices of individual channels, and the outputs and
+    // mirrors of the devices that forward entries to others; a foreign default device is
+    // replaced by a console, and every other foreign device is forgotten, so the channels fall
+    // back on the devices above them
+    static void detachForeign();
 
     // convert a string with a comma separated list of names into a set
     static inline auto nameset(string_type) -> nameset_type;
+
+    // implementation details
+private:
+    // detach the foreign devices from the default of a severity and from each of its channels
+    static void sweepIndex(index_type &, visited_type &);
+    // detach a foreign device from the shared state of a channel
+    static void sweepInventory(inventory_type &, visited_type &);
+    // detach the foreign devices among those a device forwards entries to
+    static void prune(const device_type &, visited_type &);
 
     // data members
 private:

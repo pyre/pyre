@@ -54,6 +54,9 @@ public:
     // iteration
     inline auto begin() const;
     inline auto end() const;
+    // iteration that can modify the shared state of the channels
+    inline auto begin();
+    inline auto end();
 
     // look up the shared state of a channel
     inline auto lookup(const name_type &) -> inventory_type &;

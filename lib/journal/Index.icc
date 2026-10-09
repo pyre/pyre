@@ -13,6 +13,7 @@
 
 
 // metamethods
+// an index whose channels start out with the given state
 pyre::journal::Index::Index(active_type active, fatal_type fatal) :
     Inventory(active, fatal),
     _index {}
@@ -20,20 +21,25 @@ pyre::journal::Index::Index(active_type active, fatal_type fatal) :
 
 
 // interface
+// the number of channels i know about
 auto
 pyre::journal::Index::size() const
 {
+    // easy enough
     return _index.size();
 }
 
 
+// whether i know about any channels
 auto
 pyre::journal::Index::empty() const
 {
+    // easy enough
     return _index.empty();
 }
 
 
+// whether i know about the given {channel}
 auto
 pyre::journal::Index::contains(const name_type & channel) const
 {
@@ -49,6 +55,7 @@ pyre::journal::Index::contains(const name_type & channel) const
 }
 
 
+// add a channel with the given state
 auto
 pyre::journal::Index::emplace(const name_type & name, active_type active, fatal_type fatal)
 {
@@ -57,20 +64,43 @@ pyre::journal::Index::emplace(const name_type & name, active_type active, fatal_
 }
 
 
+// the start of the channels i know about
 auto
 pyre::journal::Index::begin() const
 {
+    // easy enough
     return _index.begin();
 }
 
 
+// the end of the channels i know about
 auto
 pyre::journal::Index::end() const
 {
+    // easy enough
     return _index.end();
 }
 
 
+// the start of the channels i know about, with access to their shared state
+auto
+pyre::journal::Index::begin()
+{
+    // easy enough
+    return _index.begin();
+}
+
+
+// the end of the channels i know about, with access to their shared state
+auto
+pyre::journal::Index::end()
+{
+    // easy enough
+    return _index.end();
+}
+
+
+// the shared state of a {channel}, made on first use from its nearest ancestor
 auto
 pyre::journal::Index::lookup(const name_type & channel) -> inventory_type &
 {

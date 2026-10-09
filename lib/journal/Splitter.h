@@ -15,7 +15,8 @@
 #include "Device.h"
 
 
-// a device that forwards every entry it receives to each of the devices attached to it
+// a device that forwards every entry it receives to each of the devices attached to it; empty
+// attachments receive nothing
 class pyre::journal::Splitter : public Device {
     // types
 public:
@@ -44,6 +45,8 @@ public:
     inline auto outputs() const -> const outputs_type &;
     // add a device to the set
     inline auto attach(output_type output) -> Splitter &;
+    // remove every attachment of a device from the set; a device that is not attached is ignored
+    inline auto detach(const output_type & output) -> Splitter &;
 
     // user facing messages
     virtual auto alert(const entry_type &) -> Splitter & override;

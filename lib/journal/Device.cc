@@ -21,4 +21,14 @@
 pyre::journal::Device::~Device() {}
 
 
+// interface
+// whether i am implemented outside c++
+auto
+pyre::journal::Device::foreign() const -> bool
+{
+    // devices are native unless they say otherwise
+    return false;
+}
+
+
 // end of file

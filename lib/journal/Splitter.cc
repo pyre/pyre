@@ -31,6 +31,10 @@ pyre::journal::Splitter::alert(const entry_type & entry) -> Splitter &
 {
     // go through my devices
     for (auto & output : _outputs) {
+        // skip the empty attachments
+        if (!output) {
+            continue;
+        }
         // and hand each one the entry
         output->alert(entry);
     }
@@ -45,6 +49,10 @@ pyre::journal::Splitter::help(const entry_type & entry) -> Splitter &
 {
     // go through my devices
     for (auto & output : _outputs) {
+        // skip the empty attachments
+        if (!output) {
+            continue;
+        }
         // and hand each one the entry
         output->help(entry);
     }
@@ -59,6 +67,10 @@ pyre::journal::Splitter::memo(const entry_type & entry) -> Splitter &
 {
     // go through my devices
     for (auto & output : _outputs) {
+        // skip the empty attachments
+        if (!output) {
+            continue;
+        }
         // and hand each one the entry
         output->memo(entry);
     }

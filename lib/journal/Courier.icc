@@ -13,6 +13,7 @@
 
 
 // accessors
+// the descriptor
 auto
 pyre::journal::Courier::descriptor() const -> descriptor_type
 {
@@ -21,6 +22,7 @@ pyre::journal::Courier::descriptor() const -> descriptor_type
 }
 
 
+// the device that also gets every entry
 auto
 pyre::journal::Courier::mirror() const -> mirror_type
 {
@@ -29,6 +31,18 @@ pyre::journal::Courier::mirror() const -> mirror_type
 }
 
 
+// replace the device that also gets every entry
+auto
+pyre::journal::Courier::mirror(mirror_type mirror) -> Courier &
+{
+    // install the new mirror
+    _mirror = std::move(mirror);
+    // and enable chaining
+    return *this;
+}
+
+
+// the sequence number of the last record stamped
 auto
 pyre::journal::Courier::seq() const -> count_type
 {
@@ -37,6 +51,7 @@ pyre::journal::Courier::seq() const -> count_type
 }
 
 
+// the number of records that made it out
 auto
 pyre::journal::Courier::shipped() const -> count_type
 {
@@ -45,6 +60,7 @@ pyre::journal::Courier::shipped() const -> count_type
 }
 
 
+// the number of records lost since the last successful write
 auto
 pyre::journal::Courier::dropped() const -> count_type
 {
@@ -53,6 +69,7 @@ pyre::journal::Courier::dropped() const -> count_type
 }
 
 
+// whether the far end has gone away
 auto
 pyre::journal::Courier::dead() const -> bool
 {
