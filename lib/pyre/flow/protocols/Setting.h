@@ -29,8 +29,19 @@ public:
     // how to change it; false if the value is not of the setting's type
     using setter_type = std::function<bool(Factory &, const value_type &)>;
 
+    // the alternative of {value_type} that holds values of type {valueT}: integers of any width
+    // are held as {int}, floating point values of any width as {double}, pairs and intervals as
+    // themselves
+    template <class valueT>
+    using held_type = std::conditional_t<
+        std::is_integral_v<valueT>, int,
+        std::conditional_t<std::is_floating_point_v<valueT>, double, valueT>>;
+
     // factories
 public:
+    // whether values of type {valueT} can be described as settings
+    template <class valueT>
+    static constexpr auto represents() -> bool;
     // describe the setting {name} of factories of type {factoryT}, which read it through {get}
     // and change it through {set}
     template <class factoryT, class valueT, class resultT>
