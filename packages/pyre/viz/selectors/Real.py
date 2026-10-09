@@ -26,5 +26,8 @@ class Real(pyre.flow.factory, family="pyre.viz.selectors.real", implements=Selec
     real = pyre.viz.tile.output()
     real.doc = "the real part of each sample"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::selectors::real_t",)
+
 
 # end of file

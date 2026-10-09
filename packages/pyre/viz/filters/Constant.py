@@ -28,5 +28,8 @@ class Constant(pyre.flow.factory, family="pyre.viz.filters.constant", implements
     tile = pyre.viz.tile.output()
     tile.doc = "the constant signal"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::filters::constant_t",)
+
 
 # end of file
