@@ -26,7 +26,7 @@ namespace pyre::flow::factories::filters {
     class Geometric;
     template <class signalT, class logsawT>
     class LogSaw;
-    template <class signalT, class parametricT>
+    template <class signalT, class normalizedT>
     class Parametric;
     template <class signalT, class polarsawT>
     class PolarSaw;

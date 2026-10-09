@@ -48,7 +48,7 @@ main(int argc, char * argv[])
     auto filter = filter_t::create("parametric", { 0, 1 });
     // wire it
     filter->signal(signal);
-    filter->parametric(parametric);
+    filter->normalized(parametric);
 
     // go through the tile contents
     for (auto v : parametric->read()) {
