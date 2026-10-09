@@ -41,5 +41,8 @@ class HSB(pyre.flow.factory, family="pyre.viz.colormaps.hsb", implements=Colorma
     blue = Channel.output()
     blue.doc = "the blue channel"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::viz::factories::colormaps::hsb_t",)
+
 
 # end of file

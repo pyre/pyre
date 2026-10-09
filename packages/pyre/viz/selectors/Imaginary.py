@@ -26,5 +26,8 @@ class Imaginary(pyre.flow.factory, family="pyre.viz.selectors.imaginary", implem
     imaginary = pyre.viz.tile.output()
     imaginary.doc = "the imaginary part of each sample"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::selectors::imaginary_t",)
+
 
 # end of file

@@ -31,5 +31,8 @@ class Cycle(pyre.flow.factory, family="pyre.viz.filters.cycle", implements=Filte
     cycle = pyre.viz.tile.output()
     cycle.doc = "the phase of each sample, mapped onto {interval}"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::filters::cycle_t",)
+
 
 # end of file

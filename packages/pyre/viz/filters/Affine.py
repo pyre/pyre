@@ -30,5 +30,8 @@ class Affine(pyre.flow.factory, family="pyre.viz.filters.affine", implements=Fil
     affine = pyre.viz.tile.output()
     affine.doc = "the signal mapped onto {interval}"
 
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::filters::affine_t",)
+
 
 # end of file
