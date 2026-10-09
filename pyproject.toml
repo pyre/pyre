@@ -13,7 +13,7 @@ requires = [
     "setuptools_scm[toml]",
     "cmake",
     "scikit-build",
-    "pybind11",
+    "pybind11>=3",
     "numpy",
     "ninja; platform_system!='Windows'",
 ]

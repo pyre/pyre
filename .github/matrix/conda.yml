@@ -28,7 +28,7 @@ dependencies:
   # pin the standard ABI; left to itself the solver prefers the free-threaded {cp314t} build,
   # whose headers live in {include/python3.14t} rather than {include/python3.14}
   - python-gil
-  - pybind11
+  - pybind11 >=3
   - pyyaml
   # the round trip editor of yaml documents rides on it; optional, but the tests want it
   - ruamel.yaml
