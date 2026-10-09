@@ -26,7 +26,7 @@ pyre::journal::py::entry(py::module & m)
     cls.def(
         // the implementation: an entry with the given content, for those that rebuild entries
         // from records; the containers may be native or bound, so convert element by element
-        py::init([](py::iterable page, py::object notes) {
+        py::init([](py::object notes, py::iterable page) {
             // make an entry
             auto entry = std::make_unique<entry_t>();
             // fill its page
@@ -46,10 +46,11 @@ pyre::journal::py::entry(py::module & m)
             // hand it off
             return entry;
         }),
-        // the signature
-        "page"_a, "notes"_a,
+        // the signature: by keyword only, with a blank page unless one is supplied
+        py::kw_only(), "notes"_a, "page"_a = py::tuple(),
         // the docstring
-        "build an entry with the given {page} and {notes}");
+        "build an entry with the given {notes} and {page}; the page starts out blank unless one "
+        "is supplied");
     // parts
     cls.def_property_readonly(
         // the name
