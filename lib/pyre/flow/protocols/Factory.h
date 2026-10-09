@@ -21,8 +21,10 @@ public:
     using self_type = Factory;
     // my superclass
     using super_type = Node;
-    // connectors
-    using connectors_type = std::map<name_type, product_ref_type>;
+    // my inputs, by slot, which i do not keep alive
+    using inputs_type = std::map<name_type, product_weakref_type>;
+    // my outputs, by slot, which i own
+    using outputs_type = std::map<name_type, product_ref_type>;
     // the descriptions of my slots
     using slot_type = Slot;
     using slots_type = std::vector<slot_type>;
@@ -44,14 +46,15 @@ public:
 
     // accessors
 public:
-    // look up the product bound to an input {slot}
+    // look up the product bound to an input {slot}; nothing if it is not bound, or the product
+    // has gone away
     inline auto input(const name_type & slot) const -> product_ref_type;
     // look up the product bound to an output {slot}
     inline auto output(const name_type & slot) const -> product_ref_type;
 
     // access to the full set of bindings
-    inline auto inputs() const -> const connectors_type &;
-    inline auto outputs() const -> const connectors_type &;
+    inline auto inputs() const -> const inputs_type &;
+    inline auto outputs() const -> const outputs_type &;
 
     // introspection
 public:
@@ -94,8 +97,10 @@ public:
 
     // implementation details - data
 private:
-    connectors_type _inputs;
-    connectors_type _outputs;
+    // my inputs, which i do not keep alive
+    inputs_type _inputs;
+    // my outputs, which i own
+    outputs_type _outputs;
 
     // suppressed metamethods
 private:

@@ -53,8 +53,8 @@ pyre::flow::protocols::Factory::input(const name_type & name) const -> product_r
         // there is no binding
         return product_ref_type(nullptr);
     }
-    // otherwise, return the binding
-    return spot->second;
+    // otherwise, return the product, if it is still around
+    return spot->second.lock();
 }
 
 auto
@@ -72,14 +72,14 @@ pyre::flow::protocols::Factory::output(const name_type & name) const -> product_
 }
 
 auto
-pyre::flow::protocols::Factory::inputs() const -> const connectors_type &
+pyre::flow::protocols::Factory::inputs() const -> const inputs_type &
 {
     // easy enough
     return _inputs;
 }
 
 auto
-pyre::flow::protocols::Factory::outputs() const -> const connectors_type &
+pyre::flow::protocols::Factory::outputs() const -> const outputs_type &
 {
     // easy enough
     return _outputs;

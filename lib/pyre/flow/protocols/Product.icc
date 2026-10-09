@@ -52,6 +52,24 @@ pyre::flow::protocols::Product::ref() -> product_ref_type
     return std::dynamic_pointer_cast<Product>(shared_from_this());
 }
 
+// compare two bindings
+auto
+pyre::flow::protocols::Product::slot_order_type::operator()(
+    const slot_type & left, const slot_type & right) const -> bool
+{
+    // unpack
+    const auto & [leftSlot, leftFactory] = left;
+    const auto & [rightSlot, rightFactory] = right;
+    // bindings through different slots
+    if (leftSlot != rightSlot) {
+        // are ordered by the names of the slots
+        return leftSlot < rightSlot;
+    }
+    // bindings through the same slot are ordered by their factories
+    return leftFactory.owner_before(rightFactory);
+}
+
+
 // accessors
 auto
 pyre::flow::protocols::Product::stale() const -> bool

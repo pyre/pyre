@@ -19,10 +19,17 @@ public:
     using self_type = Product;
     // my superclass
     using super_type = Node;
-    // a binding: the name of the factory slot, and the factory that reads or writes me through it
-    using slot_type = std::tuple<name_type, factory_ref_type>;
+    // a binding: the name of the factory slot, and the factory that reads or writes me through it,
+    // which i do not keep alive
+    using slot_type = std::tuple<name_type, factory_weakref_type>;
+    // bindings are ordered by the name of the slot, and then by the factory, compared by the block
+    // that manages it, so a factory that has gone away keeps its place
+    struct slot_order_type {
+        // compare two bindings
+        inline auto operator()(const slot_type &, const slot_type &) const -> bool;
+    };
     // my bindings
-    using connections_type = std::set<slot_type>;
+    using connections_type = std::set<slot_type, slot_order_type>;
 
     // factory
 public:
