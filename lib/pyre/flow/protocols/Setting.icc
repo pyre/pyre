@@ -19,17 +19,19 @@ pyre::flow::protocols::Setting::of(
     const name_type & name, valueT (factoryT::*get)() const, resultT (factoryT::*set)(valueT))
     -> self_type
 {
+    // the alternative that holds the values of the setting
+    using held = held_type<valueT>;
     // reading the setting goes through the concrete factory
     auto getter = [get](const Factory & factory) -> value_type {
         // which {factory} must be, since the description came from its class
         const auto & concrete = dynamic_cast<const factoryT &>(factory);
         // read the value and hand it off
-        return value_type((concrete.*get)());
+        return value_type(static_cast<held>((concrete.*get)()));
     };
     // so does changing it
     auto setter = [set](Factory & factory, const value_type & value) -> bool {
-        // get the value in my type
-        auto typed = extract<valueT>(value);
+        // get the value in the alternative that holds it
+        auto typed = extract<held>(value);
         // a value of some other type
         if (!typed) {
             // is refused
@@ -37,13 +39,26 @@ pyre::flow::protocols::Setting::of(
         }
         // reach the concrete factory
         auto & concrete = dynamic_cast<factoryT &>(factory);
-        // change the setting, which flushes the factory
-        (concrete.*set)(*typed);
+        // change the setting, in the type the factory takes it in, which flushes the factory
+        (concrete.*set)(static_cast<valueT>(*typed));
         // all done
         return true;
     };
     // assemble the description and hand it off
-    return self_type(name, typeName<valueT>(), getter, setter);
+    return self_type(name, typeName<held>(), getter, setter);
+}
+
+
+// whether values of type {valueT} can be described as settings
+template <class valueT>
+constexpr auto
+pyre::flow::protocols::Setting::represents() -> bool
+{
+    // the alternative that would hold them
+    using held = held_type<valueT>;
+    // must be one of mine
+    return std::is_same_v<held, int> || std::is_same_v<held, double> || std::is_same_v<held, pair_t>
+        || std::is_same_v<held, interval_t>;
 }
 
 
