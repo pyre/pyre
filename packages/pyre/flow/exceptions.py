@@ -50,4 +50,97 @@ class IncompleteFlowError(FlowError):
         return
 
 
+class RecipeError(FlowError):
+    """
+    Base class for the errors raised while editing a recipe
+    """
+
+    # public data
+    description = "recipe error: {0.node}"
+
+
+class DuplicateNodeError(RecipeError):
+    """
+    Exception raised when a recipe is asked to add a node under a name it already uses
+    """
+
+    # public data
+    description = "the recipe has a node named '{0.node}' already"
+
+
+class UnknownNodeError(RecipeError):
+    """
+    Exception raised when a recipe is asked about a node it does not have
+    """
+
+    # public data
+    description = "the recipe has no node named '{0.node}'"
+
+
+class UnknownSlotError(RecipeError):
+    """
+    Exception raised when a recipe is asked to bind a slot its factory does not have
+    """
+
+    # public data
+    description = "'{0.node}' has no slot '{0.slot}'"
+
+    # metamethods
+    def __init__(self, slot, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the name of the slot
+        self.slot = slot
+        # all done
+        return
+
+
+class IncompatiblePinError(RecipeError):
+    """
+    Exception raised when a node is pinned to something that does not satisfy its protocol
+    """
+
+    # public data
+    description = "'{0.node}' cannot be pinned to {0.pin}: it does not satisfy {0.protocol}"
+
+    # metamethods
+    def __init__(self, pin, protocol, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save what was pinned
+        self.pin = pin
+        # and what it had to satisfy
+        self.protocol = protocol
+        # all done
+        return
+
+
+class IncompatibleBindingError(RecipeError):
+    """
+    Exception raised when a slot is bound to a product whose specification is unrelated to the
+    one the slot expects
+    """
+
+    # public data
+    description = (
+        "slot '{0.slot}' of '{0.node}' expects {0.expected}, which is unrelated to {0.offered}"
+        " of '{0.product}'"
+    )
+
+    # metamethods
+    def __init__(self, slot, product, expected, offered, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the slot
+        self.slot = slot
+        # the product
+        self.product = product
+        # the specification the slot expects
+        self.expected = expected
+        # and the one the product has
+        self.offered = offered
+        # all done
+        return
+
+
 # end of file

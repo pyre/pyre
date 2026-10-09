@@ -23,4 +23,10 @@ from .DynamicWorkflow import DynamicWorkflow as dynamic
 # the decorators
 from .Binder import Binder as bind
 
+# the recipes
+from . import recipes
+
+# and easy access to the recipe
+recipe = recipes.recipe
+
 # end of file

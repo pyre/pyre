@@ -974,6 +974,9 @@ pyre_test_python_testcase(tests/pyre.pkg/flow/sanity.py)
 #
 pyre_test_python_testcase(tests/pyre.pkg/viz/descriptions.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/operators.py)
+pyre_test_python_testcase(tests/pyre.pkg/viz/recipe_amplitude.py)
+pyre_test_python_testcase(tests/pyre.pkg/viz/recipe_bindings.py)
+pyre_test_python_testcase(tests/pyre.pkg/viz/recipe_harvest.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/slots.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/specifications.py)
 
