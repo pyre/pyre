@@ -24,7 +24,7 @@ def test():
     # the spelling of the tile of doubles
     float64 = (
         "pyre::flow::products::tile_t<pyre::grid::grid_t<"
-        "pyre::grid::canonical_t<2>, pyre::memory::heap_t<std::double_t>>>"
+        "pyre::grid::canonical_t<2>, pyre::memory::heap_t<double>>>"
     )
     # the catalog knows it
     tile = catalog.products[float64]
@@ -33,7 +33,7 @@ def test():
     # with its readable name
     assert tile.className == "TileGridCanonical2DHeapDouble"
     # and the spelling of its cells
-    assert tile.cell == "std::double_t"
+    assert tile.cell == "double"
     # it knows the image too
     image = catalog.products["pyre::viz::products::images::bmp_t"]
     # which has no cells
