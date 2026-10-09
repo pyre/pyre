@@ -1,0 +1,33 @@
+#!/usr/bin/env python3
+# -*- python -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+def test() -> None:
+    """
+    Verify that an entry can be built from its notes alone, and starts out with a blank page
+    """
+    # access
+    import journal
+
+    # build an entry from its notes
+    entry = journal.entry(notes={"channel": "tests.journal.entry"})
+    # its page is blank
+    assert list(entry.page) == []
+    # and its notes are the ones supplied
+    assert dict(entry.notes) == {"channel": "tests.journal.entry"}
+
+    # all done
+    return
+
+
+# main
+if __name__ == "__main__":
+    # run the test
+    test()
+
+
+# end of file
