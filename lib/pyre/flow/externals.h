@@ -32,8 +32,11 @@ namespace pyre::flow {
     using string_t = std::string;
     // an interval is a pair of doubles, its two ends
     using interval_t = std::tuple<double, double>;
-    // the value of a setting of a factory, whatever its type
-    using setting_t = std::variant<int, double, interval_t>;
+    // a pair of integers, one per axis of a tile, such as an origin or a stride
+    using pair_t = std::tuple<int, int>;
+    // the value of a setting of a factory, whatever its type; a pair comes before an interval, so
+    // a pair of integers from python lands on it, and an interval takes it by widening
+    using setting_t = std::variant<int, double, pair_t, interval_t>;
 } // namespace pyre::flow
 
 
