@@ -14,10 +14,11 @@
 
 // constructor
 pyre::flow::catalog::ProductEntry::ProductEntry(
-    decl_type decl, name_type className, decl_type cell, maker_type make) :
+    decl_type decl, name_type className, decl_type cell, bool makes, maker_type make) :
     _decl(std::move(decl)),
     _className(std::move(className)),
     _cell(std::move(cell)),
+    _makes(makes),
     _make(std::move(make))
 {}
 
@@ -46,6 +47,15 @@ pyre::flow::catalog::ProductEntry::cell() const -> const decl_type &
 {
     // easy enough
     return _cell;
+}
+
+
+// whether i can make products from a shape
+auto
+pyre::flow::catalog::ProductEntry::makes() const -> bool
+{
+    // easy enough
+    return _makes;
 }
 
 
