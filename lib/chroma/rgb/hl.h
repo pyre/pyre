@@ -15,11 +15,15 @@
 // the {hl} to {rgb} conversion kernel
 // maps {hue} and {luminosity} to {rgb} with a colormap designed for displaying complex values
 // [zebker@stanford.edu, private communication]
+// N.B.: the map has no colors of its own for luminosities outside [0, 1], so it clamps them,
+// and a value that is not a number counts as dark
 inline auto
 pyre::chroma::rgb::hl(double hue, double luminosity, double threshold) -> rgb_t
 {
     // one third of the way around the color wheel
     const auto angle = 2 * M_PI / 3;
+    // keep the luminosity in the unit interval, so the brightest pixels saturate in their own hue
+    luminosity = std::min(1.0, std::max(0.0, luminosity));
 
     // fold negative hues into the upper half so the wheel is single valued
     if (hue < 0) {
