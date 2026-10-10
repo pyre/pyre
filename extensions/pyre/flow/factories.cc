@@ -83,6 +83,12 @@ pyre::py::flow::factories(py::module &)
     // the stages every channel shares
     // the map of an interval onto [0,1], in single precision, the way the iterators make it
     catalog.registerFactory<pyre::flow::factories::filters::parametric_t<float64_t, float32_t>>();
+    // and in double precision, for the values that become hues
+    catalog.registerFactory<pyre::flow::factories::filters::parametric_t<float64_t, float64_t>>();
+    // the power law, which turns amplitudes into brightnesses, painted gray in single precision
+    catalog.registerFactory<pyre::flow::factories::filters::power_t<float64_t, float32_t>>();
+    // and into luminosities in double precision
+    catalog.registerFactory<pyre::flow::factories::filters::power_t<float64_t, float64_t>>();
     // the map of an interval onto another, which turns phases into hues
     catalog.registerFactory<pyre::flow::factories::filters::affine_t<float64_t, float64_t>>();
     // a constant, such as a saturation or a brightness
