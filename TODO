@@ -270,14 +270,6 @@
 
 - journal:
 
-- smith:
-
-  - {Smith} runs {git init} and {git commit} through {os.system} and ignores the outcome; in a
-    container without a git identity the commit fails ("Please tell me who you are", "Failed
-    to resolve 'HEAD'") and the smith tests still pass, printing the noise; seen in the
-    {lts-gcc} docker image (2026-10-09); the commit should be checked, and the tests should
-    either set an identity or expect the failure
-
 - weaver:
 
   - i want my own rst, and my own sphinx...
