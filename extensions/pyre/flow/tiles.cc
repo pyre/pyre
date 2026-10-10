@@ -31,6 +31,14 @@ namespace pyre::py::flow {
             name.c_str(),
             // the docstring
             "a tile of cells");
+        // the spelling of its type, which is its key in the catalog
+        cls.def_property_readonly_static(
+            // the name
+            "decl",
+            // the implementation
+            [](const py::object &) -> string_t { return tile_type::declSelf(); },
+            // the docstring
+            "the declaration of my type, which is my key in the catalog");
         // its shape
         cls.def_property_readonly(
             // the name

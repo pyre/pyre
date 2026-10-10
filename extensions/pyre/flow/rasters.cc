@@ -31,6 +31,14 @@ namespace pyre::py::flow {
             name.c_str(),
             // the docstring
             "a tile over cells that live in a python buffer");
+        // the spelling of its type, which is its key in the catalog
+        cls.def_property_readonly_static(
+            // the name
+            "decl",
+            // the implementation
+            [](const py::object &) -> string_t { return raster_type::declSelf(); },
+            // the docstring
+            "the declaration of my type, which is my key in the catalog");
         // its shape
         cls.def_property_readonly(
             // the name
