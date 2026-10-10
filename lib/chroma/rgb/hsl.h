@@ -24,6 +24,11 @@ pyre::chroma::rgb::hsl(double hue, double saturation, double luminosity) -> rgb_
     saturation = std::min(1.0, std::max(0.0, saturation));
     // and the luminosity, so the brightest pixels wash out to white
     luminosity = std::min(1.0, std::max(0.0, luminosity));
+    // the reference formula expects a hue in [0, 2π), so fold negative hues by a full turn
+    if (hue < 0) {
+        // by adding a full turn
+        hue += 2 * M_PI;
+    }
     // the reference formula is written in degrees, so convert the hue
     hue *= 180 / M_PI;
     // the chroma amplitude scales each channel away from the gray at this luminosity
