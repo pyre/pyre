@@ -205,6 +205,20 @@ auto
 pyre::flow::protocols::Factory::make(const name_type & slot, product_ref_type product)
     -> factory_ref_type
 {
+    // if i know the family of the component i stand for
+    if (!_family.empty()) {
+        // report my work on its channel, so whoever watches it can tell i ran
+        auto report = pyre::journal::debug_t(_family);
+        // say what i am making
+        report
+            // where
+            << pyre::journal::at()
+            // what
+            << "'" << name() << "' makes '" << product->name() << "' through its slot '" << slot
+            << "'"
+            // flush
+            << pyre::journal::endl;
+    }
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.make");
     // show me
