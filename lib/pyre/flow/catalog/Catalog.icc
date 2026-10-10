@@ -36,10 +36,16 @@ pyre::flow::catalog::Catalog::registerProduct() -> const product_entry_type &
                 return nullptr;
             }
         }
-        // anything else
-        else {
+        // anything else that says how to make one from a shape
+        else if constexpr (requires { productT::create(name, shape); }) {
             // is made with its own defaults
             return productT::create(name, shape);
+        }
+        // and the rest, such as a raster over a dataset in a file, come into a graph made by
+        // whoever opened their source
+        else {
+            // so they cannot be made from a shape
+            return nullptr;
         }
     };
     // the declaration of the type of the cells
@@ -54,6 +60,12 @@ pyre::flow::catalog::Catalog::registerProduct() -> const product_entry_type &
         cell = storage_type::declValue();
         // and whether it owns them
         makes = std::is_constructible_v<storage_type, typename storage_type::cell_count_type>;
+    }
+    // everything else
+    else {
+        // can be made from a shape only if it says how
+        makes =
+            requires(const name_type & name, shape_type shape) { productT::create(name, shape); };
     }
     // the declaration of the type
     auto decl = productT::declSelf();
