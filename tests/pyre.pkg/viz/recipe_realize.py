@@ -119,6 +119,12 @@ def test():
     for shape in [(8, 8), (5, 13)]:
         # the graph of the plan
         with plan.realize(shape=shape) as graph:
+            # every factory knows the family of the component it stands for, which names the
+            # debug channel its work is reported on
+            assert graph["amplitude"].family == "pyre.viz.operators.amplitude"
+            assert graph["normalizer"].family == "pyre.viz.normalizers.parametric"
+            assert graph["gray"].family == "pyre.viz.colormaps.gray"
+            assert graph["bmp"].family == "pyre.viz.encoders.bmp"
             # fill its signal
             fill(signal=graph["signal"], shape=shape)
             # and pull its image
