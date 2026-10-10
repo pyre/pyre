@@ -7,6 +7,7 @@
 
 // support
 #include <cassert>
+#include <limits>
 // get the chroma interface
 #include <pyre/chroma.h>
 
@@ -40,6 +41,17 @@ main(int argc, char * argv[])
     // zero saturation at full brightness is white, whatever the hue
     assert((pyre::chroma::rgb::hsb(0, 0, 1) == white));
     assert((pyre::chroma::rgb::hsb(2 * M_PI / 3, 0, 1) == white));
+
+    // values outside the unit interval clamp: brightness above it is full brightness
+    assert((pyre::chroma::rgb::hsb(0, 1, 22.5) == red));
+    // below it is black
+    assert((pyre::chroma::rgb::hsb(0, 1, -3) == black));
+    // and so is a brightness that is not a number
+    assert((pyre::chroma::rgb::hsb(0, 1, std::numeric_limits<double>::quiet_NaN()) == black));
+    // a saturation above it is full saturation
+    assert((pyre::chroma::rgb::hsb(0, 5, 1) == red));
+    // and one below it is no saturation at all
+    assert((pyre::chroma::rgb::hsb(0, -2, 1) == white));
 
     // all done
     return 0;

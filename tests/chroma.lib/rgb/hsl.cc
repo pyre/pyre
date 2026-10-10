@@ -7,6 +7,7 @@
 
 // support
 #include <cassert>
+#include <limits>
 // get the chroma interface
 #include <pyre/chroma.h>
 
@@ -33,6 +34,12 @@ main(int argc, char * argv[])
     // blue is 4π/3 at full saturation and mid luminosity
     assert((pyre::chroma::rgb::hsl(4 * M_PI / 3, 1, 0.5) == blue));
     // green matches only within machine epsilon, so it stays out of the exact checks
+    // cyan sits opposite red, whichever way around the wheel the hue is measured
+    rgb_t cyan { 0, 1, 1 };
+    // so it is both π
+    assert((pyre::chroma::rgb::hsl(M_PI, 1, 0.5) == cyan));
+    // and -π
+    assert((pyre::chroma::rgb::hsl(-M_PI, 1, 0.5) == cyan));
 
     // anything at zero luminosity is black, whatever the hue or saturation
     assert((pyre::chroma::rgb::hsl(0, 0, 0) == black));
@@ -43,6 +50,15 @@ main(int argc, char * argv[])
     assert((pyre::chroma::rgb::hsl(0, 0, 1) == white));
     assert((pyre::chroma::rgb::hsl(2 * M_PI / 3, 1, 1) == white));
     assert((pyre::chroma::rgb::hsl(4 * M_PI / 3, 1, 1) == white));
+
+    // values outside the unit interval clamp: luminosity above it washes out to white
+    assert((pyre::chroma::rgb::hsl(0, 1, 22.5) == white));
+    // below it is black
+    assert((pyre::chroma::rgb::hsl(0, 1, -3) == black));
+    // and so is a luminosity that is not a number
+    assert((pyre::chroma::rgb::hsl(0, 1, std::numeric_limits<double>::quiet_NaN()) == black));
+    // a saturation above it is full saturation
+    assert((pyre::chroma::rgb::hsl(0, 5, 0.5) == red));
 
     // all done
     return 0;

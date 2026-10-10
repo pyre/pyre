@@ -28,10 +28,11 @@ auto
 pyre::viz::iterators::colormaps::RGB<redSourceT, greenSourceT, blueSourceT>::operator*() const
     -> rgb_type
 {
-    // pull the current value from each channel source as a color channel
-    viz::color_t red = *_red;
-    viz::color_t green = *_green;
-    viz::color_t blue = *_blue;
+    // pull the current value from each channel source and clip it to the unit interval as a
+    // color channel, since there are no colors of my own for values outside it
+    viz::color_t red = std::min(1.0, std::max(0.0, double(*_red)));
+    viz::color_t green = std::min(1.0, std::max(0.0, double(*_green)));
+    viz::color_t blue = std::min(1.0, std::max(0.0, double(*_blue)));
 
     // assemble the color from the three channels
     return rgb_type { red, green, blue };
