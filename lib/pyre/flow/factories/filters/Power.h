@@ -56,7 +56,8 @@ public:
 
     // factory
 public:
-    inline static auto create(const name_type & name, double mean, double scale, double exponent)
+    inline static auto create(
+        const name_type & name = "", double mean = 1, double scale = 1, double exponent = 1)
         -> factory_ref_type;
 
     // metamethods
