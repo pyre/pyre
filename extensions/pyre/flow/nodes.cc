@@ -80,6 +80,22 @@ pyre::py::flow::nodes(py::module & m)
         "Factory",
         // the docstring
         "the base of the factories of a flow graph");
+    // the family of the component the factory stands for
+    factory.def_property(
+        // the name
+        "family",
+        // the getter
+        [](const factory_t & self) -> string_t { return self.family(); },
+        // the setter
+        [](factory_t & self, const string_t & family) -> void {
+            // record it
+            self.family(family);
+            // all done
+            return;
+        },
+        // the docstring
+        "the family of the component i stand for, which names the debug channel my work is "
+        "reported on");
     // the descriptions of my slots
     factory.def_property_readonly(
         // the name

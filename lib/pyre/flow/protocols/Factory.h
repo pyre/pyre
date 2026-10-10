@@ -56,6 +56,11 @@ public:
     inline auto inputs() const -> const inputs_type &;
     inline auto outputs() const -> const outputs_type &;
 
+    // the family of the component i stand for, which names the debug channel my work is
+    // reported on; empty, and nothing is reported, unless whoever made me says so
+    inline auto family() const -> const name_type &;
+    inline auto family(const name_type & family) -> void;
+
     // introspection
 public:
     // the descriptions of my slots; a factory that does not describe them has none, and binds
@@ -105,6 +110,8 @@ private:
     inputs_type _inputs;
     // my outputs, which i own
     outputs_type _outputs;
+    // the family of the component i stand for
+    name_type _family;
 
     // suppressed metamethods
 private:

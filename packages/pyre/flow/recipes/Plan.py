@@ -9,6 +9,7 @@
 import uuid
 
 # support
+import journal
 import pyre
 
 # the exceptions i raise
@@ -212,6 +213,10 @@ class Plan:
                 for b in bindings
                 if recipe.reads(binding=b) and b.product in made
             }
+            # report the run on the debug channel of its family, so whoever watches it can tell
+            channel = journal.debug(component.pyre_family())
+            # say what is running
+            channel.log(f"'{node.name}' stages {list(inputs)} in python")
             # make its outputs
             outputs = instance.pyre_stage(**inputs)
             # go through the slots it writes
@@ -321,6 +326,9 @@ class Plan:
                 continue
             # make the rest, one at a time
             made = catalog.makeFactory(decl=kinds[factory.name], name=factory.name)
+            # tell it the family of the component it stands for, which names the debug channel
+            # its work is reported on
+            made.family = self.component(node=factory).pyre_family()
             # apply its settings
             for name, value in self.settings(factory=factory, made=made).items():
                 # one at a time
