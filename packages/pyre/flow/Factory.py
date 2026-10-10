@@ -98,6 +98,15 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         return
 
     # interface
+    def pyre_stage(self, **inputs) -> dict:
+        """
+        Make my outputs in python when a recipe i am part of is staged, from the python values of
+        my {inputs}, and hand them back by the names of my slots; a factory with c++ engines
+        leaves that to them, so the base class makes nothing
+        """
+        # nothing to make
+        return {}
+
     def pyre_inputs(self):
         """
         Generate the sequence of my input products

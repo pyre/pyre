@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import uuid
+
 # support
 import pyre
 
@@ -93,6 +96,16 @@ class Plan:
                 raise UnresolvedProductError(node=name, reason=f"the catalog cannot make {decl}")
         # the factories, in the order the data flows through them
         order = recipe.ordered()
+        # the products the factories that compute in python make, by name
+        made = cls.run(recipe=recipe, order=order)
+        # go through them
+        for name, value in made.items():
+            # the c++ products among them
+            if isinstance(value, pyre.libpyre.flow.Product):
+                # have types the catalog knows, which pin their neighbors
+                kinds[name] = value.decl
+        # the rest of the factories need engines
+        order = [node for node in order if cls.component(node=node).pyre_engines]
         # the engines that could do the work of each one
         candidates = {node.name: cls.engines(node=node, catalog=catalog) for node in order}
         # the factory that blocked the search the deepest, in case there is no solution
@@ -152,16 +165,71 @@ class Plan:
                 node=blocked[0],
                 reason="no engine in the catalog takes the products its neighbors make",
             )
-        # every product must have a type by now
+        # every product must have a type by now, or have been made in python
         for product in recipe.products():
             # if this one does not
-            if product.name not in kinds:
+            if product.name not in kinds and product.name not in made:
                 # it is bound to nothing and was not pinned
                 raise UnresolvedProductError(
                     node=product.name, reason="it is bound to no factory and was not pinned"
                 )
         # make a plan and hand it off
-        return cls(recipe=recipe, catalog=catalog, kinds=kinds)
+        return cls(recipe=recipe, catalog=catalog, kinds=kinds, made=made)
+
+    @classmethod
+    def run(cls, *, recipe, order) -> dict:
+        """
+        Run the factories of {recipe} that have no c++ engines, in flow {order}, and hand back the
+        products they make, by name; this is how a reader opens its file and exposes a raster
+        before the engines downstream of it are chosen
+        """
+        # the products made so far, by name
+        made = {}
+        # go through the factories
+        for node in order:
+            # the component that does the work
+            component = cls.component(node=node)
+            # one with c++ engines
+            if component.pyre_engines:
+                # is not run here
+                continue
+            # the instance that does the work: the one it is pinned to, or a fresh one; pyre hands
+            # back the old instance for a name it has seen before, so a fresh one gets a new name
+            instance = (
+                node.pin
+                if node.level == "instance"
+                else component(name=f"{node.name}.{uuid.uuid1()}")
+            )
+            # the settings the recipe records
+            for setting, value in node.settings.items():
+                # become its traits
+                setattr(instance, setting, value)
+            # its bindings
+            bindings = [b for b in recipe.bindings if b.factory == node.name]
+            # the values of its inputs, by slot
+            inputs = {
+                b.slot: made[b.product]
+                for b in bindings
+                if recipe.reads(binding=b) and b.product in made
+            }
+            # make its outputs
+            outputs = instance.pyre_stage(**inputs)
+            # go through the slots it writes
+            for binding in bindings:
+                # skipping the ones it reads
+                if not recipe.writes(binding=binding):
+                    # on to the next
+                    continue
+                # a slot it made nothing for
+                if binding.slot not in outputs:
+                    # leaves its neighbors without a product
+                    raise RealizationError(
+                        node=node.name, reason=f"it made nothing for '{binding.slot}'"
+                    )
+                # file the product
+                made[binding.product] = outputs[binding.slot]
+        # hand them off
+        return made
 
     @classmethod
     def component(cls, *, node):
@@ -226,8 +294,9 @@ class Plan:
         """
         # unpack
         recipe, catalog, kinds = self.recipe, self.catalog, self.kinds
-        # the nodes, by name, starting with the ones made elsewhere
-        nodes = dict(nodes or {})
+        # the nodes, by name, starting with the ones made in python when i was staged, and the
+        # ones made elsewhere
+        nodes = {**self.made, **(nodes or {})}
         # make the rest of the products
         for product in recipe.products():
             # skipping the ones made elsewhere
@@ -246,7 +315,11 @@ class Plan:
             nodes[product.name] = made
         # make the factories
         for factory in recipe.factories():
-            # one at a time
+            # the ones that compute in python ran when i was staged
+            if factory.name not in kinds:
+                # so skip them
+                continue
+            # make the rest, one at a time
             made = catalog.makeFactory(decl=kinds[factory.name], name=factory.name)
             # apply its settings
             for name, value in self.settings(factory=factory, made=made).items():
@@ -262,6 +335,10 @@ class Plan:
         graph = Graph(recipe=recipe, nodes=nodes)
         # go through the bindings
         for binding in recipe.bindings:
+            # the ones of the factories that compute in python were honored when i was staged
+            if binding.factory not in kinds:
+                # so skip them
+                continue
             # bind
             if not nodes[binding.factory].bind(slot=binding.slot, product=nodes[binding.product]):
                 # a binding the engine refuses leaves nothing behind
@@ -293,15 +370,17 @@ class Plan:
         return settings
 
     # metamethods
-    def __init__(self, *, recipe, catalog, kinds: dict, **kwds):
+    def __init__(self, *, recipe, catalog, kinds: dict, made: dict, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the recipe
         self.recipe = recipe
         # the catalog
         self.catalog = catalog
-        # and the declarations of the types of its nodes, by name
+        # the declarations of the types of its nodes, by name
         self.kinds = kinds
+        # and the products the factories that compute in python made, by name
+        self.made = made
         # all done
         return
 
