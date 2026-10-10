@@ -59,8 +59,10 @@ auto
 pyre::viz::factories::colormaps::HL<hueT, luminosityT, redT, greenT, blueT>::declSettings()
     -> const settings_type &
 {
-    // i have none that can be changed by name
-    static const settings_type table {};
+    // my settings
+    static const settings_type table {
+        setting_type::of<self_type>("threshold", &self_type::threshold, &self_type::threshold),
+    };
     // hand them off
     return table;
 }
@@ -127,6 +129,30 @@ pyre::viz::factories::colormaps::HL<hueT, luminosityT, redT, greenT, blueT>::~HL
 {}
 
 // accessors
+template <class hueT, class luminosityT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::HL<hueT, luminosityT, redT, greenT, blueT>::threshold() const
+    -> double
+{
+    // easy enough
+    return _threshold;
+}
+
+template <class hueT, class luminosityT, class redT, class greenT, class blueT>
+auto
+pyre::viz::factories::colormaps::HL<hueT, luminosityT, redT, greenT, blueT>::threshold(
+    double threshold) -> factory_ref_type
+{
+    // update the threshold
+    _threshold = threshold;
+    // invalidate the downstream graph
+    flush();
+    // make a self reference
+    auto self = std::dynamic_pointer_cast<HL>(ref());
+    // and return it
+    return self;
+}
+
 template <class hueT, class luminosityT, class redT, class greenT, class blueT>
 auto
 pyre::viz::factories::colormaps::HL<hueT, luminosityT, redT, greenT, blueT>::hue() -> hue_ref_type
@@ -329,7 +355,7 @@ pyre::viz::factories::colormaps::HL<hueT, luminosityT, redT, greenT, blueT>::mak
         auto hValue = hData[pixel];
         auto lValue = lData[pixel];
         // project to rgb
-        auto [rValue, gValue, bValue] = pyre::chroma::rgb::hl(hValue, lValue);
+        auto [rValue, gValue, bValue] = pyre::chroma::rgb::hl(hValue, lValue, _threshold);
         // and write
         rData[pixel] = rValue;
         gData[pixel] = gValue;

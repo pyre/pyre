@@ -72,6 +72,8 @@ public:
 
     // accessors
 public:
+    // get the threshold
+    auto threshold() const -> double;
     // input slots
     auto hue() -> hue_ref_type;
     auto luminosity() -> luminosity_ref_type;
@@ -82,6 +84,8 @@ public:
 
     // mutators
 public:
+    // set the threshold
+    auto threshold(double threshold) -> factory_ref_type;
     // input slots
     auto hue(hue_ref_type) -> factory_ref_type;
     auto luminosity(luminosity_ref_type) -> factory_ref_type;
