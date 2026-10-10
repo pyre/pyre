@@ -44,9 +44,9 @@ private:
     // disallow
 private:
     Memo(const Memo &) = delete;
-    Memo(const Memo &&) = delete;
-    const Memo & operator=(const Memo &) = delete;
-    const Memo & operator=(const Memo &&) = delete;
+    Memo(Memo &&) = delete;
+    Memo & operator=(const Memo &) = delete;
+    Memo & operator=(Memo &&) = delete;
 };
 
 

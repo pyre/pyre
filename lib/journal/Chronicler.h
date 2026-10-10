@@ -106,9 +106,9 @@ private:
 private:
     Chronicler() = delete;
     Chronicler(const Chronicler &) = delete;
-    Chronicler(const Chronicler &&) = delete;
-    const Chronicler & operator=(const Chronicler &) = delete;
-    const Chronicler & operator=(const Chronicler &&) = delete;
+    Chronicler(Chronicler &&) = delete;
+    Chronicler & operator=(const Chronicler &) = delete;
+    Chronicler & operator=(Chronicler &&) = delete;
 };
 
 

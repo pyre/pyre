@@ -38,9 +38,9 @@ protected:
     // disallow
 private:
     Bland(const Bland &) = delete;
-    Bland(const Bland &&) = delete;
-    const Bland & operator=(const Bland &) = delete;
-    const Bland & operator=(const Bland &&) = delete;
+    Bland(Bland &&) = delete;
+    Bland & operator=(const Bland &) = delete;
+    Bland & operator=(Bland &&) = delete;
 };
 
 

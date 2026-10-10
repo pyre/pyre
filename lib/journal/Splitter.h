@@ -63,9 +63,9 @@ private:
     // disallow
 private:
     Splitter(const Splitter &) = delete;
-    Splitter(const Splitter &&) = delete;
-    const Splitter & operator=(const Splitter &) = delete;
-    const Splitter & operator=(const Splitter &&) = delete;
+    Splitter(Splitter &&) = delete;
+    Splitter & operator=(const Splitter &) = delete;
+    Splitter & operator=(Splitter &&) = delete;
 };
 
 

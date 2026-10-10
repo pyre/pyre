@@ -41,9 +41,9 @@ public:
     // disallow
 private:
     Tee(const Tee &) = delete;
-    Tee(const Tee &&) = delete;
-    const Tee & operator=(const Tee &) = delete;
-    const Tee & operator=(const Tee &&) = delete;
+    Tee(Tee &&) = delete;
+    Tee & operator=(const Tee &) = delete;
+    Tee & operator=(Tee &&) = delete;
 };
 
 

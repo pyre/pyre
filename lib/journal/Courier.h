@@ -133,9 +133,9 @@ private:
     // disallow
 private:
     Courier(const Courier &) = delete;
-    Courier(const Courier &&) = delete;
-    const Courier & operator=(const Courier &) = delete;
-    const Courier & operator=(const Courier &&) = delete;
+    Courier(Courier &&) = delete;
+    Courier & operator=(const Courier &) = delete;
+    Courier & operator=(Courier &&) = delete;
 };
 
 

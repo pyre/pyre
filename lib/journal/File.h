@@ -78,9 +78,9 @@ private:
     // disallow
 private:
     File(const File &) = delete;
-    File(const File &&) = delete;
-    const File & operator=(const File &) = delete;
-    const File & operator=(const File &&) = delete;
+    File(File &&) = delete;
+    File & operator=(const File &) = delete;
+    File & operator=(File &&) = delete;
 };
 
 

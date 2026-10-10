@@ -62,9 +62,9 @@ public:
     // disallow
 private:
     Warning(const Warning &) = delete;
-    Warning(const Warning &&) = delete;
-    const Warning & operator=(const Warning &) = delete;
-    const Warning & operator=(const Warning &&) = delete;
+    Warning(Warning &&) = delete;
+    Warning & operator=(const Warning &) = delete;
+    Warning & operator=(Warning &&) = delete;
 };
 
 

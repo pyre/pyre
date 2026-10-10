@@ -64,9 +64,9 @@ public:
     // disallow
 private:
     Firewall(const Firewall &) = delete;
-    Firewall(const Firewall &&) = delete;
-    const Firewall & operator=(const Firewall &) = delete;
-    const Firewall & operator=(const Firewall &&) = delete;
+    Firewall(Firewall &&) = delete;
+    Firewall & operator=(const Firewall &) = delete;
+    Firewall & operator=(Firewall &&) = delete;
 };
 
 
