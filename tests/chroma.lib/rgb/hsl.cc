@@ -34,6 +34,12 @@ main(int argc, char * argv[])
     // blue is 4π/3 at full saturation and mid luminosity
     assert((pyre::chroma::rgb::hsl(4 * M_PI / 3, 1, 0.5) == blue));
     // green matches only within machine epsilon, so it stays out of the exact checks
+    // cyan sits opposite red, whichever way around the wheel the hue is measured
+    rgb_t cyan { 0, 1, 1 };
+    // so it is both π
+    assert((pyre::chroma::rgb::hsl(M_PI, 1, 0.5) == cyan));
+    // and -π
+    assert((pyre::chroma::rgb::hsl(-M_PI, 1, 0.5) == cyan));
 
     // anything at zero luminosity is black, whatever the hue or saturation
     assert((pyre::chroma::rgb::hsl(0, 0, 0) == black));
