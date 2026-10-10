@@ -7,8 +7,8 @@
 
 
 """
-Check that smith finds its templates in the installation and generates a project from the
-basic one, with every macro in the templates resolved
+Check that smith places the project it assembles under source control: a repository with
+the initial revision, tagged 'v0.0.1'
 """
 
 # support
@@ -19,10 +19,11 @@ import pyre.smith
 
 def test():
     """
-    Generate a project from the basic template and check its configuration file
+    Generate a project and check that its initial revision is recorded and tagged
     """
-    # for the scratch area
+    # for the scratch area, and for asking git about the result
     import os
+    import subprocess
     import tempfile
 
     # give git an identity, so the initial revision can be recorded wherever the test runs
@@ -33,38 +34,38 @@ def test():
         GIT_COMMITTER_EMAIL="tests@pyre.invalid",
     )
 
-    # the templates live in the installation, under {share/pyre}
-    vault = pyre.prefix / "share" / "pyre" / "templates" / "basic"
-    # make sure they are there
-    assert vault.isDirectory(), f"no templates at {vault}"
     # work in a scratch area
     with tempfile.TemporaryDirectory() as scratch:
         # go there
         os.chdir(scratch)
         # make the app, with a project that spells everything the templates ask for
-        app = pyre.smith.smith(name="smith_basic")
+        app = pyre.smith.smith(name="smith_git_revision")
         app.project = "basic"
         app.project.name = "hello"
         app.project.authors = "the authors"
         app.project.span = "2026"
         app.project.github = "authors/hello"
-        # silence the progress report, since what matters is the generated tree
+        # silence the progress report, since what matters is the outcome
         journal.info("smith").deactivate()
         # generate the project
         status = app.run()
         # it went well
         assert status == 0
-        # the project configuration file was generated
-        config = pyre.primitives.path("hello") / "share" / "hello" / "hello.yaml"
-        assert config.exists()
-        # read it
-        text = config.open().read()
-        # with every macro resolved
-        assert "{project." not in text
-        # the name capitalized, as derived from the name
-        assert "capname: Hello" in text
-        # and the repository as given
-        assert "github: authors/hello" in text
+        # ask git for the tagged revision
+        tag = subprocess.run(
+            ["git", "rev-parse", "--verify", "--quiet", "v0.0.1^{commit}"],
+            cwd="hello",
+            capture_output=True,
+            text=True,
+        )
+        # it is there
+        assert tag.returncode == 0
+        # ask git whether anything was left out of it
+        status = subprocess.run(
+            ["git", "status", "--porcelain"], cwd="hello", capture_output=True, text=True
+        )
+        # nothing was
+        assert status.returncode == 0 and status.stdout == ""
     # all done
     return
 

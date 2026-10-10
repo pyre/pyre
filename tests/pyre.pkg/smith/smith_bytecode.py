@@ -21,10 +21,22 @@ from pyre.smith.Smith import Smith as Base
 
 
 def test():
+    """
+    Generate a project from a template with a bytecode cache in it, and check that the cache
+    stays behind
+    """
     # for the scratch area
     import os
     import shutil
     import tempfile
+
+    # give git an identity, so the initial revision can be recorded wherever the test runs
+    os.environ.update(
+        GIT_AUTHOR_NAME="pyre tests",
+        GIT_AUTHOR_EMAIL="tests@pyre.invalid",
+        GIT_COMMITTER_NAME="pyre tests",
+        GIT_COMMITTER_EMAIL="tests@pyre.invalid",
+    )
 
     # the templates live in the installation, under {share/pyre}
     basic = pyre.prefix / "share" / "pyre" / "templates" / "basic"
