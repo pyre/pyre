@@ -9,23 +9,12 @@
 import pyre
 
 
-# the protocol for all raster images
+# the protocol of the cells of a dataset
 class Raster(pyre.flow.specification, family="pyre.viz.rasters"):
     """
-    The raster protocol
+    The cells of a dataset, as a reader exposes them, out of which a slicer cuts tiles; a raster
+    is no tile: its shape is the dataset's, not the one a request asks for
     """
-
-    # framework hooks
-    @classmethod
-    def pyre_default(cls, **kwds):
-        """
-        The default raster
-        """
-        # use BMP as the default raster
-        from ..rasters.BMP import BMP
-
-        # and return it
-        return BMP
 
 
 # end of file

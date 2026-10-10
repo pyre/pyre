@@ -12,6 +12,7 @@ import pyre
 from ..protocols.Slicer import Slicer
 
 # the specifications of my slots
+from ..protocols.Raster import Raster
 from ..protocols.Tile import Tile
 
 
@@ -31,7 +32,7 @@ class Slice(pyre.flow.factory, family="pyre.viz.slicers.slice", implements=Slice
     stride.doc = "the distance between the cells of the raster the window samples, one per axis"
 
     # the input
-    source = Tile.input()
+    source = Raster.input()
     source.doc = "the raster to cut the tile out of"
 
     # the output

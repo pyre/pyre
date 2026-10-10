@@ -9,7 +9,7 @@
 from . import protocols
 
 # products
-from . import rasters
+from . import images
 from . import tiles
 
 # factories
@@ -24,7 +24,8 @@ from . import slicers
 
 # easy access to the protocols
 # products
-raster = rasters.raster
+image = images.image
+raster = protocols.raster
 tile = tiles.tile
 # factories
 reader = readers.reader
