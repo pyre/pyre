@@ -8,7 +8,7 @@
 
 # externals
 import journal
-import os
+import subprocess
 
 # access the framework
 import pyre
@@ -43,6 +43,9 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
     # application obligations
     @pyre.export
     def main(self, *args, **kwds):
+        """
+        Assemble the project from its template and place it under source control
+        """
         # make a channel for reporting progress
         info = journal.info("smith")
 
@@ -75,10 +78,6 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
             return 1
 
         # show me
-        info.log("building the git repository")
-        # have {git} create the directory
-        os.system(f"git init -q -b main {project}")
-
         info.log("generating the source tree")
         # initialize the workload
         todo = [(cwd, project, template)]
@@ -154,21 +153,65 @@ class Smith(pyre.application, family="pyre.applications.smith", namespace="smith
                 metanew.chmod(metaold.permissions)
 
         # tell me
-        info.log("committing the initial revision")
-        # build the commit command
-        command = [
-            "unset CDPATH",  # just in case the user has strange tastes
-            f"cd {project}",
-            "git add .",
-            "git commit -q -m 'automatically generated source'",
-            "git tag v0.0.1",  # tag it
-            "cd ..",
-        ]
-        # execute
-        os.system("; ".join(command))
+        info.log("placing the project under source control")
+        # make the repository and record the initial revision
+        failure = self.placeUnderSourceControl(project=project)
+        # if that didn't work out
+        if failure is not None:
+            # unpack the step that failed and what git had to say about it
+            command, message = failure
+            # make a channel
+            channel = journal.error("smith")
+            # the project itself is fine
+            channel.line(
+                f"the project '{project}' was assembled, but could not be placed under source control"
+            )
+            # say which step failed
+            channel.line(f"while running '{' '.join(command)}':")
+            # set git's message apart
+            channel.indent()
+            # quote it
+            channel.report(message)
+            # and return to the margin
+            channel.outdent()
+            # flush
+            channel.log()
+            # and report failure
+            return 1
 
         # return success
         return 0
+
+    # implementation details
+    def placeUnderSourceControl(self, *, project: str) -> tuple[list[str], list[str]] | None:
+        """
+        Make a git repository in the {project} folder and record its contents as the initial
+        revision, tagged 'v0.0.1'; hand back the step that failed and git's account of it, or
+        {None} if every step succeeded
+        """
+        # the steps, in order; each one needs the ones before it
+        steps = [
+            ["git", "init", "-q", "-b", "main"],
+            ["git", "add", "."],
+            ["git", "commit", "-q", "-m", "automatically generated source"],
+            ["git", "tag", "v0.0.1"],
+        ]
+        # go through them
+        for step in steps:
+            # carefully
+            try:
+                # run this one in the project folder, collecting what git says
+                outcome = subprocess.run(step, cwd=project, capture_output=True, text=True)
+            # if there is no {git} to run
+            except FileNotFoundError as error:
+                # hand back the step and the reason
+                return step, [str(error)]
+            # if the step failed
+            if outcome.returncode != 0:
+                # hand back the step and git's explanation, wherever git put it
+                return step, (outcome.stderr or outcome.stdout).strip().splitlines()
+        # all steps succeeded
+        return None
 
 
 # end of file
