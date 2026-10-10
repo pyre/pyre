@@ -22,4 +22,8 @@ from .Recipe import Recipe as recipe
 from .Plan import Plan as plan
 from .Graph import Graph as graph
 
+# the catalogs recipes are staged against, and the way extensions contribute theirs
+from .Catalogs import Catalogs as federation
+from .registry import register, catalogs
+
 # end of file

@@ -22,6 +22,7 @@ from ..exceptions import (
 
 # my parts
 from .Graph import Graph
+from .registry import catalogs
 
 
 # a recipe staged against a catalog
@@ -83,10 +84,11 @@ class Plan:
         """
         Choose a c++ engine for every factory of {recipe} from {catalog}, so that the types of
         the products agree on both sides of every binding; {products} pins the types of some
-        products, typically the sources, by the declarations of their types
+        products, typically the sources, by the declarations of their types; {catalog} is the
+        catalogs of every extension that registered one, unless told otherwise
         """
-        # use the catalog of the extension, unless told otherwise
-        catalog = pyre.libpyre.flow.catalog() if catalog is None else catalog
+        # use the catalogs of every extension that registered one, unless told otherwise
+        catalog = catalogs() if catalog is None else catalog
         # the types of the products that are pinned
         kinds = dict(products or {})
         # go through them
