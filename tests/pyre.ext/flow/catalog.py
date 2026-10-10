@@ -39,8 +39,12 @@ def test():
     # which has no cells
     assert image.cell == ""
 
-    # find the normalizer among the factories
-    (normalizer,) = [e for e in catalog.factories.values() if e.className == "Parametric"]
+    # find the normalizer that makes values in single precision among the factories
+    (normalizer,) = [
+        e
+        for e in catalog.factories.values()
+        if e.className == "Parametric" and catalog.products[e.slots[1].product].cell == "float"
+    ]
     # its slots, before any normalizer exists
     assert [slot.name for slot in normalizer.slots] == ["signal", "normalized"]
     # an input

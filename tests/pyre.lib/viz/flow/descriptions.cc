@@ -122,7 +122,8 @@ main(int argc, char * argv[])
     };
     check<colormaps::complex_t<complex_t, real_t, real_t, real_t>>(colormap({ signal }), {});
     check<colormaps::gray_t<real_t>>(colormap({ { "data", true } }), {});
-    check<colormaps::hl_t<real_t>>(colormap({ { "hue", true }, { "luminosity", true } }), {});
+    check<colormaps::hl_t<real_t>>(
+        colormap({ { "hue", true }, { "luminosity", true } }), { { "threshold", "double" } });
     check<colormaps::hsb_t<real_t>>(
         colormap({ { "hue", true }, { "saturation", true }, { "brightness", true } }), {});
     check<colormaps::hsl_t<real_t>>(

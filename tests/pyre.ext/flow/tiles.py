@@ -18,8 +18,12 @@ def test():
 
     # get the catalog
     catalog = flow.catalog()
-    # find the normalizer
-    (entry,) = [e for e in catalog.factories.values() if e.className == "Parametric"]
+    # find the normalizer that makes values in single precision
+    (entry,) = [
+        e
+        for e in catalog.factories.values()
+        if e.className == "Parametric" and catalog.products[e.slots[1].product].cell == "float"
+    ]
     # make one, and the tiles it takes
     normalizer = catalog.makeFactory(decl=entry.decl, name="normalizer")
     signal = catalog.makeProduct(decl=entry.slots[0].product, name="signal", shape=(2, 2))
