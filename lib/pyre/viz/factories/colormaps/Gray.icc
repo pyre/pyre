@@ -292,8 +292,8 @@ pyre::viz::factories::colormaps::Gray<signalT, redT, greenT, blueT>::make(
     auto bData = b->write();
     // copy
     for (auto pixel = 0; pixel < pixels; ++pixel) {
-        // read
-        auto value = iData[pixel];
+        // read the value and clip it to the unit interval, the way the iterators do
+        auto value = std::min(1.0, std::max(0.0, double(iData[pixel])));
         // write
         rData[pixel] = value;
         gData[pixel] = value;
