@@ -43,8 +43,8 @@ class HL(pyre.flow.factory, family="pyre.viz.colormaps.hl", implements=Colormap)
     blue = Channel.output()
     blue.doc = "the blue channel"
 
-
     # the c++ templates whose instantiations do my work, when a recipe is staged
     pyre_engines = ("pyre::viz::factories::colormaps::hl_t",)
+
 
 # end of file
