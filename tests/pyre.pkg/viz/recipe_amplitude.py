@@ -93,8 +93,8 @@ def test():
     assert recipe.specification(product="normalized") is tiles.unit
     # the color channels are color channels
     assert recipe.specification(product="red") is tiles.channel
-    # and the image is a raster
-    assert recipe.specification(product="image") is pyre.viz.raster
+    # and the image is an encoded image
+    assert recipe.specification(product="image") is pyre.viz.image
 
     # all done
     return

@@ -36,7 +36,7 @@ def test():
                 "red": tiles.channel,
                 "green": tiles.channel,
                 "blue": tiles.channel,
-                "image": pyre.viz.raster,
+                "image": pyre.viz.image,
             },
         ),
     ]
