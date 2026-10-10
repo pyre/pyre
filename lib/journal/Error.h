@@ -44,6 +44,8 @@ public:
     // metamethods
 public:
     inline explicit Error(const name_type & name, detail_type = 1, dent_type = 0);
+    // destructor
+    ~Error() = default;
 
     // implementation details
 public:

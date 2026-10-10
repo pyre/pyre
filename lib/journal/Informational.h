@@ -42,6 +42,8 @@ public:
     // metamethods
 public:
     inline explicit Informational(const name_type & name, detail_type = 1, dent_type = 0);
+    // destructor
+    ~Informational() = default;
 
     // implementation details
 public:

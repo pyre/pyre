@@ -48,6 +48,11 @@ public:
     using cmdvalue_type = cmdvalue_t;
     using cmd_type = cmd_t;
 
+    // metamethods
+public:
+    // destructor; i am never instantiated, but the bindings must be able to name it
+    ~Chronicler() = default;
+
     // interface
 public:
     // the initializer that parses the program command line

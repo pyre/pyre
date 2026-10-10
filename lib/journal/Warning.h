@@ -43,6 +43,8 @@ public:
     // metamethods
 public:
     inline explicit Warning(const name_type & name, detail_type = 1, dent_type = 0);
+    // destructor
+    ~Warning() = default;
 
     // implementation details
 public:

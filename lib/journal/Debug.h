@@ -43,6 +43,8 @@ public:
     // metamethods
 public:
     inline Debug(const name_type &, detail_type = 1, dent_type = 0);
+    // destructor
+    ~Debug() = default;
 
     // implementation details; don't access directly
 public:
