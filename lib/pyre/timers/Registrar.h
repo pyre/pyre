@@ -35,6 +35,7 @@ public:
     Registrar(Registrar &&) = default;
     Registrar & operator=(const Registrar &) = default;
     Registrar & operator=(Registrar &&) = default;
+    ~Registrar() = default;
 
     // interface
 public:
