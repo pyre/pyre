@@ -26,6 +26,14 @@ pyre::py::viz::images(py::module & m)
         "Image",
         // the docstring
         "a microsoft bitmap, as a product of a flow graph");
+    // the spelling of its type, which is its key in the catalog
+    cls.def_property_readonly_static(
+        // the name
+        "decl",
+        // the implementation
+        [](const py::object &) -> string_t { return image_t::declSelf(); },
+        // the docstring
+        "the declaration of my type, which is my key in the catalog");
     // its shape
     cls.def_property_readonly(
         // the name
