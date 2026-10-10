@@ -9,13 +9,13 @@
 import pyre
 
 # the protocol
-from ..protocols.Raster import Raster
+from ..protocols.Image import Image
 
 
-# a microsoft v2 BMP raster
-class BMP(pyre.flow.product, family="pyre.viz.rasters.bmp", implements=Raster):
+# a microsoft v2 BMP image
+class BMP(pyre.flow.product, family="pyre.viz.images.bmp", implements=Image):
     """
-    A microsoft v2 BMP raster
+    A microsoft v2 BMP image
     """
 
 

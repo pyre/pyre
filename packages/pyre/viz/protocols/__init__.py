@@ -16,11 +16,11 @@ from .Magnitude import Magnitude as magnitude
 from .Unit import Unit as unit
 from .Channel import Channel as channel
 
-# and rasters
+# the cells of a dataset
 from .Raster import Raster as raster
 
-# what a reader finds in a file
-from .Datasets import Datasets as datasets
+# and the encoded images
+from .Image import Image as image
 
 # the protocols of the factories
 from .Selector import Selector as selector

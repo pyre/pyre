@@ -13,7 +13,7 @@ from ..protocols.Encoder import Encoder as encoder
 
 
 # the implementations
-@pyre.foundry(implements=encoder, tip="an encoder that produces microsoft v2 BMP rasters")
+@pyre.foundry(implements=encoder, tip="an encoder that produces microsoft v2 BMP images")
 def bmp():
     """ """
     # pull the implementation

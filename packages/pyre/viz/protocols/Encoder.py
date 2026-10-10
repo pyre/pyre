@@ -10,7 +10,7 @@ import pyre
 
 # the specifications of my slots
 from .Channel import Channel
-from .Raster import Raster
+from .Image import Image
 
 
 # the protocol for all image encoders
@@ -30,7 +30,7 @@ class Encoder(pyre.flow.producer, family="pyre.viz.encoders"):
     blue.doc = "the blue channel"
 
     # the output
-    image = Raster.output()
+    image = Image.output()
     image.doc = "the encoded image"
 
     # framework hooks

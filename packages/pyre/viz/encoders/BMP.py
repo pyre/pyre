@@ -15,7 +15,7 @@ from ..protocols.Encoder import Encoder
 from ..protocols.Channel import Channel
 
 
-# a factory of microsoft BMP v2 rasters
+# a factory of microsoft BMP v2 images
 class BMP(pyre.flow.factory, family="pyre.viz.encoders.bmp", implements=Encoder):
     """
     An encoder that encodes its {red}, {green} and {blue} channels into a
@@ -33,8 +33,8 @@ class BMP(pyre.flow.factory, family="pyre.viz.encoders.bmp", implements=Encoder)
     blue.doc = "the blue channel"
 
     # the output
-    image = pyre.viz.raster.output()
-    image.default = pyre.viz.rasters.bmp
+    image = pyre.viz.image.output()
+    image.default = pyre.viz.images.bmp
     image.doc = "the BMP encoded signal"
 
     # the c++ templates whose instantiations do my work, when a recipe is staged

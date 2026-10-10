@@ -9,6 +9,7 @@
 import pyre
 
 # the specifications of my slots
+from .Raster import Raster
 from .Tile import Tile
 
 
@@ -20,7 +21,7 @@ class Slicer(pyre.flow.producer, family="pyre.viz.slicers"):
     """
 
     # the input
-    source = Tile.input()
+    source = Raster.input()
     source.doc = "the raster to cut the tiles out of"
 
     # the output

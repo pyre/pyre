@@ -9,19 +9,23 @@
 import pyre
 
 # the specifications of my slots
-from .Datasets import Datasets
+from .Raster import Raster
 
 
 # the protocol of the factories that open files
 class Reader(pyre.flow.producer, family="pyre.viz.readers"):
     """
-    The reader protocol: open a file and make its datasets available to the selectors that pick
-    the one to look at
+    The reader protocol: open the file at {uri} and expose the cells of a dataset in it as a
+    raster; that is all a reader nobody knows anything about can promise
     """
 
+    # user configurable state
+    uri = pyre.properties.uri()
+    uri.doc = "the location of the file to open"
+
     # the output
-    datasets = Datasets.output()
-    datasets.doc = "the datasets in the file"
+    raster = Raster.output()
+    raster.doc = "the cells of a dataset in the file"
 
 
 # end of file

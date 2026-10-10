@@ -9,11 +9,11 @@
 import pyre
 
 # the protocol
-from ..protocols.Raster import Raster as raster
+from ..protocols.Image import Image as image
 
 
 # the implementations
-@pyre.foundry(implements=raster, tip="a microsoft v2 BMP raster")
+@pyre.foundry(implements=image, tip="a microsoft v2 BMP image")
 def bmp():
     """ """
     # pull the implementation
