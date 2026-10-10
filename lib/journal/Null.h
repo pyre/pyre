@@ -31,6 +31,8 @@ public:
 public:
     // constructor
     inline explicit Null(const name_type &);
+    // destructor
+    ~Null() = default;
 
     // accessors
 public:

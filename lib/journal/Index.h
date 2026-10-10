@@ -40,6 +40,7 @@ public:
     Index(Index &&) = default;
     Index & operator=(const Index &) = default;
     Index & operator=(Index &&) = default;
+    ~Index() = default;
 
     // interface
 public:

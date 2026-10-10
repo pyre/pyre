@@ -44,6 +44,8 @@ public:
 public:
     // constructors
     inline explicit Entry();
+    // destructor
+    ~Entry() = default;
 
     // interface
 public:

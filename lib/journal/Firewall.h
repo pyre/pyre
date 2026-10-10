@@ -43,6 +43,8 @@ public:
     // metamethods
 public:
     inline explicit Firewall(const name_type &, detail_type = 1, dent_type = 0);
+    // destructor
+    ~Firewall() = default;
 
     // implementation details
 public:
