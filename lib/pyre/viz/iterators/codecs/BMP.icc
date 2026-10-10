@@ -203,6 +203,13 @@ pyre::viz::iterators::codecs::BMP::encode(iteratorT & source, bool topdown) cons
             << pyre::journal::endl;
     }
 
+    // the format has no room for values outside the unit interval, so clip a color channel to it
+    // before scaling it to a byte, and let a value that is not a number count as zero
+    auto byte = [](double value) -> byte_type {
+        // clip and scale
+        return static_cast<byte_type>(255 * std::min(1.0, std::max(0.0, value)));
+    };
+
     // encode the data at each pixel location; the payload is packed line by line
     for (auto row = 0; row < _height; ++row) {
         for (auto col = 0; col < _width; ++col) {
@@ -210,9 +217,9 @@ pyre::viz::iterators::codecs::BMP::encode(iteratorT & source, bool topdown) cons
             auto [red, green, blue] = *source;
             // write it in the file; note that the encoding order is {bgr}, not {rgb}
             // and we scale the values to the range [0,255]
-            _data[cur++] = 255 * blue;
-            _data[cur++] = 255 * green;
-            _data[cur++] = 255 * red;
+            _data[cur++] = byte(blue);
+            _data[cur++] = byte(green);
+            _data[cur++] = byte(red);
             // point to the next one
             ++source;
         }

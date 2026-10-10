@@ -304,15 +304,21 @@ pyre::viz::factories::codecs::BMP<redT, greenT, blueT>::make(
     auto blueData = b->read().data();
     // make an iterator to the image payload
     auto imageData = bmp->write().begin();
+    // the format has no room for values outside the unit interval, so clip a color channel to it
+    // before scaling it to a byte, and let a value that is not a number count as zero
+    auto byte = [](double value) -> pixel_type {
+        // clip and scale
+        return static_cast<pixel_type>(0xff * std::min(1.0, std::max(0.0, value)));
+    };
 
     // encode: go through the rows
     for (auto row = 0; row < height; ++row) {
         // go through the columns
         for (auto col = 0; col < width; ++col) {
             // get the pixel values
-            pixel_type redPixel = static_cast<pixel_type>(0xff * (*redData++)) & 0xff;
-            pixel_type greenPixel = static_cast<pixel_type>(0xff * (*greenData++)) & 0xff;
-            pixel_type bluePixel = static_cast<pixel_type>(0xff * (*blueData++)) & 0xff;
+            pixel_type redPixel = byte(*redData++);
+            pixel_type greenPixel = byte(*greenData++);
+            pixel_type bluePixel = byte(*blueData++);
             // encode; note that the order is {blue, green, red}
             *imageData++ = bluePixel;
             *imageData++ = greenPixel;
