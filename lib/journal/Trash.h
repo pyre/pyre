@@ -62,9 +62,9 @@ private:
     // disallow
 private:
     Trash(const Trash &) = delete;
-    Trash(const Trash &&) = delete;
-    const Trash & operator=(const Trash &) = delete;
-    const Trash & operator=(const Trash &&) = delete;
+    Trash(Trash &&) = delete;
+    Trash & operator=(const Trash &) = delete;
+    Trash & operator=(Trash &&) = delete;
 };
 
 

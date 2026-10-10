@@ -65,9 +65,9 @@ public:
     // disallow
 private:
     Error(const Error &) = delete;
-    Error(const Error &&) = delete;
-    const Error & operator=(const Error &) = delete;
-    const Error & operator=(const Error &&) = delete;
+    Error(Error &&) = delete;
+    Error & operator=(const Error &) = delete;
+    Error & operator=(Error &&) = delete;
 };
 
 

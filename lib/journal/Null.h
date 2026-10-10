@@ -60,9 +60,9 @@ public:
     // disallow
 private:
     Null(const Null &) = delete;
-    Null(const Null &&) = delete;
-    const Null & operator=(const Null &) = delete;
-    const Null & operator=(const Null &&) = delete;
+    Null(Null &&) = delete;
+    Null & operator=(const Null &) = delete;
+    Null & operator=(Null &&) = delete;
 };
 
 

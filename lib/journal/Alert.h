@@ -44,9 +44,9 @@ private:
     // disallow
 private:
     Alert(const Alert &) = delete;
-    Alert(const Alert &&) = delete;
-    const Alert & operator=(const Alert &) = delete;
-    const Alert & operator=(const Alert &&) = delete;
+    Alert(Alert &&) = delete;
+    Alert & operator=(const Alert &) = delete;
+    Alert & operator=(Alert &&) = delete;
 };
 
 

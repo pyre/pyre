@@ -60,9 +60,9 @@ public:
     // disallow
 private:
     Help(const Help &) = delete;
-    Help(const Help &&) = delete;
-    const Help & operator=(const Help &) = delete;
-    const Help & operator=(const Help &&) = delete;
+    Help(Help &&) = delete;
+    Help & operator=(const Help &) = delete;
+    Help & operator=(Help &&) = delete;
 };
 
 

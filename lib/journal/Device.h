@@ -52,9 +52,9 @@ private:
     // disallow
 private:
     Device(const Device &) = delete;
-    Device(const Device &&) = delete;
-    const Device & operator=(const Device &) = delete;
-    const Device & operator=(const Device &&) = delete;
+    Device(Device &&) = delete;
+    Device & operator=(const Device &) = delete;
+    Device & operator=(Device &&) = delete;
 };
 
 

@@ -61,9 +61,9 @@ public:
     // disallow
 private:
     Debug(const Debug &) = delete;
-    Debug(const Debug &&) = delete;
-    const Debug & operator=(const Debug &) = delete;
-    const Debug & operator=(const Debug &&) = delete;
+    Debug(Debug &&) = delete;
+    Debug & operator=(const Debug &) = delete;
+    Debug & operator=(Debug &&) = delete;
 };
 
 

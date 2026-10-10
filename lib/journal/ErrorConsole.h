@@ -43,9 +43,9 @@ private:
     // disallow
 private:
     ErrorConsole(const ErrorConsole &) = delete;
-    ErrorConsole(const ErrorConsole &&) = delete;
-    const ErrorConsole & operator=(const ErrorConsole &) = delete;
-    const ErrorConsole & operator=(const ErrorConsole &&) = delete;
+    ErrorConsole(ErrorConsole &&) = delete;
+    ErrorConsole & operator=(const ErrorConsole &) = delete;
+    ErrorConsole & operator=(ErrorConsole &&) = delete;
 };
 
 

@@ -43,9 +43,9 @@ private:
     // disallow
 private:
     Console(const Console &) = delete;
-    Console(const Console &&) = delete;
-    const Console & operator=(const Console &) = delete;
-    const Console & operator=(const Console &&) = delete;
+    Console(Console &&) = delete;
+    Console & operator=(const Console &) = delete;
+    Console & operator=(Console &&) = delete;
 };
 
 

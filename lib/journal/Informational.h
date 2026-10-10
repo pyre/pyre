@@ -60,9 +60,9 @@ public:
     // disallow
 private:
     Informational(const Informational &) = delete;
-    Informational(const Informational &&) = delete;
-    const Informational & operator=(const Informational &) = delete;
-    const Informational & operator=(const Informational &&) = delete;
+    Informational(Informational &&) = delete;
+    Informational & operator=(const Informational &) = delete;
+    Informational & operator=(Informational &&) = delete;
 };
 
 
