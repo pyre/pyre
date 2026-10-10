@@ -5,8 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
-# a plain ubuntu base; the conda-forge toolchain is distro-independent
-FROM ubuntu:24.04
+# the current ubuntu LTS, as a plain base; the conda-forge toolchain is distro-independent, and
+# the official tag is multi-arch, so it resolves to the host architecture with no emulation
+FROM ubuntu:latest
 
 # set up some build variables
 # the image instance; drives every {COPY} path below so a sibling image is a pure copy-and-edit
