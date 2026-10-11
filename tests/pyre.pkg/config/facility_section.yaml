@@ -1,0 +1,23 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the binding of the facility first, then the settings of the part it binds
+alpha:
+  part: facility_section.parts.knob
+
+alpha.part:
+  turns: 7
+
+# the settings of the part first, then the binding
+beta.part:
+  turns: 11
+
+beta:
+  part: facility_section.parts.knob
+
+
+# end of file
