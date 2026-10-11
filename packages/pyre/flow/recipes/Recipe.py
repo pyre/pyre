@@ -9,6 +9,7 @@
 from ..exceptions import (
     DuplicateNodeError,
     IncompatibleBindingError,
+    IncompatiblePinError,
     UnknownNodeError,
     UnknownSlotError,
 )
@@ -111,14 +112,14 @@ class Recipe:
             raise UnknownSlotError(node=factory, slot=slot)
         # what the slot expects
         expected = trait.protocol
-        # go through what the product already has, other than through this very slot
-        for offered in self.specifications(product=product, skip=(factory, slot)):
-            # a specification that is no refinement of the other, either way
-            if not (issubclass(expected, offered) or issubclass(offered, expected)):
-                # cannot share a product
-                raise IncompatibleBindingError(
-                    node=factory, slot=slot, product=product, expected=expected, offered=offered
-                )
+        # look for a specification of the product that is unrelated to it
+        offered = self.clash(factory=factory, slot=slot, product=product, expected=expected)
+        # if there is one
+        if offered is not None:
+            # the slot cannot share the product
+            raise IncompatibleBindingError(
+                node=factory, slot=slot, product=product, expected=expected, offered=offered
+            )
         # forget whatever the slot was bound to
         self.bindings = [b for b in self.bindings if (b.factory, b.slot) != (factory, slot)]
         # make the binding
@@ -131,6 +132,85 @@ class Recipe:
             setattr(maker.pin, slot, stock.pin)
         # hand off the binding
         return binding
+
+    def pin(self, name: str, pin=None) -> list:
+        """
+        Pin the node {name} to {pin}, a class or an instance that satisfies its protocol, or to
+        nothing, so it stands for any implementation of it again; a factory takes the slots of
+        its new pin, so the bindings of the slots it no longer has are undone and handed back,
+        and a slot it keeps must still expect a specification related to the ones its product
+        has; a refused pin leaves the node as it was
+        """
+        # find the node
+        node = self.node(name=name)
+        # a pin that does not satisfy its protocol
+        if pin is not None and node.protocol is not None and not node.admits(pin=pin):
+            # cannot stand here
+            raise IncompatiblePinError(node=name, pin=pin, protocol=node.protocol)
+        # remember what it was pinned to
+        previous = node.pin
+        # a binding is live while both of its ends are instances
+        live = lambda binding: all(
+            self.node(name=end).level == "instance" for end in (binding.factory, binding.product)
+        )
+        # my bindings, which are the ones that may need undoing
+        mine = [b for b in self.bindings if name in (b.factory, b.product)]
+        # the live ones, which come undone if the new pin stands
+        undo = [b for b in mine if live(b)]
+        # try the new pin
+        node.pin = pin
+        # the slots the node has with its new pin, if it is a factory
+        slots = node.slots if isinstance(node, Factory) else {}
+        # the bindings of the slots a factory no longer has
+        gone = [b for b in mine if b.factory == name and b.slot not in slots]
+        # go through the bindings that stay
+        for binding in (b for b in mine if b not in gone):
+            # a factory's slot must still get along with its product
+            if binding.factory == name:
+                # what the slot expects now
+                expected = node.slots[binding.slot].protocol
+                # what clashes with it
+                offered = self.clash(
+                    factory=name, slot=binding.slot, product=binding.product, expected=expected
+                )
+            # a product's pin must satisfy every slot bound to it
+            else:
+                # what the slot expects
+                expected = self.factoryNode(name=binding.factory).slots[binding.slot].protocol
+                # what clashes with it
+                offered = None if pin is None or pin.pyre_isCompatible(spec=expected) else pin
+            # if something clashes
+            if offered is not None:
+                # put the node back the way it was
+                node.pin = previous
+                # and complain
+                raise IncompatibleBindingError(
+                    node=binding.factory,
+                    slot=binding.slot,
+                    product=binding.product,
+                    expected=expected,
+                    offered=offered,
+                )
+        # the pin stands; undo the live bindings that were made through the old pin
+        for binding in undo:
+            # the instance that holds it: the old pin of the node, or the factory at its other end
+            holder = (
+                previous if binding.factory == name else self.factoryNode(name=binding.factory).pin
+            )
+            # clear the slot
+            setattr(holder, binding.slot, None)
+        # forget the bindings of the slots that are gone
+        self.bindings = [b for b in self.bindings if b not in gone]
+        # and make the ones that are live with the new pin
+        for binding in (b for b in mine if b not in gone and live(b)):
+            # by setting the slot of the factory's instance to the product's
+            setattr(
+                self.factoryNode(name=binding.factory).pin,
+                binding.slot,
+                self.productNode(name=binding.product).pin,
+            )
+        # hand off the bindings that are gone
+        return gone
 
     def unbind(self, factory: str, slot: str) -> Binding | None:
         """
@@ -231,6 +311,20 @@ class Recipe:
         """
         # ask the slot
         return bool(self.factoryNode(name=binding.factory).slots[binding.slot].output)
+
+    def clash(self, factory: str, slot: str, product: str, expected):
+        """
+        Find a specification of {product}, other than the one {slot} of {factory} contributes,
+        that is no refinement of {expected}, either way, or nothing when they all get along
+        """
+        # go through what the product has, other than through this very slot
+        for offered in self.specifications(product=product, skip=(factory, slot)):
+            # a specification that is no refinement of the other, either way
+            if not (issubclass(expected, offered) or issubclass(offered, expected)):
+                # is the one
+                return offered
+        # they all get along
+        return None
 
     def specifications(self, product: str, skip: tuple | None = None):
         """

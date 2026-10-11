@@ -56,6 +56,13 @@ class Node:
         # all done
         return
 
+    def admits(self, pin) -> bool:
+        """
+        Check whether {pin} satisfies my protocol, so i can be pinned to it
+        """
+        # ask it
+        return bool(self.protocol is None or pin.pyre_isCompatible(spec=self.protocol))
+
     def __str__(self) -> str:
         # render my name and my level
         return f"{type(self).__name__.lower()} '{self.name}' ({self.level})"
