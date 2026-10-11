@@ -525,6 +525,50 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         # otherwise
         return False
 
+    @classmethod
+    def pyre_isImplementedBy(cls, value):
+        """
+        Check whether {value}, a component or a component class, comes from a class that declares
+        that it implements me, or one of my descendants
+
+        This is a check of provenance, not of structure: a component that happens to provide
+        everything i require without saying so does not qualify, and neither does one that
+        implements one of my ancestors, which {pyre_isTypeCompatible} accepts for the sake of
+        assignments
+        """
+        # if the value is a component instance
+        if isinstance(value, cls.component):
+            # get its type
+            component = type(value)
+        # if it is a component class
+        elif isinstance(value, cls.actor):
+            # we know its type
+            component = value
+        # anything else
+        else:
+            # is not an implementation of anything
+            return False
+        # get the protocol the component declares it implements
+        protocol = component.pyre_implements
+        # a component that declares none
+        if protocol is None:
+            # does not implement me
+            return False
+        # a descendant of mine implements me
+        if issubclass(protocol, cls):
+            # so we are done
+            return True
+        # when protocols are loaded from the filesystem during specification resolution, the
+        # subclass check can fail on an ancestor that came through another import; so compare
+        # my family key with the keys of the ancestors of the protocol, if i have one
+        key = cls.pyre_key
+        # a protocol without a family
+        if not key:
+            # has nothing else to go by
+            return False
+        # look for me among the ancestors of the protocol
+        return any(ancestor.pyre_key == key for ancestor in protocol.pyre_pedigree)
+
     # constants
     EXTENSION = ".py"
 
