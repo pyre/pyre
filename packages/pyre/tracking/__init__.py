@@ -10,6 +10,7 @@ from .Chain import Chain as chain
 from .Command import Command as command
 from .File import File as file
 from .FileRegion import FileRegion as region
+from .Interactive import Interactive as interactive
 from .NameLookup import NameLookup as lookup
 from .Script import Script as script
 from .Simple import Simple as simple
