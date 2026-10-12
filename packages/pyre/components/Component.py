@@ -227,6 +227,15 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         return self
 
+    def pyre_suggest(self, trait):
+        """
+        Generate values that make sense for {trait}, given my current state, for an interface that
+        helps a person configure me; components that know their way around their traits override
+        this, and the rest have no suggestions
+        """
+        # by default, there are none
+        return []
+
     # introspection
     @classmethod
     def pyre_getExtent(cls):
