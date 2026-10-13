@@ -390,10 +390,18 @@ class Recipe:
         recipe = cls()
         # the names of the nodes of the products, by product identity
         products = {}
+        # a node is named after its instance, but an instance that has no name of its own is
+        # named after its role in the flow: the name of the trait of the flow that holds it, if
+        # any, by identity
+        roles = {
+            id(flow.pyre_inventory[trait].value): trait.name for trait in flow.pyre_facilities()
+        }
         # go through the factories of the flow
         for factory in flow.pyre_factories():
+            # its name, or else its role
+            name = factory.pyre_name or roles.get(id(factory))
             # add each one, pinned to itself
-            node = recipe.factory(name=recipe.vacant(name=factory.pyre_name), pin=factory)
+            node = recipe.factory(name=recipe.vacant(name=name), pin=factory)
             # go through its slots
             for slot, trait in node.slots.items():
                 # find the product bound to it
@@ -406,10 +414,11 @@ class Recipe:
                 name = products.get(id(product))
                 # if it does not have one yet
                 if name is None:
+                    # name it after itself, or its role in the flow, or else the way the framework
+                    # names what a factory makes for itself, after the factory and the slot
+                    name = product.pyre_name or roles.get(id(product)) or f"{node.name}.{slot}"
                     # add it, pinned to itself
-                    name = recipe.product(
-                        name=recipe.vacant(name=product.pyre_name), pin=product
-                    ).name
+                    name = recipe.product(name=recipe.vacant(name=name), pin=product).name
                     # and remember it
                     products[id(product)] = name
                 # record the binding, which the flow already has
