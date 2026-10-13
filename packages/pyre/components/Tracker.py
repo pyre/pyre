@@ -70,8 +70,9 @@ class Tracker(Monitor):
         """
         Handle the notification that the value of {observable} has changed
         """
-        # if the observable is a nameserver node
-        if isinstance(observable, NameServer.node):
+        # if the observable is a nameserver node that the name server knows about, i.e. not a
+        # trait of an anonymous component, which is not tracked
+        if isinstance(observable, NameServer.node) and observable.key is not None:
             # get the slot key
             key = observable.key
             # ask it for its value
