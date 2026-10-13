@@ -6,14 +6,14 @@
 
 
 # my superclass
-from .FlowMaster import FlowMaster
+from .Plumber import Plumber
 
 # the product protocol
 from .Specification import Specification
 
 
 # declaration
-class FactoryMaker(FlowMaster):
+class FactoryMaker(Plumber):
     """
     The metaclass of flow nodes
     """

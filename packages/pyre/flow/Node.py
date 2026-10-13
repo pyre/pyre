@@ -9,11 +9,11 @@
 import pyre
 
 # my metaclass
-from .FlowMaster import FlowMaster
+from .Plumber import Plumber
 
 
 # declaration
-class Node(pyre.component, metaclass=FlowMaster, internal=True):
+class Node(pyre.component, metaclass=Plumber, internal=True):
     """
     Base class for entities that participate in workflows
     """
