@@ -55,7 +55,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
     @classmethod
     def pyre_auto(cls, **kwds):
         """
-        The name of a foundry that can deduce the correct implementor from
+        The name of a foundry that can deduce the correct implementer from
         context available at construction time
         """
         # actual protocols may override
@@ -160,6 +160,14 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         key = cls.pyre_key
         # if i don't have a key, i don't have a family, otherwise, ask the nameserver
         return cls.pyre_nameserver.getSplitName(cls.pyre_key) if key is not None else None
+
+    @classmethod
+    def pyre_role(cls):
+        """
+        My role in the application design; typically the singular form of my family name
+        """
+        # by default, the name of my class
+        return cls.__name__.lower()
 
     @classmethod
     def pyre_package(cls):
