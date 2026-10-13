@@ -13,21 +13,24 @@ from .NameGenerator import NameGenerator
 
 
 # declaration
-class FlowMaster(pyre.actor):
+class Plumber(pyre.actor):
     """
     The metaclass of flow nodes
     """
 
     # public data
     pyre_nameGenerator = NameGenerator()
+    # whether the instances of my classes that were not named explicitly get a globally unique
+    # name from my generator, rather than the name the framework would give them
+    pyre_uniqueNames = False
 
     # metamethods
     def __call__(self, name=None, locator=None, implicit=False, **kwds):
         """
         Build an instance of one of my classes
         """
-        # if this instance was not named explicitly by the user
-        if implicit or name is None:
+        # if unique names are on, and this instance was not named explicitly by the user
+        if self.pyre_uniqueNames and (implicit or name is None):
             # build a unique name
             name = self.pyre_nameGenerator.uid()
 
