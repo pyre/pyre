@@ -81,42 +81,36 @@ def uris(**kwds):
     return list(schema=uri(), **kwds)
 
 
-def kv(default=object, **kwds):
+def kv(**kwds):
     """
     A (key, value) table of strings
     """
-    # normalize the default
-    default = {} if default is object else default
     # build a dictionary that maps strings to strings
-    return dict(schema=str(), default=default, **kwds)
+    return dict(schema=str(), **kwds)
 
 
-def catalog(default=object, schema=None, **kwds):
+def catalog(schema=None, **kwds):
     """
     A {dict} of {list}s
     """
-    # normalize the default
-    default = {} if default is object else default
     # if the user didn't specify a schema
     if schema is None:
         # default to string
         schema = str()
     # build a dictionary that maps strings to lists
-    return dict(schema=list(schema=schema, **kwds), default=default)
+    return dict(schema=list(schema=schema), **kwds)
 
 
-def choices(default=object, schema=None, **kwds):
+def choices(schema=None, **kwds):
     """
     A {dict} of {set}s
     """
-    # normalize the default
-    default = {} if default is object else default
     # if the user didn't specify a schema
     if schema is None:
         # default to string
         schema = str()
     # build a dictionary that map strings to sets
-    return dict(schema=set(schema=schema, **kwds), default=default)
+    return dict(schema=set(schema=schema), **kwds)
 
 
 # end of file
