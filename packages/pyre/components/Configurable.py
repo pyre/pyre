@@ -6,7 +6,7 @@
 
 
 # externals
-import itertools, textwrap
+import collections.abc, itertools, textwrap
 
 # superclass
 from ..framework.Dashboard import Dashboard
@@ -109,18 +109,22 @@ class Configurable(Dashboard):
             yield "{}default: {}".format(two, self._pyre_secret if trait.secret else default)
             yield "{}tip: {}".format(two, tip)
 
-            # if the value itself is a configurable
-            if isinstance(value, Configurable):
-                # mark it
+            # the configurables my value holds: the value itself, or the items of a container
+            held = self._pyre_heldConfigurables(value=value)
+            # if there are any
+            if held:
+                # mark them
                 yield "{}configuration:".format(two)
-                # if it has been shown already
-                if id(value) in seen:
+            # go through them
+            for configurable in held:
+                # if one has been shown already
+                if id(configurable) in seen:
                     # refer to it
-                    yield "{}see {.pyre_name}".format(three, value)
+                    yield "{}see {.pyre_name}".format(three, configurable)
                     # and move on
                     continue
                 # otherwise, describe it
-                yield from value.pyre_showConfiguration(indent=three, deep=deep, seen=seen)
+                yield from configurable.pyre_showConfiguration(indent=three, deep=deep, seen=seen)
         # all done
         return
 
@@ -524,6 +528,30 @@ class Configurable(Dashboard):
         return report
 
     # implementation details
+    def _pyre_heldConfigurables(self, value) -> list:
+        """
+        The configurables held by {value}: the value itself, if it is one, or those among the
+        items of a list, tuple or set, or among the values of a mapping
+        """
+        # a configurable
+        if isinstance(value, Configurable):
+            # holds itself
+            return [value]
+        # a mapping
+        if isinstance(value, collections.abc.Mapping):
+            # holds its values
+            items = value.values()
+        # a list, a tuple, or a set
+        elif isinstance(value, (list, tuple, set, frozenset)):
+            # holds its items
+            items = value
+        # anything else
+        else:
+            # holds none
+            return []
+        # keep the configurables
+        return [item for item in items if isinstance(item, Configurable)]
+
     def _pyre_renderTraitValues(self, renderer, workload):
         """
         Render me and the values of my trait using {renderer}
