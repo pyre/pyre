@@ -12,7 +12,7 @@ class Typed:
     """
 
     # the list of types that i will use to decorate my client
-    from . import schemata, numbers, sequences, mappings
+    from . import schemata, numbers, sequences
 
     # meta-methods
     def __new__(cls, record=None, schemata=schemata, **kwds):
@@ -110,25 +110,6 @@ class Typed:
             try:
                 # and use it
                 yield client.sequences
-            # if not
-            except AttributeError:
-                # no worries
-                pass
-            # check whether the client has a 'containers' mixin
-            try:
-                # and use it
-                yield client.containers
-            # if not
-            except AttributeError:
-                # no worries
-                pass
-
-        # handle mappings
-        if schema in cls.mappings:
-            # check whether the client has a 'mappings' mixin
-            try:
-                # and use it
-                yield client.mappings
             # if not
             except AttributeError:
                 # no worries
