@@ -42,7 +42,7 @@ $(1): $(1).directories $(1).assets $($(1).extras)
 # clean up
 $(1).clean::
 	@${call log.action,"rm",$($(1).pycdir)}
-	$(rm.force-recurse) $($(1).pycdir)${if $($(1).staging.drivers),
+	$(rm.force-recurse) $($(1).pycdir) $($(1).tmpdir)${if $($(1).staging.drivers),
 	@${foreach driver,$($(1).staging.drivers),${call log.action,"rm",$(driver)};}
 	$(rm.force) $($(1).staging.drivers)}${if $($(1).staging.config),
 	@${foreach config,$($(1).staging.config),${call log.action,"rm",$(config)};}
@@ -50,9 +50,9 @@ $(1).clean::
 
 # second level targets
 # make all relevant directories
-$(1).directories: $($(1).staging.pycdirs) $($(1).staging.config.dirs)
+$(1).directories: $($(1).staging.pycdirs) $($(1).staging.config.dirs) $($(1).tmpdir)
 # make all assets
-$(1).assets: $(1).pyc ${if $($(1).meta),$(1).meta,} $(1).drivers $(1).config
+$(1).assets: $(1).prune $(1).pyc ${if $($(1).meta),$(1).meta,} $(1).drivers $(1).config
 # byte compile all sources
 $(1).pyc: $($(1).staging.pyc)
 # export all driver scripts
@@ -60,7 +60,35 @@ $(1).drivers: $($(1).staging.drivers)
 # export all configuration files
 $(1).config: $($(1).staging.config.dirs) $($(1).staging.config)
 
+# the record of the files this package installed, so the next build can remove the ones it no
+# longer installs: modules that were moved, renamed, or deleted would otherwise stay importable;
+# a package only ever removes what it installed itself, so other packages, and the drivers and
+# configuration files of other projects, are safe
+$(1).installed.manifest := $($(1).tmpdir)package.manifest
+# what the package installs now: its byte compiled modules and meta-data, its drivers, and its
+# configuration files
+$(1).installed := $($(1).staging.pyc) $($(1).staging.meta.pyc) $($(1).staging.drivers) $($(1).staging.config)
+# the files it installed last time, as recorded then, that it does not install now; nothing before
+# the first record. the variables of this block do not exist until it is evaluated, so the record
+# is read and filtered in one expression
+$(1).installed.stale := ${filter-out $($(1).staging.pyc) $($(1).staging.meta.pyc) $($(1).staging.drivers) $($(1).staging.config),${if ${wildcard $($(1).tmpdir)package.manifest},${file <$($(1).tmpdir)package.manifest},}}
+
+# remove the stale files, along with the directories of byte compiled modules they leave empty,
+# but never the shared directories of drivers and configuration files, and record what the package
+# installs now; N.B.: a function delimited by braces counts only braces when it splits its
+# arguments, so the {filter} handed to {rmdir.empty} uses braces to keep its comma
+$(1).prune: | $($(1).tmpdir)
+	@$${foreach file,$$($(1).installed.stale),$${call log.action,"prune",$$(file)};}
+	$${if $$($(1).installed.stale),$(rm.force) $$($(1).installed.stale)}
+	$${if $$($(1).installed.stale),${call rmdir.empty,$${filter $($(1).pycdir)%,$$(sort $$(dir $$($(1).installed.stale)))}}}
+	$$(file >$$($(1).installed.manifest),$$($(1).installed))
+
 # individual assets
+# the scratch area
+$($(1).tmpdir):
+	$(mkdirp) $$@
+	@${call log.action,"mkdir",$$@}
+
 # make the directories with the byte compiled files
 $($(1).staging.pycdirs):
 	$(mkdirp) $$@

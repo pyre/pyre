@@ -18,14 +18,14 @@ platform.isysroot := $(or $(SDKROOT),/Library/Developer/CommandLineTools/SDKs/Ma
 
 # c
 platform.c.flags = -arch x86_64 $($(compiler.c).compile.isysroot) $(platform.isysroot)
-platform.c.ldflags := -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-undefined,dynamic_lookup
+platform.c.ldflags := -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs
 platform.c.dll = -dynamiclib
-platform.c.ext = -bundle
+platform.c.ext = -bundle -Wl,-undefined,dynamic_lookup
 # c++
 platform.c++.flags = -arch x86_64 $($(compiler.c++).compile.isysroot) $(platform.isysroot)
-platform.c++.ldflags := -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-undefined,dynamic_lookup
+platform.c++.ldflags := -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs
 platform.c++.dll = -dynamiclib
-platform.c++.ext = -bundle
+platform.c++.ext = -bundle -Wl,-undefined,dynamic_lookup
 
 
 # end of file

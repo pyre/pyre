@@ -68,7 +68,26 @@ $(1).assets: $(1).headers.gateway $(1).headers ${call library.workflows.assets.a
 
 $(1).headers.gateway: $($(1).staging.headers.gateway)
 
-$(1).headers: $($(1).staging.headers)
+$(1).headers: $(1).headers.prune $($(1).staging.headers)
+
+# the record of the headers this library published, so the next build can remove the ones it no
+# longer publishes; a library only ever removes what it published itself, so the gateway headers
+# of other libraries that share its directories, and their nested trees, are safe
+$(1).headers.manifest := $($(1).tmpdir)headers.manifest
+# what the library publishes now: its gateway headers and its public headers
+$(1).headers.published := $($(1).staging.headers.gateway) $($(1).staging.headers)
+# the headers it published last time, as recorded then, that it does not publish now: moved,
+# renamed, or deleted sources; nothing before the first record. the variables of this block do
+# not exist until it is evaluated, so the record is read and filtered in one expression
+$(1).headers.stale := ${filter-out $($(1).staging.headers.gateway) $($(1).staging.headers),${if ${wildcard $($(1).tmpdir)headers.manifest},${file <$($(1).tmpdir)headers.manifest},}}
+
+# remove the stale headers, along with the directories they leave empty, and record what the
+# library publishes now
+$(1).headers.prune: | $($(1).tmpdir)
+	@$${foreach header,$$($(1).headers.stale),$${call log.action,"prune",$$(header)};}
+	$${if $$($(1).headers.stale),$(rm.force) $$($(1).headers.stale)}
+	$${if $$($(1).headers.stale),${call rmdir.empty,$$(sort $$(dir $$($(1).headers.stale)))}}
+	$$(file >$$($(1).headers.manifest),$$($(1).headers.published))
 
 # clean up the autogen files; nothing to do by default
 $(1).autogen.cleanup:: $(1).assets

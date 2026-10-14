@@ -41,7 +41,7 @@ $(1): $(1).static $(1).generated $(1).chunks
 # clean up
 $(1).clean:
 	@${call log.action,"rm",$($(1).staging.prefix)}
-	$(rm.force-recurse) $($(1).staging.prefix)
+	$(rm.force-recurse) $($(1).staging.prefix) $($(1).staged.manifest)
 	@${call log.action,"rm",$($(1).install.prefix)}
 	$(rm.force-recurse) $($(1).install.prefix)
 
@@ -67,7 +67,7 @@ $(1).chunks: ${foreach chunk,$($(1).chunks),$(1).chunks.$(chunk)}
 $($(1).staging.generated.assets) &: \
     $($(1).staging.babel_config) $($(1).staging.page) \
     $($(1).staging.webpack_config) $($(1).staging.npm_config) $($(1).staging.ts_config) \
-    $($(1).staging.npm_lock) $($(1).staging.app.sources) \
+    $($(1).staging.npm_lock) $($(1).staging.app.sources) $($(1).staged.manifest) \
     ${if $($(1).schema.generator),$($(1).staging.schema),} | $(1).generate.prep
 	$(cd) $($(1).staging.prefix); npm run relay && NODE_ENV=$(webpack.node_env) npm run build
 	$(touch) $($(1).staging.generated.assets)
@@ -75,7 +75,37 @@ $($(1).staging.generated.assets) &: \
 $(1).generate.prep: $(1).config $(1).npm_modules $(1).sources
 
 # build the static assets
-$(1).static: $($(1).install.static.assets)
+$(1).static: $(1).prune $($(1).install.static.assets)
+
+# the record of the files the bundle staged and installed, {staged.manifest}, lets the next build
+# remove the ones it no longer stages or installs: a source that was moved, renamed, or deleted
+# would otherwise stay in the staging area, where relay and webpack would still see it; files that
+# the build itself writes, e.g. the relay artifacts, the node modules, and the bundle, are not on
+# the list
+# what the bundle stages and installs now
+$(1).staged := ${strip \
+    $($(1).staging.page) $($(1).staging.npm_config) $($(1).staging.babel_config) \
+    $($(1).staging.webpack_config) $($(1).staging.ts_config) \
+    $($(1).staging.app.sources) $($(1).install.static.assets) \
+}
+# what it staged and installed last time, as recorded then; nothing before the first record
+$(1).staged.recorded := ${if ${wildcard $($(1).staged.manifest)},${file <$($(1).staged.manifest)},}
+
+# the record is remade on every build, but rewritten only when the set of files changed, so the
+# bundle, which depends on it, is rebuilt when a file is added or removed, and not otherwise;
+# N.B.: a function delimited by braces counts only braces when it splits its arguments, so every
+# function nested in one is delimited by braces as well
+$(1).prune: $($(1).staged.manifest)
+
+$($(1).staged.manifest): $(1).staged.check | $($(1).staging.prefix)
+	@$${foreach file,$${filter-out $$($(1).staged),$$($(1).staged.recorded)},$${call log.action,"prune",$${subst $($(1).staging.prefix),,$${subst $($(1).install.prefix),,$$(file)}}};}
+	$${if $${filter-out $$($(1).staged),$$($(1).staged.recorded)},$(rm.force) $${filter-out $$($(1).staged),$$($(1).staged.recorded)}}
+	$${if $${filter-out $$($(1).staged),$$($(1).staged.recorded)},${call rmdir.empty,$${filter $($(1).staging.prefix)% $($(1).install.prefix)%,$${sort $${dir $${filter-out $$($(1).staged),$$($(1).staged.recorded)}}}}}}
+	$${if $${filter-out $$($(1).staged),$$($(1).staged.recorded)}$${filter-out $$($(1).staged.recorded),$$($(1).staged)},$${file >$$@,$$($(1).staged)}}
+
+# always look at the record
+.PHONY: $(1).staged.check
+$(1).staged.check:
 
 # assemble the staging configuration files
 $(1).config: \
