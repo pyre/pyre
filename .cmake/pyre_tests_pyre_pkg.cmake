@@ -676,6 +676,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_array_default.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_instance_configuration_anonymous.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_list_default.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_secret.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/component_show_containers.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_set_default.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_tuple_default.py)
 
