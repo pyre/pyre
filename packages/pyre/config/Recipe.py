@@ -143,14 +143,9 @@ class Recipe:
             value = inventory.getTraitValue(trait=trait)
             # facilities
             if trait.isFacility:
-                # that are not bound to a component have nothing to say
-                if value is None or not hasattr(value, "pyre_name"):
+                # that are bound to a component that can't be rebuilt have nothing to say
+                if not self._followable(component=value):
                     # so move on
-                    continue
-                # components without a name or a family have elected to stay outside the
-                # configuration store, so there is no way to say how to rebuild them
-                if not value.pyre_name or not value.pyre_family():
-                    # and they are left out
                     continue
                 # the rest are followed, so what the component was configured with is described
                 workload.append(value)
@@ -169,6 +164,13 @@ class Recipe:
             if not configured:
                 # are left out
                 continue
+            # containers of components, such as lists and dicts of them
+            if self._holdsComponents(trait=trait):
+                # are recorded by the specifications of the components they hold, which are
+                # followed, like the component bound to a facility
+                section[trait.name] = self._specify(value=value, workload=workload)
+                # and move on
+                continue
             # the rest appear as plain values
             section[trait.name] = self._plain(trait=trait, value=value)
         # hand off the section
@@ -183,6 +185,67 @@ class Recipe:
         # a trait nobody touched has no priority, or one of the categories the framework
         # reserves for defaults
         return priority is not None and priority.name not in ("uninitialized", "defaults")
+
+    def _followable(self, component) -> bool:
+        """
+        Check whether {component} can be described and rebuilt: it must be a component, and
+        have a name and a family, since components without them have elected to stay outside
+        the configuration store
+        """
+        # something that is not a component, such as an unbound facility, has nothing to say
+        if component is None or not hasattr(component, "pyre_name"):
+            # so it can't be followed
+            return False
+        # and neither can a component without a name or a family
+        return bool(component.pyre_name and component.pyre_family())
+
+    def _holdsComponents(self, trait) -> bool:
+        """
+        Check whether {trait} is a container whose entries are components
+        """
+        # the schema of the entries of a container is a facility when they are components
+        return getattr(getattr(trait, "schema", None), "isFacility", False) is True
+
+    def _specify(self, value, workload):
+        """
+        Reduce {value}, a container of components, to the specifications of the components it
+        holds, adding them to {workload} so they are described too; the ones that can't be
+        rebuilt are left out
+        """
+        # an empty container
+        if value is None:
+            # has nothing to say
+            return None
+        # a table
+        if self._tabular(value=value):
+            # keeps its keys, for the components that can be followed
+            specs = {}
+            # go through its entries
+            for key, component in value.items():
+                # skipping the ones that can't be rebuilt
+                if not self._followable(component=component):
+                    # on to the next
+                    continue
+                # follow the component
+                workload.append(component)
+                # and record its specification
+                specs[str(key)] = component.pyre_spec
+            # hand off the table
+            return specs
+        # anything else is a sequence, which becomes a list of specifications
+        specs = []
+        # go through its items
+        for component in value:
+            # skipping the ones that can't be rebuilt
+            if not self._followable(component=component):
+                # on to the next
+                continue
+            # follow the component
+            workload.append(component)
+            # and record its specification
+            specs.append(component.pyre_spec)
+        # hand off the list
+        return specs
 
     def _plain(self, trait, value):
         """
