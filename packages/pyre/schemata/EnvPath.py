@@ -22,6 +22,22 @@ class EnvPath(List):
     typename = "envpath"  # the name of my type
     pathsep = os.pathsep  # the character to use as separator
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am an environment path
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onEnvPath
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super()._pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(schema=self, **kwds)
+
     # meta-methods
     def __init__(self, variable, pathsep=pathsep, **kwds):
         # save the path separator
