@@ -36,7 +36,6 @@ from .Set import Set as set
 from .Tuple import Tuple as tuple
 
 from .Mapping import Mapping as mapping
-from .Catalog import Catalog as catalog
 
 # meta-types
 from .Component import Component as component
