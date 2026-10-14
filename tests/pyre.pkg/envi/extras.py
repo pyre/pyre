@@ -18,8 +18,11 @@ def test():
     # for a header in memory
     import io
 
-    # the warning is expected; quiet it
-    journal.warning("pyre.envi.header").active = False
+    # the warnings are expected, from the header and from the list that drops a bad item, so
+    # send them to a file
+    log = journal.file(path="extras.log")
+    journal.warning("pyre.envi.header").device = log
+    journal.warning("pyre.config.containers").device = log
 
     # a header with a bad line count and a bad wavelength list
     text = "\n".join(
@@ -41,6 +44,21 @@ def test():
     assert hdr.wavelength is None
     # and their text is in the bag, a bare value as a string and a braced one as a list
     assert hdr.extras == {"lines": "many", "wavelength": ["0.4", "blue", "0.6"]}
+
+    # get the warnings
+    with open("extras.log") as stream:
+        # all of them
+        report = stream.read()
+    # the list says which item it dropped, and why
+    assert "skipping 'blue': could not coerce 'blue' into a float" in report, report
+    # the header adds the value it read and the type it expected
+    assert "the value of 'wavelength', {0.4, blue, 0.6}, is not of type 'list[float]'" in report
+    # and says what became of it
+    assert "so 'wavelength' is left unset; its text is in the extras of the header" in report
+    # for a scalar, nobody said why, so the header passes on the reason, once
+    assert report.count("could not coerce 'many' into an integer") == 1, report
+    # and no message repeats what another one already said
+    assert report.count("could not coerce 'blue'") == 1, report
 
     # all done
     return
