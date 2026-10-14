@@ -7,7 +7,7 @@
 
 
 """
-Stage a recipe whose head is a reader that computes in python: staging runs it first, so the
+Stage a recipe whose head is a source that computes in python: staging runs it first, so the
 raster it exposes decides which slice fits, and every graph the plan realizes reads that raster;
 the tiles match the ones the same recipe renders from a raster handed in by hand
 """
@@ -21,15 +21,20 @@ def test():
     # the recipe with a slice at its head, which starts at a raster
     from recipe_slice import sliced
 
-    # a reader that exposes the cells of a grid it holds
-    class Grid(pyre.flow.factory, family="tests.pyre.viz.readers.grid", implements=pyre.viz.reader):
+    # the protocol of the factories that expose a raster, which has no default implementation
+    class Source(pyre.flow.producer, family="tests.pyre.viz.sources"):
         """
-        A reader of a grid in memory
+        A factory that exposes a raster
         """
 
-        # the location of the file, which a reader of memory ignores
-        uri = pyre.properties.uri()
-        uri.doc = "where the cells would come from"
+        # the output
+        raster = pyre.viz.raster.output()
+
+    # a source that exposes the cells of a grid it holds
+    class Grid(pyre.flow.factory, family="tests.pyre.viz.sources.grid", implements=Source):
+        """
+        A source of the cells of a grid in memory
+        """
 
         # the output
         raster = pyre.viz.raster.output()
@@ -67,14 +72,14 @@ def test():
             cell = line * samples + sample
             # the value
             cells[line, sample] = cmath.rect(cell % 11, 0.2 * cell)
-    # a reader of it
+    # a source of it
     reader = Grid(name="tests.pyre.viz.recipe_reader.grid", cells=cells)
 
     # the catalog
     catalog = pyre.libpyre.flow.catalog()
-    # the recipe with a reader in front of the slice
+    # the recipe with the source in front of the slice
     recipe = sliced()
-    recipe.factory(name="reader", protocol=pyre.viz.reader, pin=reader)
+    recipe.factory(name="reader", protocol=Source, pin=reader)
     recipe.bind(factory="reader", slot="raster", product="raster")
     # stage it, which runs the reader
     plan = recipe.stage(catalog=catalog)
@@ -108,12 +113,12 @@ def test():
     # and the reader ran only when the recipe was staged
     assert reader.runs == 1
 
-    # a reader nobody implements cannot be staged
+    # a source with no implementation to fall back on cannot be staged
     from pyre.flow.exceptions import NoComponentError
 
-    # a recipe with an unpinned reader
+    # a recipe with an unpinned source
     recipe = sliced()
-    recipe.factory(name="reader", protocol=pyre.viz.reader)
+    recipe.factory(name="reader", protocol=Source)
     recipe.bind(factory="reader", slot="raster", product="raster")
     try:
         # cannot be staged
