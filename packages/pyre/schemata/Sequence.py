@@ -30,15 +30,18 @@ class Sequence(Container):
     complaint = "could not coerce {0.value!r} to type "
 
     # interface
-    def str(self, value):
+    def string(self, value):
         """
         Render value as a string that can be persisted for later coercion
         """
         # respect {None}
         if value is None:
+            # by leaving it alone
             return None
-        # my value knows
-        return str(self.container(str(item) for item in value))
+        # get my schema
+        schema = self.schema
+        # render each item, and put them together in the form my text is read back from
+        return f"{self.delimiter} ".join(schema.string(item) for item in value)
 
     def json(self, value):
         """
