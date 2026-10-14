@@ -537,6 +537,10 @@ class Configurable(Dashboard):
         inventory = self.pyre_inventory
         # go through them
         for trait in traits:
+            # secrets stay out of what is rendered; a placeholder would read back as their value
+            if trait.secret:
+                # so skip them
+                continue
             # get the value
             value = inventory.getTraitValue(trait=trait)
             # get the trait to render the value
