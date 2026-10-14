@@ -53,8 +53,19 @@ class Typed(Schema):
         for validator in self.validators:
             # by giving a chance to each validator to raise an exception
             value = validator(descriptor=self, value=value, **kwds)
+        # place the value where my clients will find it
+        value = self.deposit(value=value, **kwds)
 
         # and return the new value
+        return value
+
+    def deposit(self, value, **kwds):
+        """
+        Place {value}, converted and validated, where my clients will find it; most values are
+        handed back as they are, while descriptors whose values live elsewhere, such as in the
+        configuration store, put them there and hand back what gives access to them
+        """
+        # leave it alone
         return value
 
     # framework requests
