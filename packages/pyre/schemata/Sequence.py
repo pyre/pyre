@@ -83,9 +83,16 @@ class Sequence(Container):
                     # want facilities to use the name of my node as the name of any instantiated
                     # components
                     yield self.schema.process(value=entry, incognito=incognito, **kwds)
-                # if anything goes wrong that it is managed by the framework, assume it has
-                # been communicated to the user
-                except pyre.PyreError:
+                # if anything goes wrong that it is managed by the framework
+                except pyre.PyreError as error:
+                    # get the journal; not when this module is loaded, since that happens while
+                    # pyre boots, before the journal can find its devices
+                    import journal
+
+                    # make a channel
+                    channel = journal.warning("pyre.config.containers")
+                    # say which entry is left out, and why
+                    channel.log(f"skipping {entry!r}: {error}")
                     # and skip this entry
                     continue
             # all done
