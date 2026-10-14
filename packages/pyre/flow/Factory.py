@@ -25,7 +25,7 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
     """
 
     # types
-    from .exceptions import IncompleteFlowError
+    from .exceptions import IncompleteFlowError, ProductionError
 
     # protocol obligations
     @pyre.export
@@ -96,6 +96,23 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
             yield from product.pyre_targets()
         # all done
         return
+
+    # trait access
+    def pyre_setTrait(self, alias, value, priority=None, locator=None):
+        """
+        Assign {value} to the trait named {alias}; a slot handed the product it holds already is
+        left alone, since nothing about it changes and the product stays as fresh as it was
+        """
+        # identify the trait descriptor
+        trait = self.pyre_trait(alias)
+        # a slot that holds this very product already
+        if (trait.input or trait.output) and self.pyre_inventory[trait].value is value:
+            # is left alone
+            return
+        # blame my caller for the assignment, unless told otherwise
+        locator = pyre.tracking.here(level=1) if locator is None else locator
+        # everything else is an assignment
+        return super().pyre_setTrait(alias=alias, value=value, priority=priority, locator=locator)
 
     # interface
     def pyre_stage(self, **inputs) -> dict:
