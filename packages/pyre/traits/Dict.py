@@ -5,20 +5,27 @@
 # (c) 1998-2026 all rights reserved
 
 
-# access to the default trait
-from .Property import Property
+# externals
+import collections.abc
 
-# superclass
-from .Slotted import Slotted
+# superclasses
+from .Property import Property
+from .. import schemata
 
 # support
 from .. import tracking
 
+# the maps that hold my values
+from .Map import Map
+from .KeyMap import KeyMap
+from .NameMap import NameMap
+
 
 # declaration
-class Dict(Slotted):
+class Dict(Property, schemata.mapping):
     """
-    A property that maps strings to components
+    A property that maps strings to values of the type of its {schema}; the entries of the
+    map of a named component live in the configuration store, one per key
     """
 
     # constants
@@ -31,34 +38,24 @@ class Dict(Slotted):
         The default strategy for handling slot values that are strings and therefore subject to
         some kind of evaluation in the context of the configuration store
         """
-        # whatever my schema says
-        return self.schema.macro
+        # the text of a whole map is interpolated, whatever the type of its values, and split
+        # into entries when the slot is evaluated; each entry is then converted by the slot my
+        # schema makes for it
+        return self.pyre_nameserver.interpolation
 
     def native(self, value, **kwds):
         """
         The default strategy for handling macros in slot values
         """
-        # if the value is any kind of mapping object
-        if isinstance(value, collections.abc.Mapping):
-            # build a dictionary of nodes
-            nodes = {key: self.schema.macro(value=load) for key, load in value.items()}
-            # build a mapping node and return it
-            return self.pyre_nameserver.mapping(nodes, **kwds)
-
-        # if the value is any kind of iterable
+        # if the value is a mapping or an iterable of pairs
         if isinstance(value, collections.abc.Iterable):
-            # build a dictionary of nodes
-            nodes = {key: self.schema.macro(value=load) for key, load in value}
-            # build a mapping node and return it
+            # build a node for each of its entries
+            nodes = {key: self.schema.macro(value=load) for key, load in self._entries(value=value)}
+            # and attach them to a mapping node
             return self.pyre_nameserver.mapping(nodes, **kwds)
-
-        # if it is {None}
-        if value is None:
-            # store it in a variable
-            return self.pyre_nameserver.variable(value=value, **kwds)
-
-        # shouldn't get here
-        assert False, "unreachable"
+        # anything else, {None} included, is stored in a variable; when it is read, {None} stays
+        # {None}, and anything that is not a map is rejected by {coerce}
+        return self.pyre_nameserver.variable(value=value, **kwds)
 
     # my value processors
     def process(self, value, **kwds):
@@ -66,22 +63,32 @@ class Dict(Slotted):
         Walk {value} through the casting procedure appropriate for clients that are component
         classes
         """
-        # leave {None} alone
-        if value is None:
-            return None
-        # make sure we are building class slots, and delegate
-        return self.catalog(factory=self.schema.classSlot, value=value, **kwds)
+        # the entries of the map get class slots
+        return super().process(value=value, slots=self.schema.classSlot, **kwds)
 
     def instantiate(self, value, **kwds):
         """
         Walk {value} through the casting procedure appropriate for clients that are component
         instances
         """
-        # leave {None} alone
-        if value is None:
-            return None
-        # make sure we are building instance slots, and delegate
-        return self.catalog(factory=self.schema.instanceSlot, value=value, **kwds)
+        # the entries of the map get instance slots
+        return super().process(value=value, slots=self.schema.instanceSlot, **kwds)
+
+    def coerce(self, value, slots=None, **kwds):
+        """
+        Convert {value}, a mapping, an iterable of pairs, or text, into a dictionary whose values
+        are converted by my {schema}; the factory of the {slots} of the entries is for {deposit}
+        """
+        # leave the factory out of the conversion of the entries, and convert
+        return super().coerce(value=value, **kwds)
+
+    def deposit(self, value, node, slots, **kwds):
+        """
+        Place the entries of {value}, a dictionary, in slots built by the factory {slots}, and
+        hand back the map that holds them
+        """
+        # build the map
+        return self.catalog(factory=slots, entries=value.items(), node=node)
 
     # framework hooks triggered by client configuration
     def classConfigured(self, component, **kwds):
@@ -91,307 +98,173 @@ class Dict(Slotted):
         # chain up
         super().classConfigured(component=component, **kwds)
         # configure the class record
-        self.configureClient(
-            client=component, myFactory=self.classSlot, traitFactory=self.schema.classSlot
-        )
+        self.configureClient(client=component, factory=self.classSlot)
         # all done
         return self
 
     def instanceConfigured(self, instance, **kwds):
         """
-        Notification that the client class record has been configured
+        Notification that the client instance has been configured
         """
         # chain up
         super().instanceConfigured(instance=instance, **kwds)
         # configure the instance
-        self.configureClient(
-            client=instance, myFactory=self.instanceSlot, traitFactory=self.schema.instanceSlot
-        )
+        self.configureClient(client=instance, factory=self.instanceSlot)
         # all done
         return self
 
     # meta-methods
-    def __init__(self, schema=Property.identity(), default=object, **kwds):
-        # adjust the default value
-        default = dict() if default is object else default
-        # chain up with a potentially adjusted default value
-        super().__init__(default=default, **kwds)
-        # record my schema
-        self.schema = schema
-        # build my slot factories
-        self.classSlot = self.factory(trait=self, post=self.process)
-        # self.instanceSlot = self.factory(trait=self, pre=self.instantiate, post=self.instantiate)
-        self.instanceSlot = self.factory(trait=self, post=self.instantiate)
+    def __init__(self, schema=None, **kwds):
+        # an unspecified schema for my entries is the trait counterpart of the schemata
+        # default, made for me alone: entries are passed through as they are
+        if schema is None:
+            # so make an identity trait
+            schema = self.identity()
+        # chain up, with slot factories that build maps out of the values of my slots
+        super().__init__(
+            schema=schema,
+            classSlot=self.factory(trait=self, post=self.process),
+            instanceSlot=self.factory(trait=self, post=self.instantiate),
+            **kwds,
+        )
         # all done
         return
 
+    def __get__(self, instance, cls):
+        """
+        Retrieve my value, introducing the map to the instance that owns it, so that it can
+        notify its owner when one of its entries changes
+        """
+        # get the value
+        value = super().__get__(instance, cls)
+        # if it is the map of an instance
+        if instance is not None and isinstance(value, Map):
+            # introduce them
+            value.client = instance
+        # and hand it off
+        return value
+
     # implementation details
-    # catalog initialization
-    def catalog(self, factory, value, node, **kwds):
+    def catalog(self, factory, entries, node):
         """
-        Instantiate and initialize an appropriate map
+        Instantiate an appropriate map and fill it with the (key, value) pairs in {entries}
         """
+        # access the store
+        nameserver = self.pyre_nameserver
         # get the node key
         key = node.key
-        # grab my schema
-        schema = self.schema
-        # decide which mapping strategy to use: if the {node} has no key
+        # a node without a key lives outside the store
         if key is None:
-            #  make a {NameMap}
-            catalog = NameMap(schema=schema, factory=factory)
+            # so its map holds its own slots
+            catalog = NameMap(trait=self, factory=factory)
+            # and has no metadata of its own
+            meta = None
         # otherwise
         else:
-            # make a key based map
-            catalog = KeyMap(schema=schema, factory=factory, key=key)
+            # its entries live in the store, under its name
+            catalog = KeyMap(trait=self, factory=factory, key=key)
+            # and they carry the priority of the assignment that made the map, so they compete
+            # on equal terms with the settings of individual keys
+            meta = nameserver.getInfo(key)
 
-        # use this priority
-        priority = self.pyre_nameserver.priority.user
-        # go through the entries in {value}
-        for key, setting in value.items():
-            # make a locator
-            locator = tracking.simple(f"while adding entry '{key}' to '{self.name}'")
+        # go through the entries
+        for name, setting in entries:
+            # a key that holds the separator of the store would name a deeper level of it
+            if nameserver.separator in name:
+                # so leave it out
+                self._skip(entry=name, reason="keys can't hold the separator of the store")
+                # and move on
+                continue
+            # make a locator that leads back to where the map was set
+            locator = tracking.chain(
+                this=tracking.simple(f"while adding entry '{name}' to '{self.name}'"),
+                next=meta.locator if meta is not None else None,
+            )
             # and update my map
-            catalog.insert(name=key, value=setting, locator=locator, priority=priority())
+            catalog.insert(
+                name=name,
+                value=setting,
+                locator=locator,
+                priority=meta.priority if meta is not None else None,
+            )
+
+        # a map in the store
+        if meta is not None:
+            # also holds the keys set individually at a priority higher than the map's own
+            for child, _ in nameserver.children(key):
+                # get the metadata of the setting
+                info = nameserver.getInfo(child)
+                # settings the map outranks were replaced by it
+                if not meta.priority < info.priority:
+                    # so skip them
+                    continue
+                # the others join the map; they were made before my schema was known, so rebuild
+                # their slots with my factory, which converts their values; at the priority of
+                # the defaults, the store keeps their value, priority and locator
+                catalog.insert(
+                    name=info.split[-1],
+                    value=None,
+                    locator=info.locator,
+                    priority=nameserver.priority.defaults(),
+                )
+
         # and return it
         return catalog
 
-    # client configuration
-    def configureClient(self, client, myFactory, traitFactory):
+    def configureClient(self, client, factory):
         """
-        A named client with public inventory requires further configuration
+        Fill the map of a named {client} with the settings that are meant for it
         """
-        # access the nameserver
+        # access the store
         nameserver = self.pyre_nameserver
         # and the configurator
         configurator = self.pyre_configurator
-        # get my schema
-        schema = self.schema
         # find my slot
         slot = client.pyre_inventory[self]
         # this gets called only for public inventory items, so I am guaranteed a key
         key = slot.key
-        # get my name
-        tag = nameserver.getName(key)
-        # the priority of all these assignments
-        initPriority = nameserver.priority.user
+        # the conditional assignments meant for the client
+        deferred = list(configurator.retrieveDeferredAssignments(key=key))
 
-        # make a key based map
-        catalog = KeyMap(schema=schema, factory=traitFactory, key=key)
+        # get my value, which already holds the keys set individually
+        current = slot.value
+        # a map that is not there
+        if current is None:
+            # is made out of the keys set individually, if there are any
+            settings = [
+                (nameserver.getInfo(child), node) for child, node in nameserver.children(key)
+            ]
+            # if there are none, and no conditional assignments either
+            if not settings and not deferred:
+                # the map stays out
+                return self
+            # otherwise, the map takes the priority and the locator of the strongest of them
+            strongest = max(
+                [info.priority for info, _ in settings] + [priority for _, priority in deferred]
+            )
+            # attach a map with the keys set individually
+            client.pyre_inventory.setTraitValue(
+                trait=self,
+                factory=factory,
+                value={info.split[-1]: node.value for info, node in settings},
+                priority=strongest,
+                locator=tracking.simple(f"while configuring '{client.pyre_name}'"),
+            )
+            # and get it
+            current = client.pyre_inventory[self].value
 
-        # grab all direct assignments to this key
-        for name, node in configurator.retrieveDirectAssignments(key):
-            # extract the item key
-            name = nameserver.split(name)[-1]
-            # and its value
-            value = node.value
-            # make a locator
-            locator = tracking.simple("while adding entry {!r} to {.name!r}".format(name, self))
-            # and store them
-            catalog.insert(name=name, value=value, priority=initPriority(), locator=locator)
-
-        # grab all deferred assignments to this key
-        for assignment, priority in configurator.retrieveDeferredAssignments(key=key):
-            # store them
-            catalog.insert(
+        # go through the conditional assignments
+        for assignment, priority in deferred:
+            # and add each one to the map
+            current.insert(
                 name=assignment.key[0],
                 value=assignment.value,
                 priority=priority,
                 locator=assignment.locator,
             )
 
-        # get the my current slot value
-        current = slot.value
-        # if non-trivial, use it to initialize my catalog; i expect it to be a dictionary
-        # this must happen after direct and indirect assignments to avoid changing the
-        # nameserver model while the update is taking place
-        if current:
-            # raise NotImplementedError("NYI: priorities/locators?")
-            catalog.update(current)
-        # one more special case: no settings in the store and {None} value
-        if current is None and not catalog:
-            # leave uninitialized
-            catalog = None
-
-        # make a locator
-        here = tracking.simple("while configuring {.pyre_name!r}".format(client))
-
-        # attach my new value
-        client.pyre_inventory.setTraitValue(
-            trait=self, factory=myFactory, value=catalog, priority=initPriority(), locator=here
-        )
-
         # all done
         return self
-
-
-# implementation details
-# externals
-import collections.abc
-
-# superclass
-from ..framework.Dashboard import Dashboard
-
-
-# the helper container classes
-class Map(collections.abc.MutableMapping, Dashboard):
-    """
-    The base class for the storage helpers
-    """
-
-    # public data
-    schema = None
-    factory = None  # information necessary to make slots
-
-    # meta-methods
-    def __init__(self, schema, factory, *args, **kwds):
-        # chain  up
-        super().__init__(**kwds)
-        # my storage
-        self.map = {}
-        # set my schema
-        self.schema = schema
-        # and my slot factory
-        self.factory = factory
-        # initialize my contents
-        self.update(*args, **kwds)
-        # all done
-        return
-
-    def __delitem__(self, name):
-        """
-        Remove {name} from my map
-        """
-        # easy enough
-        del self.map[name]
-        # all done
-        return
-
-    def __iter__(self):
-        """
-        Create an iterator over my map
-        """
-        # easy enough
-        return iter(self.map)
-
-    def __len__(self):
-        """
-        Compute my size
-        """
-        # easy enough
-        return len(self.map)
-
-    def __contains__(self, name):
-        """
-        Check whether {name} is in my map
-        """
-        # easy enough
-        return name in self.map
-
-    def __setitem__(self, name, value):
-        """
-        Store {value} in the map under {name}
-        """
-        # build a priority
-        priority = self.pyre_nameserver.priority.explicit()
-        # and a locator
-        locator = tracking.here(-1)
-        # delegate
-        return self.insert(name=name, value=value, priority=priority, locator=locator)
-
-    def __str__(self):
-        """
-        Build a simple string representation of my contents
-        """
-        return "{{{}}}".format(
-            ", ".join(["{}: {}".format(key, value) for key, value in self.items()])
-        )
-
-    # private data
-    map = None
-
-
-class KeyMap(Map):
-    """
-    A storage strategy that is appropriate when a client has public inventory
-    """
-
-    # meta-methods
-    def __init__(self, key, *args, **kwds):
-        # chain  up
-        super().__init__(*args, **kwds)
-        # save my client's name
-        self.name = self.pyre_nameserver.getName(key)
-        # all done
-        return
-
-    # slot access
-    def __getitem__(self, name):
-        """
-        Retrieve the value associated with {name} and convert according to my schema
-        """
-        # get the key
-        key = self.map[name]
-        # get the nameserver
-        nameserver = self.pyre_nameserver
-        # and return its value
-        return nameserver[key]
-
-    # implementation details
-    def insert(self, name, value, priority, locator):
-        """
-        Store {value} in the map under {name}
-        """
-        # get the nameserver
-        nameserver = self.pyre_nameserver
-        # build the full name of the map entry
-        fullname = nameserver.join(self.name, name)
-        # insert into the model
-        key, _, _ = nameserver.insert(
-            name=fullname, value=value, factory=self.factory, locator=locator, priority=priority
-        )
-        # adjust my map
-        self.map[name] = key
-        # all done
-        return
-
-
-class NameMap(Map):
-    """
-    A storage strategy for nameless clients
-    """
-
-    def __getitem__(self, name):
-        """
-        Retrieve the value associated with {name} and convert according to my schema
-        """
-        # get the slot
-        node = self.map[name]
-        # and return its value
-        return node.value
-
-    # implementation details
-    def insert(self, name, value, **kwds):
-        """
-        Build a slot to hold {value} and place it in the map
-        """
-        # make a slot
-        new = self.factory(value=value)
-        # look for an existing slot under the same name
-        try:
-            # get it
-            old = self.map[name]
-        # if there wasn't one
-        except KeyError:
-            # no worries
-            pass
-        # if there was
-        else:
-            # replace the old with the new in the evaluation graph
-            new.replace(old)
-        # update the map
-        self.map[name] = new
-        # all done
-        return
 
 
 # end of file
