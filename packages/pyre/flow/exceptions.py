@@ -38,14 +38,40 @@ class IncompleteFlowError(FlowError):
     """
 
     # public data
-    description = "{0.node}, has encountered unbound products"
+    description = "{0.node} has no product in {0.unbound}"
 
     # metamethods
     def __init__(self, traits, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save the local info
+        # save the local info: the metadata of each unbound input, as the pairs of a factory and
+        # its trait that read it
         self.traits = tuple(traits)
+        # the names of the inputs, in the order they were found
+        names = [f"'{trait.name}'" for meta in self.traits for _, trait in meta]
+        # read as a list in words, e.g. 'a', 'b' and 'c'
+        self.unbound = " and ".join(filter(None, [", ".join(names[:-1]), *names[-1:]]))
+        # all done
+        return
+
+
+class ProductionError(FlowError):
+    """
+    Exception raised when a factory cannot make one of its products, e.g. because its settings
+    pick nothing its inputs hold
+    """
+
+    # public data
+    description = "{0.node} could not make '{0.product}': {0.reason}"
+
+    # metamethods
+    def __init__(self, product, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the name of the product
+        self.product = product
+        # and why it could not be made
+        self.reason = reason
         # all done
         return
 
