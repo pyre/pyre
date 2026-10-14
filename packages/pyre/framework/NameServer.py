@@ -244,8 +244,9 @@ class NameServer(Hierarchical):
             # and we are done
             return key, new, old
 
-        # if the new assignment is higher priority than the existing one
-        if priority > meta.priority:
+        # if the new assignment is higher priority than the existing one, or is the existing one
+        # applied again, which refreshes its value
+        if not priority < meta.priority:
             # save the current metadata so we can roll it back if we have to
             mark = self.info(
                 name=name,
