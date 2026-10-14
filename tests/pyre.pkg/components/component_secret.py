@@ -65,6 +65,37 @@ def test():
     assert doc["properties"]["user"]["value"] == "guest"
     assert doc["properties"]["user"]["secret"] is False
 
+    # a renderer that writes traits as assignments
+    class renderer:
+        """a stand-in for the renderers of the weaver"""
+
+        # the start of a component
+        def componentStart(self, component):
+            # as a section
+            yield f"{component.pyre_name}:"
+
+        # the end of a component
+        def componentEnd(self, component):
+            # with a blank line
+            yield ""
+
+        # a trait and its value
+        def trait(self, name, value):
+            # as an assignment
+            return f"{name} = {value}"
+
+        # a value on a line of its own
+        def value(self, value):
+            # as it is
+            return f"{value}"
+
+    # the rendered configuration, which is written to files that are read back
+    rendered = list(a.pyre_renderTraitValues(renderer=renderer()))
+    # leaves the secret out altogether, since a placeholder would read back as its value
+    assert not any("password" in line or "hunter2" in line for line in rendered), rendered
+    # but not the rest
+    assert "user = guest" in rendered, rendered
+
     # all done
     return a, b
 
