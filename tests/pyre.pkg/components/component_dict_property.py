@@ -37,6 +37,11 @@ def test() -> None:
     assert [trait.name for trait in Reader.pyre_properties()] == ["selection"]
     # and describes itself as one
     assert str(selection) == "'selection': a property of type 'dict'"
+    # it is the only property that holds a map: there are no typed properties of mappings
+    assert not hasattr(pyre.properties.property, "mapping")
+    assert not hasattr(pyre.properties.property, "catalog")
+    # and a catalog is a dict of lists
+    assert pyre.properties.catalog().type == "dict[list[str]]"
 
     # make a reader
     reader = Reader(name="reader")
