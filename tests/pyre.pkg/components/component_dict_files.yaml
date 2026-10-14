@@ -1,0 +1,17 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# a whole map, in its text form
+yamltext:
+  selection: band:L, frequency:A
+
+# the same map, as a yaml mapping
+yamlkeys:
+  selection: {band: L, frequency: A}
+
+
+# end of file
