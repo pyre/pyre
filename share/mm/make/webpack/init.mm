@@ -54,6 +54,8 @@ define webpack.init
 
     # build locations
     ${eval $(2).staging.prefix ?= $($(1).tmpdir)$($(2).name).ux/}
+    # the record of the files staged and installed, next to the staging area
+    ${eval $(2).staged.manifest ?= ${patsubst %/,%.manifest,$($(2).staging.prefix)}}
     ${eval $(2).staging.prefix.generated ?= $($(2).staging.prefix)build/}
     ${eval $(2).staging.page ?= $($(2).staging.prefix)$($(2).name).html}
     ${eval $(2).staging.npm_config ?= $($(2).staging.prefix)package.json}

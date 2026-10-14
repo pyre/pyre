@@ -93,6 +93,14 @@ rm.flags.recurse = -r
 rm.flags.force-recurse = -rf
 
 rmdir = rmdir
+# remove the directories in a list that are left empty, the deepest first, so that removing a
+# nested directory can empty its parent before the parent's turn comes; a directory that still
+# holds anything stays. N.B.: written for the recipes of the asset rules, which are expanded by
+# {call} and then evaluated, hence the doubled escape of the shell variable
+#  usage: ${call rmdir.empty,{directories}}
+define rmdir.empty =
+for d in `printf '%s\n' $(1) | sort -r`; do $(rmdir) "$$$$d" 2>/dev/null || true; done
+endef
 
 # rsync
 rsync = rsync

@@ -18,6 +18,7 @@ nvcc.prefix.incpath := -I
 
 nvcc.prefix.ldflags :=
 nvcc.prefix.libpath := -L
+nvcc.prefix.rpath := -Xlinker -rpath=
 nvcc.prefix.libraries := -l
 
 # compile time flags

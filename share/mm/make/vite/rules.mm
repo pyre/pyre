@@ -43,8 +43,22 @@ define vite.workflows.build
 $(_bundle): $(_bundle).install
 	@${call log.asset,"vite",$(_bundle)}
 
-# stage the sources, configuration files, and node modules
-$(_bundle).stage: $(_bundle).stage.config $(_bundle).stage.files $(_bundle).stage.modules
+# stage the sources, configuration files, and node modules, after removing the staged files whose
+# sources are gone
+$(_bundle).stage: $(_bundle).prune $(_bundle).stage.config $(_bundle).stage.files $(_bundle).stage.modules
+
+# the staged files that were moved, renamed, or deleted since the last build, by the record it left;
+# relay and vite run on every build, so removing them is enough; files that the build itself writes,
+# e.g. the relay artifacts, the node modules, and the bundle, are not on the record
+${eval _stale := ${filter-out $($(_bundle).staged),${if ${wildcard $($(_bundle).staged.manifest)},${file <$($(_bundle).staged.manifest)},}}}
+
+# remove them, along with the directories they leave empty in the staging area, and record what
+# the bundle stages now
+$(_bundle).prune: | $($(_bundle).staging.prefix)
+	@${foreach file,$(_stale),${call log.action,"prune",${subst $($(_bundle).staging.prefix),,$(file)}};}
+	${if $(_stale),$(rm.force) $(_stale)}
+	${if $(_stale),${call rmdir.empty,${filter $($(_bundle).staging.prefix)%,${sort ${dir $(_stale)}}}}}
+	$${file >$($(_bundle).staged.manifest),$($(_bundle).staged)}
 
 # the graphql codegen pass that needs a separate step; relay does, houdini folds it into vite
 $(_bundle).codegen: $(_bundle).stage
@@ -55,21 +69,27 @@ $(_bundle).bundle: $(_bundle).codegen
 	@${call log.action,vite,$(_bundle)}
 	$(cd) $($(_bundle).staging.prefix) && npm run build
 
-# install the built assets to their destination
+# install the built assets to their destination, replacing what is there: vite names its chunks
+# after a hash of their contents, so merging into the installed tree would keep every chunk of every
+# earlier build; the new tree is copied next to the old one and then swapped in, so the installed
+# tree is never half copied
 $(_bundle).install: $(_bundle).bundle
 	@${call log.action,install,$($(_bundle).install.prefix)}
-	$(mkdirp) $($(_bundle).install.prefix)
-	$(cp.r) $($(_bundle).staging.dist). $($(_bundle).install.prefix)
+	$(mkdirp) ${dir ${patsubst %/,%,$($(_bundle).install.prefix)}}
+	$(rm.force-recurse) ${patsubst %/,%.new,$($(_bundle).install.prefix)}
+	$(cp.r) $($(_bundle).staging.dist) ${patsubst %/,%.new,$($(_bundle).install.prefix)}
+	$(rm.force-recurse) $($(_bundle).install.prefix)
+	$(mv) ${patsubst %/,%.new,$($(_bundle).install.prefix)} ${patsubst %/,%,$($(_bundle).install.prefix)}
 
 # run the vite dev server with HMR, serving from the staging area
 $(_bundle).dev: $(_bundle).codegen
 	@${call log.action,dev,$(_bundle)}
 	$(cd) $($(_bundle).staging.prefix) && npm run dev
 
-# clean up the staging and install areas
+# clean up the staging and install areas, and the record of what was staged
 $(_bundle).clean:
 	@${call log.action,rm,$(_bundle)}
-	$(rm.force-recurse) $($(_bundle).staging.prefix) $($(_bundle).install.prefix)
+	$(rm.force-recurse) $($(_bundle).staging.prefix) $($(_bundle).install.prefix) $($(_bundle).staged.manifest)
 
 # prime the configuration pile, just in case it's empty
 $(_bundle).config::

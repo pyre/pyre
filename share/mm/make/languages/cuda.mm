@@ -15,7 +15,7 @@ languages.cuda.interpreted :=
 
 # flags
 languages.cuda.categories.compile := flags defines incpath
-languages.cuda.categories.link := ldflags libpath libraries
+languages.cuda.categories.link := ldflags libpath rpath libraries
 
 
 # build a compile command line

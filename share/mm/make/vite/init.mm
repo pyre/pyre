@@ -91,6 +91,10 @@ define vite.init
     ${eval $(_bundle).stage.modules ?= $($(_bundle).staging.prefix)node_modules/}
     # where vite writes its production bundle, relative to the staging root
     ${eval $(_bundle).staging.dist ?= $($(_bundle).staging.prefix)dist/}
+    # the files the bundle stages: its configuration files, its sources, and its static assets
+    ${eval $(_bundle).staged ?= ${call vite.staged.files,$(_bundle)}}
+    # and the record of what it staged, next to the staging area
+    ${eval $(_bundle).staged.manifest ?= ${patsubst %/,%.manifest,$($(_bundle).staging.prefix)}}
 
     # the npm configuration file and the committed dependency lock
     ${eval $(_bundle).source.npm_config ?= $($(_bundle).config.prefix)$($(_bundle).config.npm)}
@@ -192,6 +196,21 @@ define vite.config.source.files =
         ${realpath
             ${addprefix $($(1).config.prefix), $($(1).config.all)}
         }
+    }
+# all done
+endef
+
+
+# form the absolute paths of the files the bundle stages, the same way the rules that stage them do:
+# the configuration files that exist, the sources, and the static assets
+#  usage: vite.staged.files {bundle}
+define vite.staged.files =
+    ${strip
+        ${foreach file,$($(1).config.all),
+            ${if ${realpath $($(1).config.prefix)$(file)},$($(1).staging.prefix)$(file),}
+        }
+        ${patsubst $($(1).root.sources)%,$($(1).staging.src)%,$($(1).sources.files)}
+        ${patsubst $($(1).root.static)%,$($(1).staging.prefix)public/%,$($(1).static.files)}
     }
 # all done
 endef

@@ -39,6 +39,8 @@ define packages.init
     ${eval $(2).pycdir ?= $(builder.dest.pyc)$($(2).name)/}
     # the destination for drivers
     ${eval $(2).bindir ?= $(builder.dest.bin)}
+    # the scratch area, which holds the record of what the package installed
+    ${eval $(2).tmpdir ?= $($(1).tmpdir)$($(2).name)/}
 
     # artifacts
     # the root of the package relative to the project home
