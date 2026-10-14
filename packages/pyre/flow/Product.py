@@ -78,6 +78,18 @@ class Product(Node, implements=Specification, internal=True):
         return
 
     # interface
+    def pyre_describe(self):
+        """
+        Describe what i hold to whoever inspects me, as pairs of a name and a value in words; i
+        describe my settings, and products that hold more say what that is
+        """
+        # go through my settings
+        for trait in self.pyre_configurables():
+            # and describe each one by its value
+            yield trait.name, str(self.pyre_inventory[trait].value)
+        # all done
+        return
+
     def pyre_done(self, **kwds):
         """
         Hook invoked right after my factories finished refreshing me
