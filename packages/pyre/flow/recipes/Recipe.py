@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+import pyre
+
 # the exceptions i raise
 from ..exceptions import (
     DuplicateNodeError,
@@ -120,16 +123,26 @@ class Recipe:
             raise IncompatibleBindingError(
                 node=factory, slot=slot, product=product, expected=expected, offered=offered
             )
-        # forget whatever the slot was bound to
+        # what the slot was bound to, if anything
+        previous = self.binding(factory=factory, slot=slot)
+        # forget it
         self.bindings = [b for b in self.bindings if (b.factory, b.slot) != (factory, slot)]
         # make the binding
         binding = Binding(factory=factory, slot=slot, product=product)
         # add it
         self.bindings.append(binding)
+        # an instance that writes the product
+        if maker.level == "instance" and trait.output:
+            # makes it an instance too
+            self.realize(product=product)
         # when both ends are instances
         if maker.level == "instance" and stock.level == "instance":
             # the binding is a live one, so make it
             setattr(maker.pin, slot, stock.pin)
+        # the product the slot was bound to before
+        if previous is not None and previous.product != product:
+            # may have lost the last instance that writes it
+            self.demote(product=previous.product)
         # hand off the binding
         return binding
 
@@ -197,8 +210,11 @@ class Recipe:
             holder = (
                 previous if binding.factory == name else self.factoryNode(name=binding.factory).pin
             )
-            # clear the slot
-            setattr(holder, binding.slot, None)
+            # a reader loses the product, but a writer keeps what it made, whether or not anyone
+            # reads it
+            if holder.pyre_trait(alias=binding.slot).input:
+                # so clear the slot of a reader
+                setattr(holder, binding.slot, None)
         # forget the bindings of the slots that are gone
         self.bindings = [b for b in self.bindings if b not in gone]
         # and make the ones that are live with the new pin
@@ -209,8 +225,115 @@ class Recipe:
                 binding.slot,
                 self.productNode(name=binding.product).pin,
             )
+        # a factory changes what its outputs are
+        if isinstance(node, Factory):
+            # go through the bindings of its slots that stay
+            for binding in (b for b in mine if b.factory == name and b not in gone):
+                # an instance that writes a product
+                if node.level == "instance" and self.writes(binding=binding):
+                    # makes it an instance too
+                    self.realize(product=binding.product)
+            # go through the products it was bound to
+            for product in {b.product for b in mine if b.factory == name}:
+                # each of which may have lost the last instance that writes it
+                self.demote(product=product)
         # hand off the bindings that are gone
         return gone
+
+    def realize(self, product: str) -> None:
+        """
+        Make {product} an instance, now that an instance writes it: the one that instance holds
+        in the slot bound to it, when it satisfies everything the product must, or else a new
+        instance of the class the product is pinned to or of the default of its most refined
+        specification, which the writer then holds; a product that is an instance already is
+        left alone
+        """
+        # find the product
+        stock = self.productNode(name=product)
+        # one that is an instance already
+        if stock.level == "instance":
+            # is left alone
+            return
+        # the most refined of what it must satisfy
+        spec = self.specification(product=product)
+        # the instances that write it, with the slots they write it through
+        writers = [
+            (self.factoryNode(name=b.factory).pin, b.slot)
+            for b in self.writers(product=product)
+            if self.factoryNode(name=b.factory).level == "instance"
+        ]
+        # with none
+        if not writers:
+            # it stays as it is
+            return
+        # the first one, and its slot
+        holder, slot = writers[0]
+        # the instance the first writer holds in its slot
+        held = getattr(holder, slot)
+        # it will do if it satisfies the specification and is of the class the product is
+        # pinned to, if it is pinned to one
+        fits = (
+            held is not None
+            and (spec is None or held.pyre_isCompatible(spec=spec))
+            and (stock.level != "class" or isinstance(held, stock.pin))
+        )
+        # if it does not
+        if not fits:
+            # make one of the class the product is pinned to, or of the default of its
+            # specification
+            held = self.fresh(cls=stock.pin if stock.level == "class" else None, spec=spec)
+        # a specification with no implementation to fall back on
+        if held is None:
+            # leaves the product as it is
+            return
+        # remember what the product was pinned to, so i can undo it
+        self.realized[product] = stock.pin
+        # pin the product to it, which makes every binding to it live
+        self.pin(name=product, pin=held)
+        # all done
+        return
+
+    def fresh(self, spec, cls=None):
+        """
+        Make a product that nobody has named, of {cls} or else of the default of {spec}, so it
+        is a new one rather than the one the framework hands back for a name it has seen; a
+        specification with no default makes nothing
+        """
+        # without a class
+        if cls is None:
+            # use the default of the specification
+            cls = spec.pyre_default()
+        # a foundry
+        if isinstance(cls, pyre.foundry):
+            # hands out the class it stands for
+            cls = cls()
+        # a specification with no default
+        if cls is None:
+            # makes nothing
+            return None
+        # make one and hand it off
+        return cls()
+
+    def demote(self, product: str) -> None:
+        """
+        Send {product} back to whatever it was pinned to before i made it an instance, when no
+        instance writes it any more; a product someone else pinned is left alone
+        """
+        # one that i did not make an instance, or that is no longer mine
+        if product not in self.realized or product not in self.nodes:
+            # is left alone
+            return
+        # one that an instance still writes
+        if any(
+            self.factoryNode(name=b.factory).level == "instance"
+            for b in self.writers(product=product)
+        ):
+            # stays an instance
+            return
+        # it goes back to what it was pinned to before, and is no longer mine
+        self.pin(name=product, pin=self.realized.pop(product))
+        # all done
+        return
 
     def unbind(self, factory: str, slot: str) -> Binding | None:
         """
@@ -228,10 +351,13 @@ class Recipe:
         maker = self.factoryNode(name=factory)
         # and the product
         stock = self.productNode(name=binding.product)
-        # when both ends are instances
-        if maker.level == "instance" and stock.level == "instance":
-            # the binding was a live one, so undo it
+        # when both ends are instances, the binding was a live one; a reader loses the product,
+        # but a writer keeps what it made, whether or not anyone reads it
+        if maker.level == "instance" and stock.level == "instance" and self.reads(binding=binding):
+            # so clear the slot of a reader
             setattr(maker.pin, slot, None)
+        # the product may have lost the last instance that writes it
+        self.demote(product=binding.product)
         # hand off the binding
         return binding
 
@@ -434,6 +560,9 @@ class Recipe:
         self.nodes = {}
         # and my bindings, in the order they were made
         self.bindings = []
+        # the products i made instances of because an instance writes them, with what each was
+        # pinned to before
+        self.realized = {}
         # all done
         return
 
