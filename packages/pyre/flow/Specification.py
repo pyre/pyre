@@ -38,10 +38,13 @@ class Specification(pyre.protocol):
     @classmethod
     def input(cls, **kwds):
         """
-        Make an input descriptor
+        Make an input descriptor, which holds nothing until it is bound to a product, so a factory
+        that reads an unbound input refuses to run rather than read a product nobody makes
         """
         # ask my metaclass to build a descriptor marked as input
         facility = cls(input=True, **kwds)
+        # which holds nothing until it is bound
+        facility.default = None
         # and return it
         return facility
 
