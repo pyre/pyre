@@ -51,14 +51,15 @@ def test() -> None:
     assert named.operator.amplitude.pyre_name == "names.operator.amplitude"
     # it is wired
     assert named.normalizer.signal is named.operator.amplitude
-    # and its recipe uses the names of its nodes
+    # except for the input of the operator, which is bound to nothing so it holds nothing
+    assert named.operator.signal is None
+    # and its recipe uses the names of its nodes, with none for what the operator reads
     recipe = pyre.flow.recipe.harvest(flow=named)
     assert sorted(recipe.nodes) == [
         "names.normalizer",
         "names.normalizer.normalized",
         "names.operator",
         "names.operator.amplitude",
-        "names.operator.signal",
     ], sorted(recipe.nodes)
 
     # an anonymous flow
@@ -81,7 +82,6 @@ def test() -> None:
         "normalizer.normalized",
         "operator",
         "operator.amplitude",
-        "operator.signal",
     ], sorted(recipe.nodes)
     # the product the two share is one node, written by the operator and read by the normalizer
     assert [b.factory for b in recipe.writers(product="operator.amplitude")] == ["operator"]
