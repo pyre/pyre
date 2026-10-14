@@ -25,6 +25,10 @@ from .Scalar import Scalar as scalar
 # the cells of a dataset
 from .Raster import Raster as raster
 
+# what a reader found in its file, and one of the datasets in it
+from .Contents import Contents as contents
+from .Dataset import Dataset as dataset
+
 # and the encoded images
 from .Image import Image as image
 
@@ -37,5 +41,6 @@ from .Normalizer import Normalizer as normalizer
 from .Encoder import Encoder as encoder
 from .Slicer import Slicer as slicer
 from .Reader import Reader as reader
+from .Picker import Picker as picker
 
 # end of file
