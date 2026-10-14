@@ -182,19 +182,36 @@ class Reader:
                 ):
                     # which is a failure as well
                     raise exceptions.MalformedValueError(keyword=keyword, value=value)
-            # if the conversion fails
+            # if a sequence lost items
+            except exceptions.MalformedValueError:
+                # the sequence has already said which ones and why
+                detail = None
+            # if the conversion fails outright
             except pyre.PyreError as error:
-                # the trait stays unset
-                setattr(header, trait.name, None)
-                # the value goes in the bag as text
-                header.extras[keyword] = value
-                # and the user hears about it
-                channel.line(f"while reading '{uri}'")
-                channel.indent()
-                channel.line(f"could not convert the value of '{keyword}': {error}")
-                channel.line(f"the text is available in the extras of the header")
-                channel.outdent()
-                channel.log()
+                # nobody has said why yet
+                detail = str(error)
+            # if all went well
+            else:
+                # on to the next entry
+                continue
+            # the trait stays unset
+            setattr(header, trait.name, None)
+            # the value goes in the bag as text
+            header.extras[keyword] = value
+            # and the user hears about it, with what the header knows about the value
+            channel.line(f"while reading '{uri}'")
+            channel.indent()
+            # the value, as the header wrote it, and the type it is documented to have
+            shown = f"{{{text}}}" if isinstance(value, list) else repr(text)
+            channel.line(f"the value of '{keyword}', {shown}, is not of type '{trait.type}'")
+            # the reason, unless it has been given already
+            if detail is not None:
+                # in the words of the conversion
+                channel.line(detail)
+            # and what became of the value
+            channel.line(f"so '{keyword}' is left unset; its text is in the extras of the header")
+            channel.outdent()
+            channel.log()
         # all done
         return header
 
