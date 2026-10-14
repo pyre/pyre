@@ -45,17 +45,17 @@ from .OutputStream import OutputStream as ostream
 from .EnvVar import EnvVar as envvar
 from .EnvPath import EnvPath as envpath
 
-# put the schemata in piles
+# put the schemata that typed properties are made of in piles; mappings are not among them,
+# since the property that holds a map is {pyre.traits.Dict}, whose entries live in the store
 basic = (identity, bool, cell, complex, decimal, enum, float, fraction, inet, int, str)
 composite = (date, dimensional, path, time, timestamp, uri)
-containers = (sequence, array, list, set, tuple, mapping, catalog)
+containers = (sequence, array, list, set, tuple)
 meta = (istream, ostream, envvar, envpath)
 # all of them
 schemata = basic + composite + containers + meta
 
 # type categories
 sequences = {list, set, tuple, array}
-mappings = {catalog}
 numbers = {bool, complex, decimal, dimensional, float, int}
 
 
