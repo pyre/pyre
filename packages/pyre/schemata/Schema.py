@@ -101,6 +101,29 @@ class Schema:
         # all done
         return
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a schema
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onSchema
+        # if it doesn't understand
+        except AttributeError:
+            # get my class
+            cls = type(self)
+            # and my poorly formed visitor
+            visitor = type(authority)
+            # it's not a visitor, since we only get here when all alternatives are exhausted
+            raise NotImplementedError(
+                f"class '{visitor.__module__}.{visitor.__name__}' "
+                f"is not a '{cls.__module__}.{cls.__name__}' visitor"
+            ) from None
+        # otherwise, invoke the handler
+        return handler(schema=self, **kwds)
+
     # meta-methods
     def __init__(self, default=None, **kwds):
         # chain up

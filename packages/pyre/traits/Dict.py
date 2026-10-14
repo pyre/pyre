@@ -113,6 +113,23 @@ class Dict(Property, schemata.mapping):
         # all done
         return self
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a dict; an {authority} that does not know dicts sees me as the
+        mapping i am
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onDict
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super()._pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(schema=self, **kwds)
+
     # meta-methods
     def __init__(self, schema=None, **kwds):
         # an unspecified schema for my entries is the trait counterpart of the schemata

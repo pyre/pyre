@@ -21,6 +21,22 @@ class Array(Sequence):
     # constants
     typename = "array"  # the name of my type
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am an array
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onArray
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super()._pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(schema=self, **kwds)
+
     # meta-methods
     def __init__(self, schema=Float(), rank=None, **kwds):
         # chain up

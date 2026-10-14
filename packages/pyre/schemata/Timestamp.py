@@ -73,6 +73,22 @@ class Timestamp(Schema):
         # represent as a string
         return self.string(value)
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a timestamp
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onTimestamp
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super()._pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(schema=self, **kwds)
+
     # meta-methods
     def __init__(self, default=datetime.datetime.today(), format=format, **kwds):
         # chain up with my default

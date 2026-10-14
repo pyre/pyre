@@ -25,6 +25,22 @@ class Behavior(Trait, Decorator):
     # predicate that indicates whether this trait is a behavior
     isBehavior = True
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a behavior
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onBehavior
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super()._pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(schema=self, **kwds)
+
     # metamethods
     def __init__(self, method, tip=None, **kwds):
         # chain up

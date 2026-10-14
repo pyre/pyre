@@ -42,6 +42,22 @@ class Enum(Schema):
             # complain
             raise self.EnumError(enum=self.enum, value=value, error=error)
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am an enumeration
+        """
+        # attempt to
+        try:
+            # ask {authority} for my handler
+            handler = authority._pyre_onEnum
+        # if it doesn't understand
+        except AttributeError:
+            # chain up
+            return super()._pyre_identify(authority=authority, **kwds)
+        # otherwise, invoke the handler
+        return handler(schema=self, **kwds)
+
     # meta-methods
     def __init__(self, enum, default=object, **kwds):
         # if the caller didn't provide a default value
