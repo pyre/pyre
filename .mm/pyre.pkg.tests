@@ -28,6 +28,7 @@ tests.pyre.pkg.h5.api.access_errors.clean := access_errors.h5 access_errors_junk
 tests.pyre.pkg.memory.ordered.clean := memory_ordered_test.dat
 tests.pyre.pkg.envi.write.clean := envi_write_test.hdr
 tests.pyre.pkg.config.yaml_editor_save.clean := yaml_editor_save.yaml
+tests.pyre.pkg.config.recipe_containers.clean := recipe_containers.yaml
 tests.pyre.pkg.config.persist.clean := persist-state.yaml
 tests.pyre.pkg.filesystem.zip_open.clean := zip_open.zip
 tests.pyre.pkg.envi.extras.clean := extras.log
