@@ -9,14 +9,14 @@
 import pyre
 
 # the specifications of my slots
-from .Raster import Raster
+from .Contents import Contents
 
 
 # the protocol of the factories that open files
 class Reader(pyre.flow.producer, family="pyre.viz.readers"):
     """
-    The reader protocol: open the file at {uri} and expose the cells of a dataset in it as a
-    raster; that is all a reader nobody knows anything about can promise
+    The reader protocol: open the file at {uri} and describe what is in it as its contents: the
+    datasets it holds, and the axes that tell them apart
     """
 
     # user configurable state
@@ -24,8 +24,8 @@ class Reader(pyre.flow.producer, family="pyre.viz.readers"):
     uri.doc = "the location of the file to open"
 
     # the output
-    raster = Raster.output()
-    raster.doc = "the cells of a dataset in the file"
+    contents = Contents.output()
+    contents.doc = "the datasets in the file, and the axes that tell them apart"
 
 
 # end of file

@@ -9,6 +9,8 @@
 from . import protocols
 
 # products
+from . import contents
+from . import datasets
 from . import images
 from . import scalars
 from . import tiles
@@ -16,6 +18,7 @@ from . import tiles
 # factories
 from . import accessors
 from . import readers
+from . import pickers
 from . import colormaps
 from . import encoders
 from . import filters
@@ -24,7 +27,9 @@ from . import operators
 from . import slicers
 
 # easy access to the protocols
-# of the products: encoded images
+# of the products: the datasets of a file
+dataset = datasets.dataset
+# encoded images
 image = images.image
 # the cells of datasets
 raster = protocols.raster
@@ -38,6 +43,8 @@ quantity = protocols.quantity
 accessor = accessors.accessor
 # the readers of datasets
 reader = readers.reader
+# the pickers of one dataset among those of a file
+picker = pickers.picker
 # the maps from values to colors
 colormap = colormaps.colormap
 # the encoders of images
