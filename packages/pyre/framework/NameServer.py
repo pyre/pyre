@@ -237,7 +237,13 @@ class NameServer(Hierarchical):
             # the existing node is not the correct type, so use the factory we were given to
             # build a new one; the value of the old node must be correct, because {defaults}
             # is the lowest possible priority; so we must save it
-            new = factory(key=key, value=old.value, current=old)
+            value = old.value
+            # text that was evaluated already
+            if isinstance(value, str):
+                # must reach the new node as it is, rather than be evaluated a second time
+                value = self.node.interpolation.escape(value)
+            # build the new node
+            new = factory(key=key, value=value, current=old)
             # and register it; no need to adjust the graph since the slot factory now takes
             # care of this
             self._nodes[key] = new
