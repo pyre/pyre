@@ -587,6 +587,7 @@ pyre_test_python_testcase(tests/pyre.pkg/smith/smith_git_revision.py)
 #
 pyre_test_python_testcase(tests/pyre.pkg/framework/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/exceptions.py)
+pyre_test_python_testcase(tests/pyre.pkg/framework/exceptions_descriptions.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/package_layout.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/package_layout_dist.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/slot.py)
