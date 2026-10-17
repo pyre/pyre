@@ -115,6 +115,10 @@ class Interpolation:
             elif match.group("esc_close"):
                 # add a single '}' to the fragment
                 fragment += "}"
+            # a pair of braces with nothing between them names no node
+            elif match.group("empty"):
+                # so it stands for itself, which is how an empty table reads as text
+                fragment += "{}"
             # unmatched braces
             elif match.group("lone_open") or match.group("lone_closed"):
                 raise cls.ExpressionSyntaxError(
@@ -169,6 +173,15 @@ class Interpolation:
         # splice them together and return the result
         return functools.reduce(operator.add, values)
 
+    @classmethod
+    def escape(cls, text):
+        """
+        Spell {text} so that interpolating it yields {text} again, braces and all; this is
+        how text that was evaluated already goes back into a slot without being evaluated twice
+        """
+        # double every brace, so none of them is read as a reference
+        return text.replace("{", "{{").replace("}", "}}")
+
     # private data
     _scanner = re.compile(  # the expression tokenizer
         r"(?P<esc_open>{{)"
@@ -176,6 +189,8 @@ class Interpolation:
         r"(?P<esc_close>}})"
         r"|"
         r"{(?P<identifier>[^}{]+)}"
+        r"|"
+        r"(?P<empty>{})"
         r"|"
         r"(?P<lone_open>{)"
         r"|"
