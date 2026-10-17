@@ -115,11 +115,16 @@ class Mapping(Container):
         """
         Generate the (key, value) pairs in {value}, a mapping, an iterable of pairs, or text of
         the form "key:value, key:value", leaving the values as they are; keys are strings, as
-        they are in configuration files, and entries that are not pairs are left out
+        they are in configuration files, and entries that are not pairs are left out; the text
+        "{}", the way an empty dictionary renders, has no entries
         """
         # if we have text
         if isinstance(value, str):
-            # go through its entries
+            # the way an empty dictionary renders
+            if value.strip() == "{}":
+                # is a table without entries
+                return
+            # otherwise, go through its entries
             for entry in value.split(self.delimiter):
                 # clean it up
                 entry = entry.strip()
