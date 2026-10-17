@@ -5,6 +5,10 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+from ..calc.Interpolation import Interpolation
+
+
 # the configuration of a component, as it was configured
 class Recipe:
     """
@@ -13,7 +17,8 @@ class Recipe:
 
     Each section records the configured traits of one component, keyed by the component's
     name. Properties appear as plain values: scalars as they are, containers as lists, paths
-    and uris as strings. Facilities always appear, as the specification of the component they
+    and uris as strings, with the braces of text escaped, since a configuration file is
+    interpolated when it is read and the values are what the text evaluated to. Facilities always appear, as the specification of the component they
     are bound to: a binding decides which class gets built, and therefore what the section of
     the bound component means, so it is recorded whether it was configured or came from the
     default. A part the component owns appears by family alone, since its name is the name of
@@ -273,8 +278,12 @@ class Recipe:
         """
         Reduce {value} to scalars, lists, and tables of them
         """
-        # scalars travel as they are
-        if value is None or isinstance(value, (bool, int, float, str)):
+        # text was evaluated already, and is interpolated again when the file is read
+        if isinstance(value, str):
+            # so it travels with its braces escaped
+            return Interpolation.escape(value)
+        # the other scalars travel as they are
+        if value is None or isinstance(value, (bool, int, float)):
             # untouched
             return value
         # tables, entry by entry
@@ -285,8 +294,8 @@ class Recipe:
         if isinstance(value, (list, tuple, set, frozenset)):
             # item by item
             return [self._flatten(value=item) for item in value]
-        # anything else travels as its string form
-        return str(value)
+        # anything else travels as its string form, which is text like any other
+        return Interpolation.escape(str(value))
 
 
 # end of file
