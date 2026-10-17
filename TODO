@@ -170,6 +170,31 @@
     - is the last valid assignment the one that wins? is it fatal if the last assignment
       violates a constraint or do I fall back? how does the user control this behavior?
 
+- framework exceptions: revisit how errors are made and rendered; pyre#81 and #268 did the
+  first round (2026-10-17)
+
+  - wrapped errors: about fifteen sites in pyre, and six chores in qed, catch an exception
+    and raise a framework error with {description=str(error)}; the renderer leaves the
+    braces of that text alone unless they spell a field of the new error, e.g.
+    {0.description}, which it resolves; the sites should write a description of their own
+    and attach the original with {error=error}, the way the schemata do since #268; they
+    include {externals/RequirementSchema}, {config/native/Importer}, {config/pml/PML}, the
+    cfg parser, {xml/Reader}, {nexus/Staff} and {nexus/Crew}
+
+  - descriptions set by constructors: {PyreError} replaces the description of its class
+    whenever it is given {description=}, so the same keyword carries both templates, e.g.
+    the complaints of the schemata, and plain text, e.g. wrapped errors; {ProtocolError} and
+    {xml.UnsupportedFeatureError} always compute their own; the description should be a
+    class constant, with the variable parts left to fields
+
+  - computed templates: {schemata/Sequence} and {externals/Requirements} append the name of
+    their type to a complaint, and {ProtocolError} splices the names of protocols into its
+    template, so braces in a family name end up in the template
+
+  - the renderer resolves more than the templates use: they need {0.attribute} chains and
+    the {!r} conversion, and nothing else; narrow it to those once the wrapped errors are
+    gone
+
 - yaml: a round trip parser of our own, in c++ with bindings (2026-10-04)
 
   - why: {config/yaml/Parser.py} reads through PyYAML and {config/yaml/Editor.py} edits
