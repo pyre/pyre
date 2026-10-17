@@ -197,10 +197,10 @@ class Dict(Property, schemata.mapping):
                 this=tracking.simple(f"while adding entry '{name}' to '{self.name}'"),
                 next=meta.locator if meta is not None else None,
             )
-            # and update my map
+            # and update my map; the entries were evaluated already, so they go in as they are
             catalog.insert(
                 name=name,
-                value=setting,
+                value=self._literal(value=setting),
                 locator=locator,
                 priority=meta.priority if meta is not None else None,
             )
@@ -259,11 +259,11 @@ class Dict(Property, schemata.mapping):
             strongest = max(
                 [info.priority for info, _ in settings] + [priority for _, priority in deferred]
             )
-            # attach a map with the keys set individually
+            # attach a map with the keys set individually, whose values were evaluated already
             client.pyre_inventory.setTraitValue(
                 trait=self,
                 factory=factory,
-                value={info.split[-1]: node.value for info, node in settings},
+                value={info.split[-1]: self._literal(value=node.value) for info, node in settings},
                 priority=strongest,
                 locator=tracking.simple(f"while configuring '{client.pyre_name}'"),
             )
@@ -282,6 +282,18 @@ class Dict(Property, schemata.mapping):
 
         # all done
         return self
+
+    def _literal(self, value):
+        """
+        Spell {value}, which was evaluated already, so that the slot built for it holds it as it
+        is, rather than evaluate its text a second time
+        """
+        # text
+        if isinstance(value, str):
+            # has its braces escaped
+            return self.pyre_nameserver.node.interpolation.escape(value)
+        # everything else is left alone
+        return value
 
 
 # end of file
