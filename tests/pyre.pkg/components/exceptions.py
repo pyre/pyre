@@ -16,13 +16,15 @@ def test():
     from pyre.components.exceptions import (
         ComponentError,
         CategoryMismatchError,
+        FacilitySpecificationError,
         ImplementationSpecificationError,
         ProtocolError,
         TraitNotFoundError,
     )
 
     class component(pyre.component):
-        pass
+        # a facility, for the errors about its specification
+        tool = pyre.facility(protocol=pyre.protocol)
 
     class protocol(pyre.protocol):
         pass
@@ -39,6 +41,15 @@ def test():
         raise CategoryMismatchError(configurable=c1, target=c2, name="test")
     except CategoryMismatchError as error:
         pass
+
+    # a facility whose specification can't be instantiated
+    try:
+        raise FacilitySpecificationError(
+            configurable=c1, trait=component.pyre_trait(alias="tool"), value="nothing"
+        )
+    # names the component, the trait and the specification
+    except FacilitySpecificationError as error:
+        assert str(error) == f"{c1}.tool: could not instantiate 'nothing'", str(error)
 
     try:
         raise ImplementationSpecificationError(name="test", errors=[])
