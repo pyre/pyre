@@ -113,14 +113,13 @@ class FacilitySpecificationError(ComponentError):
     """
 
     # public data
-    description = "{0.__name__}.{0.trait.name}: could not instantiate {0.value!r}"
+    description = "{0.configurable}.{0.trait.name}: could not instantiate {0.value!r}"
 
     # meta-methods
     def __init__(self, configurable, trait, value, **kwds):
         # chain up
         super().__init__(**kwds)
         # save the error info
-
         self.configurable = configurable
         self.trait = trait
         self.value = value
