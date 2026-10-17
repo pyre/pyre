@@ -1,0 +1,22 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# an empty map, the way a dictionary renders, as text
+yamlempty:
+  selection: "{}"
+
+# a whole map, in its text form, with a value that holds braces
+yamltext:
+  selection: "band:{{L}}"
+  label: "{{L}}"
+
+# the same map, as a yaml mapping
+yamlkeys:
+  selection: {band: "{{L}}"}
+
+
+# end of file
