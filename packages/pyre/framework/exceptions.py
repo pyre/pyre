@@ -5,6 +5,82 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import re
+import string
+
+# the parser of the format fields of descriptions
+_formatter = string.Formatter()
+
+
+def _render(template: str, error: "PyreError") -> str:
+    """
+    Render {template}, the description of {error}, by resolving the fields that refer to
+    {error}; everything else, e.g. the braces of text that was never meant to be a template,
+    is left as it was written
+    """
+    # attempt to
+    try:
+        # split the template into literal text and fields
+        pieces = list(_formatter.parse(template))
+    # if it is not even well formed, e.g. it has a lone closing brace
+    except ValueError:
+        # it is text, so leave it alone
+        return template
+    # the rendering
+    text = ""
+    # go through the pieces
+    for literal, name, spec, conversion in pieces:
+        # add the literal text
+        text += literal
+        # a piece with no field
+        if name is None:
+            # contributes nothing more
+            continue
+        # resolve the field and add it
+        text += _field(name=name, spec=spec, conversion=conversion, error=error)
+    # all done
+    return text
+
+
+def _field(name: str, spec: str, conversion: str | None, error: "PyreError") -> str:
+    """
+    Resolve the field {name} of a description of {error}, or spell it as it was written, when
+    it does not refer to {error}, or does not resolve
+    """
+    # the conversion and the format specification, as they were written
+    suffix = (f"!{conversion}" if conversion else "") + (f":{spec}" if spec else "")
+    # and the whole field
+    written = "{" + name + suffix + "}"
+    # the position the field names, which is everything before its first attribute or item
+    base = re.split(r"[.\[]", name, maxsplit=1)[0]
+    # and the path from there to the value
+    path = name[len(base) :]
+    # fields that name anything else
+    if base not in ("", "0"):
+        # are text
+        return written
+    # the error itself, which would render this very description again, unless asked for its
+    # representation
+    if not path and conversion != "r":
+        # is text too
+        return written
+    # attempt to
+    try:
+        # look the field up, with an explicit position
+        value, _ = _formatter.get_field("0" + path, (error,), {})
+        # convert it
+        value = _formatter.convert_field(value, conversion)
+        # resolve the fields of its format specification
+        spec = _render(template=spec, error=error) if spec else ""
+        # and format it
+        return _formatter.format_field(value, spec)
+    # if the field leads nowhere, or its value can't be formatted the way it asks
+    except (AttributeError, IndexError, KeyError, TypeError, ValueError):
+        # spell it as it was written
+        return written
+
+
 class PyreError(Exception):
     """
     Base class for all pyre related errors
@@ -30,11 +106,11 @@ class PyreError(Exception):
 
     def __str__(self):
         # render the error message
-        reason = self.description.format(self)
+        reason = _render(template=self.description, error=self)
         # if we have a locator
         if self.locator:
             # give it a chance to pinpoint the error
-            return "{.locator}: {}".format(self, reason)
+            return f"{self.locator}: {reason}"
         # otherwise
         return reason
 
