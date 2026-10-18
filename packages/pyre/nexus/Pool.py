@@ -157,8 +157,10 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         A crew member has delivered the {result} of {task}
         """
-        # a batch pool executes for effect; log the result and move on
-        self.debug.log(f"collected {result} from {task}")
+        # nothing to do with the {result} of the {task}, but if someone is listening
+        if self.debug.active:
+            # let them know the {task} is complete
+            self.debug.log(f"collected {result} from {task}")
         # all done
         return self
 
