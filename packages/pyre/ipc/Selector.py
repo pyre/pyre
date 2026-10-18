@@ -147,42 +147,39 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         channel = self._debug
         # until someone says otherwise
         while self._watching:
-            # show me
-            channel.line("watching:")
             # compute how long i am allowed to be asleep
-            channel.line(f"    computing the allowed sleep interval")
             timeout = self.poll()
-            channel.line(f"    max sleep: {timeout}")
-
             # construct the descriptor containers
-            channel.line("    collecting the event sources")
             iwtd = self._read.keys()
             owtd = self._write.keys()
             ewtd = self._exception.keys()
 
-            # if my channel is active
+            # if anybody is listening
             if channel:
-                # show me the input channels
+                # show them how long i may sleep
+                channel.line("watching:")
+                channel.line(f"    max sleep: {timeout}")
+                # the input channels
                 if iwtd:
                     channel.line(f"      read:")
                 for fd in iwtd:
                     for event in self._read[fd]:
                         channel.line(f"        {event.channel}")
-                # show me the output channels
+                # the output channels
                 if owtd:
                     channel.line("      write:")
                 for fd in owtd:
                     for event in self._write[fd]:
                         channel.line(f"        {event.channel}")
-                # show me the channels that are watching for exceptions
+                # and the channels that are watching for exceptions
                 if ewtd:
                     channel.line("      exception:")
                 for fd in ewtd:
                     for event in self._exception[fd]:
                         channel.line(f"        {event.channel}")
+                # flush
+                channel.log()
 
-            # check for indefinite block
-            channel.line("    checking for indefinite block")
             # the channel signals arrive on, if any; watching it is not a reason to stay up,
             # since a loop that is left with nothing but signals has run out of work
             relay = Signals.relay().channel()
@@ -190,11 +187,13 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
             sources = len(iwtd) - (relay in iwtd) + len(owtd) + len(ewtd)
             # if there is nothing to watch and no alarm to wait for
             if not sources and timeout is None:
-                channel.log("** no registered handlers left; exiting")
+                # if anybody is listening
+                if channel:
+                    # let them know why i am leaving
+                    channel.log("** no registered handlers left; exiting")
+                # and leave
                 return
 
-            # show me
-            channel.log(f"    calling select; timeout={timeout}")
             # wait for an event; N.B.: a signal does not interrupt this, since the standard
             # library retries after running its handler (PEP 475), so a signal reaches the loop
             # only through the relay, as a read event
@@ -207,32 +206,29 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
                 # and try again
                 continue
 
-            # if my channel is active
+            # if anybody is listening
             if channel:
-                # show me
+                # show them what woke me up
                 channel.line("activity detected:")
-                # some details
                 channel.line(f"      read clients: {len(reads)}")
                 channel.line(f"      write clients: {len(writes)}")
                 channel.line(f"      except clients: {len(excepts)}")
+                # and the alarms that may be due
+                channel.line(f"    raising alarms: {len(self._alarms)} registered")
                 # flush
                 channel.log()
 
             # dispatch to the handlers of file events
-            channel.log("    dispatching to handlers")
             self.dispatch(index=self._exception, entities=excepts)
             self.dispatch(index=self._write, entities=writes)
             self.dispatch(index=self._read, entities=reads)
-
             # raise the overdue alarms
-            channel.log(f"    raising alarms: {len(self._alarms)} registered")
             self.awaken()
 
-            # flush
-            channel.log("moving on...")
-
-        # sign off
-        channel.log("done watching")
+        # if anybody is listening
+        if channel:
+            # sign off
+            channel.log("done watching")
         # all done
         return
 
