@@ -369,6 +369,64 @@ def bots() -> None:
     return
 
 
+def skips() -> None:
+    """
+    The spell check leaves alone the files its skip patterns match, by the name of the file or of
+    a directory above it, or by their paths, and still checks the rest
+    """
+    # the files with misspellings that the patterns cover, by the pattern that covers each
+    covered = {
+        # the name of the file, anywhere in the tree
+        "web/package-lock.json": "package-lock.json",
+        # the name of a directory above it
+        "src/generated/notes.txt": "generated",
+        # its path, the way the codespell documentation writes it
+        "share/data/notes.txt": "./share/data/*",
+    }
+    # in a scratch directory
+    with tempfile.TemporaryDirectory() as root:
+        # lay out the repository
+        scaffold(root=root)
+        # skip the files the patterns cover
+        with open(os.path.join(root, "pyproject.toml"), encoding="utf-8") as stream:
+            # read the configuration
+            text = stream.read()
+        # and add the patterns to it
+        write(
+            root=root,
+            name="pyproject.toml",
+            text=text.replace(
+                'ignore-words = "words.txt"\n',
+                f'ignore-words = "words.txt"\nskip = "{",".join(covered.values())}"\n',
+            ),
+        )
+        # plant a misspelling in each of the covered files
+        for name in covered:
+            # one by one
+            write(root=root, name=name, text=f"{MISSPELLING}\n")
+        # and in one that no pattern covers
+        write(root=root, name="src/notes.txt", text=f"{MISSPELLING}\n")
+        # let git know about them
+        git("add", "pyproject.toml", *covered, "src/notes.txt", cwd=root)
+        # check the spelling
+        result = subprocess.run(
+            [sys.executable, CHECKER, "--only", "spelling"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        # the file no pattern covers was checked
+        expect(report=result.stdout, check="spelling", needle="src/notes.txt")
+        # and the covered ones were not
+        for name in covered:
+            # by name
+            if f"{name}:" in result.stdout:
+                # or else the skip patterns were ignored
+                raise SelfTestError(f"'{name}' was not skipped:\n{result.stdout}")
+    # all done
+    return
+
+
 def main() -> int:
     """
     Run the self tests
@@ -381,8 +439,10 @@ def main() -> int:
         violations()
         # one with every kind of preamble departure
         layouts()
-        # and one with commits by a bot
+        # one with commits by a bot
         bots()
+        # and one with files the spell check skips
+        skips()
     # if the checker misbehaved
     except SelfTestError as error:
         # say how
