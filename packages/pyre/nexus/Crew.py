@@ -242,8 +242,10 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             return False
         # my twin has answered for this task, so any deadline still standing over it is moot
         self.task = None
-        # show me on the debug channel
-        self.debug.log(f"{self.pid}: {memberstatus}, {taskstatus}, {result}")
+        # if anybody is listening
+        if self.debug.active:
+            # let them know what happened
+            self.debug.log(f"{self.pid}: {memberstatus}, {taskstatus}, {result}")
 
         # first, let's figure out what to do with the task. the delivery runs code that
         # belongs to whoever asked for the task, and it may fail; my own fate must be
@@ -447,8 +449,10 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             self.stop()
             # and stop listening
             return False
-        # leave a note
-        self.debug.log(f"{self.pid}: got {task}")
+        # if anybody is listening
+        if self.debug.active:
+            # leave them a note with the {task} details
+            self.debug.log(f"{self.pid}: got {task}")
         # if it's a quit marker
         if task is None:
             # we are all done
@@ -511,8 +515,10 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         """
         # make a report
         report = (crewstatus, taskstatus, result)
-        # tell me
-        self.debug.log(f"{self.pid}: sending report {report}")
+        # if anybody is listening
+        if self.debug.active:
+            # let them know the report is ready
+            self.debug.log(f"{self.pid}: sending report {report}")
         # carefully, since the team may be gone
         try:
             # serialize and send
