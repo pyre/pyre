@@ -76,14 +76,17 @@ class Node(Peer, family="pyre.nexus.servers.node", implements=Nexus):
         # layout of the distributed application?
         return
 
-    def signal(self, signal, frame):
+    def signal(self, signal, **kwds):
         """
-        An adaptor that dispatches {signal} to the registered handler
+        An adaptor that dispatches {signal}, as relayed by my event loop, to the registered
+        handler
         """
         # locate the handler
         handler = self.signals[signal]
-        # and invoke it
-        return handler()
+        # invoke it
+        handler()
+        # and keep listening for {signal}
+        return True
 
     # meta methods
     def __init__(self, **kwds):
@@ -114,13 +117,16 @@ class Node(Peer, family="pyre.nexus.servers.node", implements=Nexus):
     def registerSignalHandlers(self):
         """
         By default, nodes register handlers for process termination and configuration reload
+
+        The handlers run from my event loop, which the relay of the dispatcher wakes up as soon
+        as a signal arrives, so a request to stop is heard even by an idle node
         """
         # build my signal index
         signals = self.newSignalIndex()
         # register the signal demultiplexer
         for name in signals.keys():
-            # as a handler for every signal in my index
-            signal.signal(name, self.signal)
+            # as the handler my event loop invokes for every signal in my index
+            self.dispatcher.whenSignal(signal=name, call=self.signal)
         # all done
         return signals
 
