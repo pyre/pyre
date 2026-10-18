@@ -47,6 +47,18 @@ def inet(spec=""):
     return schemata.inet.coerce(value=spec)
 
 
+# the delivery of signals to event loops
+def signals():
+    """
+    The relay that delivers the signals of this process to event loops
+    """
+    # access the relay
+    from .Signals import Signals
+
+    # and hand off the one that belongs to this process
+    return Signals.relay()
+
+
 # my exceptions
 from . import exceptions
 

@@ -43,4 +43,30 @@ class EndOfStream(IPCError):
         return
 
 
+# signals cannot reach the event loop
+class SignalRelayError(IPCError):
+    """
+    The relay that delivers signals to event loops could not take charge of a signal
+
+    The interpreter lets only its main thread install signal handlers and the descriptor it
+    writes to when a signal arrives, and it keeps a single such descriptor per process, so the
+    relay refuses when asked from another thread, or when somebody else, e.g. an {asyncio}
+    event loop, already owns the descriptor
+    """
+
+    # the message template
+    description = "cannot relay signal {0.signal} to the event loop: {0.reason}"
+
+    # metamethods
+    def __init__(self, signal, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the signal that was asked for
+        self.signal = signal
+        # and why it cannot be relayed
+        self.reason = reason
+        # all done
+        return
+
+
 # end of file
