@@ -423,6 +423,31 @@ def skips() -> None:
             if f"{name}:" in result.stdout:
                 # or else the skip patterns were ignored
                 raise SelfTestError(f"'{name}' was not skipped:\n{result.stdout}")
+        # the files the checker reported, from the details of its spelling section
+        checked = {
+            line.strip().split(":")[0] for line in result.stdout.split("\n") if "==>" in line
+        }
+        # every file in the repository is tracked, so codespell walking it applies the same
+        # patterns itself, and must report the same files; a release of codespell that matches
+        # its patterns differently fails here, rather than in the spell check of a repository
+        walk = subprocess.run(
+            ["codespell", "--toml", "pyproject.toml", "."],
+            cwd=root,
+            capture_output=True,
+            text=True,
+        )
+        # the files the walk reported, without the leading './' of its paths
+        walked = {
+            line.split(":")[0].removeprefix("./")
+            for line in walk.stdout.split("\n")
+            if "==>" in line
+        }
+        # the two must agree
+        if checked != walked:
+            # or else the checker no longer skips what codespell skips
+            raise SelfTestError(
+                f"the checker reported {sorted(checked)}, codespell walking the tree {sorted(walked)}"
+            )
     # all done
     return
 
