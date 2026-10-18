@@ -146,12 +146,54 @@ def exemptions(*, root: str) -> tuple:
     return tuple(configuration.get("tool", {}).get("conventions", {}).get("exempt", []))
 
 
+def skips(*, root: str) -> tuple:
+    """
+    The patterns of the files the spell check leaves alone, as listed in {skip} of
+    {tool.codespell} in {pyproject.toml}
+    """
+    # the configuration of the repository
+    path = os.path.join(root, "pyproject.toml")
+    # a repository without one
+    if not os.path.isfile(path):
+        # skips nothing
+        return ()
+    # read it
+    with open(path, mode="rb") as stream:
+        # all of it
+        configuration = tomllib.load(stream)
+    # the patterns are a single string, separated by commas
+    patterns = configuration.get("tool", {}).get("codespell", {}).get("skip", "")
+    # split them, and hand off the ones that are not blank
+    return tuple(pattern.strip() for pattern in patterns.split(",") if pattern.strip())
+
+
+def skipped(*, name: str, patterns: tuple) -> bool:
+    """
+    Check whether the tracked file {name} matches any of the skip {patterns}, the way codespell
+    matches them when it walks a directory: against the name of the file and of each directory
+    above it, and against each of their paths, with and without a leading './'
+    """
+    # the directories above the file, and the file itself
+    parts = name.split("/")
+    # the paths that lead to each of them
+    paths = ["/".join(parts[: n + 1]) for n in range(len(parts))]
+    # every spelling a pattern may be written against
+    candidates = parts + paths + [f"./{path}" for path in paths]
+    # the file is skipped when any pattern matches any of them
+    return any(
+        fnmatch.fnmatch(candidate, pattern) for candidate in candidates for pattern in patterns
+    )
+
+
 def spelling(*, root: str, base: str | None) -> list:
     """
     Spell check the prose of every tracked file, with the exclusions in {pyproject.toml}
     """
+    # the files codespell would skip if it walked the tree; named on the command line, it
+    # checks them regardless, so they are left out here
+    patterns = skips(root=root)
     # the files
-    files = tracked(root=root)
+    files = [name for name in tracked(root=root) if not skipped(name=name, patterns=patterns)]
     # check them
     result = run(command=["codespell", "--toml", "pyproject.toml", *files], cwd=root)
     # every line of output is a misspelling
