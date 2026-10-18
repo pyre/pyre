@@ -70,6 +70,14 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         """
 
     @pyre.provides
+    def whenSignal(self, signal, call):
+        """
+        Add {call} to the routines to invoke from the event loop, between two events, when the
+        process receives {signal}; {call} is invoked with the signal number as {signal}, and
+        stays registered for as long as it returns a true value
+        """
+
+    @pyre.provides
     def forget(self, channel):
         """
         Stop watching {channel}: drop every handler registered on it, including the ones that

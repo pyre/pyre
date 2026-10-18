@@ -18,6 +18,9 @@ from . import dispatcher
 # my base class
 from .Scheduler import Scheduler
 
+# the relay that delivers signals
+from .Signals import Signals
+
 
 # declaration
 class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dispatcher):
@@ -52,6 +55,17 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         self._forgotten.discard(channel)
         # add it to the pile
         self._write[channel.outbound].append(self._event(channel=channel, handler=call, **kwds))
+        # and return
+        return
+
+    @pyre.export
+    def whenSignal(self, signal, call):
+        """
+        Add {call} to the list of routines to call from my event loop when the process receives
+        {signal}
+        """
+        # hand it to the relay, which arranges for me to watch the channel it delivers on
+        Signals.relay().watch(dispatcher=self, signal=signal, call=call)
         # and return
         return
 
@@ -169,27 +183,23 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
 
             # check for indefinite block
             channel.line("    checking for indefinite block")
-            if not iwtd and not owtd and not ewtd and timeout is None:
+            # the channel signals arrive on, if any; watching it is not a reason to stay up,
+            # since a loop that is left with nothing but signals has run out of work
+            relay = Signals.relay().channel()
+            # so leave it out of the count
+            sources = len(iwtd) - (relay in iwtd) + len(owtd) + len(ewtd)
+            # if there is nothing to watch and no alarm to wait for
+            if not sources and timeout is None:
                 channel.log("** no registered handlers left; exiting")
                 return
 
             # show me
             channel.log(f"    calling select; timeout={timeout}")
-            # wait for an event
+            # wait for an event; N.B.: a signal does not interrupt this, since the standard
+            # library retries after running its handler (PEP 475), so a signal reaches the loop
+            # only through the relay, as a read event
             try:
                 reads, writes, excepts = select.select(iwtd, owtd, ewtd, timeout)
-            # when a signal is delivered to a handler registered by the application, the select
-            # call is interrupted and raises {InterruptedError}, a subclass of {OSError}
-            except InterruptedError as error:
-                # unpack
-                errno = error.errno
-                msg = error.strerror
-                # show me
-                channel.line(f"signal received: errno={errno}: {msg}")
-                channel.line(f"  more watching: {self._watching}")
-                channel.log()
-                # keep going
-                continue
             # a registration whose descriptor died behind our back poisons the whole call
             except (OSError, ValueError):
                 # find the corpses and drop them, so everybody else keeps getting served

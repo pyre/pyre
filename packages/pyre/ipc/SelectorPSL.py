@@ -22,6 +22,9 @@ import journal
 # interface
 from .Dispatcher import Dispatcher
 
+# the relay that delivers signals
+from .Signals import Signals
+
 # superclass
 from .Scheduler import Scheduler
 
@@ -78,6 +81,17 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         self._arm(key=fd, mask=mask, force=fresh)
         # and add the {event} to the write pile
         self._write.setdefault(fd, []).append(self._event(channel=channel, handler=call, **kwds))
+        # all done
+        return
+
+    @pyre.export
+    def whenSignal(self, signal, call):
+        """
+        Add {call} to the handlers that will be invoked from my event loop when the process
+        receives {signal}
+        """
+        # hand it to the relay, which arranges for me to watch the channel it delivers on
+        Signals.relay().watch(dispatcher=self, signal=signal, call=call)
         # all done
         return
 
@@ -169,20 +183,19 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
             # compute how long i'm allowed to sleep before an alarm triggers
             # N.B.: {poll} returns {None} when no alarms are registered
             timeout = self.poll()
+            # the channel signals arrive on, if any; watching it is not a reason to stay up,
+            # since a loop that is left with nothing but signals has run out of work
+            relay = Signals.relay().channel()
             # if there is nothing to watch
-            if not (read or write) and timeout is None:
+            if not (len(read) - (relay in read) or write) and timeout is None:
                 # mark
                 self._watching = False
                 # and bail
                 break
-            # otherwise, carefully
-            try:
-                # wait for something interesting to happen
-                selection = selector.select(timeout=timeout)
-            # if we have a runaway signal
-            except InterruptedError:
-                # make a trivial selection so the loop continues
-                selection = ()
+            # wait for something interesting to happen; N.B.: a signal does not interrupt this,
+            # since the standard library retries after running its handler (PEP 475), so a
+            # signal reaches the loop only through the relay, as a read event
+            selection = selector.select(timeout=timeout)
             # go through the response
             for key, mask in selection:
                 # get the corresponding file descriptor
