@@ -401,55 +401,40 @@ class Application(pyre.component, metaclass=Director):
 
     def pyre_mountPrivateFolder(self, pfs, prefix, folder):
         """
-        Look in {prefix} for {folder}, create it if necessary, and mount it within {pfs}, my
-        private filespace
+        Look in {prefix} for my subdirectory of {folder}, and mount it within {pfs}, my private
+        filespace; when it is not there, mount an empty folder in its place
+
+        Nothing is created on disk: the prefix is wherever the launching script happens to live,
+        e.g. the directory of a test suite or a source checkout, and folders made there on every
+        launch are litter nobody asked for
         """
         # get my namespace
         namespace = self.pyre_namespace
-        # sign in
-        # print(f"Application.pyre_mountPrivateFolder:")
-        # print(f"  looking for: {prefix.uri}/{folder}/{namespace}")
-        # give me the context
-
-        # check whether the parent folder exists
+        # look for {folder}
         try:
-            # if so, get it
+            # in my prefix
             parent = prefix[folder]
-        # if not
+        # if it is not there
         except prefix.NotFoundError:
-            # attempt to
-            try:
-                # create it
-                parent = prefix.mkdir(name=folder)
-            # if something goes wrong
-            except OSError:
-                # bail
-                return
+            # mount an empty folder in its place; must use {pfs} to do this to guarantee
+            # filesystem consistency
+            pfs[folder] = pfs.folder()
+            # and move on
+            return
         # the directory is there; look for content
         parent.discover(levels=1)
-        # now, check whether there is a subdirectory named after me
+        # now, look for a subdirectory named after me
         try:
-            # if so get it
+            # and get it
             mine = parent[namespace]
-        # if not
-        except prefix.NotFoundError as error:
-            # attempt to
-            try:
-                # create it
-                mine = parent.mkdir(name=namespace)
-            # if something goes wrong
-            except OSError:
-                # bail
-                return
-            # and show me
-            # print(f"  created {mine.uri}")
-        # if all went well
-        else:
-            # show me
-            # print(f"  mounted {mine.uri}")
-            # look carefully; there may be large subdirectories beneath
-            mine.discover(levels=1)
-
+        # if it is not there
+        except prefix.NotFoundError:
+            # mount an empty folder in its place
+            pfs[folder] = pfs.folder()
+            # and move on
+            return
+        # look carefully; there may be large subdirectories beneath
+        mine.discover(levels=1)
         # attach it to my private filespace
         pfs[folder] = mine
 
