@@ -195,7 +195,8 @@ class NameServer(Hierarchical):
             meta = self.info(
                 name=name, split=split, key=key, priority=priority, locator=locator, factory=factory
             )
-            # and attach it to the meta-data store
+            # and attach it to the meta-data store, ahead of node creation so it is available to
+            # anything that asks for it while the node is being built
             self._metadata[key] = meta
 
             # gingerly
