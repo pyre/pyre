@@ -7,7 +7,7 @@
 
 
 """
-Verify that we can process an empty pml file
+Verify that we can process an empty cfg file
 """
 
 
@@ -17,7 +17,7 @@ def test():
 
     # get the codec manager
     m = pyre.config.newConfigurator()
-    # ask for a pml codec
+    # ask for a cfg codec
     reader = m.codec(encoding="cfg")
     # the configuration file
     uri = "sample-empty.cfg"

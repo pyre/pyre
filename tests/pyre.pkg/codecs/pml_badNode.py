@@ -29,7 +29,8 @@ def test():
         assert False
     except reader.DecodingError as error:
         assert str(error) == (
-            "file='sample-badNode.pml', line=13, column=53: decoding error: mismatched tag"
+            "while decoding sample-badNode.pml:\n"
+            "    file='sample-badNode.pml', line=13, column=53: mismatched tag"
         )
 
     return m, reader

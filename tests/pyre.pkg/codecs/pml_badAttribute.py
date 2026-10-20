@@ -29,7 +29,8 @@ def test():
         assert False
     except reader.DecodingError as error:
         assert str(error) == (
-            "file='sample-badAttribute.pml', line=13, column=2: decoding error:"
+            "while decoding sample-badAttribute.pml:\n"
+            "    file='sample-badAttribute.pml', line=13, column=2:"
             " node 'bind': unknown attribute 'property'"
         )
 
