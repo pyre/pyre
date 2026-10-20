@@ -49,23 +49,6 @@ class Pyre(Executive):
         # all done
         return self
 
-    def check(self):
-        """
-        Report and boot time errors
-        """
-        # bail out if no errors were detected
-        if not self.errors:
-            return
-
-        # report the boot time errors
-        # MGA: ??can i use journal??
-        print(" ** pyre: the following errors were encountered while booting:")
-        for error in self.errors:
-            print(" ++   {}".format(error))
-
-        # all done
-        return self
-
     # meta-methods
     def __init__(self, **kwds):
         # chain up
