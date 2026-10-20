@@ -21,6 +21,19 @@ def test():
     # check
     assert descriptor.coerce("1.20") == decimal.Decimal("1.20")
 
+    # values the decimal constructor rejects, each in its own way
+    for value in ["one", [1, 2], {"k": "v"}, object()]:
+        # must all
+        try:
+            # be refused
+            descriptor.coerce(value)
+            # so getting here is a bug
+            assert False, f"{value!r} was converted into a decimal"
+        # by the schema
+        except descriptor.CastingError as error:
+            # with an error that names the value
+            assert repr(value) in str(error), str(error)
+
     return
 
 
