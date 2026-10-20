@@ -19,12 +19,12 @@ def test():
         FacilitySpecificationError,
         ImplementationSpecificationError,
         ProtocolError,
+        ResolutionError,
         TraitNotFoundError,
     )
 
     class component(pyre.component):
-        # a facility, for the errors about its specification
-        tool = pyre.facility(protocol=pyre.protocol)
+        pass
 
     class protocol(pyre.protocol):
         pass
@@ -42,14 +42,16 @@ def test():
     except CategoryMismatchError as error:
         pass
 
-    # a facility whose specification can't be instantiated
+    # text that is not a component specification
     try:
-        raise FacilitySpecificationError(
-            configurable=c1, trait=component.pyre_trait(alias="tool"), value="nothing"
-        )
-    # names the component, the trait and the specification
-    except FacilitySpecificationError as error:
-        assert str(error) == f"{c1}.tool: could not instantiate 'nothing'", str(error)
+        raise FacilitySpecificationError(protocol=protocol, value="")
+    # is a failure to resolve it, that names the text and the protocol
+    except ResolutionError as error:
+        assert isinstance(error, FacilitySpecificationError), error
+        assert str(error) == (
+            f"could not resolve '' into a component that implements {protocol}, "
+            "since it is not a component specification"
+        ), str(error)
 
     try:
         raise ImplementationSpecificationError(name="test", errors=[])
