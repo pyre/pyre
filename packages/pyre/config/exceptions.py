@@ -79,6 +79,26 @@ class DecodingError(CodecError):
     Exception raised by codecs when they encounter errors in their input streams
     """
 
+    # public data
+    description = "while decoding {0.uri}:\n    {0.report}"
+
+    @property
+    def report(self):
+        """
+        Splice the errors in my input stream together
+        """
+        # one per line
+        return "\n    ".join(map(str, self.errors))
+
+    # meta-methods
+    def __init__(self, errors, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the errors in the input stream
+        self.errors = errors
+        # all done
+        return
+
 
 class EncodingError(CodecError):
     """
