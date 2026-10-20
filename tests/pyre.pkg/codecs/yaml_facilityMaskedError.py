@@ -85,11 +85,15 @@ def test():
         # if it doesn't, we have a bug in the test
         assert False, "the misconfigured facility went unnoticed"
     # it should complain about the nested facility
-    except fields.ResolutionError as error:
+    except fields.TraitValueError as error:
+        # the trait it names is the nested facility
+        assert error.trait == "broken.discretization", error.trait
+        # get the error that refused the value
+        refusal = error.error
         # the culprit is the value bound to the nested facility
-        assert error.value == "no_such_discretization"
+        assert refusal.value == "no_such_discretization"
         # and the protocol it could not satisfy is the one of the nested facility
-        assert error.protocol is discretizations
+        assert refusal.protocol is discretizations
 
     # all done
     return s

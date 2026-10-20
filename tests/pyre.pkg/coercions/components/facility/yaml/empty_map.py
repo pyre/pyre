@@ -92,19 +92,25 @@ def test() -> None:
         # and read the trait
         held = probe.part
     # if the setting is refused the right way
-    except Parts.ResolutionError as error:
+    except Parts.TraitValueError as error:
         # get the complaint
         complaint = str(error)
         # find what it leaves out
         missing = [text for text in ["probe.part"] if text not in complaint]
-        # if anything
-        if missing:
+        # and the error that refused the value
+        refuser = type(error.error).__name__
+        # if anything, or if the wrong error refused the value
+        if missing or refuser != "ResolutionError":
             # say what went wrong
-            channel.line("the facility refused the setting, but its error is incomplete")
+            channel.line(
+                "the facility refused the setting, but its error is incomplete, or carries the wrong refusal"
+            )
             # and the details
             channel.indent()
             channel.line(f"error: {complaint}")
             channel.line(f"lacks: {', '.join(map(repr, missing))}")
+            channel.line(f"refused by: {refuser}")
+            channel.line("expected: ResolutionError")
             channel.line("look in: schemata/Component.py")
             channel.outdent()
     # if it is refused some other way
