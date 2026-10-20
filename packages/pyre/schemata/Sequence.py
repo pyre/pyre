@@ -72,6 +72,10 @@ class Sequence(Container):
                 return
             # otherwise, split it using comma as the separator
             value = filter(None, (entry.strip() for entry in value.split(self.delimiter)))
+        # a map with entries is not a sequence of its keys
+        if isinstance(value, collections.abc.Mapping) and value:
+            # so complain
+            raise self.CastingError(value=value, description=self.complaint + self.type)
         # if we have an iterable
         if isinstance(value, collections.abc.Iterable):
             # go through each entry
