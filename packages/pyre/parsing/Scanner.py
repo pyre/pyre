@@ -162,8 +162,10 @@ class Scanner(metaclass=Lexer):
                 token = yield fault
             # if anything goes wrong
             except self.ParsingError as error:
-                # forward it to my client
-                client.throw(type(error), error)
+                # forward it to my client, and hand its response upstream
+                fault = client.throw(type(error), error)
+                # an error carries no token to pass along, so wait for the next one
+                continue
             # if it is not whitespace
             if not isinstance(token, self.whitespace):
                 # pass it along

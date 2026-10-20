@@ -34,6 +34,10 @@ class Parser(pyre.parsing.parser):
         self.context = [self.Configuration()]
         # and the list of errors
         self.errors = []
+        # no blocks are open
+        self.blocks = []
+        # and no section is waiting for its block
+        self.opening = None
 
         # set up my processor
         processor = self.processor(locator=locator)
@@ -65,7 +69,7 @@ class Parser(pyre.parsing.parser):
             scanner.whitespace: self.ignore,
             scanner.finish: self.ignore,
             # hierarchy
-            scanner.push: self.ignore,
+            scanner.push: self.push,
             scanner.pop: self.pop,
             # context specifier
             scanner.section: self.section,
@@ -130,6 +134,8 @@ class Parser(pyre.parsing.parser):
         section = self.Section(token)
         # push on the stack
         self.context.append(section)
+        # its contents are in the block that opens next
+        self.opening = section
         # all done
         return
 
@@ -137,6 +143,8 @@ class Parser(pyre.parsing.parser):
         """
         Process a key assignment
         """
+        # a section followed by an assignment at its own level has no block of its own
+        self.opening = None
         # make a new assignment handler
         assignment = self.Assignment(token)
         # push it on the stack
@@ -161,10 +169,38 @@ class Parser(pyre.parsing.parser):
         # all done
         return
 
+    def push(self, token):
+        """
+        Process the opening of a block, which holds the contents of the section declared right
+        before it
+        """
+        # the block is legitimate if a section is waiting for it
+        legitimate = self.opening is not None
+        # either way, that section is not waiting any more
+        self.opening = None
+        # remember what kind of block this is, so i know what its closing means
+        self.blocks.append(legitimate)
+        # if the block belongs to a section
+        if legitimate:
+            # all is well
+            return
+        # otherwise, the text is indented with no section to hold it; build an error
+        error = self.IndentationError(description="unexpected indentation", locator=token.locator)
+        # and save it
+        self.errors.append(error)
+        # all done
+        return
+
     def pop(self, token):
         """
         Process the closing of a block
         """
+        # nothing is waiting for a block any more
+        self.opening = None
+        # if the block was opened with no section to hold it
+        if not self.blocks.pop():
+            # there is no section to close
+            return
         # get the current section
         section = self.context.pop()
         # and its parent
@@ -190,6 +226,8 @@ class Parser(pyre.parsing.parser):
 
     # private data
     errors = None  # the list of parsing and lexing errors
+    blocks = None  # for each open block, whether it holds the contents of a section
+    opening = None  # the section waiting for the block with its contents
     productions = None  # the table of token handlers
     configuration = None  # the list of configuration events harvested from the input source
 
