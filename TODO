@@ -158,6 +158,14 @@
     - trap the events and redistribute?
     - is this a component attribute? or a trait decoration?
 
+  - the {pyre} package is configured twice at boot, so every configuration file it finds is
+    read twice: while {pyre} is imported, {externals/Package.py} registers a protocol in a
+    {pyre.} family, {NameServer.package} finds no package yet and makes and configures one
+    ({NameServer.py:74}); then {pyre/__init__.py:342} calls {registerPackage}, which makes and
+    configures it again ({Executive.py:458}); the order may be load-bearing, since the first
+    pass runs before {package.register} records where the package lives, so the second may be
+    the one that finds the files shipped with it (2026-10-20, emptymap F28)
+
 - configuration errors:
 
   - trap, collect, show on exit
