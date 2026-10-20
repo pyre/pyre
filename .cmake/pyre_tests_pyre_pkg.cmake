@@ -614,8 +614,19 @@ pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_duplicate.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_badImport.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_syntaxError.py)
+pyre_test_python_testcase(tests/pyre.pkg/framework/fileserver_open_errors.py)
 # reverted pending review; in mm's drivers.exclude
 # pyre_test_python_testcase(tests/pyre.pkg/framework/executive_shelves.py)
+
+# {fileserver_open_errors} makes a scratch folder and removes it when it passes; a run that
+# fails leaves it behind
+set(framework_fileserver_open_errors_cleanup
+  "rm -rf fileserver_open_errors.scratch"
+  )
+pyre_test_testcase_shell_fixture(
+  "" "${framework_fileserver_open_errors_cleanup}"
+  tests/pyre.pkg/framework/fileserver_open_errors.py
+  )
 
 
 #
