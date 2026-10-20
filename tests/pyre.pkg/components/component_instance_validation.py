@@ -49,9 +49,9 @@ def test():
         # this should be unreachable
         assert False
     # if the violation were detected correctly
-    except b.ConstraintViolationError:
-        # move on
-        pass
+    except b.TraitValueError as error:
+        # by the constraint
+        assert isinstance(error.error, b.ConstraintViolationError), error
 
     # make another assignment that violates the constraint
     b.interval = -0.5
@@ -62,9 +62,9 @@ def test():
         # this should be unreachable
         assert False
     # if the violation were detected correctly
-    except b.ConstraintViolationError:
-        # move on
-        pass
+    except b.TraitValueError as error:
+        # by the constraint
+        assert isinstance(error.error, b.ConstraintViolationError), error
 
     # make another assignment that violates the constraint
     b.interval = 1
@@ -75,9 +75,9 @@ def test():
         # this should be unreachable
         assert False
     # if the violation were detected correctly
-    except b.ConstraintViolationError:
-        # move on
-        pass
+    except b.TraitValueError as error:
+        # by the constraint
+        assert isinstance(error.error, b.ConstraintViolationError), error
 
     return
 

@@ -112,9 +112,9 @@ def test() -> None:
         # must fail
         assert False, "5 was accepted as a map"
     # with a casting error
-    except Reader.pyre_trait("selection").CastingError:
+    except Reader.TraitValueError as error:
         # as expected
-        pass
+        assert isinstance(error.error, Reader.pyre_trait("selection").CastingError), error
 
     # all done
     return

@@ -41,10 +41,10 @@ def test():
     try:
         # make a play
         musical(name="spamalot")
-    # if this fails
-    except role.ResolutionError:
+    # if this fails because the role could not be resolved
+    except role.TraitValueError as error:
         # all good
-        pass
+        assert isinstance(error.error, role.ResolutionError), error
     # otherwise
     else:
         # oops

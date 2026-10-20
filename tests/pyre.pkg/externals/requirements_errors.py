@@ -20,6 +20,7 @@ def test():
     import pyre.externals
 
     # get the casting error the type system raises
+    from pyre.components.exceptions import TraitValueError
     from pyre.schemata.exceptions import CastingError
 
     # a component with a requirements trait
@@ -41,9 +42,9 @@ def test():
         # read the trait back
         consumer.reqs
     # the broken entry must be reported
-    except CastingError:
-        # as expected
-        pass
+    except TraitValueError as error:
+        # as a casting error
+        assert isinstance(error.error, CastingError), error
     # a generic sequence would have dropped it silently, leaving one requirement behind
     else:
         # which subverts the resolver
