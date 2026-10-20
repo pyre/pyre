@@ -91,6 +91,15 @@ class SourceNotFoundError(FilesystemError):
     description = "while looking for {0.rep!r}: file not found"
 
 
+class SourceUnreadableError(FilesystemError):
+    """
+    Exception raised when the supplied URI names a file that exists but cannot be read
+    """
+
+    # public data
+    description = "while opening {0.rep!r}: {0.error.strerror}"
+
+
 class FolderError(FilesystemError):
     """
     Exception raised when a request is made for the contents of a node that is not a folder

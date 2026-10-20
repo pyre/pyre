@@ -29,6 +29,7 @@ class Filesystem(Folder):
     from .exceptions import (
         NotFoundError,
         SourceNotFoundError,
+        SourceUnreadableError,
         URISpecificationError,
         FolderError,
     )

@@ -52,10 +52,18 @@ class Local(Filesystem):
         try:
             # call the system {open} and return the result
             return uri.open(**kwds)
-        # if this fails
+        # if the file is gone since it was discovered
+        except FileNotFoundError:
+            # complain
+            raise self.SourceNotFoundError(filesystem=self, node=node, uri=uri)
+        # if it is a folder
+        except IsADirectoryError:
+            # complain
+            raise self.IsFolderError(filesystem=self, node=node, uri=uri)
+        # if it is there but cannot be read
         except OSError as error:
             # complain
-            raise self.URISpecificationError(uri=uri, reason=str(error))
+            raise self.SourceUnreadableError(filesystem=self, node=node, uri=uri, error=error)
 
     def mkdir(self, name, parent=None, **kwds):
         """

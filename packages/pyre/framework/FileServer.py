@@ -84,18 +84,18 @@ class FileServer(Filesystem):
             try:
                 # open it and return the associated file object
                 return open(uri.address, **kwds)
-            # if {uri} is not in my logical namespace
-            except self.NotFoundError as error:
-                # complain
-                raise self.SourceNotFoundError(filesystem=self, node=error.node, uri=uri)
             # if {uri} maps to a non-existent file
-            except IOError:
+            except FileNotFoundError:
                 # complain
                 raise self.SourceNotFoundError(filesystem=self, node=None, uri=uri)
             # if {uri} maps to a folder
-            except OSError:  # NYI: after python3.3: convert to IsADirectoryError
+            except IsADirectoryError:
                 # complain
                 raise self.IsFolderError(filesystem=self, node=None, uri=uri)
+            # if {uri} maps to a file that is there but cannot be read
+            except OSError as error:
+                # complain
+                raise self.SourceUnreadableError(filesystem=self, node=None, uri=uri, error=error)
 
         # translate application private file space uris
         if scheme == "pfs":
