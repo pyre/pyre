@@ -1,0 +1,16 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+malformed:
+  yaml:
+    # a setting that is dropped, since the file is malformed
+    applied: yes
+    # a flow sequence that is never closed
+    broken: [unclosed
+
+
+# end of file

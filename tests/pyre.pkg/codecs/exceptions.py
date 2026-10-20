@@ -21,7 +21,7 @@ def test():
         pass
 
     try:
-        raise DecodingError(codec=None, uri=None, locator=None)
+        raise DecodingError(codec=None, uri=None, locator=None, errors=[])
     except DecodingError as error:
         pass
 

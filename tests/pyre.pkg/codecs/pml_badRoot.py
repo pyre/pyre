@@ -29,7 +29,8 @@ def test():
         assert False
     except reader.DecodingError as error:
         assert str(error) == (
-            "file='sample-badRoot.pml', line=12, column=0: decoding error: unknown tag 'Config'"
+            "while decoding sample-badRoot.pml:\n"
+            "    file='sample-badRoot.pml', line=12, column=0: unknown tag 'Config'"
         )
 
     return m, reader

@@ -7,7 +7,7 @@
 
 
 """
-Verify that we can process an empty pml file
+Verify that the cfg codec refuses a file with a character it does not recognize
 """
 
 
@@ -17,18 +17,26 @@ def test():
 
     # get the codec manager
     m = pyre.config.newConfigurator()
-    # ask for a pml codec
+    # ask for a cfg codec
     reader = m.codec(encoding="cfg")
     # the configuration file
     uri = "sample-badToken.cfg"
     # open a stream
     sample = open(uri)
-    # read the contents
-    events = reader.decode(uri=uri, source=sample, locator=None)
-    # check that we got a real instance back
-    assert events == []
+    # attempt to
+    try:
+        # read the contents
+        reader.decode(uri=uri, source=sample, locator=None)
+        # which should fail
+        assert False
+    # with a decoding error
+    except reader.DecodingError as error:
+        # about my file
+        assert error.uri == uri
+        # that carries what the parser found wrong with it
+        assert error.errors
 
-    return m, reader, events
+    return m, reader
 
 
 # main
