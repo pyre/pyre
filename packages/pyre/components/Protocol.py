@@ -26,7 +26,12 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # types
     from ..schemata import uri
-    from .exceptions import FrameworkError, DefaultError, ResolutionError
+    from .exceptions import (
+        FrameworkError,
+        DefaultError,
+        FacilitySpecificationError,
+        ResolutionError,
+    )
     from .Actor import Actor as actor
     from .Foundry import Foundry as foundry
     from .Component import Component as component
@@ -214,12 +219,20 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         Attempt to resolve {spec} into a component that implements me; {spec} is
         assumed to be a string
         """
+        # attempt to
+        try:
+            # convert {spec} into a uri, the form the resolvers accept
+            uri = cls.uri().coerce(spec)
+        # if it can't be
+        except cls.uri.CastingError as error:
+            # {spec} is not a component specification at all
+            raise cls.FacilitySpecificationError(protocol=cls, value=spec, error=error) from error
         # get the executive
         executive = cls.pyre_executive
-        # and ask it to resolve {value} into component candidates; this will handle correctly
+        # and ask it to resolve the {uri} into component candidates; this will handle correctly
         # uris that resolve to a retrievable component, as well as uris that mention an
         # existing instance
-        for candidate in executive.resolve(uri=spec, protocol=cls, **kwds):
+        for candidate in executive.resolve(uri=uri, protocol=cls, **kwds):
             # we have a candidate; now it's time to decide whether it is acceptable. the
             # definition of what's acceptable is somewhat complicated because there are many
             # sensible use cases to support. the first step is to check whether the candidate
