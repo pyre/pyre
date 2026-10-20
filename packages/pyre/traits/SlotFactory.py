@@ -21,6 +21,18 @@ class SlotFactory(Dashboard):
     # make a null value processor
     noop = identity().coerce
 
+    # types
+    from ..components.exceptions import (
+        FacilitySpecificationError,
+        ResolutionError,
+        TraitValueError,
+    )
+    from ..constraints.exceptions import ConstraintViolationError
+    from ..schemata.exceptions import SchemaError
+
+    # the errors that mean my trait refused a value
+    refusals = (SchemaError, ConstraintViolationError, ResolutionError, FacilitySpecificationError)
+
     # interface
     def preprocess(self, value: object, **kwds) -> object:
         """
@@ -29,12 +41,67 @@ class SlotFactory(Dashboard):
         # ask the preprocessor of my trait
         return self._pre(value=value, **kwds)
 
-    def postprocess(self, value: object, **kwds) -> object:
+    def postprocess(self, value: object, node=None, **kwds) -> object:
         """
-        Turn {value}, read from a slot of my trait, into a value of my trait
+        Turn {value}, read from the slot {node} of my trait, into a value of my trait; if my
+        trait refuses it, raise a {TraitValueError} that names the trait whose value {node} holds
         """
-        # ask the postprocessor of my trait
-        return self._post(value=value, **kwds)
+        # attempt to
+        try:
+            # ask the postprocessor of my trait
+            return self._post(value=value, node=node, **kwds)
+        # if my trait refused the value with a {TraitValueError}
+        except self.TraitValueError as error:
+            # if the {error} doesn't know yet the target {trait}
+            if error.trait is None:
+                # it must be mine, so mark it
+                self.attribute(error=error, node=node)
+            # and let it through
+            raise
+        # if my trait refused the value any other way
+        except self.refusals as error:
+            # make a {TraitValueError} that carries the refusal
+            refusal = self.TraitValueError(value=value, error=error)
+            # mark it with the trait name
+            self.attribute(error=refusal, node=node)
+            # and raise it in place of the refusal
+            raise refusal from error
+
+        # any path to here
+        import journal
+
+        # is a bug
+        journal.firewall("pyre.traits").log("UNREACHABLE")
+
+    def attribute(self, error: TraitValueError, node) -> None:
+        """
+        Record in {error} the name of the trait whose value the slot {node} holds and, unless
+        {error} knows better, where the value was set
+        """
+        # use the name of my trait, in case {node} is not in the store
+        error.trait = self.trait.name
+        # get the key of {node}
+        key = getattr(node, "key", None)
+        # a slot outside the store
+        if key is None:
+            # has nothing more to say
+            return
+        # attempt to
+        try:
+            # look up its metadata
+            info = self.pyre_nameserver.getInfo(key)
+        # if there are none
+        except KeyError:
+            # there is nothing more to say either
+            return
+        # use the name of the trait in the store, which says whose trait it is
+        error.trait = info.name
+        # and, if the error does not know where it came from
+        if error.locator is None:
+            # point to where the value was set
+            error.locator = info.locator
+        # all done
+        return
 
     # meta-methods
     def __init__(self, trait, pre=noop, post=noop, **kwds):

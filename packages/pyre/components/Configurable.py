@@ -29,6 +29,7 @@ class Configurable(Dashboard):
         ConfigurationError,
         ProtocolCompatibilityError,
         ResolutionError,
+        TraitValueError,
     )
 
     # framework data; every class record gets a fresh set of these values
