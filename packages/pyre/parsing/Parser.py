@@ -11,7 +11,7 @@ class Parser:
     """
 
     # types
-    from .exceptions import ParsingError, SyntaxError, TokenizationError
+    from .exceptions import IndentationError, ParsingError, SyntaxError, TokenizationError
 
     # meta methods
     def __init__(self, **kwds):

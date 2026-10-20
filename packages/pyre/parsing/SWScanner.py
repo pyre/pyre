@@ -136,9 +136,9 @@ class SWScanner(Scanner):
         # check that this brought us back to a consistent indentation level
         if dent != column:
             # and if not, build a description of the problem
-            fault = self.IndentationError(text="", locator=locator)
+            fault = self.IndentationError(locator=locator)
             # and invoke the downstream error handler
-            self.pyre_client.throw(self.TokenizationError, fault)
+            self.pyre_client.throw(type(fault), fault)
 
         # push out to the right spot
         self.pyre_dent = column
