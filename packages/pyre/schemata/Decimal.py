@@ -30,8 +30,9 @@ class Decimal(Number):
         try:
             # let the constructor do its job
             return decimal.Decimal(value)
-        # if anything goes wrong
-        except decimal.InvalidOperation as error:
+        # if it can't, whether because {value} is text that is not a number, a sequence that is
+        # not a decimal tuple, or a type it does not convert
+        except (decimal.InvalidOperation, ValueError, TypeError) as error:
             # convert it into a configuration error
             raise self.CastingError(value=value, description=self.complaint, error=error)
 
