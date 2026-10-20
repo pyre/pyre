@@ -103,6 +103,10 @@ class Property(Slotted):
             """
             The strategy for building slots from more complex input values
             """
+            # a non-empty map is not a sequence of its keys
+            if isinstance(value, collections.abc.Mapping) and value:
+                # so keep it whole, for my schema to refuse when it is read
+                return super().native(value=value, **kwds)
             # if the value is a sequence
             if isinstance(value, collections.abc.Iterable):
                 # convert the items into nodes

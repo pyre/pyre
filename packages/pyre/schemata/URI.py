@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import collections.abc  # for container identification
+
 # superclass
 from .Schema import Schema
 
@@ -32,6 +35,10 @@ class URI(Schema):
         if isinstance(value, self.locator):
             # leave it alone
             return value
+        # a map with entries does not identify a resource, even though it has text
+        if isinstance(value, collections.abc.Mapping) and value:
+            # so complain
+            raise self.CastingError(value=value, description=self.complaint)
 
         # force conversion to a string; this shouldn't fail, unless the {__str__} converter of
         # {value} is broken, in which case it is almost certain we have a bug...

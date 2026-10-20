@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import collections.abc  # for container identification
+
 # superclass
 from .Schema import Schema
 
@@ -24,6 +27,10 @@ class String(Schema):
         """
         Attempt to convert {value} into a string
         """
+        # a map with entries is not text, even though it has one
+        if isinstance(value, collections.abc.Mapping) and value:
+            # so complain
+            raise self.CastingError(value=value, description=self.complaint)
         # attempt to
         try:
             # let the constructor do its job
