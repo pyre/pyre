@@ -28,30 +28,33 @@ def test():
         number = pyre.properties.int(default=1)
         number.validators = (pyre.constraints.isGreater(value=0),)
 
-    return
-
-    # check the simple case
+    # make an illegal assignment
+    raw.number = 0
+    # attempting to
     try:
-        # illegal assignment
-        raw.number = 0
-        # should be unreachable
+        # reading it should throw an exception
+        raw.number
+        # so this statement should be unreachable
         assert False
-    # if it got detected properly
-    except pyre.component.ConstraintViolationError:
-        # verify the state is unchanged
-        assert raw.number == 1
+    # if the error got detected properly
+    except raw.TraitValueError:
+        # all good
+        pass
 
-    # check the iterable case
+    # another illegal assignment
+    canonical.number = 0
+    # attempting to
     try:
-        # illegal assignment
-        canonical.number = 0
-        # should be unreachable
+        # reading this value should also raise an exception
+        canonical.number
+        # so this statement should be unreachable
         assert False
-    # if it got detected properly
-    except pyre.component.ConstraintViolationError:
-        # verify the state is unchanged
-        assert canonical.number == 1
+    # if the error got detected properly
+    except canonical.TraitValueError:
+        # all good
+        pass
 
+    # all done
     return
 
 
