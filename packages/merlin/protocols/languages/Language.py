@@ -36,8 +36,8 @@ class Language(merlin.protocol, family="merlin.languages"):
             # leave it alone
             return value
 
-        # otherwise, turn the value into a {uri}
-        uri = cls.uri().coerce(value)
+        # otherwise, turn the value into a {uri} the way the resolvers read specifications
+        uri = cls.pyre_executive.specification(uri=value)
         # extract the address bit, convert it to lower case
         family = uri.address.lower()
         # run it through the compiler aliases

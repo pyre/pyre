@@ -30,8 +30,8 @@ class Compiler(merlin.protocol, family="merlin.compilers"):
         # otherwise, pull the known aliases from {compilers}
         from merlin.compilers import aliases
 
-        # turn the value into a {uri}
-        uri = cls.uri().coerce(value)
+        # turn the value into a {uri} the way the resolvers read specifications
+        uri = cls.pyre_executive.specification(uri=value)
         # extract the address bit
         family = uri.address
         # run it through the compiler aliases
