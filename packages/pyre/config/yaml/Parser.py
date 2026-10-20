@@ -17,6 +17,7 @@ class Parser:
 
     # types
     from ..events import Assignment, ConditionalAssignment
+    from ...parsing.exceptions import ParsingError
 
     # constants
     typeSeparator = "#"
@@ -46,7 +47,15 @@ class Parser:
                 # compose the node tree rather than loading the document, so that every node
                 # keeps the mark that says where in the file it came from
                 doc = loader.get_single_node()
-                # and process the contents
+            # if the document is not well formed
+            except yaml.YAMLError as error:
+                # record what is wrong, and where
+                self.errors.append(self.malformed(error=error, uri=uri, locator=locator))
+                # there is nothing to harvest
+                return ()
+            # if all is well
+            else:
+                # process the contents
                 return self.process(doc=doc, loader=loader, uri=uri, locator=locator)
             # release the loader
             finally:
@@ -76,6 +85,27 @@ class Parser:
         return
 
     # implementation details
+    def malformed(self, error, uri, locator):
+        """
+        Build a parsing error out of {error}, raised by the yaml loader because the document at
+        {uri} is not well formed, that says what is wrong and where
+        """
+        # the loader describes the problem, and what it was doing when it ran into it
+        problem = getattr(error, "problem", None) or str(error)
+        context = getattr(error, "context", None)
+        # put the two together
+        description = f"{context}: {problem}" if context else problem
+        # the loader marks where the problem is, when it knows
+        mark = getattr(error, "problem_mark", None)
+        # the marks count from zero, people count from one
+        line, column = (None, None) if mark is None else (mark.line + 1, mark.column + 1)
+        # place the problem in the file, after the reason the file was read
+        where = pyre.tracking.chain(
+            this=pyre.tracking.file(source=uri, line=line, column=column), next=locator
+        )
+        # build the error and return it
+        return self.ParsingError(description=description, locator=where)
+
     def process(self, doc, loader, uri, locator):
         """
         Convert the contents of {doc}, a node tree, into a sequence of configuration events

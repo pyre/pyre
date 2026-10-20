@@ -57,8 +57,16 @@ class Configurator:
             # and get out of here
             return errors
 
-        # convert the input source into a stream of events
-        events = reader.decode(uri, source, locator)
+        # attempt to
+        try:
+            # convert the input source into a stream of events
+            events = reader.decode(uri, source, locator)
+        # if the source is malformed
+        except reader.DecodingError as error:
+            # add it to my pile
+            errors.append(error)
+            # and get out of here, leaving all of its settings out
+            return errors
         # process it
         errors.extend(self.processEvents(events=events, priority=priority))
         # and return the errors

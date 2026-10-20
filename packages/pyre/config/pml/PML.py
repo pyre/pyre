@@ -34,15 +34,14 @@ class PML(Codec):
         try:
             # harvest the configuration events in the source
             configuration = reader.read(stream=source, document=Document())
+        # if the reader ran into trouble
         except reader.ParsingError as error:
-            # adjust the locator if necessary
+            # place it after the reason the source was read, if there is one
             if locator:
-                loc = pyre.tracking.chain(this=error.locator, next=locator)
-            else:
-                loc = error.locator
-            msg = "decoding error: {}".format(error.description)
-            # convert the parsing error into a decoding error and raise it
-            raise cls.DecodingError(codec=cls, uri=uri, locator=loc, description=msg) from error
+                # by chaining the two
+                error.locator = pyre.tracking.chain(this=error.locator, next=locator)
+            # throw away the harvested events, and complain
+            raise cls.DecodingError(codec=cls, uri=uri, locator=locator, errors=[error]) from error
         # all done; return the harvested events
         # for event in configuration: print(event)
         return configuration
