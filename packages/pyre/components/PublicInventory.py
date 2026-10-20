@@ -260,8 +260,8 @@ class PublicInventory(Inventory):
                     # declared it
                     ref = slot.ref(
                         key=key[trait.name],
-                        preprocessor=trait.classSlot.pre,
-                        postprocessor=trait.classSlot.post,
+                        preprocessor=trait.classSlot.preprocess,
+                        postprocessor=trait.classSlot.postprocess,
                     )
                     # yield the trait, its class slot factory, and a reference to the inherited
                     # slot

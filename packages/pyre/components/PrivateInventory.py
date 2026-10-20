@@ -165,7 +165,8 @@ class PrivateInventory(Inventory):
                     # the type of an inherited trait is determined by the nearest ancestor that
                     # declared it
                     ref = slot.ref(
-                        preprocessor=trait.classSlot.pre, postprocessor=trait.classSlot.post
+                        preprocessor=trait.classSlot.preprocess,
+                        postprocessor=trait.classSlot.postprocess,
                     )
                     # and yield the trait, reference slot pair
                     yield trait, ref
