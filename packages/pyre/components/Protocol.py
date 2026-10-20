@@ -219,16 +219,16 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         Attempt to resolve {spec} into a component that implements me; {spec} is
         assumed to be a string
         """
+        # get the executive
+        executive = cls.pyre_executive
         # attempt to
         try:
             # convert {spec} into a uri, the form the resolvers accept
-            uri = cls.uri().coerce(spec)
+            uri = executive.specification(uri=spec)
         # if it can't be
         except cls.uri.CastingError as error:
             # {spec} is not a component specification at all
             raise cls.FacilitySpecificationError(protocol=cls, value=spec, error=error) from error
-        # get the executive
-        executive = cls.pyre_executive
         # and ask it to resolve the {uri} into component candidates; this will handle correctly
         # uris that resolve to a retrievable component, as well as uris that mention an
         # existing instance

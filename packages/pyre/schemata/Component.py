@@ -76,15 +76,20 @@ class Component(Schema):
                 # which is interpreted as a request to instantiate the default facility value
                 # with the given name; convert the {value} into a {uri}; if the conversion is
                 # not successful, the {uri} schema will complain
-                uri = self.uri().coerce(value)
+                uri = protocol.pyre_executive.specification(uri=value)
                 # extract the fragment, which we use as the instance name; it's ok if it's {None}
                 instanceName = uri.fragment
-                # extract the address, which we use as the component specification; it's ok if it's {None}
+                # extract the address, which we use as the component specification; it's ok if
+                # it's {None}
                 componentSpec = uri.address
                 # if we have an instance name but no component specification
                 if instanceName and not componentSpec:
                     # get my default value
-                    factory = self.default()
+                    factory = self.default
+                    # if it is my protocol's {pyre_default} class method
+                    if factory == default:
+                        # ask it for the component
+                        factory = factory()
                     # perhaps it's a foundry
                     if isinstance(factory, foundry):
                         # in which case, invoke it

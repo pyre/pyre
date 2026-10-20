@@ -35,6 +35,8 @@ class Executive:
 
     # constants
     hostmapkey = "pyre.hostmap"  # the key with the nicknames of known hosts
+    # the marker of the instance name in a component specification, with the blanks around it
+    instanceMarker = re.compile(r"\s*#\s*")
 
     # public data
     # the managers; patched during boot
@@ -188,6 +190,19 @@ class Executive:
         # all done
         return
 
+    def specification(self, uri):
+        """
+        Convert {uri}, which names a component, into a uri the resolvers accept; in text, the
+        blanks around the {#} that introduces the name of the instance are dropped, so
+        specifications can be spelled readably
+        """
+        # if {uri} is text
+        if isinstance(uri, str):
+            # drop the blanks around the marker of the instance name
+            uri = self.instanceMarker.sub("#", uri)
+        # convert it and hand it off
+        return self.uri().coerce(uri)
+
     def resolve(self, uri, protocol=None, **kwds):
         """
         Interpret {uri} as a component descriptor and attempt to resolve it
@@ -245,7 +260,7 @@ class Executive:
         # print(f'    uri: {uri}')
         # print(f'    protocol: {protocol}')
         # force a uri
-        uri = self.uri().coerce(uri)
+        uri = self.specification(uri=uri)
         # grab my name server
         nameserver = self.nameserver
 

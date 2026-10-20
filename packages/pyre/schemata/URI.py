@@ -37,20 +37,18 @@ class URI(Schema):
         # {value} is broken, in which case it is almost certain we have a bug...
         value = str(value)
 
-        # collapse all internal spaces; they are not valid values anyway
-        value = "".join(value.split())
-
         # attempt to coerce
         try:
-            # by assuming it is a string
+            # by assuming it is a string; blanks inside it are kept, since they are part of the
+            # names of the resources users type, and only the ones around it are dropped
             return self.locator.parse(
                 value.strip(),
                 scheme=self.scheme,
                 authority=self.authority,
                 address=self.address,
             )
-        # if anything goes wrong
-        except Exception as error:
+        # if the parser does not recognize it
+        except self.locator.ParsingError as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
 
