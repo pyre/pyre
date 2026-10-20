@@ -14,20 +14,30 @@ Exercise "isPositive"
 def test():
     import pyre.constraints
 
+    # make the constraint
     constrain = pyre.constraints.isPositive()
 
-    constrain(0)
+    # values greater than zero are accepted
     constrain(1)
     constrain(1.1)
     constrain(2)
 
-    stranger = -1
-    try:
-        constrain(stranger)
-    except constrain.ConstraintViolationError as error:
-        assert error.constraint == constrain
-        assert error.value == stranger
+    # zero and anything below it
+    for stranger in (0, -1):
+        # must be
+        try:
+            # refused
+            constrain(stranger)
+            # so getting here is a bug
+            assert False, f"{stranger} was accepted as positive"
+        # by the constraint
+        except constrain.ConstraintViolationError as error:
+            # that knows who it is
+            assert error.constraint == constrain
+            # and what it refused
+            assert error.value == stranger
 
+    # all done
     return constrain
 
 
