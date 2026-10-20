@@ -8,7 +8,7 @@
 
 """
 A facility set to the empty text refuses it, with an error that names the trait, the text, and
-the protocol (part:E5, F12)
+the protocol (part:E5, F12, F17)
 """
 
 
@@ -85,8 +85,8 @@ def test() -> None:
     # make a channel for what goes wrong from here on; it fires only after any error is
     # handled, so the report is not buried under the traceback it explains
     channel = journal.firewall("pyre.coercions")
-    # building the component and reading the trait must fail, since the empty text names no
-    # component
+    # building the component and reading the trait must fail, since the empty text is not a
+    # component specification
     try:
         # build the component
         probe = Probe(name="probe")
@@ -105,7 +105,7 @@ def test() -> None:
         # and the error that refused the value
         refuser = type(error.error).__name__
         # if anything, or if the wrong error refused the value
-        if missing or refuser != "ResolutionError":
+        if missing or refuser != "FacilitySpecificationError":
             # say what went wrong
             channel.line(
                 "the facility refused the setting, but its error is incomplete, or carries the wrong refusal"
@@ -115,7 +115,7 @@ def test() -> None:
             channel.line(f"error: {complaint}")
             channel.line(f"lacks: {', '.join(map(repr, missing))}")
             channel.line(f"refused by: {refuser}")
-            channel.line("expected: ResolutionError")
+            channel.line("expected: FacilitySpecificationError")
             channel.line("look in: components/Protocol.py")
             channel.outdent()
     # if it is refused some other way
@@ -124,7 +124,7 @@ def test() -> None:
         channel.line("the facility refused the setting with the wrong error")
         # and the details
         channel.indent()
-        channel.line("expected: ResolutionError")
+        channel.line("expected: FacilitySpecificationError")
         channel.line(f"got: {type(error).__name__}: {error}")
         # and where it was raised, as far as four frames out inside pyre
         channel.line("raised:")
@@ -149,7 +149,7 @@ def test() -> None:
         channel.line("the facility accepted the setting")
         # and the details
         channel.indent()
-        channel.line("expected: ResolutionError")
+        channel.line("expected: FacilitySpecificationError")
         channel.line(f"holds: {held!r}")
         channel.line("look in: components/Protocol.py")
         channel.outdent()
