@@ -179,10 +179,10 @@ def isNotEmpty():
 
 def isPositive():
     """
-    Check that the given value is greater than or equal to zero
+    Check that the given value is greater than zero
     """
     # build the constraint and return it
-    return isGreaterEqual(value=0)
+    return isGreater(value=0)
 
 
 def inRange(low, high):
