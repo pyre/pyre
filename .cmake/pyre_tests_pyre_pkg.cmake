@@ -615,6 +615,7 @@ pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_duplicate.p
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_badImport.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_syntaxError.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/fileserver_open_errors.py)
+pyre_test_python_testcase(tests/pyre.pkg/framework/executive_guesses.py)
 # reverted pending review; in mm's drivers.exclude
 # pyre_test_python_testcase(tests/pyre.pkg/framework/executive_shelves.py)
 
@@ -626,6 +627,14 @@ set(framework_fileserver_open_errors_cleanup
 pyre_test_testcase_shell_fixture(
   "" "${framework_fileserver_open_errors_cleanup}"
   tests/pyre.pkg/framework/fileserver_open_errors.py
+  )
+# and so does {executive_guesses}
+set(framework_executive_guesses_cleanup
+  "rm -rf executive_guesses.scratch"
+  )
+pyre_test_testcase_shell_fixture(
+  "" "${framework_executive_guesses_cleanup}"
+  tests/pyre.pkg/framework/executive_guesses.py
   )
 
 
