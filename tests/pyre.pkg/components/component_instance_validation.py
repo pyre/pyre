@@ -22,10 +22,10 @@ def test():
 
         # traits
         # a positive value
-        positive = pyre.properties.float(default=0)
+        positive = pyre.properties.float(default=1)
 
         # a value less than 1
-        interval = pyre.properties.float(default=0)
+        interval = pyre.properties.float(default=0.5)
         interval.validators = [pyre.constraints.isLess(value=1)]
 
         # attach a validator to multiple traits
