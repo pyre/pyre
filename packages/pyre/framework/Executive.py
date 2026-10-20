@@ -54,6 +54,7 @@ class Executive:
 
     # bookkeeping
     errors = None  # the pile of exceptions raised during booting and configuration
+    guesses = None  # the configuration files i guessed at while searching, and did not find
 
     # high level interface
     def loadConfiguration(self, uri, locator=None, priority=priority.user):
@@ -74,10 +75,22 @@ class Executive:
             self.errors.append(error)
             # and bail out
             return
-        # ask the configurator to process the stream
-        errors = self.configurator.loadConfiguration(
-            uri=uri, source=source, locator=locator, priority=priority
-        )
+        # load the settings in it
+        self.loadConfigurationSource(uri=uri, source=source, locator=locator, priority=priority)
+        # all done
+        return
+
+    def loadConfigurationSource(self, uri, source, locator, priority):
+        """
+        Load the configuration settings in {source}, the open input stream of {uri}, and insert
+        them in the configuration database with the given {priority}
+        """
+        # make sure the stream is closed when its settings are in
+        with source:
+            # ask the configurator to process the stream
+            errors = self.configurator.loadConfiguration(
+                uri=uri, source=source, locator=locator, priority=priority
+            )
         # add any errors to my pile
         self.errors.extend(errors)
         # all done
@@ -181,11 +194,27 @@ class Executive:
         # look for each one
         for root, filename, extension in scope:
             # build the {uri}
-            uri = f"{root}/{filename}.{extension}"
+            uri = self.uri().coerce(f"{root}/{filename}.{extension}")
             # show me
             # print(f" ++ looking for '{uri}'")
-            # load the settings from the associated file
-            self.loadConfiguration(uri=uri, priority=priority, locator=locator)
+            # attempt to
+            try:
+                # ask the file server for the input stream
+                source = self.fileserver.open(uri=uri)
+            # if there is no such file, the guess missed
+            except self.fileserver.SourceNotFoundError as error:
+                # so file it with the other misses
+                self.guesses.append(error)
+                # and move on
+                continue
+            # if the file is there but could not be opened
+            except self.PyreError as error:
+                # save it
+                self.errors.append(error)
+                # and move on
+                continue
+            # load the settings in it
+            self.loadConfigurationSource(uri=uri, source=source, locator=locator, priority=priority)
 
         # all done
         return
@@ -543,6 +572,8 @@ class Executive:
         super().__init__(**kwds)
         # the pile of errors encountered
         self.errors = []
+        # and the pile of configuration files i guessed at and did not find
+        self.guesses = []
         # all done
         return
 
@@ -657,6 +688,8 @@ class Executive:
         """
         # my error pile is probably full of circular references
         self.errors = []
+        # and so is the pile of missed guesses
+        self.guesses = []
         # all done
         return self
 
