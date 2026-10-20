@@ -184,6 +184,44 @@ class DefaultError(ComponentError):
         return
 
 
+class TraitValueError(ComponentError):
+    """
+    Exception raised when a trait refuses a value; validators are encouraged to raise it, or
+    an exception derived from it, and the framework names the trait whose value was refused
+    and where it was set
+    """
+
+    # public data
+    description = "{0.trait}: {0.reason}"
+
+    @property
+    def reason(self):
+        """
+        Explain why the value was refused
+        """
+        # if whoever refused the value said why
+        if self._reason is not None:
+            # use it
+            return self._reason
+        # if the value was refused by another error
+        if self.error is not None:
+            # it knows why
+            return str(self.error)
+        # otherwise, there is not much to say
+        return f"{self.value!r} is not acceptable"
+
+    # meta-methods
+    def __init__(self, value=None, reason=None, trait=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store my context
+        self.value = value
+        self.trait = trait
+        self._reason = reason
+        # all done
+        return
+
+
 class ConfigurationError(ComponentError):
     """
     Exception raised when something bad happens during component configuration
