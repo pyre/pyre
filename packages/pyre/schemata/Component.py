@@ -56,7 +56,11 @@ class Component(Schema):
                 # this handles both uris that point to a retrievable component and uris that
                 # point to existing instances known to the executive
                 value = protocol.pyre_resolveSpecification(spec=value, **kwds)
-            # if that fails
+            # if {value} is not a component specification at all
+            except protocol.FacilitySpecificationError:
+                # there is nothing else to try
+                raise
+            # if that fails any other way
             except protocol.ResolutionError as error:
                 # resolving a specification includes instantiating the component it names, so
                 # the complaint may be about something that went wrong while configuring that

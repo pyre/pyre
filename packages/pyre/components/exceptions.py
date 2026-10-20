@@ -107,26 +107,6 @@ class TraitNotFoundError(ComponentError):
         return
 
 
-class FacilitySpecificationError(ComponentError):
-    """
-    Exception raised when a facility cannot instantiate its configuration specification
-    """
-
-    # public data
-    description = "{0.configurable}.{0.trait.name}: could not instantiate {0.value!r}"
-
-    # meta-methods
-    def __init__(self, configurable, trait, value, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save the error info
-        self.configurable = configurable
-        self.trait = trait
-        self.value = value
-        # all done
-        return
-
-
 class ProtocolCompatibilityError(ComponentError):
     """
     Exception raised when a configurable is incompatible with a suggested protocol
@@ -164,6 +144,19 @@ class ResolutionError(ComponentError):
         self.report = report
         # all done
         return
+
+
+class FacilitySpecificationError(ResolutionError):
+    """
+    Exception raised when a protocol is asked to resolve text that is not a component
+    specification, i.e. text that cannot be converted into a uri the framework resolvers accept
+    """
+
+    # public data
+    description = (
+        "could not resolve {0.value!r} into a component that implements {0.protocol}, "
+        "since it is not a component specification"
+    )
 
 
 class DefaultError(ComponentError):

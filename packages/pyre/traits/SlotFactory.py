@@ -22,16 +22,12 @@ class SlotFactory(Dashboard):
     noop = identity().coerce
 
     # types
-    from ..components.exceptions import (
-        FacilitySpecificationError,
-        ResolutionError,
-        TraitValueError,
-    )
+    from ..components.exceptions import ResolutionError, TraitValueError
     from ..constraints.exceptions import ConstraintViolationError
     from ..schemata.exceptions import SchemaError
 
     # the errors that mean my trait refused a value
-    refusals = (SchemaError, ConstraintViolationError, ResolutionError, FacilitySpecificationError)
+    refusals = (SchemaError, ConstraintViolationError, ResolutionError)
 
     # interface
     def preprocess(self, value: object, **kwds) -> object:
