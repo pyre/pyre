@@ -203,6 +203,12 @@
     the {!r} conversion, and nothing else; narrow it to those once the wrapped errors are
     gone
 
+- parsing: the scanners throw errors at their clients with the {(type, value)} signature
+  ({Scanner.py:84, 166}, {SWScanner.py:141}), which python 3.12 deprecates for generators;
+  it is a contract, since clients need not be generators and some implement
+  {throw(type, value, traceback)} themselves (the sink in {parsing/lexing_tokenizationError.py}),
+  so moving to the one argument form means changing every client (2026-10-20, emptymap F32)
+
 - yaml: a round trip parser of our own, in c++ with bindings (2026-10-04)
 
   - why: {config/yaml/Parser.py} reads through PyYAML and {config/yaml/Editor.py} edits
