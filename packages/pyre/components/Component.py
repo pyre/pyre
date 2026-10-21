@@ -210,12 +210,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
                 if error.configurable is None:
                     # so it is mine
                     error.configurable = self
-                # record it against whoever it is about
-                self.pyre_executive.recordConfigurationError(
-                    error=error, configurable=error.configurable
-                )
-                # add it to the ones found here
-                errors.append(error)
+                # record it against whoever it is about, and add it to the ones found here
+                errors.append(self.pyre_recordRefusal(error=error, configurable=error.configurable))
                 # and move on
                 continue
             # find the components it holds, itself or its entries
@@ -243,12 +239,29 @@ class Component(Configurable, metaclass=Actor, internal=True):
                 getattr(cls, trait.name)
             # if it is refused
             except cls.TraitValueError as error:
-                # record it against my class
-                cls.pyre_executive.recordConfigurationError(error=error, configurable=cls)
-                # and add it to the ones found here
-                errors.append(error)
+                # record it against my class, and add it to the ones found here
+                errors.append(cls.pyre_recordRefusal(error=error, configurable=cls))
         # all done
         return errors
+
+    @classmethod
+    def pyre_recordRefusal(cls, error, configurable):
+        """
+        Record {error}, a refusal a check found in a trait of {configurable}, unless an earlier
+        check recorded it already, and return the refusal that is in the pile
+        """
+        # get the executive
+        executive = cls.pyre_executive
+        # go through the errors recorded against {configurable}
+        for known in executive.configurationErrors(configurable=configurable):
+            # if one of them is the same refusal
+            if error.repeats(other=known):
+                # it is the one in the pile
+                return known
+        # otherwise, it is new, so record it
+        executive.recordConfigurationError(error=error, configurable=configurable)
+        # and hand it back
+        return error
 
     def pyre_showConfigurationErrors(self, channel=None):
         """

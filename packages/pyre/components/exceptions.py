@@ -202,6 +202,19 @@ class TraitValueError(ComponentError):
         # so name the trait, its owner, and that place
         return f"'{self.trait}' of {self.configurable}, {made} at {self.configurable.pyre_locator}"
 
+    def repeats(self, other) -> bool:
+        """
+        Check whether {other} is the same refusal as mine: the same slot refused its value for the
+        same reason; every assignment makes a new slot, but a slot whose value is an expression
+        may refuse it for another reason once the names it refers to change
+        """
+        # only another refusal
+        if not isinstance(other, TraitValueError):
+            # can be the same
+            return False
+        # by the same slot, for the same reason
+        return other.slot is self.slot and other.reason == self.reason
+
     @property
     def reason(self):
         """
