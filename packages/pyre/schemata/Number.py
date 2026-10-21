@@ -23,14 +23,8 @@ def evaluationContext():
     context.update(math.__dict__)
     # enable the greek letters for the corresponding constants
     context["π"] = math.pi
-    # τ is a {3.6} feature
-    try:
-        # if it's there, pull it
-        context["τ"] = math.tau
-    # otherwise
-    except AttributeError:
-        # compute it
-        context["τ"] = 2 * math.pi
+    # both of them
+    context["τ"] = math.tau
     # all done
     return context
 
