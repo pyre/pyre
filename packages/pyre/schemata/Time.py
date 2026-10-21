@@ -36,28 +36,26 @@ class Time(Schema):
         if isinstance(value, datetime.datetime):
             # in which case extract a time object from it
             return value.timetz()
-
-        # the rest assumes that {value} is a string; attempt
-        try:
-            # to strip the value
+        # text
+        if isinstance(value, str):
+            # strip it
             value = value.strip()
-        # if this fails
-        except AttributeError:
-            # complain
-            raise self.CastingError(value=value, description=self.complaint)
-        # if there is nothing left
-        if not value:
-            # bail
-            return None
-
-        # attempt to
-        try:
-            # assume it is a string; strip it and convert it
-            return datetime.datetime.strptime(value, self.format).time()
-        # if the parser refuses
-        except (TypeError, ValueError) as error:
-            # complain, passing along the parser's reason
-            raise self.CastingError(value=value, description=self.complaint, error=error)
+            # if there is nothing left
+            if not value:
+                # it is uninitialized
+                return None
+            # attempt to
+            try:
+                # cast it into a time
+                time = datetime.datetime.strptime(value, self.format).time()
+            # if the parser refuses
+            except (TypeError, ValueError) as error:
+                # complain, passing along the parser's reason
+                raise self.CastingError(value=value, description=self.complaint, error=error)
+            # if all goes well, return the {time}
+            return time
+        # all other types are incompatible, for now
+        raise self.CastingError(value=value, description=self.complaint)
 
     def string(self, value):
         """
