@@ -671,59 +671,6 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                 stdout, stderr = make.communicate()
                 # grab the status code
                 status = make.returncode
-                # if there was an error
-                if status != 0:
-                    # grab a channel
-                    channel = journal.error("mm.gnu")
-                    # complain
-                    channel.line(f"failed to launch '{self.make}'")
-                    channel.line(f"while attempting to retrieve the version of GNU make")
-                    channel.indent()
-                    channel.line(f"'{self.make}' returned error code {status}")
-                    channel.outdent()
-                    channel.line(f"check your setting for my 'make' property")
-                    # flush
-                    channel.log()
-                    # and bail, just in case errors aren't fatal
-                    return
-                # otherwise, grab the first line of output
-                signature = stdout.splitlines()[0]
-                # take it apart using the GNU make version parser
-                match = self.gnuMakeVersionParser.match(signature)
-                # if it doesn't match
-                if not match:
-                    # we have a problem
-                    channel = journal.error("mm.gnu")
-                    # complain
-                    channel.line(f"could not find a suitable installation of GNU make")
-                    channel.line(f"while verifying my installation")
-                    channel.indent()
-                    channel.line(f"'{self.make}' doesn't seem to be GNU make")
-                    channel.line(f"you need GNU make 4.4 or higher")
-                    channel.outdent()
-                    channel.line(f"check your setting for my 'make' property")
-                    # flush
-                    channel.log()
-                    # and bail, just in case errors aren't fatal
-                    return
-                # get the version info
-                major, minor, micro = map(int, match.groups(default=0))
-                # we need 4.4 or higher, for the {.WAIT} prerequisite ordering primitive
-                if (major, minor, micro) < (4, 4, 0):
-                    # we have a problem
-                    channel = journal.error("mm.gnu")
-                    # complain
-                    channel.line(f"your version of GNU make is too old")
-                    channel.line(f"while verifying my installation")
-                    channel.indent()
-                    channel.line(f"you need GNU make 4.4 or higher")
-                    channel.line(f"your '{self.make}' version is {major}.{minor}.{micro}")
-                    channel.outdent()
-                    channel.line(f"check your setting for my 'make' property")
-                    # flush
-                    channel.log()
-                    # and bail, just in case errors aren't fatal
-                    return
         # if the executable could not be found
         except FileNotFoundError as error:
             # we have a problem
@@ -738,6 +685,8 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             channel.line(f"check your setting for my 'make' property")
             # flush
             channel.log()
+            # and bail, just in case errors aren't fatal
+            return
         # if the launch fails in a more general way
         except OSError as error:
             # we have a problem
@@ -752,6 +701,8 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             channel.line(f"check your setting for my 'make' property")
             # flush
             channel.log()
+            # and bail, just in case errors aren't fatal
+            return
         # if {subprocess} detected some other kind of problem
         except subprocess.SubprocessError as error:
             # we have a problem
@@ -766,6 +717,61 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             channel.line(f"check your setting for my 'make' property")
             # flush
             channel.log()
+            # and bail, just in case errors aren't fatal
+            return
+        # if it ran, but reported an error
+        if status != 0:
+            # grab a channel
+            channel = journal.error("mm.gnu")
+            # complain
+            channel.line(f"failed to launch '{self.make}'")
+            channel.line(f"while attempting to retrieve the version of GNU make")
+            channel.indent()
+            channel.line(f"'{self.make}' returned error code {status}")
+            channel.outdent()
+            channel.line(f"check your setting for my 'make' property")
+            # flush
+            channel.log()
+            # and bail, just in case errors aren't fatal
+            return
+        # otherwise, grab the first line of output
+        signature = stdout.splitlines()[0]
+        # take it apart using the GNU make version parser
+        match = self.gnuMakeVersionParser.match(signature)
+        # if it doesn't match
+        if not match:
+            # we have a problem
+            channel = journal.error("mm.gnu")
+            # complain
+            channel.line(f"could not find a suitable installation of GNU make")
+            channel.line(f"while verifying my installation")
+            channel.indent()
+            channel.line(f"'{self.make}' doesn't seem to be GNU make")
+            channel.line(f"you need GNU make 4.4 or higher")
+            channel.outdent()
+            channel.line(f"check your setting for my 'make' property")
+            # flush
+            channel.log()
+            # and bail, just in case errors aren't fatal
+            return
+        # get the version info
+        major, minor, micro = map(int, match.groups(default=0))
+        # we need 4.4 or higher, for the {.WAIT} prerequisite ordering primitive
+        if (major, minor, micro) < (4, 4, 0):
+            # we have a problem
+            channel = journal.error("mm.gnu")
+            # complain
+            channel.line(f"your version of GNU make is too old")
+            channel.line(f"while verifying my installation")
+            channel.indent()
+            channel.line(f"you need GNU make 4.4 or higher")
+            channel.line(f"your '{self.make}' version is {major}.{minor}.{micro}")
+            channel.outdent()
+            channel.line(f"check your setting for my 'make' property")
+            # flush
+            channel.log()
+            # and bail, just in case errors aren't fatal
+            return
 
         # all done
         return
@@ -2632,11 +2638,14 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             return "$(dpkg.prefix)"
         # express it under the prefix when possible
         try:
-            return f"$(dpkg.prefix)/{path.relativeTo(prefix)}"
+            # by finding its relative location
+            relative = path.relativeTo(prefix)
         # if it isn't under the prefix (e.g. /usr/local/cuda lives under /usr, but a custom
         # toolkit might not), keep it absolute
         except ValueError:
             return str(path)
+        # if all goes well, render it under the prefix
+        return f"$(dpkg.prefix)/{relative}"
 
     def _buildRpmPackageDatabase(self, db):
         """
@@ -2970,10 +2979,13 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
             return "$(rpm.prefix)"
         # express it under the prefix when possible
         try:
-            return f"$(rpm.prefix)/{path.relativeTo(prefix)}"
+            # by finding its relative location
+            relative = path.relativeTo(prefix)
         # if it isn't under the prefix, keep it absolute
         except ValueError:
             return str(path)
+        # if all goes well, render it under the prefix
+        return f"$(rpm.prefix)/{relative}"
 
     def _emitDpkgCuda(self, dpkg, installed, prefix):
         """
