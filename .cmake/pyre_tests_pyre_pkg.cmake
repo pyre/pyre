@@ -745,6 +745,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_scalar_maps.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_refusal_owner.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_hook_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/component_validate_twice.py)
 
 
 #
