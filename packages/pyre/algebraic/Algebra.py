@@ -187,11 +187,13 @@ class Algebra(Type):
             # looking for
             try:
                 # a marked one
-                return base._pyre_hasAlgebra
+                marked = base._pyre_hasAlgebra
             # if that fails
             except AttributeError:
                 # perfect; check the next one
                 continue
+            # found one, so return its marker
+            return marked
         # all good
         return False
 

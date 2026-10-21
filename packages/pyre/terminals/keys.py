@@ -148,11 +148,13 @@ def _utf8(lead, pending):
     # attempt to
     try:
         # decode the assembled bytes as a single character
-        return (bytes([lead]) + trailing).decode("utf-8")
+        character = (bytes([lead]) + trailing).decode("utf-8")
     # if the decoder fails
     except UnicodeDecodeError:
         # fall back to the raw lead
         return chr(lead)
+    # if all goes well, return the {character}
+    return character
 
 
 # end of file

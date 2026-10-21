@@ -184,7 +184,7 @@ class Dataset(Object):
         # if all is well, attempt to
         try:
             # read the value and update my cache
-            return self._pyre_pull()
+            value = self._pyre_pull()
         # if this fails
         except NotImplementedError as error:
             # make a channel
@@ -196,8 +196,10 @@ class Dataset(Object):
             channel.line(f"while reading '{file._pyre_uri}'")
             # flush
             channel.log()
-        # all done
-        return
+            # and return something harmless
+            return
+        # if all goes well, return the {value}
+        return value
 
     def _pyre_write(self, dst: libh5.DataSet):
         """

@@ -62,11 +62,13 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         # try to
         try:
             # ask the operating system about the output endpoint
-            return os.device_encoding(self.ostream.fileno())
+            encoding = os.device_encoding(self.ostream.fileno())
         # when there is no descriptor or no terminal
         except (AttributeError, OSError):
             # the encoding is unknown
             return None
+        # if all goes well, return the {encoding}
+        return encoding
 
     @pyre.export
     def write(self, text):
@@ -180,11 +182,13 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         # try to
         try:
             # ask the operating system, using the output endpoint
-            return os.get_terminal_size(self.ostream.fileno())
+            size = os.get_terminal_size(self.ostream.fileno())
         # a missing descriptor or absent terminal
         except (AttributeError, ValueError, OSError):
             # leaves the size unknown
             return os.terminal_size((0, 0))
+        # if all goes well, return the {size}
+        return size
 
     def _isatty(self, stream):
         """
@@ -193,11 +197,13 @@ class Plain(pyre.component, family="pyre.terminals.plain", implements=Terminal):
         # try to
         try:
             # ask the operating system about the stream's descriptor
-            return os.isatty(stream.fileno())
+            tty = os.isatty(stream.fileno())
         # a stream without a descriptor
         except (AttributeError, ValueError, OSError):
             # is not a terminal
             return False
+        # if all goes well, return the answer
+        return tty
 
 
 # end of file

@@ -28,19 +28,23 @@ class Enum(Schema):
             # attempt to
             try:
                 # convert it to the enum value
-                return self.enum[value]
+                member = self.enum[value]
             # if this fails
             except KeyError as error:
                 # complain
                 raise self.EnumError(enum=self.enum, value=value, error=error)
+            # if all goes well, return the {member}
+            return member
         # for all other types of value, we use the class converter
         try:
             # as provided by {__call__}
-            return self.enum(value)
+            member = self.enum(value)
         # if anything goes wrong
         except ValueError as error:
             # complain
             raise self.EnumError(enum=self.enum, value=value, error=error)
+        # if all goes well, return the {member}
+        return member
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

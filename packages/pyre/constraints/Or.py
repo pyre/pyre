@@ -25,11 +25,13 @@ class Or(Constraint):
             # and look for
             try:
                 # the first one that is satisfied
-                return constraint.validate(value=value, **kwds)
+                validated = constraint.validate(value=value, **kwds)
             # if this one did not
             except constraint.ConstraintViolationError:
                 # check the next
                 continue
+            # found one, so return what it made of {value}
+            return validated
         # if they all failed, chain up
         return super().validate(value=value, **kwds)
 

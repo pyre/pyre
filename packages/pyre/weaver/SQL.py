@@ -55,14 +55,13 @@ class SQL(LineMill, Expression):
         # check whether
         try:
             # it knows how to render itself
-            return value.sql()
+            rendering = value.sql()
         # otherwise
         except AttributeError:
-            # no worries
-            pass
-
-        # last resort: render the value as a string
-        return str(value)
+            # last resort: render the value as a string
+            rendering = str(value)
+        # either way, return the {rendering}
+        return rendering
 
     # private data
     comment = "--"

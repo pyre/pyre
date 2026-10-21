@@ -71,11 +71,13 @@ class Proof:
             # attempt to
             try:
                 # read it
-                return open(str(path)).read()
+                contents = open(str(path)).read()
             # if it isn't there
             except OSError:
                 # move on to the next folder
                 continue
+            # found it, so return its {contents}
+            return contents
         # the header is nowhere to be found
         return None
 

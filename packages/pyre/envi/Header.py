@@ -304,12 +304,14 @@ class Header(pyre.component, family="pyre.envi.header"):
             return None
         # look it up
         try:
-            # and return the name
-            return self.datatypes[code]
+            # get the name
+            name = self.datatypes[code]
         # if the code is not one ENVI defines
         except KeyError:
             # complain
             raise exceptions.UnknownDataTypeError(code=code)
+        # if all goes well, return the {name}
+        return name
 
     @property
     def cell(self) -> str | None:

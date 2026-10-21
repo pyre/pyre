@@ -48,23 +48,31 @@ class Package(pyre.protocol, family="pyre.externals"):
         user = cls.pyre_user
         # check whether there is a registered preference for this category
         try:
-            # if so, we are done
-            return user.externals[cls.category]
+            # look it up
+            preference = user.externals[cls.category]
         # if not
         except (KeyError, AttributeError):
             # moving on
             pass
+        # if there is one
+        else:
+            # we are done
+            return preference
 
         # next, get the host
         host = cls.pyre_host
         # check whether there is a registered preference for this category
         try:
-            # if so, we are done
-            return host.externals[cls.category]
+            # look it up
+            preference = host.externals[cls.category]
         # if not
         except (KeyError, AttributeError):
             # moving on
             pass
+        # if there is one
+        else:
+            # we are done
+            return preference
 
         # finally, get the index of external packages
         from .Index import Index

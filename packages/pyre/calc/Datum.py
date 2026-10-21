@@ -45,11 +45,13 @@ class Datum(AbstractNode):
         # attempt to
         try:
             # ask me for my value
-            return self.getValue()
+            value = self.getValue()
         # if reading is not supported
         except AttributeError:
             # complain
             raise self.EvaluationError(node=self, error="node value is not readable")
+        # if all goes well, return the {value}
+        return value
 
     @value.setter
     def value(self, value):
@@ -59,11 +61,13 @@ class Datum(AbstractNode):
         # attempt to
         try:
             # set my value
-            return self.setValue(value=value)
+            self.setValue(value=value)
         # if writing is not supported
         except AttributeError:
             # complain
             raise self.EvaluationError(node=self, error="node value is not writable")
+        # all done
+        return
 
     # classifiers
     @property
