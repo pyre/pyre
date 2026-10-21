@@ -18,6 +18,7 @@ class Slotted(Trait):
     # types
     from .SlotFactory import SlotFactory as factory
     from ..components.exceptions import TraitValueError
+    from ..framework.exceptions import PyreError
 
     # framework data
     isConfigurable = True  # slotted traits have configurable values
@@ -45,6 +46,21 @@ class Slotted(Trait):
                 error.configurable = configurable
             # either way, let it through
             raise
+        # if computing it fails in any other way of the framework's, e.g. an expression that
+        # refers to a name that does not exist, or that can't be evaluated
+        except self.PyreError as error:
+            # the value is refused because of it
+            refusal = self.TraitValueError(error=error)
+            # by the slot that holds it
+            refusal.slot = slot
+            # whose factory, the one for my client's kind of slots
+            slots = self.classSlot if instance is None else self.instanceSlot
+            # knows how to attribute the refusal to my trait
+            slots.attribute(error=refusal, node=slot)
+            # associate the refusal with my client
+            refusal.configurable = configurable
+            # and raise it in place of the error
+            raise refusal from error
         # if all goes well, return the {value}
         return value
 
