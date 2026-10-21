@@ -123,8 +123,8 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         try:
             # to exec so that signals get delivered correctly
             os.execv(sys.executable, argv)
-        # if anything goes wrong
-        except Exception as error:
+        # if the interpreter could not be started
+        except OSError as error:
             # show me
             print(error, file=sys.stderr)
 

@@ -174,13 +174,13 @@ def boot():
         # get the main module
         import __main__
 
-        # and if the magic flag i set
+        # and if the magic flag is set
         if __main__.pyre_noboot:
             # bail
             return None
-    # if anything goes wrong
-    except:
-        # just ignore it and carry on
+    # if the main module does not have one
+    except AttributeError:
+        # so carry on and boot
         pass
 
     # now, check whether
@@ -233,7 +233,7 @@ def debug():
         # get the list of module names specified in the user's main script
         packages |= set(__main__.pyre_debug)
     # if there aren't any
-    except:
+    except AttributeError:
         # no worries
         pass
 

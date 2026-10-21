@@ -43,12 +43,14 @@ class Cell(Schema):
                 Cell.xlat = xlat
             # carefully
             try:
-                # attempt the conversion
-                return xlat[value.lower()]
-            # lookup failures
-            except Exception as error:
-                # get reported as casting errors
+                # look the name up in the table
+                cell = xlat[value.lower()]
+            # if it is not there
+            except KeyError as error:
+                # it is not a cell
                 raise self.CastingError(description=self.complaint, value=value, error=error)
+            # if all goes well, return the {cell}
+            return cell
         # all other types are incompatible, for now
         raise self.CastingError(description=self.complaint, value=value)
 
