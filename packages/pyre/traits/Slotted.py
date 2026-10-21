@@ -17,6 +17,7 @@ class Slotted(Trait):
 
     # types
     from .SlotFactory import SlotFactory as factory
+    from ..components.exceptions import TraitValueError
 
     # framework data
     isConfigurable = True  # slotted traits have configurable values
@@ -32,8 +33,20 @@ class Slotted(Trait):
         configurable = instance or cls
         # get the slot from the client's inventory
         slot = configurable.pyre_inventory[self]
-        # compute and return its value
-        return slot.value
+        # attempt to
+        try:
+            # compute its value
+            value = slot.value
+        # if the value is refused
+        except self.TraitValueError as error:
+            # and the refusal is not about my {value} but about where it is stored
+            if error.slot is slot:
+                # associate it with my client
+                error.configurable = configurable
+            # either way, let it through
+            raise
+        # if all goes well, return the {value}
+        return value
 
 
 # end of file
