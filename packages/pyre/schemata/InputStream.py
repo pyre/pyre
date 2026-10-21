@@ -6,6 +6,7 @@
 
 
 # externals
+import io
 import sys
 
 # superclasses
@@ -22,6 +23,7 @@ class InputStream(Schema, Dashboard):
     # constants
     mode = "r"
     typename = "istream"
+    complaint = "could not use {0.value!r} as an input stream"
 
     # types
     from . import uri
@@ -31,20 +33,24 @@ class InputStream(Schema, Dashboard):
         """
         Attempt to convert {value} into an open input stream
         """
-        # the value is the special string "stdin"
-        if value == "stdin" or value == "<stdin>":
-            # return the process stdin
-            return sys.stdin
-        # for strings
+        # text
         if isinstance(value, str):
-            # assume that the framework fileserver knows how to deal with it
+            # the value is the special string "stdin"
+            if value == "stdin" or value == "<stdin>":
+                # return the process stdin
+                return sys.stdin
+            # anything else, the framework fileserver knows how to open
             return self.pyre_fileserver.open(uri=value, mode=self.mode)
         # if the {value} is a uri
         if isinstance(value, self.uri.locator):
             # assume that the framework fileserver knows how to deal with it
             return self.pyre_fileserver.open(uri=value, mode=self.mode)
-        # otherwise, leave it alone
-        return value
+        # streams that are already open
+        if isinstance(value, io.IOBase):
+            # are left alone
+            return value
+        # all other types are incompatible, for now
+        raise self.CastingError(value=value, description=self.complaint)
 
     def string(self, value):
         """
