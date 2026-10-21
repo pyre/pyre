@@ -138,14 +138,18 @@ class Vector(gsl.Vector):
         """
         # attempt to read {value} as a single number
         try:
-            # which the extension spreads across all my cells
-            return gsl.Vector.fill(self, float(value))
+            # by converting it
+            number = float(value)
         # if it is not a number
         except TypeError:
             # take it as an iterable, one entry per cell
             for index, entry in enumerate(value):
                 # deposited in turn
                 self.set(index, float(entry))
+        # if it is
+        else:
+            # the extension spreads it across all my cells
+            gsl.Vector.fill(self, number)
         # all done
         return self
 
