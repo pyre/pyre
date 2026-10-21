@@ -9,7 +9,7 @@
 import math
 
 # the evaluator of text
-from ..calc.evaluation import evaluate
+from ..calc.evaluation import evaluate, errors
 from ..calc.exceptions import DisallowedNameError
 
 # superclass
@@ -56,8 +56,8 @@ class Number(Schema):
         except DisallowedNameError as error:
             # say so, in words the user can act on
             raise self.CastingError(value=value, description=str(error), error=error)
-        # if anything else goes wrong, which stays broad until the errors are narrowed
-        except Exception as error:
+        # if it fails in any of the ways an evaluation can
+        except errors as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
         # if all goes well, return the {candidate}

@@ -12,7 +12,10 @@ import re
 import weakref
 
 # the evaluator of text
-from .evaluation import evaluate
+from .evaluation import evaluate, errors
+
+# the refusal of a builtin or a name
+from .exceptions import DisallowedNameError
 
 
 # class declaration
@@ -57,13 +60,11 @@ class Expression:
         try:
             # to evaluate my program, with access to the builtins a setting may use
             value = evaluate(expression=self._program, context={"model": self._model})
-        # if i run into unresolved nodes
-        except self.UnresolvedNodeError:
-            # report it
-            raise
-        # other errors
-        except Exception as error:
-            # are reported as evaluation errors
+        # if it fails in any of the ways an evaluation can, or uses a function or a name the
+        # value of a setting may not; the errors of the nodes it refers to, such as unresolved
+        # names or their own failed evaluations, are theirs, so they go through as they are
+        except (DisallowedNameError, *errors) as error:
+            # report it as an evaluation error of mine
             raise self.EvaluationError(node=self, error=error) from None
         # otherwise, just return the value
         return value

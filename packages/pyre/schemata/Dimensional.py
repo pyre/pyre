@@ -8,6 +8,10 @@
 # externals
 from .. import units
 
+# the ways an evaluation can fail, and the units can fail to mix
+from ..calc.evaluation import errors
+from ..units.exceptions import UnitError
+
 # the refusal of a builtin
 from ..calc.exceptions import DisallowedNameError
 
@@ -46,8 +50,8 @@ class Dimensional(Number):
         except DisallowedNameError as error:
             # say so, in words the user can act on
             raise self.CastingError(value=value, description=str(error), error=error)
-        # if anything else goes wrong, which stays broad until the errors are narrowed
-        except Exception as error:
+        # if it fails in any of the ways an evaluation can, or its units don't mix
+        except (*errors, UnitError) as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
         # if all goes well, return the {quantity}
