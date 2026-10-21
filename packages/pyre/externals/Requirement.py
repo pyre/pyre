@@ -39,6 +39,10 @@ class Requirement:
         r"(?P<category>[A-Za-z][\w-]*)" r"(?:\[(?P<selectors>[^\]]*)\])?" r"(?P<clauses>.*)"
     )
 
+    # a flavor name, which selectors and exclusions must be: a letter followed by letters,
+    # digits, and any of {_}, {-} and {.}
+    _name = re.compile(r"[A-Za-z][\w.-]*")
+
     # a single version clause: a comparison operator followed by a version tag
     _clause = re.compile(r"(?P<operator>==|!=|>=|<=|>|<)\s*(?P<version>[\w.+-]+)")
 
@@ -99,12 +103,22 @@ class Requirement:
                     if not name:
                         # or it's another typo
                         raise cls.RequirementSyntaxError(spec=spec, problem="empty exclusion")
-                    # record the exclusion
-                    exclusions.append(name)
+                    # it goes with the exclusions
+                    pile = exclusions
                 # plain tokens are selections
                 else:
-                    # record the selector
-                    selectors.append(entry)
+                    # the token is the selected name
+                    name = entry
+                    # and it goes with the selectors
+                    pile = selectors
+                # either way, it must be a flavor name
+                if cls._name.fullmatch(name) is None:
+                    # or the selection could never be honored
+                    raise cls.RequirementSyntaxError(
+                        spec=spec, problem=f"'{name}' is not a valid flavor name"
+                    )
+                # record it
+                pile.append(name)
         # the version clause section
         clauses = []
         # get the remaining text
