@@ -27,22 +27,49 @@ class Complex(Number):
         """
         Attempt to convert {value} into a complex number
         """
-        # attempt to convert into a complex number
-        try:
-            # if it is a string
-            if isinstance(value, str):
+        # start with {value} itself
+        candidate = value
+        # if it is text
+        if isinstance(value, str):
+            # attempt to
+            try:
                 # get the interpreter to evaluate simple expressions
-                value = eval(value, self.context)
-            # if it is an iterable
-            if isinstance(value, collections.abc.Iterable):
-                # unpack it and instantiate it
-                return complex(*value)
-            # otherwise, just invoke the constructor
-            return complex(value)
-        # if anything whatsoever goes wrong
-        except Exception as error:
+                candidate = eval(value, self.context)
+            # if anything whatsoever goes wrong, which stays broad until the evaluation is restricted
+            except Exception as error:
+                # complain
+                raise self.CastingError(value=value, description=self.complaint, error=error)
+        # text, which is what the expression may have evaluated to
+        if isinstance(candidate, str):
+            # is the only part
+            parts = (candidate,)
+        # a map is not a complex number, even though its keys could be taken as its parts; in a
+        # configuration file, it is most likely a macro that was not quoted
+        elif isinstance(candidate, collections.abc.Mapping):
+            # so complain
+            raise self.CastingError(value=value, description=self.complaint)
+        # any other iterable
+        elif isinstance(candidate, collections.abc.Iterable):
+            # holds the parts
+            parts = tuple(candidate)
+        # and anything else
+        else:
+            # is the only part
+            parts = (candidate,)
+        # a complex number must have parts; the constructor would make zero out of none
+        if not parts:
+            # so complain
+            raise self.CastingError(value=value, description=self.complaint)
+        # now we are ready to
+        try:
+            # let the constructor do its job
+            number = complex(*parts)
+        # if it can't make sense of the parts, or one of them is out of its range
+        except (TypeError, ValueError, OverflowError) as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {number}
+        return number
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
