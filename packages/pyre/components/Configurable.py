@@ -27,6 +27,7 @@ class Configurable(Dashboard):
         CategoryMismatchError,
         TraitNotFoundError,
         ConfigurationError,
+        InitializationError,
         ProtocolCompatibilityError,
         ResolutionError,
         TraitValueError,

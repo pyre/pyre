@@ -55,6 +55,7 @@ class Executive:
     # bookkeeping
     errors = None  # the pile of exceptions raised during booting and configuration
     guesses = None  # the configuration files i guessed at while searching, and did not find
+    attributions = None  # the errors in my pile about component classes and instances, by whom
 
     # high level interface
     def loadConfiguration(self, uri, locator=None, priority=priority.user):
@@ -71,8 +72,8 @@ class Executive:
             # print(f" -- found: {uri} ")
         # if that fails
         except self.PyreError as error:
-            # save it
-            self.errors.append(error)
+            # record it
+            self.recordConfigurationError(error=error)
             # and bail out
             return
         # load the settings in it
@@ -91,10 +92,43 @@ class Executive:
             errors = self.configurator.loadConfiguration(
                 uri=uri, source=source, locator=locator, priority=priority
             )
-        # add any errors to my pile
-        self.errors.extend(errors)
+        # go through any errors
+        for error in errors:
+            # and record each one
+            self.recordConfigurationError(error=error)
         # all done
         return
+
+    def recordConfigurationError(self, error, configurable=None):
+        """
+        Add {error} to my pile, filed under {configurable}, the component class or instance it
+        is about, if any, and log it on the {pyre.configuration} warning channel, which an
+        application that reports its errors its own way can silence
+        """
+        # add it to the pile
+        self.errors.append(error)
+        # if it is about a component
+        if configurable is not None:
+            # file it under it too
+            self.attributions.setdefault(configurable, []).append(error)
+        # get the journal
+        import journal
+
+        # make a channel
+        channel = journal.warning("pyre.configuration")
+        # say what went wrong
+        channel.report(report=str(error).splitlines())
+        # and flush
+        channel.log()
+        # all done
+        return
+
+    def configurationErrors(self, configurable):
+        """
+        The errors in my pile that are about {configurable}, a component class or instance
+        """
+        # look them up
+        return list(self.attributions.get(configurable, []))
 
     # other facilities
     def newTimer(self, **kwds):
@@ -209,8 +243,8 @@ class Executive:
                 continue
             # if the file is there but could not be opened
             except self.PyreError as error:
-                # save it
-                self.errors.append(error)
+                # record it
+                self.recordConfigurationError(error=error)
                 # and move on
                 continue
             # load the settings in it
@@ -574,6 +608,8 @@ class Executive:
         self.errors = []
         # and the pile of configuration files i guessed at and did not find
         self.guesses = []
+        # the errors about component classes and instances, by whom
+        self.attributions = {}
         # all done
         return
 
@@ -690,6 +726,8 @@ class Executive:
         self.errors = []
         # and so is the pile of missed guesses
         self.guesses = []
+        # and the errors filed by whom they are about
+        self.attributions = {}
         # all done
         return self
 

@@ -164,6 +164,23 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # pass them on
         return value, locator
 
+    # configuration errors
+    @property
+    def pyre_configurationErrors(self):
+        """
+        The errors in the pile of the executive that are about me
+        """
+        # the executive knows
+        return self.pyre_executive.configurationErrors(configurable=self)
+
+    @classmethod
+    def pyre_classConfigurationErrors(cls):
+        """
+        The errors in the pile of the executive that are about my class
+        """
+        # the executive knows
+        return cls.pyre_executive.configurationErrors(configurable=cls)
+
     # framework notifications
     @classmethod
     def pyre_staged(cls, name, locator, implicit):
@@ -203,15 +220,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
     def pyre_initialized(self):
         """
         Hook that gets invoked by the framework right before the component is put into
-        action. The component is now in a known good state, with all configurable traits fully
-        bound and validated. This is the place where the component should acquire whatever
-        further resources it requires.
+        action. The component is configured, but its traits are evaluated when they are first
+        read, so a value one of them refuses surfaces then, or when its configuration is
+        checked. This is the place where the component should acquire whatever further
+        resources it requires.
         """
-        # if there were any configuration errors, report them
-        yield from self.pyre_configurationErrors
-        # report any further errors encountered while checking the instance state and acquiring
+        # return the list of errors encountered while checking the instance state and acquiring
         # resources; by default, there aren't any
-        return
+        return []
 
     def pyre_traitModified(self, trait, new, old):
         """
@@ -323,8 +339,15 @@ class Component(Configurable, metaclass=Actor, internal=True):
                 priority=cls.pyre_executive.priority.construction(),
                 locator=locator,
             )
-        # and collect configuration errors
-        instance.pyre_configurationErrors = list(inventory.configureInstance(instance))
+        # configure it, and collect what the configuration hooks find wrong
+        errors = list(inventory.configureInstance(instance))
+        # if they found anything
+        if errors:
+            # record it against the instance, which is built anyway
+            cls.pyre_executive.recordConfigurationError(
+                error=cls.ConfigurationError(configurable=instance, errors=errors),
+                configurable=instance,
+            )
 
         # all done
         return instance

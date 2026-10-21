@@ -164,14 +164,14 @@ class Actor(Requirement):
         )
 
         # invoke the instantiation hook and harvest any errors
-        initializationErrors = list(instance.pyre_initialized())
-        # attach them
-        instance.pyre_initializationErrors = initializationErrors
-
+        errors = list(instance.pyre_initialized())
         # if there were any
-        if initializationErrors:
-            # complain
-            raise instance.ConfigurationError(configurable=instance, errors=initializationErrors)
+        if errors:
+            # record them against the instance, which is built anyway
+            executive.recordConfigurationError(
+                error=instance.InitializationError(configurable=instance, errors=errors),
+                configurable=instance,
+            )
 
         # register with the component registrar
         registrar.registerComponentInstance(instance=instance)
