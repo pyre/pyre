@@ -476,7 +476,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             crewstatus = self.crewcodes.healthy
             # and attach the error description
             result = error
-        # if anything else goes wrong
+        # boundary: anything else the task raises aborts it, and goes back in the report
         except Exception as error:
             # prepare a report with an error code for the task
             taskstatus = self.taskcodes.aborted

@@ -65,7 +65,8 @@ class Panel(Command):
                 # leave it alone and just indicate a failure
                 return self.ERROR_GENERIC
 
-            # if anything else goes wrong
+            # boundary: anything else the command raises becomes an exit code, unless we are
+            # debugging
             except Exception as error:
                 # if we are in debug mode
                 if plexus.DEBUG:

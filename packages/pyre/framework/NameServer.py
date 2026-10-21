@@ -205,19 +205,21 @@ class NameServer(Hierarchical):
             try:
                 # build the new node
                 new = factory(key=key, value=value)
-            # if anything wrong happens
-            except Exception:
-                # clear out the metadata
+            # if anything at all goes wrong, an interrupt included
+            except BaseException:
+                # the store must not keep the metadata of a node that was never built
                 del self._metadata[key]
-                # and raise the same exception
+                # but the error is not mine to handle, so pass it on
                 raise
             # otherwise, we are all good; attach the node
             self._nodes[key] = new
             # and return the insertion info
             return key, new, old
 
-        # getting this far implies we've bumped into this key before; if the caller has supplied
-        # a specific factory
+        # getting this far implies we've bumped into this key before; remember the factory that
+        # builds its nodes, so it can be put back if the new node can't be built
+        installed = meta.factory
+        # if the caller has supplied a specific factory
         if factory:
             # install it
             meta.factory = factory
@@ -245,10 +247,18 @@ class NameServer(Hierarchical):
             if isinstance(value, str):
                 # must reach the new node as it is, rather than be evaluated a second time
                 value = self.node.interpolation.escape(value)
-            # build the new node
-            new = factory(key=key, value=value, current=old)
-            # and register it; no need to adjust the graph since the slot factory now takes
-            # care of this
+            # gingerly
+            try:
+                # build the new node
+                new = factory(key=key, value=value, current=old)
+            # if anything at all goes wrong, an interrupt included
+            except BaseException:
+                # the store must not keep a factory that could not build the node
+                meta.factory = installed
+                # but the error is not mine to handle, so pass it on
+                raise
+            # otherwise, register the new node; no need to adjust the graph since the slot
+            # factory now takes care of this
             self._nodes[key] = new
             # and we are done
             return key, new, old
@@ -263,7 +273,7 @@ class NameServer(Hierarchical):
                 key=key,
                 priority=meta.priority,
                 locator=meta.locator,
-                factory=meta.factory,
+                factory=installed,
             )
             # record the assignment metadata so whoever is watching for this assignment
             # has access to the current information; save the priority
@@ -274,12 +284,13 @@ class NameServer(Hierarchical):
             try:
                 # make a new node using the registered node factory
                 new = meta.factory(key=key, value=value, current=old)
-            # if anything goes wrong
-            except Exception:
-                # roll back the metadata
+            # if anything at all goes wrong, an interrupt included
+            except BaseException:
+                # the store must not keep the metadata of an assignment that never happened
                 meta.locator = mark.locator
                 meta.priority = mark.priority
-                # and raise the same exception
+                meta.factory = mark.factory
+                # but the error is not mine to handle, so pass it on
                 raise
             # otherwise, we are all good; register the new node
             self._nodes[key] = new
