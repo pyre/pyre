@@ -742,6 +742,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_trait_value_errors
 pyre_test_python_testcase(tests/pyre.pkg/components/protocol_specification_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_facility_specifications.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_scalar_maps.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/component_sequence_scalar.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_refusal_owner.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_hook_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate.py)
