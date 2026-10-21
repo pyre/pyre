@@ -24,18 +24,28 @@ class Integer(Number):
         """
         Attempt to convert {value} into an integer
         """
-        # attempt to convert into an integer
-        try:
-            # for strings
-            if isinstance(value, str):
+        # start with {value} itself
+        candidate = value
+        # if it is text
+        if isinstance(value, str):
+            # attempt to
+            try:
                 # get the interpreter to evaluate simple expressions
-                value = eval(value, self.context)
-            # everything must to go through the {int} constructor to get coerced correctly
-            return int(value)
-        # if anything whatsoever goes wrong
-        except Exception as error:
+                candidate = eval(value, self.context)
+            # if anything whatsoever goes wrong, which stays broad until the evaluation is restricted
+            except Exception as error:
+                # complain
+                raise self.CastingError(value=value, description=self.complaint, error=error)
+        # otherwise, attempt to
+        try:
+            # let the constructor do its job; anything it accepts is fine
+            number = int(candidate)
+        # if it can't make sense of what it was given, or the {value} is out of its range
+        except (TypeError, ValueError, OverflowError) as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {number}
+        return number
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
