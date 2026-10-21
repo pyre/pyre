@@ -11,15 +11,15 @@ Verify the failure mode when a required package cannot be located
 
 The configuration file {unavailable.yaml} restricts the host to the bare engine over the
 fixture installation, which does not provide petsc; the application must construct anyway,
-and the first access of the facility must fail loudly with a {DefaultError} that names the
-protocol
+and the first access of the facility must fail loudly with a {TraitValueError} that names the
+facility and carries the {DefaultError} that names the protocol
 """
 
 # support
 import pyre
 
-# the exception the facility binding is expected to raise
-from pyre.components.exceptions import DefaultError
+# the exceptions the facility binding is expected to raise
+from pyre.components.exceptions import DefaultError, TraitValueError
 
 
 # the application
@@ -44,10 +44,14 @@ def test():
     try:
         # touch the facility
         app.petsc
-    # the access must fail with the protocol in the complaint
-    except DefaultError as error:
-        # check that the complaint names the category
-        assert "petsc" in str(error)
+    # the access must fail as a refusal of the value of the facility
+    except TraitValueError as error:
+        # because the protocol has no default
+        assert isinstance(error.error, DefaultError), repr(error.error)
+        # with a complaint that names the facility
+        assert "unavailable.petsc" in str(error), str(error)
+        # and the category
+        assert "pyre.externals.petsc" in str(error), str(error)
     # anything else is a bug
     else:
         # the access must not succeed
