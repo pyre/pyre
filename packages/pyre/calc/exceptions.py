@@ -38,7 +38,29 @@ class ExpressionError(NodeError):
     """
 
 
-class DisallowedFunctionError(ExpressionError):
+class DisallowedNameError(ExpressionError):
+    """
+    Exception raised when the value of a setting uses a name that starts with two underscores,
+    which reaches past the builtins it is allowed
+    """
+
+    # public data
+    description = (
+        "{0.name!r} can't be used in the value of a setting; "
+        "names that start with two underscores are off limits"
+    )
+
+    # meta-methods
+    def __init__(self, name, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the name
+        self.name = name
+        # all done
+        return
+
+
+class DisallowedFunctionError(DisallowedNameError):
     """
     Exception raised when the value of a setting uses a builtin it is not allowed
     """
@@ -64,15 +86,6 @@ class DisallowedFunctionError(ExpressionError):
         )
         # and put them together
         return "\n".join(lines)
-
-    # meta-methods
-    def __init__(self, name, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save the name of the builtin
-        self.name = name
-        # all done
-        return
 
 
 class EmptyExpressionError(ExpressionError):
