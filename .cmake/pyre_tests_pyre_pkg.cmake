@@ -618,6 +618,7 @@ pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_badImport.p
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_resolve_syntaxError.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/fileserver_open_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/executive_guesses.py)
+pyre_test_python_testcase(tests/pyre.pkg/framework/executive_validate.py)
 # reverted pending review; in mm's drivers.exclude
 # pyre_test_python_testcase(tests/pyre.pkg/framework/executive_shelves.py)
 
@@ -743,6 +744,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_facility_specifica
 pyre_test_python_testcase(tests/pyre.pkg/components/component_scalar_maps.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_refusal_owner.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_hook_errors.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/component_validate.py)
 
 
 #
