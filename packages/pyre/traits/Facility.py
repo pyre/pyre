@@ -77,7 +77,7 @@ class Facility(Slotted, schemata.component):
         # attempt to
         try:
             # convert {value} normally
-            return super().coerce(value=value, **kwds)
+            component = super().coerce(value=value, **kwds)
         # if my protocol could not compute a default
         except DefaultError:
             # facilities marked {optional} bind {None} when nobody has anything better to offer
@@ -86,6 +86,8 @@ class Facility(Slotted, schemata.component):
                 return None
             # everybody else fails loudly
             raise
+        # if all goes well, return the {component}
+        return component
 
     def instantiate(self, value, node, incognito=False, **kwds):
         """

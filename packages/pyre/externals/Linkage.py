@@ -95,12 +95,14 @@ class Linkage:
                 try:
                     # read the image
                     image = binaries.read(path=folder / entry.name)
-                    # and hand over what it links against
-                    return tuple(image.dependencies)
+                    # and collect what it links against
+                    dependencies = tuple(image.dependencies)
                 # if it isn't an image we understand, or the read went wrong
                 except (binaries.exceptions.BinaryError, OSError):
                     # keep looking; a directory may hold a stale or broken file
                     continue
+                # found it, so hand over what it links against
+                return dependencies
         # the library is nowhere to be found
         return None
 

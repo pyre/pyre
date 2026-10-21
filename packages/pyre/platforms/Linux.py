@@ -142,15 +142,14 @@ class Linux(POSIX, family="pyre.platforms.linux"):
         """
         # first, let's try
         try:
-            # to use {lscpu} to collect the information and return it
-            return cls.lscpu()
+            # to use {lscpu} to collect the information
+            survey = cls.lscpu()
         # if it's not available on this machine
         except FileNotFoundError:
-            # no worries, we'll try something else
-            pass
-
-        # last resort, because it's heavily polluted by x86_64 peculiarities
-        return cls.procCPUInfo()
+            # last resort, because it's heavily polluted by x86_64 peculiarities
+            survey = cls.procCPUInfo()
+        # either way, return the {survey}
+        return survey
 
     @classmethod
     def memorySurvey(cls):

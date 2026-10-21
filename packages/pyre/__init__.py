@@ -169,19 +169,21 @@ def boot():
     """
     Perform all the initialization steps necessary to bootstrap the framework
     """
+    # get the main module
+    import __main__
+
     # check whether the user has indicated we should skip booting
     try:
-        # get the main module
-        import __main__
-
-        # and if the magic flag is set
-        if __main__.pyre_noboot:
-            # bail
-            return None
+        # by setting the magic flag
+        noboot = __main__.pyre_noboot
     # if the main module does not have one
     except AttributeError:
         # so carry on and boot
-        pass
+        noboot = False
+    # if the flag is set
+    if noboot:
+        # bail
+        return None
 
     # now, check whether
     try:

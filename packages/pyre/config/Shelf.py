@@ -30,16 +30,13 @@ class Shelf(dict):
         # attempt to
         try:
             # look up the symbol
-            return self[symbol]
+            value = self[symbol]
         # if that fails
         except KeyError as error:
             # convert the error into something more descriptive and complain
             raise self.SymbolNotFoundError(shelf=self, symbol=symbol) from error
-
-        # unreachable
-        import journal
-
-        raise journal.firewall("pyre.config.native").log("UNREACHABLE")
+        # if all goes well, return the {value}
+        return value
 
     # meta methods
     def __init__(self, uri, symbols, locator=None, **kwds):

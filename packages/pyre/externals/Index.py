@@ -273,11 +273,13 @@ class Index:
             # attempt to
             try:
                 # make a pass over the request and its closure
-                return self._pass(requested=requested, fresh=fresh)
+                resolution = self._pass(requested=requested, fresh=fresh)
             # if a requirement invalidated a selection made earlier in the pass
             except ResolutionRestart:
                 # go again, with the richer demand pool
                 continue
+            # the pass went through, so return its {resolution}
+            return resolution
         # exhausting the attempts indicates a bug in the invalidation logic
         import journal
 

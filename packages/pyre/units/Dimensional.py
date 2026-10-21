@@ -33,12 +33,14 @@ class Dimensional:
         """
         # attempt to
         try:
-            # check for matching derivations
-            return self.derivation == other.derivation
+            # get the derivation of {other}
+            derivation = other.derivation
         # if {other} is not a dimensional
         except AttributeError:
-            # return false
+            # it is compatible only with dimensionless quantities
             return self.derivation == self.zero
+        # otherwise, check for matching derivations
+        return self.derivation == derivation
 
     # meta methods
     def __init__(self, value, derivation):
@@ -247,16 +249,20 @@ class Dimensional:
         """
         # assuming {other} is dimensional
         try:
-            # check the dimensions
-            if self.derivation == other.derivation:
-                # and the values
-                return self.value < other.value
+            # get its dimensions
+            derivation = other.derivation
         # if not
         except AttributeError:
             # check whether I am dimensionless
             if self.derivation == self.zero:
                 # in which case, just compare my value
                 return self.value < other
+        # if it is
+        else:
+            # and the dimensions match
+            if self.derivation == derivation:
+                # compare the values
+                return self.value < other.value
         # the operation is illegal
         raise self.CompatibilityError(operation="<", op1=self, op2=other)
 
@@ -266,17 +272,20 @@ class Dimensional:
         """
         # assuming {other} is dimensional
         try:
-            # check the dimensions
-            if self.derivation == other.derivation:
-                # and the values
-                return self.value <= other.value
+            # get its dimensions
+            derivation = other.derivation
         # if not
-        # except AttributeError: pass
         except AttributeError:
             # check whether I am dimensionless
             if self.derivation == self.zero:
                 # in which case, just compare my value
                 return self.value <= other
+        # if it is
+        else:
+            # and the dimensions match
+            if self.derivation == derivation:
+                # compare the values
+                return self.value <= other.value
         # the operation is illegal
         raise self.CompatibilityError(operation="<=", op1=self, op2=other)
 
@@ -286,16 +295,20 @@ class Dimensional:
         """
         # assuming {other} is dimensional
         try:
-            # check the dimensions
-            if self.derivation == other.derivation:
-                # and the values
-                return self.value == other.value
+            # get its dimensions
+            derivation = other.derivation
         # if not
         except AttributeError:
             # check whether I am dimensionless
             if self.derivation == self.zero:
                 # in which case, just compare my value
                 return self.value == other
+        # if it is
+        else:
+            # and the dimensions match
+            if self.derivation == derivation:
+                # compare the values
+                return self.value == other.value
         # in every other case, the operation is illegal
         raise self.CompatibilityError(operation="==", op1=self, op2=other)
 
@@ -305,16 +318,20 @@ class Dimensional:
         """
         # assuming {other} is dimensional
         try:
-            # check the dimensions
-            if self.derivation == other.derivation:
-                # and the values
-                return self.value != other.value
+            # get its dimensions
+            derivation = other.derivation
         # if not
         except AttributeError:
             # check whether I am dimensionless
             if self.derivation == self.zero:
                 # in which case, just compare my value
                 return self.value != other
+        # if it is
+        else:
+            # and the dimensions match
+            if self.derivation == derivation:
+                # compare the values
+                return self.value != other.value
         # the operation is illegal
         raise self.CompatibilityError(operation="!=", op1=self, op2=other)
 
@@ -324,16 +341,20 @@ class Dimensional:
         """
         # assuming {other} is dimensional
         try:
-            # check the dimensions
-            if self.derivation == other.derivation:
-                # and the values
-                return self.value > other.value
+            # get its dimensions
+            derivation = other.derivation
         # if not
         except AttributeError:
             # check whether I am dimensionless
             if self.derivation == self.zero:
                 # in which case, just compare my value
                 return self.value > other
+        # if it is
+        else:
+            # and the dimensions match
+            if self.derivation == derivation:
+                # compare the values
+                return self.value > other.value
         # the operation is illegal
         raise self.CompatibilityError(operation=">", op1=self, op2=other)
 
@@ -343,16 +364,20 @@ class Dimensional:
         """
         # assuming {other} is dimensional
         try:
-            # check the dimensions
-            if self.derivation == other.derivation:
-                # and the values
-                return self.value >= other.value
+            # get its dimensions
+            derivation = other.derivation
         # if not
         except AttributeError:
             # check whether I am dimensionless
             if self.derivation == self.zero:
                 # in which case, just compare my value
                 return self.value >= other
+        # if it is
+        else:
+            # and the dimensions match
+            if self.derivation == derivation:
+                # compare the values
+                return self.value >= other.value
         # the operation is illegal
         raise self.CompatibilityError(operation=">=", op1=self, op2=other)
 

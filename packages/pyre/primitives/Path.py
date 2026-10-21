@@ -518,13 +518,15 @@ class Path(tuple):
             # attempt to
             try:
                 # create the directory
-                return os.mkdir(self, **kwds)
+                os.mkdir(self, **kwds)
             # if the directory exists already
             except FileExistsError:
                 # and we care
                 if not exist_ok:
                     # complain
                     raise
+            # either way, we are done
+            return
         # if we are supposed to build the intermediate levels, delegate to the system routine
         return os.makedirs(self, exist_ok=exist_ok, **kwds)
 

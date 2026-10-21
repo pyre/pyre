@@ -128,13 +128,16 @@ class SymbolTable:
         """
         # attempt to evaluate
         try:
-            return self[name]
+            # by looking up {name}
+            value = self[name]
         # if it failed
         except self.UnresolvedNodeError:
             # bind it to {default}
             self[name] = default
-        # evaluate and return
-        return self[name]
+            # and evaluate it
+            value = self[name]
+        # either way, return the {value}
+        return value
 
     def insert(self, name, node):
         """
