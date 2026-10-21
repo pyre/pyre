@@ -113,14 +113,9 @@ class Property(Slotted):
                 nodes = (self.schema.macro(value=item) for item in value)
                 # and attach them to a sequence node
                 return self.pyre_nameserver.sequence(nodes=nodes, **kwds)
-
-            # if the value is {None}
-            if value is None:
-                # chain up
-                return super().native(value=value, **kwds)
-
-            # shouldn't get here
-            assert False, "unreachable"
+            # anything else, {None} or a value that is not a sequence, is kept whole, for my
+            # schema to accept or refuse when it is read
+            return super().native(value=value, **kwds)
 
     # meta-methods
     def __init__(self, classSlot=None, instanceSlot=None, **kwds):
