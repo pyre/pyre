@@ -37,7 +37,7 @@ class SlotFactory(Dashboard):
         # ask the preprocessor of my trait
         return self._pre(value=value, **kwds)
 
-    def postprocess(self, value: object, node=None, **kwds) -> object:
+    def postprocess(self, value: object, node, **kwds) -> object:
         """
         Turn {value}, read from the slot {node} of my trait, into a value of my trait; if my
         trait refuses it, raise a {TraitValueError} that names the trait whose value {node} holds
@@ -48,6 +48,10 @@ class SlotFactory(Dashboard):
             return self._post(value=value, node=node, **kwds)
         # if my trait refused the value with a {TraitValueError}
         except self.TraitValueError as error:
+            # if the {error} doesn't know yet the slot that holds the refused value
+            if error.slot is None:
+                # it is {node}
+                error.slot = node
             # if the {error} doesn't know yet the target {trait}
             if error.trait is None:
                 # it must be mine, so mark it
@@ -58,6 +62,8 @@ class SlotFactory(Dashboard):
         except self.refusals as error:
             # make a {TraitValueError} that carries the refusal
             refusal = self.TraitValueError(value=value, error=error)
+            # remember the slot that holds the refused value
+            refusal.slot = node
             # mark it with the trait name
             self.attribute(error=refusal, node=node)
             # and raise it in place of the refusal
@@ -77,7 +83,7 @@ class SlotFactory(Dashboard):
         # use the name of my trait, in case {node} is not in the store
         error.trait = self.trait.name
         # get the key of {node}
-        key = getattr(node, "key", None)
+        key = node.key
         # a slot outside the store
         if key is None:
             # has nothing more to say

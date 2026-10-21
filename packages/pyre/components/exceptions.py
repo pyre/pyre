@@ -180,12 +180,27 @@ class DefaultError(ComponentError):
 class TraitValueError(ComponentError):
     """
     Exception raised when a trait refuses a value; validators are encouraged to raise it, or
-    an exception derived from it, and the framework names the trait whose value was refused
-    and where it was set
+    an exception derived from it, and the framework names the trait whose value was refused,
+    the component or class it belongs to, and where the value was set
     """
 
     # public data
-    description = "{0.trait}: {0.reason}"
+    description = "{0.target}: {0.reason}"
+
+    @property
+    def target(self):
+        """
+        Name the trait whose value was refused, and its owner, when the name does not say
+        """
+        # the owner of a slot in the store is part of the name of the trait
+        if self.configurable is None or self.slot.key is not None:
+            # so the name is enough
+            return self.trait
+        # otherwise, the owner is told apart by where it was made: a class where it was
+        # declared, an instance where it was built
+        made = "declared" if isinstance(self.configurable, type) else "built"
+        # so name the trait, its owner, and that place
+        return f"'{self.trait}' of {self.configurable}, {made} at {self.configurable.pyre_locator}"
 
     @property
     def reason(self):
@@ -204,12 +219,17 @@ class TraitValueError(ComponentError):
         return f"{self.value!r} is not acceptable"
 
     # meta-methods
-    def __init__(self, value=None, reason=None, trait=None, **kwds):
+    def __init__(self, value=None, reason=None, trait=None, configurable=None, **kwds):
         # chain up
         super().__init__(**kwds)
         # store my context
         self.value = value
         self.trait = trait
+        # the component or class that owns the trait, once whoever reads it says so
+        self.configurable = configurable
+        # and the slot that holds the value, once the factory of its slots says so
+        self.slot = None
+        # record the explicit reason; i synthesize one when it's missing
         self._reason = reason
         # all done
         return
