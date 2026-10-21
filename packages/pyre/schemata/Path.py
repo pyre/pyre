@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import collections.abc  # for container identification
+
 # support
 from .. import primitives
 
@@ -32,18 +35,21 @@ class Path(Schema):
         """
         Attempt to convert {value} into a path
         """
-        # perhaps it is already a path
-        if isinstance(value, primitives.path):
-            # in which case, just leave it alone
-            return value
-
-        # the rest assume {value} is a string; if it isn't
-        if not isinstance(value, str):
-            # complain
+        # a map is not a path, even though the constructor would take its keys as the parts of
+        # one; in a configuration file, it is most likely a macro that was not quoted
+        if isinstance(value, collections.abc.Mapping):
+            # so complain
             raise self.CastingError(value=value, description=self.complaint)
-
-        # cast {value} into a path
-        return primitives.path(value)
+        # attempt to
+        try:
+            # let the constructor do its job; it knows paths, strings, and iterables of them
+            path = primitives.path(value)
+        # if it can't make sense of {value}
+        except TypeError as error:
+            # complain
+            raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {path}
+        return path
 
     def json(self, value):
         """
