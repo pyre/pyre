@@ -257,6 +257,7 @@ pyre_test_python_cleanup(mappings_text.log tests/pyre.pkg/schemata/mappings_text
 pyre_test_python_testcase(tests/pyre.pkg/schemata/containers_render.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/ostreams.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/paths.py)
+pyre_test_python_testcase(tests/pyre.pkg/schemata/paths_iterables.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/sets.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/strings.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/strings_broken.py)
