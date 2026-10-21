@@ -87,7 +87,7 @@ class Dimensional:
         # if the two quantities are not compatible
         if not self.derivation == other.derivation:
             # report an error
-            raise self.CompatibilityError(operation="addition", op1=self, op2=other)
+            raise self.CompatibilityError(operation="subtraction", op1=self, op2=other)
         # otherwise compute the result and return it
         return Dimensional(value=self.value - other.value, derivation=self.derivation)
 
