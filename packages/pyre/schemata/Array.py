@@ -11,6 +11,9 @@ from .Sequence import Sequence
 # default schema
 from .Float import Float
 
+# the evaluator of text
+from ..calc.evaluation import evaluate
+
 
 # declaration
 class Array(Sequence):
@@ -59,8 +62,8 @@ class Array(Sequence):
             if not value:
                 # return an empty tuple
                 return
-            # otherwise, ask python to process
-            value = eval(value)
+            # otherwise, ask python to process, with access to the builtins a setting may use
+            value = evaluate(expression=value, context={})
         # delegate to my superclass to build my container
         yield from super()._coerce(value=value, incognito=incognito, **kwds)
         # all done

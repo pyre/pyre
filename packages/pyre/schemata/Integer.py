@@ -28,14 +28,8 @@ class Integer(Number):
         candidate = value
         # if it is text
         if isinstance(value, str):
-            # attempt to
-            try:
-                # get the interpreter to evaluate simple expressions
-                candidate = eval(value, self.context)
-            # if anything whatsoever goes wrong, which stays broad until the evaluation is restricted
-            except Exception as error:
-                # complain
-                raise self.CastingError(value=value, description=self.complaint, error=error)
+            # evaluate it
+            candidate = self.evaluate(value=value)
         # otherwise, attempt to
         try:
             # let the constructor do its job; anything it accepts is fine

@@ -8,6 +8,10 @@
 # externals
 import math
 
+# the evaluator of text
+from ..calc.evaluation import evaluate
+from ..calc.exceptions import DisallowedFunctionError
+
 # superclass
 from .Schema import Schema
 
@@ -37,6 +41,27 @@ class Number(Schema):
 
     # constants
     context = evaluationContext()
+
+    # interface
+    def evaluate(self, *, value: str) -> object:
+        """
+        Evaluate the text in {value} in my context, with access to the builtins that the value
+        of a setting may use
+        """
+        # attempt to
+        try:
+            # get the interpreter to evaluate simple expressions
+            candidate = evaluate(expression=value, context=self.context)
+        # if it uses a function the value of a setting may not
+        except DisallowedFunctionError as error:
+            # say so, in words the user can act on
+            raise self.CastingError(value=value, description=str(error), error=error)
+        # if anything else goes wrong, which stays broad until the errors are narrowed
+        except Exception as error:
+            # complain
+            raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {candidate}
+        return candidate
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

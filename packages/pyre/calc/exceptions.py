@@ -38,6 +38,43 @@ class ExpressionError(NodeError):
     """
 
 
+class DisallowedFunctionError(ExpressionError):
+    """
+    Exception raised when the value of a setting uses a builtin it is not allowed
+    """
+
+    # public data
+    description = (
+        "{0.name!r} can't be used in the value of a setting; the functions allowed are\n"
+        "{0.allowed}"
+    )
+
+    @property
+    def allowed(self) -> str:
+        """
+        List the functions the value of a setting may use, a group per line
+        """
+        # get the groups
+        from .evaluation import functions
+
+        # render each group on a line of its own
+        lines = (
+            f"  {group}: {', '.join(function.__name__ for function in members)}"
+            for group, members in functions.items()
+        )
+        # and put them together
+        return "\n".join(lines)
+
+    # meta-methods
+    def __init__(self, name, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the name of the builtin
+        self.name = name
+        # all done
+        return
+
+
 class EmptyExpressionError(ExpressionError):
     """
     Exception raised when the expression factory did not encounter any named references to
