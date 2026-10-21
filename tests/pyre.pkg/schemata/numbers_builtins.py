@@ -9,7 +9,8 @@
 """
 The text of a numeric, dimensional or array setting may use only the builtins a setting is
 allowed: the others are refused with a complaint that names the function and lists the ones
-allowed; a name that is not a builtin at all is refused as an unknown name
+allowed; so are names that start with two underscores; a name that is not a builtin at all is
+refused as an unknown name
 """
 
 
@@ -20,7 +21,7 @@ def test() -> None:
     """
     # support
     import pyre
-    from pyre.calc.exceptions import DisallowedFunctionError
+    from pyre.calc.exceptions import DisallowedFunctionError, DisallowedNameError
 
     # get the units
     meter = pyre.units.SI.meter
@@ -64,6 +65,30 @@ def test() -> None:
         else:
             # say so
             assert False, f"{schema} accepted open"
+
+    # the first line of the refusal of {__class__}
+    first = "'__class__' can't be used in the value of a setting"
+    # the schemata that refuse text that reaches past the builtins through such names
+    for schema in [
+        pyre.schemata.int(),
+        pyre.schemata.float(),
+        pyre.schemata.complex(),
+        pyre.schemata.dimensional(),
+    ]:
+        # carefully
+        try:
+            # coerce text that walks up the class hierarchy
+            schema.coerce(value="(1).__class__")
+        # it must be refused
+        except schema.CastingError as error:
+            # because of the name
+            assert isinstance(error.error, DisallowedNameError), repr(error.error)
+            # with a complaint that says so, so users see it
+            assert str(error).startswith(first), str(error)
+        # if it is not refused at all
+        else:
+            # say so
+            assert False, f"{schema} accepted __class__"
 
     # an array
     schema = pyre.schemata.array()
