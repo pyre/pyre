@@ -7,7 +7,7 @@
 
 
 """
-Exercise the URI parser
+Exercise the output stream schema
 """
 
 
