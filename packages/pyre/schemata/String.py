@@ -34,11 +34,13 @@ class String(Schema):
         # attempt to
         try:
             # let the constructor do its job
-            return str(value)
+            text = str(value)
         # if anything goes wrong
         except Exception as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {text}
+        return text
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

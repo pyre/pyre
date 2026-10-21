@@ -50,8 +50,8 @@ class Local(Filesystem):
         uri = self.vnodes[node].uri
         # attempt to
         try:
-            # call the system {open} and return the result
-            return uri.open(**kwds)
+            # call the system {open}
+            stream = uri.open(**kwds)
         # if the file is gone since it was discovered
         except FileNotFoundError:
             # complain
@@ -64,6 +64,8 @@ class Local(Filesystem):
         except OSError as error:
             # complain
             raise self.SourceUnreadableError(filesystem=self, node=node, uri=uri, error=error)
+        # if all goes well, return the {stream}
+        return stream
 
     def mkdir(self, name, parent=None, **kwds):
         """
