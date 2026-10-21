@@ -115,6 +115,7 @@ pyre_test_python_testcase(tests/pyre.pkg/units/one.py)
 pyre_test_python_testcase(tests/pyre.pkg/units/algebra.py)
 pyre_test_python_testcase(tests/pyre.pkg/units/parser.py)
 pyre_test_python_testcase(tests/pyre.pkg/units/formatting.py)
+pyre_test_python_testcase(tests/pyre.pkg/units/subtraction_incompatible.py)
 
 
 #
