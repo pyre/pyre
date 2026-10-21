@@ -7,6 +7,9 @@
 
 from ..patterns.Singleton import Singleton
 
+# the evaluator of text
+from ..calc.evaluation import evaluate
+
 
 class Parser(metaclass=Singleton):
     """
@@ -35,8 +38,9 @@ class Parser(metaclass=Singleton):
             # and merge mine in it
             context.update(self.context)
 
-        # evaluate the expression and return the result
-        return eval(text, context)
+        # evaluate the expression, with access to the builtins a setting may use, and return
+        # the result
+        return evaluate(expression=text, context=context)
 
     # meta methods
     def __init__(self, **kwds):

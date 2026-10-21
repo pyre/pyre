@@ -8,6 +8,9 @@
 # externals
 from .. import units
 
+# the refusal of a builtin
+from ..calc.exceptions import DisallowedFunctionError
+
 # my superclass
 from .Number import Number
 
@@ -38,11 +41,17 @@ class Dimensional(Number):
         # attempt to coerce strings
         try:
             # by invoking the {units} parser
-            return self.parser.parse(value, context=self.context)
-        # if anything whatsoever goes wring
+            quantity = self.parser.parse(value, context=self.context)
+        # if it uses a function the value of a setting may not
+        except DisallowedFunctionError as error:
+            # say so, in words the user can act on
+            raise self.CastingError(value=value, description=str(error), error=error)
+        # if anything else goes wrong, which stays broad until the errors are narrowed
         except Exception as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {quantity}
+        return quantity
 
     def json(self, value):
         """

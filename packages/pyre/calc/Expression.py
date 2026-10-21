@@ -11,6 +11,9 @@ import re
 # so I can hold on to my model without making cycles
 import weakref
 
+# the evaluator of text
+from .evaluation import evaluate
+
 
 # class declaration
 class Expression:
@@ -52,8 +55,8 @@ class Expression:
         """
         # attempt
         try:
-            # to evaluate my program
-            value = eval(self._program, {"model": self._model})
+            # to evaluate my program, with access to the builtins a setting may use
+            value = evaluate(expression=self._program, context={"model": self._model})
         # if i run into unresolved nodes
         except self.UnresolvedNodeError:
             # report it
@@ -161,8 +164,9 @@ class Expression:
         """
         # compile {expression}
         program, _ = cls.compile(model=model, expression=expression)
-        # evaluate {program} and return the generated value
-        return eval(program, {"model": model})
+        # evaluate {program}, with access to the builtins a setting may use, and return the
+        # generated value
+        return evaluate(expression=program, context={"model": model})
 
     # private data
     _model = None  # my symbol table
