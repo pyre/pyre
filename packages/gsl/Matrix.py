@@ -153,14 +153,18 @@ class Matrix(gsl.Matrix):
         """
         # attempt to read {value} as a single number
         try:
-            # which the extension spreads across all my cells
-            return gsl.Matrix.fill(self, float(value))
+            # by converting it
+            number = float(value)
         # if it is not a number
         except TypeError:
             # take it as an iterable, one entry per cell, in row-major order
             for index, entry in zip(itertools.product(*map(range, self.shape)), value):
                 # deposited in turn
                 self.set(index, float(entry))
+        # if it is
+        else:
+            # the extension spreads it across all my cells
+            gsl.Matrix.fill(self, number)
         # all done
         return self
 
