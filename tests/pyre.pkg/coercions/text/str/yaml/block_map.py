@@ -7,7 +7,8 @@
 
 
 """
-A setting below a str in block form is reported when the component is built (R3)
+A setting below a str in block form is recorded against the component when it is built, and the
+str keeps its value (R3)
 """
 
 
@@ -62,40 +63,28 @@ def test() -> None:
         # and complain
         channel.log()
 
+    # the setting is recorded as it is found, and logged; keep the log out of the way
+    journal.warning("pyre.configuration").device = journal.trash()
     # load the setting
     pyre.loadConfiguration(path)
     # make a channel for what goes wrong from here on; it fires only after any error is
     # handled, so the report is not buried under the traceback it explains
     channel = journal.firewall("pyre.coercions")
-    # building the component and reading the trait must fail, since a str has no entries
+    # what the trait must hold: its default, since a str has no entries
+    expected = "c-default"
+    # building the component and reading the trait must succeed
     try:
         # build the component
         probe = Probe(name="probe")
         # and read the trait
         held = probe.s
-    # if the setting is refused the right way
-    except Probe.ConfigurationError as error:
-        # get the complaint
-        complaint = str(error)
-        # find what it leaves out
-        missing = [text for text in ["probe.s.k"] if text not in complaint]
-        # if anything
-        if missing:
-            # say what went wrong
-            channel.line("the str refused the setting, but its error is incomplete")
-            # and the details
-            channel.indent()
-            channel.line(f"error: {complaint}")
-            channel.line(f"lacks: {', '.join(map(repr, missing))}")
-            channel.line("look in: components/PublicInventory.py")
-            channel.outdent()
-    # if it is refused some other way
+    # if anything is refused
     except pyre.PyreError as error:
         # say what went wrong
-        channel.line("the str refused the setting with the wrong error")
+        channel.line("the str raised an error instead of recording the setting")
         # and the details
         channel.indent()
-        channel.line("expected: ConfigurationError")
+        channel.line(f"expected: {expected!r}")
         channel.line(f"got: {type(error).__name__}: {error}")
         # and where it was raised, as far as four frames out inside pyre
         channel.line("raised:")
@@ -114,16 +103,32 @@ def test() -> None:
         channel.outdent()
         # and with the details
         channel.outdent()
-    # if it is not refused at all
+    # otherwise
     else:
-        # say what went wrong
-        channel.line("the str accepted the setting")
-        # and the details
-        channel.indent()
-        channel.line("expected: ConfigurationError")
-        channel.line(f"holds: {held!r}")
-        channel.line("look in: components/PublicInventory.py")
-        channel.outdent()
+        # if it holds something else
+        if held != expected:
+            # say what went wrong
+            channel.line("the str holds the wrong value")
+            # and the details
+            channel.indent()
+            channel.line(f"expected: {expected!r}")
+            channel.line(f"holds: {held!r}")
+            channel.line("look in: components/PublicInventory.py")
+            channel.outdent()
+        # gather what was recorded against the instance
+        said = "\n".join(str(entry) for entry in probe.pyre_configurationErrors)
+        # find what it leaves out
+        missing = [text for text in ["probe.s.k"] if text not in said]
+        # if anything
+        if missing:
+            # say what went wrong
+            channel.line("the setting below the str was not recorded against the instance")
+            # and the details
+            channel.indent()
+            channel.line(f"recorded: {said!r}")
+            channel.line(f"lacks: {', '.join(map(repr, missing))}")
+            channel.line("look in: components/PublicInventory.py")
+            channel.outdent()
 
     # if anything went wrong
     if channel.page:
