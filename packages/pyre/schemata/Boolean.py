@@ -28,14 +28,20 @@ class Boolean(Number):
         if isinstance(value, bool):
             # pass through unchanged
             return value
-        # anything else
-        try:
-            # must be convertible by my table
-            return self.xlat[value.lower()]
-        # if anything goes wrong
-        except Exception as error:
-            # it is an error
-            raise self.CastingError(description=self.complaint, value=value, error=error)
+        # text
+        if isinstance(value, str):
+            # carefully
+            try:
+                # look it up in my table
+                flag = self.xlat[value.lower()]
+            # if it is not there
+            except KeyError as error:
+                # it is not a boolean
+                raise self.CastingError(description=self.complaint, value=value, error=error)
+            # if all goes well, return the {flag}
+            return flag
+        # all other types are incompatible, for now
+        raise self.CastingError(description=self.complaint, value=value)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

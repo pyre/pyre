@@ -29,11 +29,14 @@ class Fraction(Number):
         # attempt to
         try:
             # let the constructor do its job
-            return fractions.Fraction(value)
-        # if anything goes wrong
-        except Exception as error:
+            fraction = fractions.Fraction(value)
+        # if {value} is malformed text, of the wrong type, or has no ratio, such as a zero
+        # denominator or an infinity
+        except (ValueError, TypeError, ArithmeticError) as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {fraction}
+        return fraction
 
     def json(self, value):
         """

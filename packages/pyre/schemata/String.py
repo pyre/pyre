@@ -31,16 +31,9 @@ class String(Schema):
         if isinstance(value, collections.abc.Mapping) and value:
             # so complain
             raise self.CastingError(value=value, description=self.complaint)
-        # attempt to
-        try:
-            # let the constructor do its job
-            text = str(value)
-        # if anything goes wrong
-        except Exception as error:
-            # complain
-            raise self.CastingError(value=value, description=self.complaint, error=error)
-        # if all goes well, return the {text}
-        return text
+        # python can convert pretty much everything else into text; any other failures are
+        # caused by issues in the {value} class, so let them through
+        return str(value)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
