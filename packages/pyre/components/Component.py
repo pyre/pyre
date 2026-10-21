@@ -6,6 +6,7 @@
 
 
 # externals
+import collections.abc
 import uuid
 from .. import tracking
 
@@ -180,6 +181,131 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         # the executive knows
         return cls.pyre_executive.configurationErrors(configurable=cls)
+
+    def pyre_validateConfiguration(self, visited=None):
+        """
+        Check my configuration by reading each of my traits, and those of the components they
+        hold, record the values they refuse in the pile of the executive, and return them; the
+        framework never calls this, and a component may override it to check more, or less
+        """
+        # unless this is part of a larger check, nothing has been checked yet
+        visited = set() if visited is None else visited
+        # if i have been checked already
+        if self in visited:
+            # there is nothing new to find
+            return []
+        # otherwise, mark me as checked
+        visited.add(self)
+        # the refusals found here
+        errors = []
+        # go through my traits
+        for trait in self.pyre_configurables():
+            # attempt to
+            try:
+                # read the value
+                value = getattr(self, trait.name)
+            # if anything is refused
+            except self.TraitValueError as error:
+                # and it is not already attributed, it surfaced while reading my trait
+                if error.configurable is None:
+                    # so it is mine
+                    error.configurable = self
+                # record it against whoever it is about
+                self.pyre_executive.recordConfigurationError(
+                    error=error, configurable=error.configurable
+                )
+                # add it to the ones found here
+                errors.append(error)
+                # and move on
+                continue
+            # find the components it holds, itself or its entries
+            held = list(self.pyre_componentsIn(value=value))
+            # go through the components the value holds
+            for component in held:
+                # and check them too
+                errors.extend(component.pyre_validateConfiguration(visited=visited))
+        # all done
+        return errors
+
+    @classmethod
+    def pyre_classValidateConfiguration(cls):
+        """
+        Check the configuration of my class by reading each of its traits, record the values
+        they refuse in the pile of the executive, and return them; the framework never calls this
+        """
+        # the refusals found here
+        errors = []
+        # go through my traits
+        for trait in cls.pyre_configurables():
+            # attempt to
+            try:
+                # read the value
+                getattr(cls, trait.name)
+            # if it is refused
+            except cls.TraitValueError as error:
+                # record it against my class
+                cls.pyre_executive.recordConfigurationError(error=error, configurable=cls)
+                # and add it to the ones found here
+                errors.append(error)
+        # all done
+        return errors
+
+    def pyre_showConfigurationErrors(self, channel=None):
+        """
+        Report the errors that are about me in one entry on {channel}, by default the
+        {pyre.configuration} info channel; the framework never calls this
+        """
+        # get my errors
+        errors = self.pyre_configurationErrors
+        # if there are none
+        if not errors:
+            # there is nothing to report
+            return self
+        # get the journal
+        import journal
+
+        # unless the caller has a channel in mind, make one
+        channel = journal.info("pyre.configuration") if channel is None else channel
+        # say what this is about
+        channel.line(f"configuration errors of {self}:")
+        # go through the errors
+        channel.indent()
+        # each one
+        for error in errors:
+            # in as many lines as it takes
+            channel.report(report=str(error).splitlines())
+        # done with the errors
+        channel.outdent()
+        # and flush
+        channel.log()
+        # all done
+        return self
+
+    @classmethod
+    def pyre_componentsIn(cls, value):
+        """
+        Generate the component instances {value} holds: itself, or the entries of a container
+        """
+        # a map holds its values
+        if isinstance(value, collections.abc.Mapping):
+            # so they are the candidates
+            candidates = value.values()
+        # a sequence or a set holds its items, but text, which is a sequence, holds no components
+        elif isinstance(value, (list, tuple, set, frozenset)):
+            # so they are the candidates
+            candidates = value
+        # anything else
+        else:
+            # is the only candidate
+            candidates = [value]
+        # go through the candidates
+        for candidate in candidates:
+            # and pick the component instances
+            if isinstance(candidate, Component):
+                # hand it over
+                yield candidate
+        # all done
+        return
 
     # framework notifications
     @classmethod
