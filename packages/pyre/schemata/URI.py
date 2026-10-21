@@ -48,7 +48,7 @@ class URI(Schema):
         try:
             # by assuming it is a string; blanks inside it are kept, since they are part of the
             # names of the resources users type, and only the ones around it are dropped
-            return self.locator.parse(
+            uri = self.locator.parse(
                 value.strip(),
                 scheme=self.scheme,
                 authority=self.authority,
@@ -58,6 +58,8 @@ class URI(Schema):
         except self.locator.ParsingError as error:
             # complain
             raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {uri}
+        return uri
 
     def json(self, value):
         """

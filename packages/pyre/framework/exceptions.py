@@ -82,11 +82,13 @@ class PyreError(Exception):
             # resolve the fields of its format specification
             spec = self.pyre_render(template=spec) if spec else ""
             # and format it
-            return self.pyre_formatter.format_field(value, spec)
+            rendering = self.pyre_formatter.format_field(value, spec)
         # if the field leads nowhere, or its value can't be formatted the way it asks
         except (AttributeError, IndexError, KeyError, TypeError, ValueError):
             # spell it as it was written
             return written
+        # if all goes well, return the {rendering}
+        return rendering
 
     # meta-methods
     def __init__(self, description=None, locator=None, error=None, **kwds):

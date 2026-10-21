@@ -82,8 +82,8 @@ class FileServer(Filesystem):
         if scheme is None or scheme == "file":
             # so attempt to
             try:
-                # open it and return the associated file object
-                return open(uri.address, **kwds)
+                # open it
+                stream = open(uri.address, **kwds)
             # if {uri} maps to a non-existent file
             except FileNotFoundError:
                 # complain
@@ -96,6 +96,8 @@ class FileServer(Filesystem):
             except OSError as error:
                 # complain
                 raise self.SourceUnreadableError(filesystem=self, node=None, uri=uri, error=error)
+            # if all goes well, return the {stream}
+            return stream
 
         # translate application private file space uris
         if scheme == "pfs":

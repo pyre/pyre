@@ -29,12 +29,14 @@ class Decimal(Number):
         # attempt to
         try:
             # let the constructor do its job
-            return decimal.Decimal(value)
+            number = decimal.Decimal(value)
         # if it can't, whether because {value} is text that is not a number, a sequence that is
         # not a decimal tuple, or a type it does not convert
         except (decimal.InvalidOperation, ValueError, TypeError) as error:
             # convert it into a configuration error
             raise self.CastingError(value=value, description=self.complaint, error=error)
+        # if all goes well, return the {number}
+        return number
 
     def json(self, value):
         """

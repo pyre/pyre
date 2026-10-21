@@ -120,11 +120,13 @@ class NameServer(Hierarchical):
         # attempt to
         try:
             # evaluate the expression
-            return self.node.expression.expand(model=self, expression=expression)
+            value = self.node.expression.expand(model=self, expression=expression)
         # with empty expressions
         except self.EmptyExpressionError as error:
-            # return the expanded text, since the input may have contained escaped braces
-            return error.expression
+            # use the expanded text, since the input may have contained escaped braces
+            value = error.expression
+        # all done
+        return value
 
     def interpolate(self, expression):
         """

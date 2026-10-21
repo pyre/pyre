@@ -45,7 +45,7 @@ class SlotFactory(Dashboard):
         # attempt to
         try:
             # ask the postprocessor of my trait
-            return self._post(value=value, node=node, **kwds)
+            value = self._post(value=value, node=node, **kwds)
         # if my trait refused the value with a {TraitValueError}
         except self.TraitValueError as error:
             # if the {error} doesn't know yet the slot that holds the refused value
@@ -68,12 +68,8 @@ class SlotFactory(Dashboard):
             self.attribute(error=refusal, node=node)
             # and raise it in place of the refusal
             raise refusal from error
-
-        # any path to here
-        import journal
-
-        # is a bug
-        journal.firewall("pyre.traits").log("UNREACHABLE")
+        # if all goes well, return the {value}
+        return value
 
     def attribute(self, error: TraitValueError, node) -> None:
         """
