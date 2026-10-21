@@ -30,18 +30,24 @@ class RequirementSchema(schemata.identity):
         """
         Attempt to convert {value} into a requirement
         """
-        # only text and structured requirements are candidates
-        if not isinstance(value, (str, Requirement)):
-            # anything else is unusable
-            raise self.CastingError(value=value, description=self.complaint)
-        # attempt to
-        try:
-            # push the value through the parser; structured requirements pass through
-            return Requirement.parse(spec=value)
-        # if the specification is malformed
-        except Requirement.RequirementSyntaxError as error:
-            # convert the complaint into the type system's vocabulary
-            raise self.CastingError(value=value, description=str(error)) from error
+        # structured requirements
+        if isinstance(value, Requirement):
+            # pass through untouched
+            return value
+        # text
+        if isinstance(value, str):
+            # attempt to
+            try:
+                # push it through the parser
+                requirement = Requirement.parse(spec=value)
+            # if the specification is malformed
+            except Requirement.RequirementSyntaxError as error:
+                # convert the complaint into the type system's vocabulary
+                raise self.CastingError(value=value, description=str(error)) from error
+            # if all goes well, return the {requirement}
+            return requirement
+        # all other types are incompatible, for now
+        raise self.CastingError(value=value, description=self.complaint)
 
     # meta-methods
     def __init__(self, default=None, **kwds):
