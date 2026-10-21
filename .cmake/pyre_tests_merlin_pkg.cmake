@@ -13,6 +13,7 @@ pyre_test_python_testcase(tests/merlin.pkg/components/sanity.py)
 pyre_test_python_testcase(tests/merlin.pkg/components/merlin_shell.py)
 pyre_test_python_testcase(tests/merlin.pkg/components/merlin_spell.py)
 pyre_test_python_testcase(tests/merlin.pkg/components/merlin_curator.py)
+pyre_test_python_testcase(tests/merlin.pkg/shells/mm_gnumake.py)
 pyre_test_python_testcase(tests/merlin.pkg/components/merlin_packages.py)
 
 # cleanup
