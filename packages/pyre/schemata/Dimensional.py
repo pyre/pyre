@@ -9,7 +9,7 @@
 from .. import units
 
 # the refusal of a builtin
-from ..calc.exceptions import DisallowedFunctionError
+from ..calc.exceptions import DisallowedNameError
 
 # my superclass
 from .Number import Number
@@ -42,8 +42,8 @@ class Dimensional(Number):
         try:
             # by invoking the {units} parser
             quantity = self.parser.parse(value, context=self.context)
-        # if it uses a function the value of a setting may not
-        except DisallowedFunctionError as error:
+        # if it uses a function or a name the value of a setting may not
+        except DisallowedNameError as error:
             # say so, in words the user can act on
             raise self.CastingError(value=value, description=str(error), error=error)
         # if anything else goes wrong, which stays broad until the errors are narrowed

@@ -10,7 +10,7 @@ import math
 
 # the evaluator of text
 from ..calc.evaluation import evaluate
-from ..calc.exceptions import DisallowedFunctionError
+from ..calc.exceptions import DisallowedNameError
 
 # superclass
 from .Schema import Schema
@@ -52,8 +52,8 @@ class Number(Schema):
         try:
             # get the interpreter to evaluate simple expressions
             candidate = evaluate(expression=value, context=self.context)
-        # if it uses a function the value of a setting may not
-        except DisallowedFunctionError as error:
+        # if it uses a function or a name the value of a setting may not
+        except DisallowedNameError as error:
             # say so, in words the user can act on
             raise self.CastingError(value=value, description=str(error), error=error)
         # if anything else goes wrong, which stays broad until the errors are narrowed
