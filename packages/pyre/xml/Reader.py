@@ -252,7 +252,7 @@ class Reader(xml.sax.ContentHandler):
         # leave our own exception alone
         except self.ParsingError:
             raise
-        # convert everything else to a ProcessingError
+        # boundary: anything else the node raises becomes a ProcessingError, chained to it
         except Exception as error:
             # the reason
             msg = "error while calling the method 'notify' of {}".format(self._currentNode)
