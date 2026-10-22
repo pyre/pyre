@@ -77,6 +77,8 @@ class Actor(Requirement):
         inventory = self.PublicInventory if family else self.PrivateInventory
         # and invoke it to register the component class and build its inventory
         inventory.initializeClass(component=self, family=family)
+        # the class is now configured, so invoke the initialization hook, as protocols do
+        self.pyre_classInitialized()
 
         # get my protocol specification
         protocol = self.pyre_implements
