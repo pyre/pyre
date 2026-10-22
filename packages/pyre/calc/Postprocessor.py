@@ -60,6 +60,14 @@ class Postprocessor:
         # and return it
         return value
 
+    def getUnprocessedValue(self):
+        """
+        Compute my value without running it through my {postprocessor}, for a client that wants
+        what I hold without the side effects of processing it, such as opening a file
+        """
+        # skip my postprocessor, and the cache of what it made
+        return super().getValue()
+
     # meta-methods
     def __init__(self, postprocessor=noop, **kwds):
         # chain up
