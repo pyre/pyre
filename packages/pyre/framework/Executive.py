@@ -509,14 +509,23 @@ class Executive:
         locator = instance.pyre_locator
         # make a priority
         priority = priority()
-        # find out whether the instance may claim its name, and where the value at the name came
+        # decide what the instance does with its name, and find where the value at the name came
         # from, if there is one, before the instance takes over the record of the name; this
         # fires a firewall if the name is a trait's
-        claim, setAside = self.assessClaim(name=name, locator=locator)
-        # the instance claims its name, whatever was set there; later assignments compete with
-        # its priority as usual
+        decision, setAside = self.assessClaim(name=name, locator=locator)
+        # if the name is the slot of the facility that is building the instance
+        if decision == "share":
+            # the slot holds the instance once it is built, and keeps the rank and the provenance
+            # of the setting that decided it, so reading a facility does not act like setting it
+            return nameserver.hash(name)
+        # otherwise, the instance claims its name, whatever was set there, or competes for it on
+        # rank; later assignments compete with its priority as usual
         key, _, old = nameserver.insert(
-            name=name, value=instance, priority=priority, locator=locator, claim=claim
+            name=name,
+            value=instance,
+            priority=priority,
+            locator=locator,
+            claim=decision == "claim",
         )
         # if the instance took the place of a value someone set
         if setAside is not None and not isinstance(old, nameserver.node.unresolved):
@@ -530,10 +539,10 @@ class Executive:
 
     def assessClaim(self, name, locator):
         """
-        Decide whether a component instance built at {locator} may claim {name}, and find where
-        the value at {name} was set, if there is one; the slot of a facility is not such a value,
-        since the instance a facility builds takes the place of that slot, which is how it holds
-        the instance, and the slot of any other trait is not the instance's to take
+        Decide what a component instance built at {locator} does with {name}: "claim" it, whatever
+        was there, "share" it with the slot of the facility that is building the instance, or
+        "compete" for it on rank; and find where the value at {name} was set, if there is one.
+        The slot of any other trait is not the instance's to take
         """
         # the factory of the slots of traits
         from ..traits.SlotFactory import SlotFactory
@@ -547,14 +556,14 @@ class Executive:
         # if it records nothing
         except KeyError:
             # the name is free to claim, and there is no value there
-            return True, None
+            return "claim", None
         # if the framework registered the node, the name of a package or a family
         if isinstance(info.priority, nameserver.priority.framework):
             # it is not the instance's to take; this is a bug in the code that built it
             self.refuseInstanceName(name=name, kind=nameserver.kind(key=info.key), locator=locator)
             # if the firewall is not fatal, the instance competes for the name on priority, and
             # loses
-            return False, None
+            return "compete", None
         # the factory of the node there
         factory = info.factory
         # if it is not the factory of the slots of a component's trait: the store makes one for
@@ -562,18 +571,18 @@ class Executive:
         # trait has the short name its class gave it
         if not isinstance(factory, SlotFactory) or factory.trait.name == info.name:
             # the node holds a value someone set, so claim it and say where the value came from
-            return True, info.locator
+            return "claim", info.locator
         # if it is the factory of the slots of a facility
         if factory.trait.isFacility:
-            # the node is the slot that is building the instance, which takes its place
-            return True, None
+            # the node is the slot that is building the instance, which holds it once it is built
+            return "share", None
 
         # otherwise, the name is a trait's: instances built at run time must not be named after
         # traits, so this is a bug in the code that built it
         self.refuseInstanceName(name=name, kind="a trait", locator=locator)
         # if the firewall is not fatal, the trait keeps its slot, and the instance competes for it
         # on priority, as it did before instances claimed their names
-        return False, None
+        return "compete", None
 
     def refuseInstanceName(self, name, kind, locator):
         """
