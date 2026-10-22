@@ -314,25 +314,39 @@ class NameServer(Hierarchical):
                 # and complain
                 raise journal.firewall("pyre.nameserver").log(bug)
 
-            # we have already updated the factory; the rest of the meta-data, currently
-            # priority and locator, must be correct, so don't touch
-
-            # the existing node is not the correct type, so use the factory we were given to
-            # build a new one; the value of the old node must be correct, because {defaults}
-            # is the lowest possible priority; so we must save it
-            value = old.value
-            # text that was evaluated already
-            if isinstance(value, str):
-                # must reach the new node as it is, rather than be evaluated a second time
-                value = self.node.interpolation.escape(value)
+            # we have already updated the factory; remember the rank and the provenance of the
+            # existing node, in case the new one can't be built
+            mark = (meta.priority, meta.locator)
+            # if the existing node ranks below this default, nobody has set the name: the node is
+            # the placeholder a reference left behind, which has no value, or the default of a
+            # component that this one replaces, which is not this component's
+            if meta.priority < priority:
+                # so the default takes over the setting, along with its rank
+                meta.priority = priority
+                # and its provenance
+                meta.locator = locator
+                # and the new node is built out of the default
+                source = value
+            # otherwise, the existing setting outranks the default, and keeps its rank and its
+            # provenance
+            else:
+                # the existing node is not the correct type, so the new one is built out of its
+                # value, which must be correct, because {defaults} is the lowest possible priority
+                source = old.value
+                # text that was evaluated already
+                if isinstance(source, str):
+                    # must reach the new node as it is, rather than be evaluated a second time
+                    source = self.node.interpolation.escape(source)
             # gingerly
             try:
                 # build the new node
-                new = factory(key=key, value=value, current=old)
+                new = factory(key=key, value=source, current=old)
             # if anything at all goes wrong, an interrupt included
             except BaseException:
                 # the store must not keep a factory that could not build the node
                 meta.factory = installed
+                # nor the rank and the provenance of a default that never took over
+                meta.priority, meta.locator = mark
                 # but the error is not mine to handle, so pass it on
                 raise
             # otherwise, register the new node; no need to adjust the graph since the slot
@@ -449,9 +463,13 @@ class NameServer(Hierarchical):
             newNode.replace(oldNode)
             # adjust the key in the new node
             newNode.key = key
-            # adjust the value processors
-            newNode.preprocessor = oldNode.preprocessor
-            newNode.postprocessor = oldNode.postprocessor
+            # if somebody has set the old name, its node carries the value processors of its
+            # trait; a placeholder that a reference left behind has none
+            if oldInfo.priority.category != self.priority.uninitialized.category:
+                # so carry them over
+                newNode.preprocessor = oldNode.preprocessor
+                # both of them
+                newNode.postprocessor = oldNode.postprocessor
             # attach it to the store
             self._nodes[key] = newNode
             # adjust the metadata
