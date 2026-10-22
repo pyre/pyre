@@ -658,6 +658,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_class_binding_impo
 pyre_test_python_testcase(tests/pyre.pkg/components/component_class_binding_vfs.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_class_binding_conversions.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_class_validation.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/component_class_hooks.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_class_trait_matrix.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_class_private_locators.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_class_public_locators.py)
