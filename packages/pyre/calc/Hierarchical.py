@@ -67,6 +67,39 @@ class Hierarchical(SymbolTable):
         # all done
         return
 
+    def descendants(self, key):
+        """
+        Given the address {key} of a node, iterate over all the canonical nodes below it, at any
+        depth, including the ones below levels that hold no node of their own
+        """
+        # the keys right below {key}, once each, even when aliases lead to them
+        pending = list(set(key.nodes.values()))
+        # remember the ones that are lined up, so an alias does not line one up twice
+        seen = set(pending)
+        # while there are keys to visit
+        while pending:
+            # grab one
+            childkey = pending.pop()
+            # line up the keys below it that are not lined up already
+            for grandchild in set(childkey.nodes.values()) - seen:
+                # remember it
+                seen.add(grandchild)
+                # and visit it later
+                pending.append(grandchild)
+            # look for its node
+            try:
+                # in my store
+                childnode = self._nodes[childkey]
+            # if it holds none, it is only a level in the hierarchy
+            except KeyError:
+                # so move on
+                continue
+            # otherwise, hand it over
+            yield childkey, childnode
+
+        # all done
+        return
+
     def find(self, pattern="", key=None):
         """
         Generate a sequence of (name, node) pairs for all nodes in the model whose name
