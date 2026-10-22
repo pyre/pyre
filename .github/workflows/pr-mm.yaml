@@ -48,10 +48,6 @@ jobs:
         run: |
           echo " -- update the package cache"
           sudo apt update
-          echo " -- upgradables"
-          sudo apt list --upgradable
-          echo " -- upgrade"
-          sudo apt dist-upgrade
           echo " -- install our dependencies"
           sudo apt install -y openssh-server libgsl-dev libopenmpi-dev libhdf5-dev
 
