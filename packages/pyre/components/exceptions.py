@@ -308,8 +308,7 @@ class StraySettingError(ComponentError):
 
     # public data
     description = (
-        "'{0.setting}' was skipped: '{0.trait}', of type {0.typename}, takes no settings below "
-        "it; to give it text that holds a ':' or braces, quote the text"
+        "'{0.setting}' was skipped: '{0.trait}', of type {0.typename}, takes no settings below it"
     )
 
     # meta-methods
