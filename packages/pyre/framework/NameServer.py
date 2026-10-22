@@ -144,9 +144,12 @@ class NameServer(Hierarchical):
         return node
 
     # override superclass methods
-    def insert(self, value, priority, locator, key=None, name=None, split=None, factory=None):
+    def insert(
+        self, value, priority, locator, key=None, name=None, split=None, factory=None, claim=False
+    ):
         """
-        Add {value} to the store
+        Add {value} to the store; with {claim}, {value} takes the node whatever the priority of
+        what is there, and keeps {priority} for the assignments that follow
         """
         # N.B.: presenting a {value} to be inserted into the model under {key} involves using
         # the {factory} to create a slot. the {factory} used is either the one supplied by the
@@ -263,9 +266,9 @@ class NameServer(Hierarchical):
             # and we are done
             return key, new, old
 
-        # if the new assignment is higher priority than the existing one, or is the existing one
-        # applied again, which refreshes its value
-        if not priority < meta.priority:
+        # if the new assignment claims the node, is higher priority than the existing one, or is
+        # the existing one applied again, which refreshes its value
+        if claim or not priority < meta.priority:
             # save the current metadata so we can roll it back if we have to
             mark = self.info(
                 name=name,
