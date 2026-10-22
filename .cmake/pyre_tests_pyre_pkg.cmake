@@ -742,6 +742,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_dict_components.py
 pyre_test_python_testcase(tests/pyre.pkg/components/component_dict_text.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_settings_below.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_instance_name.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/component_facility_read.py)
 pyre_test_python_cleanup(component_dict_text.log tests/pyre.pkg/components/component_dict_text.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_dict_priorities.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_dict_files.py)
@@ -773,6 +774,12 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_hook_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate_twice.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_trait_evaluation_errors.py)
+
+
+#
+# pyre/attributes
+#
+pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_provenance.py)
 
 
 #
