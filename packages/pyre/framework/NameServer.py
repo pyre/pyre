@@ -72,22 +72,97 @@ class NameServer(Hierarchical):
             package = self.createPackage(name=name, locator=locator)
             # configure it
             package.configure(executive=executive)
-        # if it's there
+        # if there is a node there already
         else:
-            # get the value of the node
-            package = node.value
-            # make sure it is a package, and if not
-            if not isinstance(package, self.Package):
-                # get the journal
-                import journal
+            # what the store records about it
+            info = self._metadata[key]
+            # if the node is a marker left by a request for a name nobody has set
+            if isinstance(node, self.node.unresolved):
+                # the package takes its place
+                package = self.createPackage(name=name, locator=locator)
+                # configure it
+                package.configure(executive=executive)
+            # if the node holds a value someone set, rather than one the framework registered
+            elif not isinstance(info.priority, self.priority.framework):
+                # the name belongs to the package, so complain
+                self.refuseValue(name=name, kind="a package", locator=info.locator)
+                # if the firewall is not fatal, the package takes its name
+                package = self.createPackage(name=name, locator=locator)
+                # configure it
+                package.configure(executive=executive)
+            # otherwise, the framework registered it
+            else:
+                # get the value of the node
+                package = node.value
+                # make sure it is a package, and if not
+                if not isinstance(package, self.Package):
+                    # get the journal
+                    import journal
 
-                # build the report
-                complaint = f"name conflict while configuring package '{name}': {package}"
-                # and complain
-                raise journal.error("pyre.configuration").log(complaint)
+                    # build the report
+                    complaint = f"name conflict while configuring package '{name}': {package}"
+                    # and complain
+                    raise journal.error("pyre.configuration").log(complaint)
 
         # return the package
         return package
+
+    def reserve(self, name):
+        """
+        Check that nobody set a value at {name}, the family of a protocol or a component that is
+        about to be registered: family names belong to the framework
+        """
+        # hash the name
+        key = self.hash(name)
+        # attempt to
+        try:
+            # look up what the store records at {name}
+            info = self._metadata[key]
+        # if there is nothing
+        except KeyError:
+            # the name is free
+            return
+        # if the node is a marker left by a request for a name nobody has set, or a family the
+        # framework registered before, as when a class is declared again
+        if isinstance(self._nodes[key], self.node.unresolved) or isinstance(
+            info.priority, self.priority.framework
+        ):
+            # the registration may take it
+            return
+        # otherwise, someone set a value there, so complain
+        self.refuseValue(name=name, kind="a family", locator=info.locator)
+        # if the firewall is not fatal, the registration takes the name
+        return
+
+    def refuseValue(self, name, kind, locator):
+        """
+        Fire the firewall for a value set at {name}, which names {kind}, a package or a family;
+        these names belong to the framework, and a value there is a mistake, such as a typo in a
+        family name
+        """
+        # get the journal
+        import journal
+
+        # make a channel
+        channel = journal.firewall("pyre.configuration")
+        # say what is wrong
+        channel.line(f"'{name}' names {kind}, so it can't be given a value")
+        # and where the value was set
+        channel.line(f"the value was set at {locator}")
+        # and complain
+        channel.log()
+        # all done
+        return
+
+    def kind(self, key):
+        """
+        Say what the node at {key}, which the framework registered, names: a package, or the
+        family of a protocol or a component
+        """
+        # the node holds what the framework put there, so its value is at hand
+        value = self._nodes[key].value
+        # name it
+        return "a package" if isinstance(value, self.Package) else "a family"
 
     # auxiliary object management
     def createPackage(self, name, locator):
@@ -98,8 +173,8 @@ class NameServer(Hierarchical):
         package = self.Package(name=name, locator=locator)
         # hash the name
         key = self._hash[name]
-        # get the right priority
-        priority = self.priority.package()
+        # get the right priority: package names belong to the framework
+        priority = self.priority.framework()
         # attach it to a slot
         slot = self.literal(key=key, value=package)
         # fill out the node info
@@ -301,8 +376,13 @@ class NameServer(Hierarchical):
             return key, new, old
 
         # the only remaining case is an assignment of lower priority than the existing one that
-        # is also not happening during component configuration; there is nothing to do in this
-        # case
+        # is also not happening during component configuration; if the existing one is a node
+        # the framework registered, the name of a package or a family, the assignment is a
+        # mistake
+        if isinstance(meta.priority, self.priority.framework):
+            # so complain
+            self.refuseValue(name=name, kind=self.kind(key=key), locator=locator)
+        # otherwise, there is nothing to do in this case
         return key, None, old
 
     def retrieve(self, name):

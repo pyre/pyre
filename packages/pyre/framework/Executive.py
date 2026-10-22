@@ -447,7 +447,7 @@ class Executive:
         return
 
     # registration interface for framework objects
-    def registerProtocolClass(self, protocol, family, priority=priority.package):
+    def registerProtocolClass(self, protocol, family, priority=priority.framework):
         """
         Register a freshly minted protocol class
         """
@@ -462,6 +462,8 @@ class Executive:
         locator = protocol.pyre_locator
         # make a priority
         priority = priority()
+        # the family belongs to the framework, so check nobody set a value there
+        self.nameserver.reserve(name=family)
         # insert the protocol into the model
         key = self.nameserver.configurable(
             name=family, configurable=protocol, priority=priority, locator=locator
@@ -470,7 +472,7 @@ class Executive:
         # and return the name server registration key
         return key
 
-    def registerComponentClass(self, component, family, priority=priority.package):
+    def registerComponentClass(self, component, family, priority=priority.framework):
         """
         Register a freshly minted component class
         """
@@ -485,6 +487,8 @@ class Executive:
         locator = component.pyre_locator
         # make a priority
         priority = priority()
+        # the family belongs to the framework, so check nobody set a value there
+        self.nameserver.reserve(name=family)
         # insert the component into the model
         key = self.nameserver.configurable(
             name=family, configurable=component, priority=priority, locator=locator
@@ -544,6 +548,13 @@ class Executive:
         except KeyError:
             # the name is free to claim, and there is no value there
             return True, None
+        # if the framework registered the node, the name of a package or a family
+        if isinstance(info.priority, nameserver.priority.framework):
+            # it is not the instance's to take; this is a bug in the code that built it
+            self.refuseInstanceName(name=name, kind=nameserver.kind(key=info.key), locator=locator)
+            # if the firewall is not fatal, the instance competes for the name on priority, and
+            # loses
+            return False, None
         # the factory of the node there
         factory = info.factory
         # if it is not the factory of the slots of a component's trait: the store makes one for
