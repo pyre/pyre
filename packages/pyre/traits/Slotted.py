@@ -25,6 +25,23 @@ class Slotted(Trait):
     classSlot = None  # the factory for class slots
     instanceSlot = None  # the factory of instance slots
 
+    # framework hooks triggered by the construction of instances
+    def instanceSeed(self, classSlot):
+        """
+        Compute the value the slot of a new instance starts with, out of {classSlot}, the slot of
+        its class: the value it holds, without processing it, so that building an instance has
+        none of the side effects of processing a default, such as opening the file of a stream;
+        the instance processes the value when it reads the trait
+        """
+        # get the value of the class slot, unprocessed
+        value = classSlot.getUnprocessedValue()
+        # text that was evaluated already
+        if isinstance(value, str):
+            # must reach the instance slot as it is, rather than be evaluated a second time
+            value = self.pyre_nameserver.node.interpolation.escape(value)
+        # hand it over
+        return value
+
     # meta-methods
     def __get__(self, instance, cls):
         """
