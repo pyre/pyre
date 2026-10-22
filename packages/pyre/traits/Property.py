@@ -20,6 +20,9 @@ class Property(Slotted):
     The base class for traits that correspond to simple types
     """
 
+    # exceptions
+    from ..components.exceptions import StraySettingError
+
     # framework data
     category = "property"
     # predicate that indicates whether this trait is a property
@@ -116,6 +119,68 @@ class Property(Slotted):
             # anything else, {None} or a value that is not a sequence, is kept whole, for my
             # schema to accept or refuse when it is read
             return super().native(value=value, **kwds)
+
+    class identity:
+        """Mixin for values of any type"""
+
+        # framework hooks
+        def reportSettingsBelow(self, client):
+            """
+            Leave alone the settings filed below my name: my value may be a component whose name
+            puts it there, and they configure it
+            """
+            # they are not mine to report
+            return self
+
+    # framework hooks triggered by client configuration
+    def classConfigured(self, component, **kwds):
+        """
+        Notification that the client class record has been configured
+        """
+        # chain up
+        super().classConfigured(component=component, **kwds)
+        # report the settings below my name, which can't reach my value
+        self.reportSettingsBelow(client=component)
+        # all done
+        return self
+
+    def instanceConfigured(self, instance, **kwds):
+        """
+        Notification that the client instance has been configured
+        """
+        # chain up
+        super().instanceConfigured(instance=instance, **kwds)
+        # report the settings below my name, which can't reach my value
+        self.reportSettingsBelow(client=instance)
+        # all done
+        return self
+
+    def reportSettingsBelow(self, client):
+        """
+        Record against {client} each setting filed below my name: i take none, so none of them
+        can reach my value
+        """
+        # get the store
+        nameserver = self.pyre_nameserver
+        # and the executive, which keeps the record
+        executive = self.pyre_executive
+        # find the key of my slot; this gets called only for public inventory items, so there is
+        # one
+        key = client.pyre_inventory[self].key
+        # go through the settings below it, at any depth
+        for child, _ in nameserver.descendants(key=key):
+            # make an error that names the setting, where it was made, and me
+            error = self.StraySettingError(
+                configurable=client,
+                trait=nameserver.getInfo(key).name,
+                setting=nameserver.getInfo(child).name,
+                typename=self.typename,
+                locator=nameserver.getInfo(child).locator,
+            )
+            # and record it against {client}
+            executive.recordConfigurationError(error=error, configurable=client)
+        # all done
+        return self
 
     # meta-methods
     def __init__(self, classSlot=None, instanceSlot=None, **kwds):

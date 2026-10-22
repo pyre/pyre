@@ -300,4 +300,29 @@ class InitializationError(ComponentError):
         return
 
 
+class StraySettingError(ComponentError):
+    """
+    Exception raised when a setting is filed below a property that takes none, such as a str or
+    an int, so it can never reach the value of the property
+    """
+
+    # public data
+    description = (
+        "'{0.setting}' was skipped: '{0.trait}', of type {0.typename}, takes no settings below "
+        "it; to give it text that holds a ':' or braces, quote the text"
+    )
+
+    # meta-methods
+    def __init__(self, configurable, trait, setting, typename, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store my context
+        self.configurable = configurable
+        self.trait = trait
+        self.setting = setting
+        self.typename = typename
+        # all done
+        return
+
+
 # end of file
