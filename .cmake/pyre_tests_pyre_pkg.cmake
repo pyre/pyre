@@ -358,6 +358,7 @@ pyre_test_python_testcase(tests/pyre.pkg/calc/hierarchical_alias.py)
 pyre_test_python_testcase(tests/pyre.pkg/calc/hierarchical_group.py)
 pyre_test_python_testcase(tests/pyre.pkg/calc/hierarchical_contains.py)
 pyre_test_python_testcase(tests/pyre.pkg/calc/model.py)
+pyre_test_python_testcase(tests/pyre.pkg/calc/symbol_table.py)
 
 
 #
@@ -597,6 +598,7 @@ pyre_test_python_testcase(tests/pyre.pkg/framework/slot_update.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/nameserver.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/nameserver_access.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/nameserver_aliases.py)
+pyre_test_python_testcase(tests/pyre.pkg/framework/environ_set.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/fileserver.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/fileserver_uri.py)
 pyre_test_python_testcase(tests/pyre.pkg/framework/fileserver_mount.py)
