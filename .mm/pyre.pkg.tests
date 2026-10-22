@@ -98,7 +98,6 @@ pyre.pkg.tests.drivers.exclude += \
 pyre.pkg.tests.drivers.exclude += \
     config/configurator_locators.py \
     framework/executive_shelves.py \
-    framework/linker_codecs.py \
 
 
 # end of file
