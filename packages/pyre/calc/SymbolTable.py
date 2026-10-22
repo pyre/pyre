@@ -157,8 +157,8 @@ class SymbolTable:
         # update the model
         self._nodes[name] = node
 
-        # and return
-        return name, new, old
+        # and report the name, the node now stored under it, and the one it replaced
+        return name, node, old
 
     def retrieve(self, name):
         """
