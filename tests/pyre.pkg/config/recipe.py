@@ -78,13 +78,13 @@ def test():
     # a shared thing, configured at construction
     shared = Shared(name="recipe.shared", level=3)
     # the owner, partly configured from the file, partly at construction
-    owner = Owner(name="recipe.owner", count=4, home="/var/tmp", friend=shared)
+    owner = Owner(name="recipe.keeper", count=4, home="/var/tmp", friend=shared)
     # runtime state
     owner.derived = ["a", "b"]
     # build the recipe
     recipe = pyre.config.newRecipe().add(owner)
     # the owner's section
-    section = recipe.section("recipe.owner")
+    section = recipe.section("recipe.keeper")
     # what came from the file
     assert section["label"] == "configured"
     assert section["weight"] == 2.5
@@ -103,11 +103,11 @@ def test():
     # and the transient state is absent
     assert "derived" not in section
     # the part has its own section, with what the file configured
-    assert recipe.section("recipe.owner.part") == {"level": 7}
+    assert recipe.section("recipe.keeper.part") == {"level": 7}
     # so does the shared component
     assert recipe.section("recipe.shared") == {"level": 3}
     # the sections come in the order the components were met
-    assert list(recipe.sections) == ["recipe.owner", "recipe.owner.part", "recipe.shared"]
+    assert list(recipe.sections) == ["recipe.keeper", "recipe.keeper.part", "recipe.shared"]
     # and the specifications are known
     assert recipe.spec("recipe.shared") == "recipe.things.shared#recipe.shared"
     # all done

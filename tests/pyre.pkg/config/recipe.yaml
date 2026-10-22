@@ -6,7 +6,7 @@
 
 
 # the owner, configured from this file
-recipe.owner:
+recipe.keeper:
     label: configured
     weight: 2.5
     vertices:
@@ -14,7 +14,7 @@ recipe.owner:
         - (3.0, 4.0)
 
 # its part, configured in place
-recipe.owner.part:
+recipe.keeper.part:
     level: 7
 
 
