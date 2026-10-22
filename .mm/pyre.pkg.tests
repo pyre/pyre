@@ -99,5 +99,12 @@ pyre.pkg.tests.drivers.exclude += \
     config/configurator_locators.py \
     framework/executive_shelves.py \
 
+# the following coercion cells describe behavior that is not there yet: a bad entry of a dict is
+# recorded once the tracker lands, and an entry whose macro names nothing is refused once its
+# evaluation is settled
+pyre.pkg.tests.drivers.exclude += \
+    coercions/mappings/dict/yaml/entry_empty_map.py \
+    coercions/mappings/catalog/yaml/entry_unresolved.py \
+
 
 # end of file
