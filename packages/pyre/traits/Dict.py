@@ -121,6 +121,16 @@ class Dict(Property, schemata.mapping):
         # they are not mine to report
         return self
 
+    # framework hooks triggered by the construction of instances
+    def instanceSeed(self, classSlot):
+        """
+        Compute the value the slot of a new instance starts with, out of {classSlot}, the slot of
+        its class: the map of the class, since processing the slot is how the entries set for
+        the class gather into it
+        """
+        # get the map of the class
+        return classSlot.value
+
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
