@@ -33,7 +33,7 @@ def test() -> None:
         labels = pyre.properties.kv()
 
     # make a reader
-    reader = Reader(name="pyre.tests.dict.recipe.reader")
+    reader = Reader(name="pyre.tests.dict.recipe.probe")
     # configure its tables
     reader.selection = "band:L, frequency:A"
     reader.counts = {"one": "1"}
@@ -41,7 +41,7 @@ def test() -> None:
     # build its recipe
     recipe = pyre.config.newRecipe().add(reader)
     # get its section
-    section = recipe.section("pyre.tests.dict.recipe.reader")
+    section = recipe.section("pyre.tests.dict.recipe.probe")
     # the tables appear entry by entry
     assert section["selection"] == {"band": "L", "frequency": "A"}
     # with the values converted

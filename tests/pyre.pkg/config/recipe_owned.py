@@ -68,7 +68,7 @@ def test():
     }
 
     # make a holder
-    holder = Holder(name="recipe.holder")
+    holder = Holder(name="recipe.vault")
     # read its part, the way any client would before persisting
     gadget = holder.gadget
     # configure the part
@@ -76,13 +76,13 @@ def test():
     # build the recipe
     recipe = pyre.config.newRecipe().add(holder)
     # the binding is recorded by family alone, never by the name of the part
-    assert recipe.section("recipe.holder") == {"gadget": "recipe.gadgets.widget"}
+    assert recipe.section("recipe.vault") == {"gadget": "recipe.gadgets.widget"}
     # and the part has its section
-    assert recipe.section("recipe.holder.gadget") == {"level": 5}
+    assert recipe.section("recipe.vault.gadget") == {"level": 5}
 
     # the loader must be able to bind what the recipe recorded: configure another holder
     # with the same section
-    pyre.executive.nameserver["recipe.other.gadget"] = recipe.section("recipe.holder")["gadget"]
+    pyre.executive.nameserver["recipe.other.gadget"] = recipe.section("recipe.vault")["gadget"]
     # build it
     other = Holder(name="recipe.other")
     # and check that its part is what the recipe said

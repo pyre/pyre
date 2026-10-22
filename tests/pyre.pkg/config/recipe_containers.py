@@ -68,7 +68,7 @@ def test():
     second = Gear(name="recipe.containers.second", teeth=30)
     spare = Gear(name="recipe.containers.spare", teeth=40)
     # build a machine
-    machine = Machine(name="recipe.containers.machine")
+    machine = Machine(name="recipe.containers.mill")
     # with a list of parts, one of them anonymous, which can't be rebuilt
     machine.train = [first, Gear(), second]
     # and a dict of them
@@ -77,7 +77,7 @@ def test():
     # build the recipe
     recipe = pyre.config.newRecipe().add(machine)
     # the section of the machine
-    section = recipe.section("recipe.containers.machine")
+    section = recipe.section("recipe.containers.mill")
     # names the components in the list by their specifications, leaving out the anonymous one
     assert section["train"] == [
         "recipe.containers.parts.gear#recipe.containers.first",
@@ -94,9 +94,9 @@ def test():
     machine.pyre_persist(uri=uri)
     # the file holds the specifications, not the string form of the components
     doc = pyre.config.newYamlEditor(uri=uri)
-    assert list(doc.get("recipe.containers.machine", "train")) == section["train"]
+    assert list(doc.get("recipe.containers.mill", "train")) == section["train"]
     # a second machine, configured by what the first one wrote
-    doc.set("recipe.containers.copy", value=doc.get("recipe.containers.machine"))
+    doc.set("recipe.containers.copy", value=doc.get("recipe.containers.mill"))
     doc.save()
     # restoring is plain configuration
     pyre.loadConfiguration(str(uri))
