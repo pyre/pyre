@@ -183,8 +183,9 @@ class Parser:
                 # add a constraint
                 conditions.append((scope + name, family))
 
-            # if {value} is a nested scope
-            if isinstance(valueNode, yaml.MappingNode):
+            # if {value} is a nested scope, i.e. a mapping in block form; a mapping in flow form is
+            # a value, and an alias has the form of its anchor, since it is the anchor's node
+            if isinstance(valueNode, yaml.MappingNode) and not valueNode.flow_style:
                 # process it
                 yield from self.harvest(
                     node=valueNode,
