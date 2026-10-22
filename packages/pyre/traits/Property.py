@@ -120,18 +120,6 @@ class Property(Slotted):
             # schema to accept or refuse when it is read
             return super().native(value=value, **kwds)
 
-    class identity:
-        """Mixin for values of any type"""
-
-        # framework hooks
-        def reportSettingsBelow(self, client):
-            """
-            Leave alone the settings filed below my name: my value may be a component whose name
-            puts it there, and they configure it
-            """
-            # they are not mine to report
-            return self
-
     # framework hooks triggered by client configuration
     def classConfigured(self, component, **kwds):
         """
