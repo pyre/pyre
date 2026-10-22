@@ -7,9 +7,9 @@
 
 
 """
-Settings filed below a property that takes none, such as a str, an int or a list, are recorded
-against the component class or instance when it is configured, and the property keeps its value;
-the settings below a dict, a facility or an identity are theirs, and are left alone
+Settings filed below a property that takes none, such as a str, an int, a list or an identity, are
+recorded against the component class or instance when it is configured, and the property keeps
+its value; the settings below a dict or a facility are theirs, and are left alone
 """
 
 
@@ -68,12 +68,12 @@ def test() -> None:
         l.default = ["a"]
         l.doc = "a list"
 
+        o = pyre.properties.identity()
+        o.doc = "an identity"
+
         # traits whose settings below them are theirs
         d = pyre.properties.kv()
         d.doc = "a dict"
-
-        o = pyre.properties.identity()
-        o.doc = "an identity"
 
         part = Part()
         part.default = Piece
@@ -103,7 +103,7 @@ def test() -> None:
     # by name
     names = sorted(error.setting for error in recorded)
     # each of them, once
-    assert names == ["probe.i.k", "probe.l.k", "probe.s.a.b", "probe.s.k"], names
+    assert names == ["probe.i.k", "probe.l.k", "probe.o.k", "probe.s.a.b", "probe.s.k"], names
     # go through them
     for error in recorded:
         # each one is about the instance
@@ -115,6 +115,7 @@ def test() -> None:
     assert probe.s == "default"
     assert probe.i == 2
     assert probe.l == ["a"]
+    assert probe.o is None
     # the dict holds the setting below it as an entry
     assert dict(probe.d) == {"k": "v"}
     # and the facility's component is configured by the setting below it
