@@ -496,16 +496,92 @@ class Executive:
         """
         Register a freshly minted component instance
         """
+        # the error that records a value the instance sets aside
+        from ..components.exceptions import NameClaimedError
+
+        # get the store
+        nameserver = self.nameserver
         # get the locator
         locator = instance.pyre_locator
         # make a priority
         priority = priority()
-        # insert the component instance into the model
-        key = self.nameserver.configurable(
-            name=name, configurable=instance, priority=priority, locator=locator
+        # find out whether the instance may claim its name, and where the value at the name came
+        # from, if there is one, before the instance takes over the record of the name; this
+        # fires a firewall if the name is a trait's
+        claim, setAside = self.assessClaim(name=name, locator=locator)
+        # the instance claims its name, whatever was set there; later assignments compete with
+        # its priority as usual
+        key, _, old = nameserver.insert(
+            name=name, value=instance, priority=priority, locator=locator, claim=claim
         )
+        # if the instance took the place of a value someone set
+        if setAside is not None and not isinstance(old, nameserver.node.unresolved):
+            # record that the value was set aside, against the instance
+            self.recordConfigurationError(
+                error=NameClaimedError(name=name, configurable=instance, locator=setAside),
+                configurable=instance,
+            )
         # return the key
         return key
+
+    def assessClaim(self, name, locator):
+        """
+        Decide whether a component instance built at {locator} may claim {name}, and find where
+        the value at {name} was set, if there is one; the slot of a facility is not such a value,
+        since the instance a facility builds takes the place of that slot, which is how it holds
+        the instance, and the slot of any other trait is not the instance's to take
+        """
+        # the factory of the slots of traits
+        from ..traits.SlotFactory import SlotFactory
+
+        # get the store
+        nameserver = self.nameserver
+        # attempt to
+        try:
+            # look up what the store records at {name}
+            info = nameserver.getInfo(nameserver.hash(name))
+        # if it records nothing
+        except KeyError:
+            # the name is free to claim, and there is no value there
+            return True, None
+        # the factory of the node there
+        factory = info.factory
+        # if it is not the factory of the slots of a component's trait: the store makes one for
+        # each plain setting, whose trait is named after the setting itself, while a component's
+        # trait has the short name its class gave it
+        if not isinstance(factory, SlotFactory) or factory.trait.name == info.name:
+            # the node holds a value someone set, so claim it and say where the value came from
+            return True, info.locator
+        # if it is the factory of the slots of a facility
+        if factory.trait.isFacility:
+            # the node is the slot that is building the instance, which takes its place
+            return True, None
+
+        # otherwise, the name is a trait's: instances built at run time must not be named after
+        # traits, so this is a bug in the code that built it
+        self.refuseInstanceName(name=name, kind="a trait", locator=locator)
+        # if the firewall is not fatal, the trait keeps its slot, and the instance competes for it
+        # on priority, as it did before instances claimed their names
+        return False, None
+
+    def refuseInstanceName(self, name, kind, locator):
+        """
+        Fire the firewall for a component instance built at {locator} with {name}, which names
+        {kind}, a package, a family or a trait, none of which an instance may take
+        """
+        # get the journal
+        import journal
+
+        # make a channel
+        channel = journal.firewall("pyre.configuration")
+        # say what is wrong
+        channel.line(f"'{name}' names {kind}, so an instance can't be built with that name")
+        # and where the instance was built
+        channel.line(f"the instance was built at {locator}")
+        # and complain
+        channel.log()
+        # all done
+        return
 
     def registerPackage(self, name, file):
         """

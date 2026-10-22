@@ -324,4 +324,32 @@ class StraySettingError(ComponentError):
         return
 
 
+class NameClaimedError(ComponentError):
+    """
+    Exception raised when a component instance is built with a name that holds a value someone
+    set
+    """
+
+    # public data
+    description = "'{0.name}' was skipped: {0.claimant} was built with that name"
+
+    @property
+    def claimant(self):
+        """
+        Describe the instance that took the name
+        """
+        # by its class
+        return f"an instance of '{type(self.configurable).__name__}'"
+
+    # meta-methods
+    def __init__(self, name, configurable, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store my context
+        self.name = name
+        self.configurable = configurable
+        # all done
+        return
+
+
 # end of file
