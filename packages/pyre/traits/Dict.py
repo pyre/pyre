@@ -113,6 +113,14 @@ class Dict(Property, schemata.mapping):
         # all done
         return self
 
+    def reportSettingsBelow(self, client):
+        """
+        Leave alone the settings filed below my name: they are my entries, which
+        {configureClient} puts in my map
+        """
+        # they are not mine to report
+        return self
+
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
