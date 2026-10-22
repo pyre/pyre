@@ -58,13 +58,13 @@ class Environ(collections.abc.MutableMapping):
 
         # grab the nameserver
         nameserver = self.nameserver
-        # build a locator
-        locator = tracking.here(-1)
+        # build a locator that points to my caller, the line that set the variable
+        locator = tracking.here(1)
         # a priority
         priority = nameserver.priority.user()
         # and add it to the configuration store
         nameserver.configurable(
-            name=self.prefix + key, value=value, locator=locator, priority=priority
+            name=self.prefix + key, configurable=value, locator=locator, priority=priority
         )
 
         # all done
