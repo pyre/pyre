@@ -7,68 +7,95 @@
 
 
 """
-Verify that manipulating the default and instance trait values has no cross-talk
+Verify that class and instance trait values interact the way the attributes of python classes
+and their instances do
 """
 
+# support
 import pyre
 
 
+# a component with a couple of traits
 class gaussian(pyre.component):
     """a representation of a gaussian function"""
 
-    # properties
+    # the mean
     mean = pyre.properties.float(default=0)
+    # and the spread
     spread = pyre.properties.float(default=0.25)
 
 
 def test():
-
-    # first, the basics
+    """
+    Change the class defaults and the values of an instance, and check what everybody sees
+    """
+    # the class holds its defaults
     assert gaussian.mean == 0
+    # both of them
     assert gaussian.spread == 0.25
-    # change the defaults
+    # change the mean
     gaussian.mean = 1
+    # and the spread
     gaussian.spread = 0.5
-    # and check again
+    # the class holds the new mean
     assert gaussian.mean == 1
+    # and the new spread
     assert gaussian.spread == 0.5
 
-    # instantiate a couple of functors
+    # make a functor
     g1 = gaussian(name="g1")
+    # and another
     g2 = gaussian(name="g2")
-    # check that their traits gave the default values
+    # the first sees the mean of the class
     assert g1.mean == 1
+    # and its spread
     assert g1.spread == 0.5
+    # and so does the second
     assert g2.mean == 1
+    # both of them
     assert g2.spread == 0.5
 
-    # now, change the traits values of g1
+    # give the first one a mean of its own
     g1.mean = 0
+    # and a spread
     g1.spread = 0.25
-    # verify that everybody is configured correctly
+    # the class keeps its mean
     assert gaussian.mean == 1
+    # and its spread
     assert gaussian.spread == 0.5
+    # the first functor holds its own mean
     assert g1.mean == 0
+    # and its own spread
     assert g1.spread == 0.25
+    # the second still sees the mean of the class
     assert g2.mean == 1
+    # and its spread
     assert g2.spread == 0.5
 
-    # finally, change the default values again
+    # change the class defaults again
     gaussian.mean = 2
+    # both of them
     gaussian.spread = 0.75
-    # and verify that everybody is still ok
+    # the class holds the new mean
     assert gaussian.mean == 2
+    # and the new spread
     assert gaussian.spread == 0.75
+    # the first functor keeps its own mean
     assert g1.mean == 0
+    # and its own spread
     assert g1.spread == 0.25
-    assert g2.mean == 1
-    assert g2.spread == 0.5
+    # the second has no values of its own, so it sees the new mean of the class
+    assert g2.mean == 2
+    # and its new spread
+    assert g2.spread == 0.75
 
+    # all done
     return gaussian, g1, g2
 
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
