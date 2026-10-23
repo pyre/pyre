@@ -80,7 +80,9 @@ class PrivateInventory(Inventory):
         component.pyre_inventory = inventory
         # collect the slots
         local = cls.localSlots(component=component)
+        # along with the ones it inherits
         inherited = cls.inheritedSlots(component=component)
+        # in one pile
         slots = itertools.chain(local, inherited)
         # and populate the inventory
         inventory.populate(slots=slots)
@@ -127,6 +129,7 @@ class PrivateInventory(Inventory):
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
             if not trait.isConfigurable:
+                # by moving on to the next trait
                 continue
             # yield a (trait, slot) pair
             yield trait, trait.classSlot(value=trait.default)
@@ -180,8 +183,9 @@ class PrivateInventory(Inventory):
                 break
         # if we ran out of ancestors before we ran out of traits
         else:
-            # complain
+            # name the traits whose slots are missing
             missing = ", ".join(f"'{trait.name}'" for trait in traits)
+            # and describe the problem
             msg = f"{component}: could not locate slots for the following traits: {missing}"
             # by accessing the journal package
             import journal
@@ -216,6 +220,7 @@ class PrivateInventory(Inventory):
         return
 
     def __str__(self):
+        # identify me
         return f"private inventory at {id(self):#x}"
 
 
