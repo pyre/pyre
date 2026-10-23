@@ -71,7 +71,9 @@ between the two is how defects are found. They are therefore dense and complete:
 
 - **One comment line per line of code.** Nearly every statement gets a comment on the line above
   it: each assignment, call, branch, and return. A statement that spans several lines gets one
-  comment for the whole statement.
+  comment for the whole statement. The `narrative` check of `etc/ci/conventions/check.py` holds
+  every python file a change touches to this rule, so a file is brought up to it whenever it is
+  edited.
 - **Intent, not mechanics.** A comment says what the step is supposed to accomplish ("fold in the
   contribution of this axis", "make a channel"), never a paraphrase of the syntax ("multiply the
   cells by the extents").
