@@ -243,9 +243,10 @@ def onChild(channel):
             # all done
             return
 
-    # instantiate
+    # instantiate, under a name other than the {child} flag on my command line, which would
+    # otherwise be a setting meant for my node
     cdbg.log("instantiating my node")
-    child = node(name="child", channel=channel)
+    child = node(name="worker", channel=channel)
     cdbg.log("child: {}".format(child))
     # enter the event loop
     cdbg.log("entering the event loop")

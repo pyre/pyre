@@ -27,6 +27,9 @@ def test() -> None:
     executive = pyre.executive
     # make a channel for what goes wrong; it fires once all the checks are done
     channel = journal.firewall("pyre.tests.framework.guesses")
+    # the files i load on purpose fail, and the executive says so; the checks below read its
+    # pile of errors, so its warnings are not needed on the screen
+    journal.warning("pyre.configuration").device = journal.trash()
 
     # booting searched for configuration files, and missed most of them
     if not executive.guesses:

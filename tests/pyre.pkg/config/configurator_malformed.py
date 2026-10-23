@@ -27,6 +27,9 @@ def test() -> None:
     nameserver = executive.nameserver
     # make a channel for what goes wrong; it fires once all the checks are done
     channel = journal.firewall("pyre.tests.config.malformed")
+    # the files i load are malformed on purpose, and the executive says so; the checks below
+    # read its pile of errors, so its warnings are not needed on the screen
+    journal.warning("pyre.configuration").device = journal.trash()
 
     # go through the encodings
     for encoding in ["cfg", "pfg", "yaml", "pml"]:
