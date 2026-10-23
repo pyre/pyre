@@ -17,8 +17,11 @@ def test():
 
     # make some nodes
     nodes = []
+    # holding the integers from one through ten
     for n in range(10):
+        # make a variable with the next integer
         node = pyre.calc.var(value=n + 1)
+        # and add it to the pile
         nodes.append(node)
 
     # make a sequence
@@ -27,9 +30,9 @@ def test():
     assert tuple(s.value) == tuple(range(1, 11))
 
     # make a mapping
-    m = pyre.calc.mapping(**{"n{}".format(i): n for i, n in enumerate(nodes)})
+    m = pyre.calc.mapping(**{f"n{i}": n for i, n in enumerate(nodes)})
     # check
-    assert m.value == dict({"n{}".format(i): i + 1 for i in range(10)})
+    assert m.value == dict({f"n{i}": i + 1 for i in range(10)})
 
     # all done
     return
@@ -47,7 +50,7 @@ if __name__ == "__main__":
     # for nodes
     from pyre.calc.Node import Node
 
-    # print(tuple(Node.pyre_extent))
+    # no node outlives the test
     assert tuple(Node.pyre_extent) == ()
 
 

@@ -12,6 +12,10 @@ Verify that node updates propagate properly
 
 
 def test():
+    """
+    Build an expression over two nodes, change one of them, and check that the expression
+    follows
+    """
     # access the package
     import pyre.calc
 
@@ -20,18 +24,21 @@ def test():
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
+    # under a common level of the hierarchy
     model["user.email"] = "michael.aivazis@orthologue.com"
+    # along with an expression that refers to its siblings by their full names
     model["user.signature"] = model.expression("{user.name}+' -- '+{user.email}")
 
     # check the signature
     assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
-    # modify one of the nodes
-    model["user.email"] = "michael.aivazis@orthologue.com"
+    # give one of the nodes a new value
+    model["user.email"] = "michael.aivazis@para-sim.com"
 
-    # check the new signature
-    assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
+    # the signature follows
+    assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@para-sim.com"
 
+    # all done
     return
 
 

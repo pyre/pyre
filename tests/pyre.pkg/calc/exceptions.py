@@ -21,26 +21,43 @@ def test():
         UnresolvedNodeError,
     )
 
+    # attempt to
     try:
+        # raise an evaluation error
         raise EvaluationError(node=None, error=None)
-    except EvaluationError as error:
+    # and catch it
+    except EvaluationError:
+        # as expected
         pass
 
+    # attempt to
     try:
+        # raise an empty expression error
         raise EmptyExpressionError(formula=None)
-    except EmptyExpressionError as error:
+    # and catch it
+    except EmptyExpressionError:
+        # as expected
         pass
 
+    # attempt to
     try:
+        # raise a syntax error in an expression
         raise ExpressionSyntaxError(formula=None, error=None)
-    except ExpressionError as error:
+    # and catch it as an expression error, its base class
+    except ExpressionError:
+        # as expected
         pass
 
+    # attempt to
     try:
+        # raise an unresolved node error
         raise UnresolvedNodeError(node=None, name=None)
-    except UnresolvedNodeError as error:
+    # and catch it
+    except UnresolvedNodeError:
+        # as expected
         pass
 
+    # all done
     return
 
 

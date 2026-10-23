@@ -20,14 +20,18 @@ def test():
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
+    # the email
     model["user.email"] = "michael.aivazis@orthologue.com"
+    # and a signature built out of both
     model["user.signature"] = model.interpolation("{user.name} -- {user.email}")
     # check the signature
     assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     # case 1: canonical does not exist, alias does not exist
     model.alias(base="author", alias="affiliation", target="user.affiliation")
+    # give the canonical node a value
     model["user.affiliation"] = "orthologue"
+    # check that the alias sees it
     assert model["author.affiliation"] == model["user.affiliation"]
 
     # case 2: canonical exists, alias does not
@@ -37,35 +41,55 @@ def test():
 
     # case 3: canonical does not exist, alias does
     model["author.telephone"] = "+1 626.395.3424"
+    # make the alias
     model.alias(base="author", alias="telephone", target="user.telephone")
+    # check that the canonical node picked up the value of the alias
     assert model["author.telephone"] == model["user.telephone"]
 
     # case 4: both are preëxisting nodes
     model["author.name"] = "TBD"
+    # attempt to alias them
     try:
+        # which should fail
         model.alias(base="author", alias="name", target="user.name")
+        # so we should never get here
         assert False
-    except model.AliasingError as error:
+    # if it fails as expected
+    except model.AliasingError:
+        # no problem
         pass
 
     # check the final state
     assert model["user.name"] == "Michael Aïvázis"
+    # the email
     assert model["user.email"] == "michael.aivazis@orthologue.com"
+    # the telephone
     assert model["user.telephone"] == "+1 626.395.3424"
+    # the affiliation
     assert model["user.affiliation"] == "orthologue"
+    # and the signature
     assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
     # and again through the aliases
     assert model["author.name"] == "Michael Aïvázis"
+    # the email was never aliased
     try:
+        # so asking for it should fail
         model["author.email"]
+        # and we should never get here
         assert False
-    except model.UnresolvedNodeError as error:
+    # if it fails as expected
+    except model.UnresolvedNodeError:
+        # no problem
         pass
+    # the telephone
     assert model["author.telephone"] == "+1 626.395.3424"
+    # the affiliation
     assert model["author.affiliation"] == "orthologue"
+    # and the signature
     assert model["author.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
+    # all done
     return
 
 

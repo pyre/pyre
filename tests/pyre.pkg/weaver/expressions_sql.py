@@ -7,7 +7,7 @@
 
 
 """
-Exercise a python expression weaver
+Exercise an SQL expression weaver
 """
 
 
@@ -17,37 +17,56 @@ def test():
 
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")
+    # that speaks SQL
     weaver.language = "sql"
     # access its mill
     mill = weaver.language
 
     # build a few nodes
     zero = pyre.calc.var(value=0)
+    # and one
     one = pyre.calc.var(value=1)
 
     # check expression generation
     # the trivial cases
     assert mill.expression(zero) == "0"
+    # one renders as itself
     assert mill.expression(one) == "1"
 
     # arithmetic
+    # addition
     assert mill.expression(one + zero) == "(1) + (0)"
+    # subtraction
     assert mill.expression(one - zero) == "(1) - (0)"
+    # multiplication
     assert mill.expression(one * zero) == "(1) * (0)"
+    # division
     assert mill.expression(one / zero) == "(1) / (0)"
+    # exponentiation
     assert mill.expression(one**zero) == "(1) ^ (0)"
+    # remainder
     assert mill.expression(one % zero) == "(1) % (0)"
 
+    # absolute value
     assert mill.expression(abs(one)) == "@(1)"
+    # negation
     assert mill.expression(-one) == "-(1)"
+    # equality
     assert mill.expression(one == zero) == "(1) = (0)"
+    # inequality
     assert mill.expression(one != zero) == "(1) <> (0)"
+    # less than or equal
     assert mill.expression(one <= zero) == "(1) <= (0)"
+    # greater than or equal
     assert mill.expression(one >= zero) == "(1) >= (0)"
+    # less than
     assert mill.expression(one < zero) == "(1) < (0)"
+    # greater than
     assert mill.expression(one > zero) == "(1) > (0)"
 
+    # logical and
     assert mill.expression(one & zero) == "(1) AND (0)"
+    # logical or
     assert mill.expression(one | zero) == "(1) OR (0)"
 
     # return the configured weaver
@@ -56,6 +75,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

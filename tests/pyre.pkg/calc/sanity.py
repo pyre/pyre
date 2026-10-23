@@ -15,6 +15,7 @@ def test():
     # access the package
     import pyre.calc
 
+    # all done
     return
 
 

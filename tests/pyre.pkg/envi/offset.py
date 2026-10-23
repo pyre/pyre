@@ -28,6 +28,7 @@ def test():
     for order, code in [(0, "<"), (1, ">")]:
         # the product and its sidecar
         uri = f"envi_offset_test_{order}.dat"
+        # are named after the order
         hdr = f"envi_offset_test_{order}.hdr"
         # write the product in that order, behind its embedded header
         with open(uri, "wb") as product:

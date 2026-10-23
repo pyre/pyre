@@ -7,7 +7,8 @@
 
 
 """
-Verify that syntax errors in interpolations are caught
+Verify that doubled braces in interpolations stand for literal braces, and that a reference wrapped
+in them is still a reference
 """
 
 
@@ -30,15 +31,20 @@ def test():
 
     # finally
     tricky = model.interpolation("{{{number of items}}}")
-    # verify it made a variable
+    # verify it made an interpolation
     assert type(tricky) is model.node.interpolation
     # with an unresolved node
     try:
+        # so asking for its value
         tricky.value
+        # must fail
         assert False
+    # with the correct error
     except tricky.UnresolvedNodeError:
+        # which is what we expect
         pass
 
+    # all done
     return
 
 

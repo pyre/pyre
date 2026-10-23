@@ -17,12 +17,16 @@ def test():
 
     # make a node and set its value
     v = 80.0
+    # by building a variable that holds it
     production = pyre.calc.var(value=v)
+    # verify the node reports it
     assert production.value == v
 
-    # once more
+    # once more, with a new value
     v = 100.0
+    # that replaces the one the node holds
     production.value = v
+    # verify the node reports the change
     assert production.value == v
 
     # all done
@@ -40,7 +44,7 @@ if __name__ == "__main__":
     # verify reference counts
     from pyre.calc.Node import Node
 
-    # print(tuple(Node.pyre_extent))
+    # no node outlives the test
     assert tuple(Node.pyre_extent) == ()
 
 

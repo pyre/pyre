@@ -38,8 +38,9 @@ def test():
     assert len(reqs) == 2
     # as structured requirements
     assert all(isinstance(req, pyre.externals.requirement) for req in reqs)
-    # with their sections harvested
+    # with their sections harvested: the package name and the version clause of the first
     assert reqs[0].category == "hdf5" and reqs[0].clauses == ((">=", "1.12"),)
+    # the package name and the selectors of the second
     assert reqs[1].category == "mpi" and reqs[1].selectors == ("openmpi",)
 
     # all done

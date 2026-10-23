@@ -18,17 +18,25 @@ def test():
 
     # a model
     model = pyre.calc.model()
-    # the nodes
+    # the production cost
     model["production"] = 80.0
+    # the shipping cost
     model["shipping"] = 20.0
+    # an expression that is syntactically correct but applies {&} to floats
     model["cost"] = model.expression("{production}&{shipping}")
 
+    # attempt to
     try:
+        # evaluate the bad expression
         model["cost"]
+        # which should have failed
         assert False
-    except model.EvaluationError as error:
+    # if it fails as expected
+    except model.EvaluationError:
+        # all is good
         pass
 
+    # all done
     return
 
 

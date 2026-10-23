@@ -18,44 +18,48 @@ def test():
     # set up the model
     model = pyre.calc.model()
 
-    # the nodes
+    # the production cost
     p = 80.0
+    # and the shipping cost
     s = 0.25 * 80
-    # register the nodes
+    # register the production cost
     model["production"] = p
+    # and the shipping cost
     model["shipping"] = s
+    # the total cost is their sum
     model["cost"] = model.expression("{production}+{shipping}")
+    # and the price doubles it
     model["price"] = model.expression("2*{cost}")
 
     # check the values
-    # print("before:")
-    # print("  production:", model["production"])
-    # print("  shipping:", model["shipping"])
-    # print("  cost:", model["cost"])
-    # print("  price:", model["price"])
+    # check the production cost
     assert model["production"] == p
+    # the shipping cost
     assert model["shipping"] == s
+    # the total cost
     assert model["cost"] == p + s
+    # and the price
     assert model["price"] == 2 * (p + s)
 
-    # thanks to the indirect references to their operands, expressions get updated values when
-    # their dependents change; this is a side effect of the current implementation
+    # expressions refer to their operands indirectly, so they see the new values of their
+    # operands
 
-    # make a change
+    # make a change to the production cost
     p = 100.0
+    # and hand it to the model
     model["production"] = p
 
     # check again
-    # print("after:")
-    # print("  production:", model["production"])
-    # print("  shipping:", model["shipping"])
-    # print("  cost:", model["cost"])
-    # print("  price:", model["price"])
+    # check the production cost
     assert model["production"] == p
+    # the shipping cost is unaffected
     assert model["shipping"] == s
+    # the total cost sees the change
     assert model["cost"] == p + s
+    # and so does the price
     assert model["price"] == 2 * (p + s)
 
+    # all done
     return
 
 

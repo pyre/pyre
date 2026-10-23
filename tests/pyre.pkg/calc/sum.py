@@ -17,38 +17,55 @@ def test():
 
     # set up the values
     p = 80.0
+    # of the production and shipping costs
     s = 20.0
     # make the nodes
     production = pyre.calc.var(value=p)
+    # one for the shipping cost
     shipping = pyre.calc.var(value=s)
+    # the cost adds them up
     cost = pyre.calc.sum(production, shipping)
+    # and a reference to the cost
     clone = cost.ref()
 
     # check the dependencies
     assert tuple(cost.operands) == (production, shipping)
+    # the reference depends on the cost alone
     assert tuple(clone.operands) == (cost,)
     # and the dependents
     assert set(production.observers) == {cost}
+    # the cost observes the shipping cost
     assert set(shipping.observers) == {cost}
+    # and the reference observes the cost
     assert set(cost.observers) == {clone}
     # check the values
     assert production.value == p
+    # the shipping cost
     assert shipping.value == s
+    # the cost is the sum
     assert cost.value == p + s
+    # and the reference sees the sum
     assert clone.value == p + s
 
     # update the values
     p = 160.0
+    # of both costs
     s = 40.0
+    # push the new production cost to its node
     production.value = p
+    # and the new shipping cost to its own
     shipping.value = s
 
     # check again
     assert production.value == p
+    # the shipping cost
     assert shipping.value == s
+    # the cost follows the change
     assert cost.value == p + s
+    # and so does the reference
     assert clone.value == p + s
 
+    # all done
     return
 
 
@@ -64,7 +81,7 @@ if __name__ == "__main__":
     # for nodes
     from pyre.calc.Node import Node
 
-    # print(tuple(Node.pyre_extent))
+    # no node outlives the test
     assert tuple(Node.pyre_extent) == ()
 
 
