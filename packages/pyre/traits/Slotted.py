@@ -26,12 +26,31 @@ class Slotted(Trait):
     instanceSlot = None  # the factory of instance slots
 
     # framework hooks triggered by the construction of instances
-    def instanceSeed(self, classSlot):
+    def instanceSeed(self, classSlot, key=None):
         """
-        Compute the value the slot of a new instance starts with, out of {classSlot}, the slot of
-        its class: the value it holds, without processing it, so that building an instance has
-        none of the side effects of processing a default, such as opening the file of a stream;
-        the instance processes the value when it reads the trait
+        Compute what the slot of a new instance, registered under {key}, starts with, out of
+        {classSlot}, the slot of its class: a reference to it, so that, like the instance of a
+        python class, the instance sees the current value of its class until it has one of its
+        own; the reference hands over what the class slot holds, unprocessed, so that building an
+        instance has none of the side effects of processing a default, such as opening the file
+        of a stream, and the instance processes the value when it reads the trait
+        """
+        # get the factory of the slots of instances
+        factory = self.instanceSlot
+        # and refer to the class slot through its processors
+        return classSlot.ref(
+            key=key,
+            unprocessed=True,
+            preprocessor=factory.preprocess,
+            postprocessor=factory.postprocess,
+        )
+
+    def instanceCopy(self, classSlot):
+        """
+        Compute a value for the slot of a new instance out of {classSlot}, the slot of its class,
+        for the traits whose instances keep no link to their class: the value it holds, without
+        processing it, so that building an instance has none of the side effects of processing a
+        default; the instance processes the value when it reads the trait
         """
         # get the value of the class slot, unprocessed
         value = classSlot.getUnprocessedValue()
