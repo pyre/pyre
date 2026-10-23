@@ -31,7 +31,11 @@ class Reference:
         """
         # get my referent
         (referent,) = self.operands
-        # and ask him for his value
+        # if i hand over what my referent holds, rather than what it makes of it
+        if self.unprocessed:
+            # skip its postprocessor
+            return referent.getUnprocessedValue()
+        # otherwise, ask him for his value
         return referent.value
 
     def setValue(self, value):
@@ -52,6 +56,19 @@ class Reference:
         """
         # invoke the callback
         return authority.onReference(reference=self, **kwds)
+
+    # meta-methods
+    def __init__(self, unprocessed=False, **kwds):
+        """
+        Refer to my operand; with {unprocessed}, my value is what my referent holds before its
+        postprocessor sees it, so that my own postprocessor is the only one it goes through
+        """
+        # chain up
+        super().__init__(**kwds)
+        # remember what i hand over
+        self.unprocessed = unprocessed
+        # all done
+        return
 
 
 # end of file
