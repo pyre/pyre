@@ -95,8 +95,6 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Give a component a chance to normalize the {name} of an instance that is about to
         be created
         """
-        # show me
-        # print(f"{cls}: leaving '{name}' alone")
         # by default, leave it alone
         return name
 
@@ -585,12 +583,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Check whether {cls} is assignment compatible with {spec}, i.e. whether it provides at
         least the properties and behaviors specified by {spec}
         """
-        # print(f"CP: me={cls}, other={spec}")
         # chain up
         report = super().pyre_isCompatible(spec=spec, fast=fast)
         # if an incompatibility were detected and we are not interested in the full picture
         if fast and not report.isClean:
-            # print(f' ** early exit: {report.incompatibilities}')
             # we are done
             return report
 
