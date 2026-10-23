@@ -7,7 +7,6 @@
 
 # packages
 import pyre
-import pyre.weaver
 from . import datastore, sql
 
 

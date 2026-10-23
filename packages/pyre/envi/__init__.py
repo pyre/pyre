@@ -15,7 +15,6 @@ bare value and a list of strings for a braced one, for the consumer to interpret
 
 The sequence
 
-    import pyre
     import pyre.grid
     hdr = pyre.envi.reader().read(uri="product.hdr")
     data = pyre.grid.map(
