@@ -39,10 +39,15 @@ def test():
         os.chdir(scratch)
         # make the app, with a project that spells everything the templates ask for
         app = pyre.smith.smith(name="smith_git_revision")
+        # built from the basic template
         app.project = "basic"
+        # named after the traditional greeting
         app.project.name = "hello"
+        # with its authors
         app.project.authors = "the authors"
+        # the years of its copyright
         app.project.span = "2026"
+        # and its repository
         app.project.github = "authors/hello"
         # silence the progress report, since what matters is the outcome
         journal.info("smith").deactivate()

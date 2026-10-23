@@ -17,40 +17,55 @@ def test():
 
     # free variables
     c = 100.0
+    # and the shipping cost
     s = 20.0
 
     # make some nodes
     cost = pyre.calc.var(value=c)
+    # one for the shipping cost
     shipping = pyre.calc.var(value=s)
+    # the margin is half the cost
     margin = cost / 2
+    # the price adds up the cost, the margin and the shipping
     price = cost + margin + shipping
+    # and the profit is what is left after the margin
     profit = price - margin
 
     # gather them up
     nodes = [cost, shipping, margin, price, profit]
 
     # verify their values
-    # print(cost.value, shipping.value, margin.value, price.value, profit.value)
     assert cost.value == c
+    # the shipping cost
     assert shipping.value == s
+    # the margin
     assert margin.value == 0.5 * c
+    # the price
     assert price.value == c + s + 0.5 * c
+    # and the profit
     assert profit.value == c + s
 
     # make some changes
     c = 200.0
+    # to both free variables
     s = 40.0
+    # push the new cost to its node
     cost.value = c
+    # and the new shipping cost to its own
     shipping.value = s
 
     # try again
-    # print(cost.value, shipping.value, margin.value, price.value, profit.value)
     assert cost.value == c
+    # the shipping cost
     assert shipping.value == s
+    # the margin follows the cost
     assert margin.value == 0.5 * c
+    # the price follows both
     assert price.value == c + s + 0.5 * c
+    # and so does the profit
     assert profit.value == c + s
 
+    # all done
     return
 
 
@@ -66,7 +81,7 @@ if __name__ == "__main__":
     # for nodes
     from pyre.calc.Node import Node
 
-    # print(tuple(Node.pyre_extent))
+    # no node outlives the test
     assert tuple(Node.pyre_extent) == ()
 
 

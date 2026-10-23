@@ -20,22 +20,31 @@ def test():
 
     # self reference
     try:
+        # make a node that refers to itself
         model["cost"] = model.expression("{cost}")
+        # which should have been detected
         assert False
+    # if the cycle is detected
     except model.CircularReferenceError:
+        # all is good
         pass
 
     # another model
     model = pyre.calc.model()
     # now validate the graph, expecting the circular reference to raise an exception
     try:
-        # a cycle
+        # make a node that refers to another
         model["cost"] = model.expression("{price}")
+        # which refers back to it, closing a cycle
         model["price"] = model.expression("{cost}")
+        # which should have been detected
         assert False
+    # if the cycle is detected
     except model.CircularReferenceError:
+        # all is good
         pass
 
+    # all done
     return
 
 

@@ -7,7 +7,7 @@
 
 
 """
-Verify that expressions work
+Verify that interpolations work
 """
 
 
@@ -21,23 +21,28 @@ def test():
     # set up the model
     model = pyre.calc.model()
 
+    # pick a location for the tools
     home = "/opt/local"
+    # register it
     model["tools"] = home
+    # derive the location of the executables from it
     model["bin"] = model.interpolation("{tools}/bin")
+    # the libraries
     model["lib"] = model.interpolation("{tools}/lib")
+    # and the headers
     model["include"] = model.interpolation("{tools}/include")
 
     # check the values
-    # print("before:")
-    # print("  tools: {!r}".format(model["tools"]))
-    # print("  bin: {!r}".format(model["bin"]))
-    # print("  lib: {!r}".format(model["lib"]))
-    # print("  include: {!r}".format(model["include"]))
+    # check the location of the tools
     assert model["tools"] == home
+    # the location of the executables
     assert model["bin"] == os.path.join(home, "bin")
+    # the libraries
     assert model["lib"] == os.path.join(home, "lib")
+    # and the headers
     assert model["include"] == os.path.join(home, "include")
 
+    # all done
     return
 
 

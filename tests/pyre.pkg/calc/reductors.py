@@ -17,15 +17,20 @@ def test():
 
     # make some nodes
     nodes = []
+    # holding the integers from one through ten
     for n in range(10):
+        # make a variable with the next integer
         node = pyre.calc.var(value=n + 1)
+        # and add it to the pile
         nodes.append(node)
 
+    # make a node that multiplies them all together
     product = pyre.calc.product(*nodes)
 
-    # check
+    # check that it computes ten factorial
     assert product.value == 3628800
 
+    # all done
     return
 
 
@@ -41,7 +46,7 @@ if __name__ == "__main__":
     # for nodes
     from pyre.calc.Node import Node
 
-    # print(tuple(Node.pyre_extent))
+    # no node outlives the test
     assert tuple(Node.pyre_extent) == ()
 
 

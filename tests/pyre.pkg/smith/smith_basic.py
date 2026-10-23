@@ -42,10 +42,15 @@ def test():
         os.chdir(scratch)
         # make the app, with a project that spells everything the templates ask for
         app = pyre.smith.smith(name="smith_basic")
+        # built from the basic template
         app.project = "basic"
+        # named after the traditional greeting
         app.project.name = "hello"
+        # with its authors
         app.project.authors = "the authors"
+        # the years of its copyright
         app.project.span = "2026"
+        # and its repository
         app.project.github = "authors/hello"
         # silence the progress report, since what matters is the generated tree
         journal.info("smith").deactivate()
@@ -53,8 +58,9 @@ def test():
         status = app.run()
         # it went well
         assert status == 0
-        # the project configuration file was generated
+        # the project configuration file
         config = pyre.primitives.path("hello") / "share" / "hello" / "hello.yaml"
+        # was generated
         assert config.exists()
         # read it
         text = config.open().read()

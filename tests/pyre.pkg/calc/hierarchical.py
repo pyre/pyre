@@ -20,11 +20,14 @@ def test():
 
     # register the nodes
     model["user.name"] = "Michael Aïvázis"
+    # under a common level of the hierarchy
     model["user.email"] = "michael.aivazis@orthologue.com"
+    # along with one that refers to its siblings by their full names
     model["user.signature"] = model.interpolation("{user.name} -- {user.email}")
     # check the signature
     assert model["user.signature"] == "Michael Aïvázis -- michael.aivazis@orthologue.com"
 
+    # all done
     return
 
 

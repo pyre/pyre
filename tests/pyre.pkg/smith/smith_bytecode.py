@@ -47,12 +47,13 @@ def test():
         os.chdir(scratch)
         # copy the basic template, so the installation stays untouched
         copy = shutil.copytree(str(basic), os.path.join(scratch, "vault"))
-        # make a bytecode cache in it, where an installer would put one
+        # a bytecode cache in it, where an installer would put one
         cache = os.path.join(copy, "__pycache__")
+        # make it
         os.mkdir(cache)
         # with a file that is not text, as compiled bytecode is not
         with open(os.path.join(cache, "meta.cpython-313.pyc"), "wb") as stream:
-            # starting with the bytes that broke smith
+            # starting with bytes that do not decode as text
             stream.write(b"\xf3\r\r\n\x00\x00\x00\x00")
 
         # a smith that draws from the copy
@@ -73,10 +74,15 @@ def test():
 
         # make the app, with a project that spells everything the templates ask for
         app = Smith(name="smith_bytecode")
+        # built from the basic template
         app.project = "basic"
+        # named after the traditional greeting
         app.project.name = "hello"
+        # with its authors
         app.project.authors = "the authors"
+        # the years of its copyright
         app.project.span = "2026"
+        # and its repository
         app.project.github = "authors/hello"
         # silence the progress report, since what matters is the generated tree
         journal.info("smith").deactivate()

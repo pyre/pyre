@@ -18,27 +18,40 @@ def test():
     # build a model
     model = pyre.calc.model()
 
-    # unbalanced open brace
+    # check that an unbalanced open brace is caught
     try:
-        model.expression(value="{production", model=model)
+        # build an expression with an open brace that is never closed
+        model.expression(value="{production")
+        # which should have failed
         assert False
+    # if it fails as expected
     except model.ExpressionSyntaxError:
+        # all is good
         pass
 
-    # unbalanced open brace
+    # check that an unbalanced close brace is caught
     try:
-        model.expression(value="production}", model=model)
+        # build an expression with a close brace that was never opened
+        model.expression(value="production}")
+        # which should have failed
         assert False
+    # if it fails as expected
     except model.ExpressionSyntaxError:
+        # all is good
         pass
 
-    # unbalanced parenthesis
+    # check that an unbalanced parenthesis is caught
     try:
-        model.expression(value="{production}({shipping}", model=model)
+        # build an expression with a parenthesis that is never closed
+        model.expression(value="{production}({shipping}")
+        # which should have failed
         assert False
+    # if it fails as expected
     except model.ExpressionSyntaxError:
+        # all is good
         pass
 
+    # all done
     return
 
 

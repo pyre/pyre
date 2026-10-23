@@ -7,7 +7,8 @@
 
 
 """
-Verify a somewhat non-trivial evaluation network with a mix of node operations
+Verify that a node spliced into an evaluation network takes over the place of the node it
+replaces
 """
 
 
@@ -17,12 +18,19 @@ def test():
 
     # the nodes
     production = pyre.calc.var(value=80.0)
+    # the shipping cost
     shipping = pyre.calc.var(value=20.0)
+    # the cost adds them up
     cost = production + shipping
+    # the margin is a fraction of the cost
     margin = 0.25 * cost
+    # and so is the overhead
     overhead = 0.45 * cost
+    # the price adds up the cost, the margin and the overhead
     price = cost + margin + overhead
+    # a plain number for the discount
     discount = 0.2
+    # the total is the discounted price
     total = price * (1.0 - discount)
     # check we got the answer right
     assert total.value == 136
@@ -30,23 +38,18 @@ def test():
     poser = pyre.calc.var(value=180.0)
 
     # introduce the cast
-    # print("production: node@{:#x}".format(id(production)))
-    # print("  shipping: node@{:#x}".format(id(shipping)))
-    # print("      cost: node@{:#x}".format(id(cost)))
-    # print("    margin: node@{:#x}".format(id(margin)))
-    # print("  overhead: node@{:#x}".format(id(overhead)))
-    # print("     price: node@{:#x}".format(id(price)))
-    # print("  discount: node@{:#x}".format(id(discount)))
-    # print("     total: node@{:#x}".format(id(total)))
-    # print("     poser: node@{:#x}".format(id(poser)))
 
     # patch cost with the new production node
     poser.replace(production)
     # check
     assert cost.value == poser.value + shipping.value
+    # the margin follows the cost
     assert margin.value == 0.25 * cost.value
+    # and so does the overhead
     assert overhead.value == 0.45 * cost.value
+    # the price
     assert price.value == cost.value + margin.value + overhead.value
+    # and the total
     assert total.value == price.value * (1.0 - discount)
     # check we got the new answer right
     assert total.value == 272
@@ -55,13 +58,18 @@ def test():
     poser.value = 80
     # check
     assert cost.value == poser.value + shipping.value
+    # the margin follows the cost
     assert margin.value == 0.25 * cost.value
+    # and so does the overhead
     assert overhead.value == 0.45 * cost.value
+    # the price
     assert price.value == cost.value + margin.value + overhead.value
+    # and the total
     assert total.value == price.value * (1.0 - discount)
     # check we got the answer right
     assert total.value == 136
 
+    # all done
     return
 
 
@@ -77,7 +85,7 @@ if __name__ == "__main__":
     # for nodes
     from pyre.calc.Node import Node
 
-    # print(tuple(Node.pyre_extent))
+    # no node outlives the test
     assert tuple(Node.pyre_extent) == ()
 
 

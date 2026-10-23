@@ -17,24 +17,32 @@ def test():
 
     # make a node and set its value
     v = 80.0
+    # make a node that holds it
     production = pyre.calc.var(value=v)
     # make a reference
     clone = production.ref()
     # and a reference to the reference
     clone2 = clone.ref()
 
-    # check
+    # check the node
     assert production.value == v
+    # the reference
     assert clone.value == v
+    # and the reference to the reference
     assert clone2.value == v
 
-    # once more
+    # once more, with a new value
     v = 100.0
+    # hand it to the node
     production.value = v
+    # check the node
     assert production.value == v
+    # the reference sees the change
     assert clone.value == v
+    # and so does the reference to the reference
     assert clone2.value == v
 
+    # all done
     return
 
 
@@ -50,7 +58,7 @@ if __name__ == "__main__":
     # for nodes
     from pyre.calc.Node import Node
 
-    # print(tuple(Node.pyre_extent))
+    # no node outlives the test
     assert tuple(Node.pyre_extent) == ()
 
 

@@ -72,6 +72,7 @@ def test() -> None:
     }
     # is the same as the one built a key at a time
     keys = Reader(name="keys")
+    # holds every key
     assert dict(keys.selection) == {"band": "L", "frequency": "A", "polarization": "HH"}
     # whose integers are converted
     assert dict(keys.counts) == {"one": 1, "two": 2}

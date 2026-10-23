@@ -25,9 +25,11 @@ def test():
     for order, code in [(0, "<"), (1, ">")]:
         # the product and its sidecar
         uri = f"envi_cell_test_{order}.dat"
+        # are named after the order
         hdr = f"envi_cell_test_{order}.hdr"
         # write the product in that order
         with open(uri, "wb") as product:
+            # packing the values with the matching byte order
             product.write(struct.pack(f"{code}{len(values)}H", *values))
         # describe it
         header = pyre.envi.header(

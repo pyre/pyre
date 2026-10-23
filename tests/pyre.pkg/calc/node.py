@@ -15,9 +15,12 @@ def test():
     # access the package
     import pyre.calc
 
+    # make a node
     n1 = pyre.calc.var()
+    # and another; both go out of scope when the test returns
     n2 = pyre.calc.var()
 
+    # all done
     return
 
 
@@ -33,7 +36,6 @@ if __name__ == "__main__":
     from pyre.calc.Node import Node
 
     # verify reference counts
-    # print(tuple(Node.pyre_extent))
     assert tuple(Node.pyre_extent) == ()
 
 

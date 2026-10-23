@@ -7,7 +7,8 @@
 
 
 """
-Verify that syntax errors in expressions are caught
+Verify that doubled braces in expressions stand for literal braces, and that a reference wrapped
+in them is still a reference
 """
 
 
@@ -34,11 +35,16 @@ def test():
     assert type(tricky) is model.node.expression
     # with an unresolved reference
     try:
+        # so asking for its value
         tricky.value
+        # must fail
         assert False
+    # with the correct error
     except tricky.UnresolvedNodeError:
+        # which is what we expect
         pass
 
+    # all done
     return
 
 
