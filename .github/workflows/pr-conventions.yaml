@@ -65,6 +65,12 @@ jobs:
         env:
           BASE: ${{ github.base_ref }}
 
+      - name: narrative
+        if: ${{ !cancelled() }}
+        run: python3 etc/ci/conventions/check.py --only narrative --base "origin/${BASE}"
+        env:
+          BASE: ${{ github.base_ref }}
+
       - name: commits
         if: ${{ !cancelled() }}
         run: python3 etc/ci/conventions/check.py --only commits --base "origin/${BASE}"
