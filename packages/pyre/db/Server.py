@@ -34,21 +34,24 @@ class Server(pyre.component, implements=datastore):
         """
         Connect to the database back end
         """
-        raise NotImplementedError("class {.__name__!r} must override 'attach'".format(type(self)))
+        # connecting is the job of the back end specific subclasses
+        raise NotImplementedError(f"class '{type(self).__name__}' must override 'attach'")
 
     @pyre.export
     def detach(self):
         """
-        Connect to the database back end
+        Disconnect from the database back end
         """
-        raise NotImplementedError("class {.__name__!r} must override 'attach'".format(type(self)))
+        # disconnecting is the job of the back end specific subclasses
+        raise NotImplementedError(f"class '{type(self).__name__}' must override 'detach'")
 
     @pyre.export
     def execute(self, *sql):
         """
         Execute the sequence of SQL statements in {sql} as a single command
         """
-        raise NotImplementedError("class {.__name__!r} must override 'execute'".format(type(self)))
+        # executing is the job of the back end specific subclasses
+        raise NotImplementedError(f"class '{type(self).__name__}' must override 'execute'")
 
     # convenience
     def createDatabase(self, name):
@@ -93,6 +96,7 @@ class Server(pyre.component, implements=datastore):
         """
         # if there are no records to insert, bail
         if not records:
+            # with nothing to show for it
             return
         # build the sql statements
         sql = self.sql.insertRecords(*records)
@@ -133,9 +137,7 @@ class Server(pyre.component, implements=datastore):
         # build the sql statements
         sql = self.sql.select(query=query)
 
-        # walk the rows the back end sent; every back end yields data rows and nothing else.
-        # the postgres one used to put the column names in the first of them, so that every
-        # caller had to know to skip it; its names now live on the result, where they belong
+        # walk the rows the back end sent, which are data rows and nothing else
         for row in self.execute(*sql):
             # build a named tuple, whose field order matches the column order by construction
             yield query.pyre_immutable(data=row)
@@ -149,6 +151,7 @@ class Server(pyre.component, implements=datastore):
         """
         Hook invoked when the context manager is entered
         """
+        # the server itself is the managed resource
         return self
 
     def __exit__(self, exc_type, exc_instance, exc_traceback):
