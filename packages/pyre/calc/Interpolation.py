@@ -51,9 +51,13 @@ class Interpolation:
         Compute and return my value
         """
         # compute the values of my operands
-        values = (str(op.value) for op in self.operands)
-        # apply my operator
-        return functools.reduce(operator.add, values)
+        values = tuple(op.value for op in self.operands)
+        # an operand that is {None} has no text, and nothing may stand in for it
+        if any(value is None for value in values):
+            # so neither do i
+            return None
+        # splice the text of the values together
+        return functools.reduce(operator.add, (str(value) for value in values))
 
     def setValue(self, value):
         """
