@@ -8,24 +8,28 @@
 
 # externals
 import argparse
+import ast
 import datetime
 import fnmatch
+import io
 import os
 import re
 import subprocess
 import sys
+import tokenize
 import tomllib
 
 # the description of the program, for the help screen
 DESCRIPTION = """
 Check a checkout against the conventions of the repository: spelling, the formatting of python
 and c++ sources, file preambles and closing markers, and, given the branch the work is based on,
-the commits on top of it and the copyright year of the files they touch. The same checks run on
-every pull request; running them before pushing saves a round trip
+the commits on top of it, the copyright year of the files they touch, and the comment above every
+statement of the python sources they touch. The same checks run on every pull request; running
+them before pushing saves a round trip
 """
 
 # the checks, in the order they run
-CHECKS = ("spelling", "python", "cxx", "preambles", "commits")
+CHECKS = ("spelling", "python", "cxx", "preambles", "narrative", "commits")
 
 # the files whose preambles and closing markers are not checked, by extension, unless they carry
 # a preamble anyway: binaries, and formats that cannot carry comments
@@ -58,8 +62,9 @@ OPAQUE = (
 CXX = (".h", ".icc", ".cc", ".cpp", ".cu")
 # the copyright line, with whatever comment marker precedes it
 COPYRIGHT_LINE = re.compile(r"^(?P<prefix>.*?)\(c\) 1998-\d{4} all rights reserved$")
-# the lines that open a block comment preamble, and the ones that close it
+# the lines that open a block comment preamble
 OPENERS = ("<!--", "{/*", "/*")
+# and the ones that close it
 CLOSERS = ("-->", "*/}", "*/")
 # the lines that may precede the preamble: interpreters, xml declarations and doctypes, along
 # with their indented continuations, the magic lines of environment modules and zsh completion
@@ -74,6 +79,7 @@ MODE = re.compile(r"^#?(?P<marker>.*?)-\*- (?P<mode>[a-z0-9+\-]+|[a-z\-]+: .+) -
 # a commit subject names the area it touches, then says what the commit does: an area is a
 # path, a package, or a c++ namespace, and several can be listed separated by commas
 AREA = r"[A-Za-z0-9_.{}/+\-]+(::[A-Za-z0-9_.{}/+\-]+)*"
+# so a subject is one or more areas, a colon, and what the commit does
 SUBJECT = re.compile(rf"^{AREA}(, ?{AREA})*: \S")
 # the authors whose commits the commit check leaves alone: bots whose messages are beyond our
 # control, such as the dependency updates dependabot proposes
@@ -406,6 +412,194 @@ def layout(*, name: str, text: str) -> list:
         problems.append(f"{blanks} blank lines before the end of file marker, instead of 2")
     # hand off the complaints
     return problems
+
+
+def narrative(*, root: str, base: str | None) -> list:
+    """
+    Check that every statement of the python sources touched since {base} has a comment on the
+    line above it, so the comments read as the specification of the code
+    """
+    # without a base there is nothing to check
+    if not base:
+        # so say nothing
+        return []
+    # the exemptions of the repository
+    exempt = exemptions(root=root)
+    # the complaints
+    problems = []
+    # go through the python sources touched by the work
+    for name in changed(root=root, base=base):
+        # skip the ones that are not python, or that the repository exempts
+        if not name.endswith(".py") or any(fnmatch.fnmatch(name, pattern) for pattern in exempt):
+            # by moving on
+            continue
+        # read the file
+        with open(os.path.join(root, name), encoding="utf-8") as stream:
+            # all of it
+            text = stream.read()
+        # attempt to
+        try:
+            # parse it
+            tree = ast.parse(text, filename=name)
+        # a file that does not parse
+        except SyntaxError as error:
+            # cannot be checked, which is a problem of its own
+            problems.append(f"{name}:{error.lineno}: does not parse")
+            # so move on
+            continue
+        # the lines that end with a comment of their own, as class attributes often do
+        trailing = {
+            token.start[0]
+            for token in tokenize.generate_tokens(io.StringIO(text).readline)
+            if token.type == tokenize.COMMENT and token.line.strip()[0] != "#"
+        }
+        # check its statements
+        problems.extend(
+            f"{name}:{line}: no comment above this statement"
+            for line in uncommented(lines=text.split("\n"), trailing=trailing, body=tree.body)
+        )
+    # hand off the complaints
+    return problems
+
+
+def uncommented(*, lines: list, trailing: set, body: list) -> list:
+    """
+    The line numbers of the statements in {body}, and in the blocks nested in them, that have no
+    comment on the line above them, or one of their own at the end of their first line; {lines}
+    is the text of the file, and {trailing} the numbers of the lines that end with a comment
+    """
+    # nothing comes before the first statement of a block
+    previous = None
+    # the line numbers of the offenders
+    offenders = []
+    # go through the statements, remembering the one before
+    for statement in body:
+        # a docstring documents its block
+        if isinstance(statement, ast.Expr) and isinstance(
+            getattr(statement, "value", None), ast.Constant
+        ):
+            # and needs no comment
+            pass
+        # a function or a class carries a docstring
+        elif isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            # instead of a comment
+            pass
+        # an import that follows another
+        elif isinstance(statement, (ast.Import, ast.ImportFrom)) and isinstance(
+            previous, (ast.Import, ast.ImportFrom)
+        ):
+            # shares its comment, if the two are adjacent
+            if statement.lineno - previous.end_lineno != 1:
+                # otherwise it starts a group that needs one of its own
+                offenders.extend(missing(lines=lines, trailing=trailing, statement=statement))
+        # the metadata of a declaration, such as the documentation of a trait, that follows it
+        elif annotates(statement=statement, previous=previous):
+            # shares its comment
+            pass
+        # everything else
+        else:
+            # needs a comment of its own
+            offenders.extend(missing(lines=lines, trailing=trailing, statement=statement))
+        # the blocks nested in the statement
+        for field in ("body", "orelse", "finalbody"):
+            # are checked the same way
+            offenders.extend(
+                uncommented(
+                    lines=lines, trailing=trailing, body=getattr(statement, field, None) or []
+                )
+            )
+        # and so are the handlers of a {try}
+        for handler in getattr(statement, "handlers", None) or []:
+            # each with its own block
+            offenders.extend(uncommented(lines=lines, trailing=trailing, body=handler.body))
+        # and the cases of a {match}
+        for case in getattr(statement, "cases", None) or []:
+            # each with its own block
+            offenders.extend(uncommented(lines=lines, trailing=trailing, body=case.body))
+        # remember this one
+        previous = statement
+    # hand off the offenders
+    return offenders
+
+
+def subject(*, statement: ast.stmt | None) -> str | None:
+    """
+    The name that {statement} declares, as in {t = pyre.properties.str()}, or annotates, as in
+    {t.doc = "..."}; {None} for any other statement
+    """
+    # only a simple assignment has a subject
+    if not isinstance(statement, ast.Assign) or len(statement.targets) != 1:
+        # so everything else has none
+        return None
+    # get its target
+    target = statement.targets[0]
+    # a declaration names its subject
+    if isinstance(target, ast.Name):
+        # directly
+        return target.id
+    # an annotation sets an attribute of it
+    if isinstance(target, ast.Attribute) and isinstance(target.value, ast.Name):
+        # so the subject is the owner of the attribute
+        return target.value.id
+    # anything else has no subject
+    return None
+
+
+def annotates(*, statement: ast.stmt, previous: ast.stmt | None) -> bool:
+    """
+    Check whether {statement} sets an attribute of the subject of {previous}, on the line right
+    after it, the way the metadata of a trait follows its declaration
+    """
+    # the statement must set an attribute
+    if not isinstance(statement, ast.Assign) or not isinstance(statement.targets[0], ast.Attribute):
+        # or it is not an annotation
+        return False
+    # of the subject of the statement right above it
+    return (
+        previous is not None
+        and statement.lineno - previous.end_lineno == 1
+        and subject(statement=statement) is not None
+        and subject(statement=statement) == subject(statement=previous)
+    )
+
+
+def missing(*, lines: list, trailing: set, statement: ast.stmt) -> list:
+    """
+    The line number of {statement}, if the line above it, or above its decorators, is not a
+    comment, and its first line does not end with one either
+    """
+    # a statement that carries its comment at the end of its line
+    if statement.lineno in trailing:
+        # is commented
+        return []
+    # a decorated statement starts with its first decorator
+    first = min([statement.lineno, *(d.lineno for d in getattr(statement, "decorator_list", []))])
+    # the line above it, counting from one
+    above = lines[first - 2].strip() if first > 1 else ""
+    # is a comment, unless it is code that was commented out, or the statement is an offender
+    return [] if above.startswith("#") and not disabled(comment=above) else [statement.lineno]
+
+
+def disabled(*, comment: str) -> bool:
+    """
+    Check whether {comment} is a line of code that was commented out, rather than prose
+    """
+    # the text of the comment
+    text = comment.lstrip("#").strip()
+    # prose rarely carries the punctuation of a call, an assignment, or a subscript
+    if not any(mark in text for mark in "(=["):
+        # so this is prose
+        return False
+    # attempt to
+    try:
+        # parse it as python
+        ast.parse(text)
+    # if it does not parse
+    except SyntaxError:
+        # it is prose
+        return False
+    # otherwise, it is code
+    return True
 
 
 def commits(*, root: str, base: str | None) -> list:
