@@ -12,7 +12,7 @@ Check that the refcount is zero after all nodes have gone out of scope
 
 
 def test():
-
+    # access the package
     import pyre.calc
 
     n1 = pyre.calc.var()

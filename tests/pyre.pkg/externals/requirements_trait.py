@@ -17,7 +17,6 @@ def test():
     """
     # support
     import pyre
-    import pyre.externals
 
     # a component with a requirements trait
     class Consumer(pyre.component):

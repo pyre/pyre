@@ -17,7 +17,6 @@ def test():
     """
     # support
     import pyre
-    import pyre.externals
 
     # get the casting error the type system raises
     from pyre.components.exceptions import TraitValueError

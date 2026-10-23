@@ -12,6 +12,7 @@ Verify that node resolution works
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # set up the model

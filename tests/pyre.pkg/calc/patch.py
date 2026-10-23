@@ -12,6 +12,7 @@ Verify a somewhat non-trivial evaluation network with a mix of node operations
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # the nodes

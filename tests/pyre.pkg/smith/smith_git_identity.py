@@ -13,7 +13,6 @@ git, rather than claiming success
 
 # support
 import journal
-import pyre
 import pyre.smith
 
 

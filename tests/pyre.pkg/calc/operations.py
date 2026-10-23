@@ -12,6 +12,7 @@ Verify on-the-fly building of nodes using the overloaded operators
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # free variables

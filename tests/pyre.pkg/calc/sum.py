@@ -12,6 +12,7 @@ Verify nodes with sum evaluators
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # set up the values

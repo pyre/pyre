@@ -12,6 +12,7 @@ Verify container nodes
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # make some nodes

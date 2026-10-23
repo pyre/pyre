@@ -12,6 +12,7 @@ Verify that syntax errors in interpolations are caught
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # build a model

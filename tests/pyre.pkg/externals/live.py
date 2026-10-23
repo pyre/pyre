@@ -19,7 +19,6 @@ def test():
     Ask the real engine stack for a few common packages
     """
     # support
-    import pyre
     import pyre.externals
 
     # get the index

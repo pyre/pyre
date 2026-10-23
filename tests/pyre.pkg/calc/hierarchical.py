@@ -12,6 +12,7 @@ Sanity check: instantiate a hierarchical model
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # create a model

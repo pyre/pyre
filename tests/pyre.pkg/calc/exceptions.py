@@ -12,8 +12,7 @@ Tests for all the exceptions raised by this package
 
 
 def test():
-
-    import pyre.calc
+    # the exceptions of the package
     from pyre.calc.exceptions import (
         EvaluationError,
         ExpressionError,

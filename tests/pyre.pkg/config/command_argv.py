@@ -12,8 +12,6 @@ Verify that the pyre executive can communicate with external command line parser
 
 
 def test():
-    import pyre.config
-
     # get the executive instance
     import pyre
 

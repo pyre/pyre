@@ -11,10 +11,7 @@ def test():
     Lay a grid over a product with an embedded header, in each byte order, using nothing but its
     sidecar
     """
-    # access the package
-    import pyre
-
-    # and the grid factories
+    # access the package, with its grid factories
     import pyre.grid
 
     # for packing the product

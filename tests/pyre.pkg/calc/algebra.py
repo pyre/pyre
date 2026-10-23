@@ -12,6 +12,7 @@ Exercise node algebra
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # declare a couple of nodes

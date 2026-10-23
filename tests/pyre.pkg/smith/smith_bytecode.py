@@ -13,7 +13,6 @@ as pip does when it installs a wheel
 
 # support
 import journal
-import pyre
 import pyre.smith
 
 # the application class, which the package publishes through a factory

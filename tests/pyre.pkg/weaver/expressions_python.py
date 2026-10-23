@@ -12,9 +12,8 @@ Exercise a python expression weaver
 
 
 def test():
-    # get the packages
-    import pyre.weaver
-    import pyre.calc
+    # get the package
+    import pyre
 
     # instantiate a weaver
     weaver = pyre.weaver.weaver(name="sanity")

@@ -12,6 +12,7 @@ Sanity check: verify that the package is accessible
 
 
 def test():
+    # access the package
     import pyre.calc
 
     return

@@ -12,6 +12,7 @@ Verify that expressions work
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # set up the model

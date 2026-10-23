@@ -12,6 +12,7 @@ Verify that reference nodes correctly reflect the value of their referends
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # make a node and set its value

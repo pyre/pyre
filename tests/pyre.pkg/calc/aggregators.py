@@ -12,6 +12,7 @@ Verify nodes with aggregator evaluators
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # make some nodes

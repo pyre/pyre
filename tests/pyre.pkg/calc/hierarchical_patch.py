@@ -12,6 +12,7 @@ Verify that node updates propagate properly
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # create a model
