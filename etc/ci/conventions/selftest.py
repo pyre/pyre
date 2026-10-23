@@ -75,8 +75,9 @@ def scaffold(*, root: str) -> None:
     """
     # make the repository
     git("init", "--quiet", "--initial-branch=main", cwd=root)
-    # with an identity for its commits
+    # with an identity for its commits: a name
     git("config", "user.name", "self test", cwd=root)
+    # and an address
     git("config", "user.email", "selftest@example.com", cwd=root)
     # the configuration the checks read
     write(
@@ -106,8 +107,9 @@ def scaffold(*, root: str) -> None:
         text=preamble(comment="//", language="c++")
         + "\n\n// the answer\nint\nanswer()\n{\n    // hand it off\n    return 42;\n}\n\n\n// end of file\n",
     )
-    # commit them
+    # stage them
     git("add", "pyproject.toml", "words.txt", ".clang-format", "good.py", "good.cc", cwd=root)
+    # and commit them
     git("commit", "--quiet", "-m", "base: the starting point", cwd=root)
     # all done
     return
@@ -207,8 +209,9 @@ def violations() -> None:
             name="good.cc",
             text=text.replace(f"1998-{YEAR}", "1998-2000").replace("the answer", "the reply"),
         )
-        # commit it all with a subject that names no area, and a body
+        # stage it all
         git("add", "bad.py", "bad.cc", "good.cc", cwd=root)
+        # and commit it with a subject that names no area, and a body
         git("commit", "--quiet", "-m", "fixed some things", "-m", "a body", cwd=root)
         # check
         status, report = check(root=root, base="main")
@@ -216,13 +219,19 @@ def violations() -> None:
         if status == 0:
             # or else it let everything through
             raise SelfTestError(f"violations passed:\n{report}")
-        # and every check caught its violation
+        # and every check caught its violation: the misspelling
         expect(report=report, check="spelling", needle=MISSPELLING)
+        # the python formatting
         expect(report=report, check="python", needle="bad.py")
+        # the c++ formatting
         expect(report=report, check="cxx", needle="bad.cc")
+        # the missing closing marker
         expect(report=report, check="preambles", needle="bad.py: does not end")
+        # the stale copyright year
         expect(report=report, check="preambles", needle="good.cc: touched")
+        # the subject that names no area
         expect(report=report, check="commits", needle="is not of the form")
+        # and the body
         expect(report=report, check="commits", needle="has a body")
     # all done
     return
@@ -334,6 +343,74 @@ def layouts() -> None:
     return
 
 
+def narratives() -> None:
+    """
+    A statement without a comment above it is caught in the python sources the work touches,
+    and the forms the conventions allow are left alone
+    """
+    # in a scratch directory
+    with tempfile.TemporaryDirectory() as root:
+        # lay out the repository
+        scaffold(root=root)
+        # work on a branch
+        git("switch", "--quiet", "-c", "work", cwd=root)
+        # the body of a python source, one line per entry, with what the check must say
+        body = [
+            ("# support", None),
+            ("import os", None),
+            ("import sys", None),
+            ("", None),
+            ("", None),
+            ("class gadget:", None),
+            ('    """a gadget"""', None),
+            ("", None),
+            ("    # the size of the gadget", None),
+            ("    size = os.sep", None),
+            ('    size.doc = "how big"', None),
+            ("    color = sys.platform  # the color of the gadget", None),
+            ("", None),
+            ("", None),
+            ("def run():", None),
+            ('    """', None),
+            ("    Run", None),
+            ('    """', None),
+            ("    # print(os.sep)", None),
+            ("    value = 1", "flag"),
+            ("    total = value + 1", "flag"),
+            ("    # all done", None),
+            ("    return total", None),
+        ]
+        # the lines of the body start right after the preamble and the two blank lines
+        first = len(preamble(comment="#", language="python").split("\n")) + 2
+        # write the source
+        write(
+            root=root,
+            name="story.py",
+            text=preamble(comment="#", language="python")
+            + "\n\n"
+            + "\n".join(line for line, _ in body)
+            + "\n\n\n# end of file\n",
+        )
+        # stage it
+        git("add", "story.py", cwd=root)
+        # and commit it
+        git("commit", "--quiet", "-m", "story: a source with gaps in its narrative", cwd=root)
+        # check
+        status, report = check(root=root, base="main")
+        # go through the body
+        for offset, (line, verdict) in enumerate(body):
+            # the statements the check must catch
+            if verdict == "flag":
+                # are named by their line
+                expect(report=report, check="narrative", needle=f"story.py:{first + offset}:")
+            # and the rest
+            elif f"story.py:{first + offset}:" in report:
+                # are not
+                raise SelfTestError(f"'narrative' flagged '{line.strip()}':\n{report}")
+    # all done
+    return
+
+
 def bots() -> None:
     """
     The commits of a bot are not held to the commit conventions, and the same message from a
@@ -347,9 +424,11 @@ def bots() -> None:
         git("switch", "--quiet", "-c", "work", cwd=root)
         # the message a dependency update comes with: no area, and a body
         message = ["-m", "Bump black from 26.5.1 to 26.6.0", "-m", "the release notes"]
-        # a bot commits a change with it
+        # a bot makes a change
         write(root=root, name="words.txt", text="tread\n")
+        # stages it
         git("add", "words.txt", cwd=root)
+        # and commits it with that message
         git("-c", "user.name=dependabot[bot]", "commit", "--quiet", *message, cwd=root)
         # which passes
         status, report = check(root=root, base="main")
@@ -357,9 +436,11 @@ def bots() -> None:
         if status != 0:
             # or else the bot is held to conventions it cannot follow
             raise SelfTestError(f"a bot commit failed:\n{report}")
-        # a person commits another change with the same message
+        # a person makes another change
         write(root=root, name="words.txt", text="tread\nraison\n")
+        # stages it
         git("add", "words.txt", cwd=root)
+        # and commits it with the same message
         git("commit", "--quiet", *message, cwd=root)
         # which does not pass
         status, report = check(root=root, base="main")
@@ -464,6 +545,8 @@ def main() -> int:
         violations()
         # one with every kind of preamble departure
         layouts()
+        # one with gaps in the narrative of a python source
+        narratives()
         # one with commits by a bot
         bots()
         # and one with files the spell check skips
