@@ -124,12 +124,18 @@ class Dict(Property, schemata.mapping):
     # framework hooks triggered by the construction of instances
     def instanceSeed(self, classSlot, key=None):
         """
-        Compute the value the slot of a new instance, registered under {key}, starts with, out of
-        {classSlot}, the slot of its class: the map of the class, since processing the slot is
-        how the entries set for the class gather into it
+        Compute what the slot of a new instance, registered under {key}, starts with, out of
+        {classSlot}, the slot of its class: a reference to the map of the class, processed, since
+        processing the slot is how the entries set for the class gather into it; the instance
+        builds its own map out of it, where the entries set for the instance outrank those of
+        the class, and rebuilds it when the class gets a new map
         """
-        # get the map of the class
-        return classSlot.value
+        # get the factory of the slots of instances
+        factory = self.instanceSlot
+        # and refer to the map of the class through its processors
+        return classSlot.ref(
+            key=key, preprocessor=factory.preprocess, postprocessor=factory.postprocess
+        )
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
