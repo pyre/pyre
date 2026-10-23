@@ -291,8 +291,9 @@ class PublicInventory(Inventory):
     @classmethod
     def instanceSlots(cls, key, instance):
         """
-        Build slots for the initial inventory of an instance, each one seeded with a value its
-        trait computes out of the slot of the class; the slots keep no link to those of the class
+        Build slots for the initial inventory of an instance, each one seeded with what its trait
+        computes out of the slot of the class: a reference to it for most traits, so the instance
+        sees the current value of its class until it has one of its own
         """
         # get the component class of this {instance}
         component = type(instance)
@@ -300,8 +301,8 @@ class PublicInventory(Inventory):
         for trait in component.pyre_configurables():
             # ask the class inventory for the slot that corresponds to this trait
             slot = component.pyre_inventory[trait]
-            # and the trait for the value the slot of the instance starts with
-            value = trait.instanceSeed(classSlot=slot)
+            # and the trait for what the slot of the instance starts with
+            value = trait.instanceSeed(classSlot=slot, key=key[trait.name])
             # grab the trait slot factory
             factory = trait.instanceSlot
             # hand the trait, the factory and the default value from the class record
