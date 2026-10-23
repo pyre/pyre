@@ -67,13 +67,17 @@ class Facility(Slotted, schemata.component):
         return self.pyre_nameserver.variable(**kwds)
 
     # interface
-    def coerce(self, value, **kwds):
+    def coerce(self, value, anonymous=False, **kwds):
         """
-        Convert {value} into a component class or instance, honoring my {optional} marker
+        Convert {value} into a component class or instance, honoring my {optional} marker; a
+        component class becomes an instance with no name when {anonymous} is set, which is how
+        the sequences that hold components coerce their entries
         """
         # get the marker of unsatisfiable protocol defaults
         from ..components.exceptions import DefaultError
 
+        # get my protocol
+        protocol = self.protocol
         # attempt to
         try:
             # convert {value} normally
@@ -86,6 +90,13 @@ class Facility(Slotted, schemata.component):
                 return None
             # everybody else fails loudly
             raise
+        # a sequence that meets a component class holds an instance of it, with no name, since
+        # a user who wants one names it in the specification
+        if anonymous and isinstance(component, protocol.actor):
+            # so build one
+            return protocol.pyre_instantiate(
+                spec=value, component=component, name=None, locator=None
+            )
         # if all goes well, return the {component}
         return component
 

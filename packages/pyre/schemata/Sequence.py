@@ -55,9 +55,10 @@ class Sequence(Container):
         return self.container(str(item) for item in value)
 
     # implementation details
-    def _coerce(self, value, incognito=True, **kwds):
+    def _coerce(self, value, incognito=True, anonymous=True, **kwds):
         """
-        Convert {value} into an iterable
+        Convert {value} into an iterable; my entries have no names of their own, so they are
+        coerced {anonymous}, whether or not i am an entry of a container myself
         """
         # string processing
         if isinstance(value, str):
@@ -85,8 +86,11 @@ class Sequence(Container):
                     # convert it and hand it to the caller. perform the conversion incognito, in
                     # case coercing my values requires the instantiation of components; i don't
                     # want facilities to use the name of my node as the name of any instantiated
-                    # components
-                    yield self.schema.process(value=entry, incognito=incognito, **kwds)
+                    # components; my entries have no names of their own either, so a component
+                    # class among them becomes an anonymous instance
+                    yield self.schema.process(
+                        value=entry, incognito=incognito, anonymous=anonymous, **kwds
+                    )
                 # if anything goes wrong that it is managed by the framework
                 except pyre.PyreError as error:
                     # get the journal; not when this module is loaded, since that happens while
