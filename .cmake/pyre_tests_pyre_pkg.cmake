@@ -789,6 +789,9 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_trait_evaluation_e
 #
 # pyre/attributes
 #
+pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_instance.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_subinstance.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/classkey_store_instance.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_provenance.py)
 
 
