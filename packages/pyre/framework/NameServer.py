@@ -181,6 +181,7 @@ class NameServer(Hierarchical):
         name, split, key = self.info.fillNodeId(model=self, key=key, name=name)
         # store it in the model
         self._nodes[key] = slot
+        # along with its metadata
         self._metadata[key] = self.info(
             name=name, key=key, split=split, locator=package.locator, priority=priority
         )
@@ -420,6 +421,7 @@ class NameServer(Hierarchical):
             node = self.node.unresolved(key=key, request=name)
             # add it to the pile
             self._nodes[key] = node
+            # along with its metadata
             self._metadata[key] = self.info(name=name, split=split, key=key)
         # return the node
         return node

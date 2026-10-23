@@ -147,7 +147,9 @@ class PublicInventory(Inventory):
 
         # collect the slots
         local = cls.localSlots(key=key, component=component)
+        # along with the ones it inherits
         inherited = cls.inheritedSlots(key=key, component=component)
+        # in one pile
         slots = itertools.chain(local, inherited)
         # register them with the nameserver
         slots = cls.registerSlots(key=key, slots=slots, locator=component.pyre_locator)
@@ -220,6 +222,7 @@ class PublicInventory(Inventory):
         for trait in component.pyre_localTraits:
             # skip the non-configurable ones
             if not trait.isConfigurable:
+                # by moving on to the next trait
                 continue
             # yield the trait, its class slot factory, and the default value of the trait
             yield trait, trait.classSlot, trait.default
@@ -277,12 +280,14 @@ class PublicInventory(Inventory):
                 break
         # if we ran out of ancestors before we ran out of traits
         else:
-            # complain
+            # name the traits whose slots are missing
             missing = ", ".join(f"'{trait.name}'" for trait in traits)
+            # and describe the problem
             msg = f"{component}: could not locate slots for the following traits: {missing}"
             # by raising a firewall, since this is almost certainly a bug
             import journal
 
+            # and complain
             raise journal.firewall("pyre.components").log(msg)
 
         # otherwise, we are done
@@ -336,6 +341,7 @@ class PublicInventory(Inventory):
             for alias in trait.aliases:
                 # skip the canonical name
                 if alias == name:
+                    # by moving on to the next alias
                     continue
                 # notify the nameserver
                 nameserver.alias(base=key, alias=alias, target=traitKey)
@@ -363,6 +369,7 @@ class PublicInventory(Inventory):
         return self.pyre_nameserver.getNode(key)
 
     def __str__(self):
+        # identify me
         return f"public inventory at {id(self):#x}"
 
 
