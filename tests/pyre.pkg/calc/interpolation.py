@@ -12,7 +12,10 @@ Verify that expressions work
 
 
 def test():
+    # support for building the expected paths
     import os
+
+    # access the package
     import pyre.calc
 
     # set up the model

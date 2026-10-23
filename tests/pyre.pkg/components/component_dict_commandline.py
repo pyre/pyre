@@ -18,7 +18,6 @@ def test() -> None:
     """
     # support
     import pyre
-    import pyre.config
 
     # access the executive
     executive = pyre.executive

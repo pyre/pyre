@@ -13,6 +13,7 @@ Verify that probes get notified when the values of their nodes change
 
 # tuck all the object references in a function so they get a chance to go out of scope
 def test():
+    # access the package
     import pyre.calc
 
     # a probe is an observer

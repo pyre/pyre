@@ -12,6 +12,7 @@ Verify we can extract all names under a given level in the hierarchy
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # create a model

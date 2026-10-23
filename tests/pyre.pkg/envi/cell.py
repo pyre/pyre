@@ -10,10 +10,7 @@ def test():
     """
     Lay a grid over a product written in each byte order, using nothing but its header
     """
-    # access the package
-    import pyre
-
-    # and the grid factories
+    # access the package, with its grid factories
     import pyre.grid
 
     # for packing the product

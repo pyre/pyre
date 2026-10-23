@@ -12,6 +12,7 @@ Verify that circular dependencies are caught properly
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # a model

@@ -13,6 +13,7 @@ evaluated even though they have no syntax errors
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # a model

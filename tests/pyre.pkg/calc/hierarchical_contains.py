@@ -12,6 +12,7 @@ Verify that __contains__ is implemented correctly
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # create a model

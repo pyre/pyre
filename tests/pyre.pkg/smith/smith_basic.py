@@ -13,7 +13,6 @@ basic one, with every macro in the templates resolved
 
 # support
 import journal
-import pyre
 import pyre.smith
 
 

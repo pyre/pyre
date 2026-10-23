@@ -12,6 +12,7 @@ Verify nodes with literal values
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # make a node and set its value

@@ -12,6 +12,7 @@ Exercise the aliasing feature of hierarchical models
 
 
 def test():
+    # access the package
     import pyre.calc
 
     # create a model

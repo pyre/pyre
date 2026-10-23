@@ -13,7 +13,6 @@ the initial revision, tagged 'v0.0.1'
 
 # support
 import journal
-import pyre
 import pyre.smith
 
 
