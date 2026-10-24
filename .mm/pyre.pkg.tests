@@ -107,5 +107,9 @@ pyre.pkg.tests.drivers.exclude += \
     coercions/mappings/dict/yaml/entry_empty_map.py \
     coercions/mappings/catalog/yaml/entry_unresolved.py \
 
+# a reference to a component that does not exist yet resolves once its evaluation is settled
+pyre.pkg.tests.drivers.exclude += \
+    components/component_forward_reference.py \
+
 
 # end of file
