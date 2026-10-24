@@ -23,8 +23,9 @@ class FactoryMaker(Plumber):
         """
         Build a new factory record
         """
-        # augment the attributes
+        # augment the attributes with a pile for the traits that hold inputs
         attributes["pyre_inputTraits"] = ()
+        # and one for the traits that hold outputs
         attributes["pyre_outputTraits"] = ()
         # chain up to build the record
         factory = super().__new__(cls, name, bases, attributes, **kwds)
@@ -54,8 +55,9 @@ class FactoryMaker(Plumber):
         """
         Sort my products in to inputs and outputs
         """
-        # make piles for inputs and outputs
+        # make a pile for the inputs
         inputs = []
+        # and one for the outputs
         outputs = []
         # go through my facilities, looking for products
         for trait in self.pyre_facilities():

@@ -57,13 +57,17 @@ def test() -> None:
 
     # for a named factory and an anonymous one
     for factory in (Factory(name="tests.pyre.flow.rebind.named"), Factory()):
-        # its output, made
+        # its output
         made = factory.target
+        # made
         made.pyre_done()
-        # and an input, made too
+        # and an input
         source = Product()
+        # made too
         source.pyre_done()
+        # bound to the factory
         factory.source = source
+        # and the output made again after the binding
         factory.target.pyre_done()
 
         # handing the output the product it holds
@@ -72,16 +76,19 @@ def test() -> None:
         assert factory.target is made and not made.pyre_stale
         # and so does handing the input the product it holds
         factory.source = source
+        # leaves the output made
         assert not made.pyre_stale
 
         # a change to a setting
         factory.scale = 2.0
         # invalidates what the factory makes
         assert made.pyre_stale
+        # until it is made again
         made.pyre_done()
 
-        # and a different product in the output
+        # and a different product
         other = Product()
+        # in the output
         factory.target = other
         # is stale until it is made
         assert factory.target is other and other.pyre_stale

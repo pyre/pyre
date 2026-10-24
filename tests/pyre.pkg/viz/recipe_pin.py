@@ -22,8 +22,8 @@ def test():
     from pyre.flow.exceptions import IncompatibleBindingError, IncompatiblePinError
 
     # the classes to pin to
-    amplitude = pyre.viz.operators.amplitude()
-    add = pyre.viz.operators.add()
+    amplitude = pyre.viz.operators.amplitude()  # one slot in, one out
+    add = pyre.viz.operators.add()  # two in, one out
 
     # make a recipe
     recipe = pyre.flow.recipe()
@@ -31,6 +31,7 @@ def test():
     node = recipe.factory(name="op", protocol=pyre.viz.operator)
     # which has no slots of its own
     assert node.level == "protocol"
+    # and so it has no slots
     assert node.slots == {}
     # and a product
     recipe.product(name="signal")
@@ -41,6 +42,7 @@ def test():
     assert gone == []
     # and gives it the slots of the class
     assert node.level == "class"
+    # whose slots it now has
     assert list(node.slots) == ["signal", "amplitude"]
     # so it can be bound
     recipe.bind(factory="op", slot="signal", product="signal")
@@ -49,6 +51,7 @@ def test():
     gone = recipe.pin(name="op", pin=add)
     # its old slot is gone, and so is its binding
     assert [(b.factory, b.slot, b.product) for b in gone] == [("op", "signal", "signal")]
+    # so the recipe has no bindings left
     assert recipe.bindings == []
     # and it has the new slots
     assert list(node.slots) == ["op1", "op2", "sum"]
@@ -59,7 +62,9 @@ def test():
     gone = recipe.pin(name="op", pin=None)
     # takes every slot along, with its binding
     assert [b.slot for b in gone] == ["op1"]
+    # so the node stands for the protocol again
     assert node.level == "protocol"
+    # and has no slots
     assert node.slots == {}
 
     # a class that does not satisfy the protocol
@@ -75,13 +80,16 @@ def test():
     # and the node is as it was
     assert node.pin is None
 
-    # a product of magnitudes, written by an amplitude
+    # an amplitude
     recipe.factory(name="source", pin=amplitude)
+    # a product of magnitudes
     recipe.product(name="magnitude")
+    # written by the amplitude
     recipe.bind(factory="source", slot="amplitude", product="magnitude")
 
-    # and read by a selector that takes any tile
+    # a selector that takes any tile
     recipe.factory(name="selector", protocol=pyre.viz.selector, pin=pyre.viz.selectors.real())
+    # reads the magnitudes
     recipe.bind(factory="selector", slot="signal", product="magnitude")
 
     # a selector whose slot of the same name expects complex tiles, which magnitudes are not
@@ -109,6 +117,7 @@ def test():
         assert (error.node, error.slot, error.product) == ("selector", "signal", "magnitude")
     # and the selector is as it was, still bound
     assert recipe.node(name="selector").pin is pyre.viz.selectors.real()
+    # and still reading the magnitudes
     assert recipe.binding(factory="selector", slot="signal").product == "magnitude"
 
     # all done

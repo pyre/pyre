@@ -24,6 +24,10 @@ callerStackDepth = 2
 
 # in case we just don't know
 def unknown():
+    """
+    Build a locator for a source nobody can name
+    """
+    # a simple locator that says so
     return simple(source="<unknown>")
 
 

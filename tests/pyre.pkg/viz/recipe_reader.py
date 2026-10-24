@@ -63,6 +63,7 @@ def test():
 
     # a grid of complex values
     lines, samples = 24, 30
+    # in a heap grid of that shape
     cells = pyre.libpyre.grid.heap(shape=[lines, samples], cell="complex64")
     # filled with magnitudes that wrap around every 11 cells, at phases that vary with the cell
     for line in range(lines):
@@ -79,7 +80,9 @@ def test():
     catalog = pyre.libpyre.flow.catalog()
     # the recipe with the source in front of the slice
     recipe = sliced()
+    # pinned to the reader
     recipe.factory(name="reader", protocol=Source, pin=reader)
+    # which writes the raster
     recipe.bind(factory="reader", slot="raster", product="raster")
     # stage it, which runs the reader
     plan = recipe.stage(catalog=catalog)
@@ -90,6 +93,7 @@ def test():
 
     # the same recipe without the reader, its raster handed in by hand
     manual = sliced().stage(catalog=catalog, products={"raster": plan.kinds["raster"]})
+    # and the raster to hand it
     source = pyre.libpyre.flow.raster(source=cells, name="raster")
 
     # render two tiles of different shapes, each from a graph of its own
@@ -98,6 +102,7 @@ def test():
         with plan.realize(shape=shape) as graph:
             # move the window
             graph["slice"].set(setting="origin", value=origin)
+            # and set its stride
             graph["slice"].set(setting="stride", value=stride)
             # and pull the image
             staged = graph["image"].read()
@@ -105,6 +110,7 @@ def test():
         with manual.realize(shape=shape, nodes={"raster": source}) as graph:
             # the same window
             graph["slice"].set(setting="origin", value=origin)
+            # with the same stride
             graph["slice"].set(setting="stride", value=stride)
             # and pull its image
             expected = graph["image"].read()
@@ -116,10 +122,13 @@ def test():
     # a source with no implementation to fall back on cannot be staged
     from pyre.flow.exceptions import NoComponentError
 
-    # a recipe with an unpinned source
+    # a recipe
     recipe = sliced()
+    # with an unpinned source
     recipe.factory(name="reader", protocol=Source)
+    # that writes the raster
     recipe.bind(factory="reader", slot="raster", product="raster")
+    # when staged
     try:
         # cannot be staged
         recipe.stage(catalog=catalog)

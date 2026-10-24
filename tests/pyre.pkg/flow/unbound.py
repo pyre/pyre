@@ -40,22 +40,25 @@ def test() -> None:
         """
 
         # the inputs
-        red = Spec.input()
-        green = Spec.input()
-        blue = Spec.input()
+        red = Spec.input()  # red
+        green = Spec.input()  # green
+        blue = Spec.input()  # blue
 
     # for each factory, the inputs the failure should name
     for factory, unbound in [(One(), "'source'"), (Three(), "'red', 'green' and 'blue'")]:
         # making its products
         try:
+            # by asking the factory to make them
             factory.pyre_make()
         # fails
         except factory.IncompleteFlowError as error:
             # naming the factory and its inputs
             assert error.unbound == unbound, error.unbound
+            # and saying so in its description
             assert error.description.format(error) == f"{factory} has no product in {unbound}"
         # and must not succeed
         else:
+            # so complain if it does
             assert False, f"{factory} made its products with nothing to read"
 
     # all done

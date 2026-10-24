@@ -354,8 +354,9 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         """
         Hook invoked when a trait changes value
         """
-        # evaluate
+        # evaluate the new value
         newValue = new.value
+        # and the old one
         oldValue = old.value
         # if {trait} is an input
         if trait.input:
@@ -373,8 +374,9 @@ class Factory(Node, metaclass=FactoryMaker, implements=Producer, internal=True):
         # chain up
         return super().pyre_traitModified(trait=trait, new=new, old=old)
 
-    # private data
+    # private data: the traits that hold my inputs
     pyre_inputTraits = ()
+    # and the ones that hold my outputs
     pyre_outputTraits = ()
     # the c++ templates whose instantiations can do my work when a recipe is staged; none,
     # unless a factory names them

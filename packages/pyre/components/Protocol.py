@@ -38,6 +38,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
 
     # framework data
     pyre_key = None
+    # i am a protocol
     pyre_isProtocol = True
 
     # override this in your protocols to provide the default implementation
@@ -176,6 +177,7 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         # if i don't have a key, i don't have a package
         if cls.pyre_key is None:
+            # so there is nothing to report
             return None
         # otherwise, get the name server
         ns = cls.pyre_executive.nameserver
@@ -443,9 +445,10 @@ class Protocol(Configurable, metaclass=Role, internal=True):
                 # grab the next one
                 continue
 
-            # other kinds?
+            # other kinds? get the journal
             import journal
 
+            # and complain about a symbol of a kind nobody expects
             return journal.firewall.log(f"new kind of symbol in shelf '{uri}'")
 
         # all done
