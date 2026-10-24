@@ -26,20 +26,22 @@ class URI:
     @property
     def uri(self):
         """
-        Assemble a string from my parts
+        Assemble a string from my parts; a part that is there but empty is kept, as RFC 3986
+        asks of recomposition, so a uri reads back as it was written
         """
-        # make a pile
-        parts = filter(
-            None,
-            [
-                # my scheme
-                f"{self.scheme}:" if self.scheme else "",
-                f"//{self.authority}" if self.authority else "",
-                f"{self.address}" if self.address else "",
-                f"?{self.query}" if self.query else "",
-                f"#{self.fragment}" if self.fragment else "",
-            ],
-        )
+        # make a pile of the parts that are there
+        parts = [
+            # my scheme
+            f"{self.scheme}:" if self.scheme is not None else "",
+            # my authority
+            f"//{self.authority}" if self.authority is not None else "",
+            # my address
+            f"{self.address}" if self.address is not None else "",
+            # my query
+            f"?{self.query}" if self.query is not None else "",
+            # and my fragment
+            f"#{self.fragment}" if self.fragment is not None else "",
+        ]
         # assemble and return
         return "".join(parts)
 
