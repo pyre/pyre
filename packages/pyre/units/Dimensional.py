@@ -385,13 +385,17 @@ class Dimensional:
         """
         Conversion to str
         """
-        # render my derivation
-        derivation = self._strDerivation()
+        # render my units
+        label = self.label()
+        # if they are all in the denominator
+        if label.startswith("1/"):
+            # divide my value by them
+            return str(self.value) + label[1:]
         # if I have units
-        if derivation:
-            # render my value and my derivation
-            return str(self.value) + "*" + self._strDerivation()
-        # otherwise, I am dimensionless do just render my value
+        if label:
+            # render my value and my units
+            return str(self.value) + "*" + label
+        # otherwise, I am dimensionless so just render my value
         return str(self.value)
 
     def __format__(self, code):
@@ -415,7 +419,7 @@ class Dimensional:
         fields = {
             "value": "",
             "base": Dimensional(value=1, derivation=self.derivation),
-            "label": self._strDerivation(),
+            "label": self.label(),
         }
         # if the user supplied a format specifier
         if code:
@@ -464,20 +468,45 @@ class Dimensional:
         # otherwise use the plural
         return format(magnitude, value) + op + plural
 
-    # implementation details
-    def _strDerivation(self):
+    def label(self):
         """
-        Build a representation of the fundamental unit labels raised to the exponents specified
-        in my derivation.
+        Spell out my units the way a person writes them: the fundamental units with positive
+        exponents first, and those with negative ones after a slash; a quantity without units
+        spells nothing
 
         The unit parser can parse this textual representation and convert it back into a
         dimensional quantity.
         """
-        return "*".join(
-            "{}**{}".format(label, exponent) if exponent != 1 else label
-            for label, exponent in zip(self.fundamental, self.derivation)
-            if exponent
-        )
+        # pair the fundamental units with their exponents
+        factors = list(zip(self.fundamental, self.derivation))
+        # the ones with positive exponents make the numerator
+        numerator = [self._power(label=label, exponent=e) for label, e in factors if e > 0]
+        # and the ones with negative exponents, the denominator
+        denominator = [self._power(label=label, exponent=-e) for label, e in factors if e < 0]
+        # without units in the denominator
+        if not denominator:
+            # the numerator is all there is
+            return "*".join(numerator)
+        # units only in the denominator still need something above the slash
+        top = "*".join(numerator) or "1"
+        # a denominator of a single unit
+        if len(denominator) == 1:
+            # needs no parentheses
+            return f"{top}/{denominator[0]}"
+        # but one with more units does, so it reads back as written
+        return f"{top}/({'*'.join(denominator)})"
+
+    # implementation details
+    def _power(self, label, exponent):
+        """
+        Spell out the fundamental unit {label} raised to {exponent}
+        """
+        # the first power
+        if exponent == 1:
+            # is the label alone
+            return label
+        # and any other is written as a power
+        return f"{label}**{exponent:g}"
 
 
 # just in case users care about our ordering of the exponents
