@@ -38,7 +38,9 @@ class Part(pyre.component, family="recipe.things.part", implements=Thing):
     A part
     """
 
+    # a number
     level = pyre.properties.int(default=1)
+    # and some text
     label = pyre.properties.str(default="part")
 
 
@@ -48,6 +50,7 @@ class Shared(pyre.component, family="recipe.things.shared", implements=Thing):
     A shared thing
     """
 
+    # a number
     level = pyre.properties.int(default=0)
 
 
@@ -57,18 +60,31 @@ class Owner(pyre.component, family="recipe.owner"):
     An owner
     """
 
+    # some text
     label = pyre.properties.str(default="owner")
+    # a float
     weight = pyre.properties.float(default=1.0)
+    # an integer
     count = pyre.properties.int(default=0)
+    # a list of tuples
     vertices = pyre.properties.list(schema=pyre.properties.tuple(schema=pyre.properties.float()))
+    # that starts empty
     vertices.default = []
+    # a path
     home = pyre.properties.path(default="/tmp")
+    # a uri
     site = pyre.properties.uri(default="file:/tmp")
+    # a component bound by default
     part = Thing()
+    # and one that is not
     friend = Thing()
+    # since it starts out empty
     friend.default = None
+    # runtime state
     derived = pyre.properties.list(schema=pyre.properties.str())
+    # that starts empty
     derived.default = []
+    # and that is not part of the configuration
     derived.persistent = False
 
 
@@ -85,14 +101,16 @@ def test():
     recipe = pyre.config.newRecipe().add(owner)
     # the owner's section
     section = recipe.section("recipe.keeper")
-    # what came from the file
+    # what came from the file: the text
     assert section["label"] == "configured"
+    # and the float
     assert section["weight"] == 2.5
     # containers hold their items as their schemata render them, numbers as numbers, which the
     # loader reads back
     assert section["vertices"] == [[1.0, 2.0], [3.0, 4.0]]
-    # what came from the construction
+    # what came from the construction: the integer
     assert section["count"] == 4
+    # and the path
     assert section["home"] == "/var/tmp"
     # the shared component, by specification
     assert section["friend"] == "recipe.things.shared#recipe.shared"

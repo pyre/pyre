@@ -22,12 +22,12 @@ class Sequence(Container):
     """
 
     # constants
-    open = "[({"
-    close = "])}"
-    delimiter = ","
+    open = "[({"  # the characters that may open my text
+    close = "])}"  # the characters that may close it
+    delimiter = ","  # and the one that separates my entries
     typename = "sequence"  # the name of my type
     container = tuple  # the default container i represent
-    complaint = "could not coerce {0.value!r} to type "
+    complaint = "could not coerce {0.value!r} to type "  # the start of my refusals
 
     # interface
     def string(self, value):
@@ -62,10 +62,13 @@ class Sequence(Container):
         """
         # string processing
         if isinstance(value, str):
-            # strip opening and closing delimiters
+            # if it opens with a delimiter
             if value and value[0] in self.open:
+                # strip it
                 value = value[1:]
+            # if it closes with one
             if value and value[-1] in self.close:
+                # strip that too
                 value = value[:-1]
             # if there is nothing left
             if not value:
