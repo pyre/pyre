@@ -784,6 +784,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_hook_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate_twice.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_trait_evaluation_errors.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/inventory_getslots.py)
 
 
 #
