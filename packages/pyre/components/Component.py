@@ -293,6 +293,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Check my configuration by reading each of my traits, and those of the components they
         hold, record the values they refuse in the pile of the executive, and return them; the
         framework never calls this, and a component may override it to check more, or less
+
+        N.B.: reading a trait is what makes an instance keep its value, so the check materializes
+        the configured state of every instance it reaches as of that moment: from then on, they
+        no longer follow later changes to their classes
         """
         # unless this is part of a larger check, nothing has been checked yet
         visited = set() if visited is None else visited
