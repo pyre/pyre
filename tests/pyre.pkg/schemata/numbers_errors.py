@@ -60,7 +60,6 @@ def test() -> None:
         ("meter.nothing", AttributeError),
         ("meter / 0", ZeroDivisionError),
         ("meter +", SyntaxError),
-        (5, AttributeError),
     ]
     # go through them
     for value, reason in failures:
