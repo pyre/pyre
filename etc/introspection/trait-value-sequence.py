@@ -80,7 +80,8 @@ class TraitValueSequence(pyre.application):
         diagram.trigger(label="boot", col="codec", sub="argv, at import")
         # say how
         diagram.note(
-            col="codec", lines=["CommandLineParser turns --a.b=text into [Assignment] events"]
+            col="codec",
+            lines=["CommandLineParser turns --a.b=text into [Assignment] events"],
         )
         # the configurator processes them
         diagram.call(src="codec", dst="Configurator", label="processEvents")
@@ -100,7 +101,8 @@ class TraitValueSequence(pyre.application):
         diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
         # and treats the text as the generic trait would
         diagram.note(
-            col="SlotFactory", lines=["text goes through the macro of [identity]: an interpolation"]
+            col="SlotFactory",
+            lines=["text goes through the macro of [identity]: an interpolation"],
         )
         # the interpolation compiles the text
         diagram.call(src="SlotFactory", dst="calc", label="interpolation")
@@ -121,7 +123,11 @@ class TraitValueSequence(pyre.application):
         diagram.unwind("slot", "calc", "SlotFactory", "NameServer", "Configurator", "codec")
         # the environment takes the same path
         diagram.note(
-            col="codec", lines=["Environ deposits [pyre.environ.*] the same way, at [boot] rank"]
+            col="codec",
+            lines=[
+                "Environ deposits [pyre.environ.*] the same way, at [boot] rank",
+                "setting one through [executive.environ] works too (F46)",
+            ],
         )
         # all done
         return
@@ -134,7 +140,31 @@ class TraitValueSequence(pyre.application):
         diagram.trigger(label="loadConfiguration", col="codec", sub="pfg, yaml, cfg, pml")
         # whose values are text or objects, depending on the codec
         diagram.note(col="codec", lines=["decode: pfg gives text, yaml gives objects"])
-        # the configurator processes them
+        # yaml tells a scope from a value by the form of its mappings
+        diagram.note(
+            col="codec",
+            lines=[
+                "yaml: a block map is a scope, its entries are settings below its key",
+                "a flow map, {} included, is one value (S7)",
+            ],
+            kind="good",
+        )
+        # a malformed document is refused whole
+        diagram.note(
+            col="codec",
+            lines=[
+                "malformed: a [DecodingError] with file and line;",
+                "none of its settings apply",
+            ],
+            kind="good",
+        )
+        # which the executive files
+        diagram.call(src="codec", dst="Executive", label="recordConfigurationError", kind="good")
+        # in its pile
+        diagram.note(col="Executive", lines=["into [errors], logged on [pyre.configuration]"])
+        # back to the codec
+        diagram.ret(src="Executive", dst="codec")
+        # the configurator processes the events of a good document
         diagram.call(src="codec", dst="Configurator", label="processEvents")
         # plain assignments go into the store as at boot
         diagram.note(
@@ -144,12 +174,35 @@ class TraitValueSequence(pyre.application):
                 "yaml objects take the [native] branch",
             ],
         )
+        # each one goes into the store
+        diagram.call(src="Configurator", dst="NameServer", label="insert")
+        # where the names of packages and families belong to the framework
+        diagram.note(
+            col="NameServer",
+            lines=[
+                "a value at the name of a package or a family",
+                "loses to its [framework] rank: a firewall (S6b)",
+            ],
+            kind="good",
+        )
+        # and any other loss leaves nothing behind
+        diagram.note(
+            col="NameServer",
+            lines=["any other loss on rank leaves no trace (for S4d)"],
+            kind="bad",
+        )
+        # back to the configurator
+        diagram.ret(src="NameServer", dst="Configurator")
         # leave a little room
         diagram.gap(h=4)
         # conditional assignments wait for their instance
         diagram.note(
             col="Configurator",
-            lines=["[ConditionalAssignment], [family#name]:", "held in [deferred], not inserted"],
+            lines=[
+                "[ConditionalAssignment], [family#name]:",
+                "held in [deferred], not inserted;",
+                "no framework traffic until it applies (F54)",
+            ],
             kind="good",
         )
         # back to the codec
@@ -159,28 +212,60 @@ class TraitValueSequence(pyre.application):
 
     def declare(self, diagram: Sequence) -> None:
         """
-        A component class registers the defaults of its traits
+        A component class registers itself and the defaults of its traits, then is configured
         """
         # the class record builds its inventory
         diagram.trigger(label="class declared", col="Component", sub="Actor.__init__")
-        # trait by trait
-        diagram.note(col="Component", lines=["pyre_buildInventory, for every trait"])
+        # through its public inventory
+        diagram.note(col="Component", lines=["PublicInventory.initializeClass"])
+        # the executive registers the class
+        diagram.call(src="Component", dst="Executive", label="registerComponentClass")
+        # under its package, which it makes if it has to
+        diagram.note(
+            col="Executive",
+            lines=[
+                "the package, made at [framework] rank if new;",
+                "a value at its name: a firewall (S6b)",
+                "a value at the family: [reserve] fires a firewall",
+            ],
+            kind="good",
+        )
+        # and puts the class at its family
+        diagram.call(src="Executive", dst="NameServer", label="insert")
+        # where it belongs to the framework
+        diagram.note(col="NameServer", lines=["the class at its family, [framework] rank"])
+        # back to the class
+        diagram.unwind("NameServer", "Executive", "Component")
+        # then its traits
+        diagram.note(col="Component", lines=["registerSlots, for every trait"])
         # each default goes into the store
         diagram.call(src="Component", dst="NameServer", label="insert")
         # at the lowest rank, with the trait's own factory
         diagram.note(
-            col="NameServer", lines=["at [defaults] rank, with the [classSlot] of the trait"]
+            col="NameServer",
+            lines=["at [defaults] rank, with the [classSlot] of the trait"],
         )
-        # a key that was only referred to gives way to the default
-        diagram.note(col="NameServer", lines=["key holds a [placeholder]: build from the default"])
+        # a key that was only referred to is evaluated too
+        diagram.note(
+            col="NameServer",
+            lines=["key holds a [placeholder]: its value raises [UnresolvedNodeError] (s32)"],
+            kind="bad",
+        )
         # but a key that was deposited earlier is rebuilt from its value
-        diagram.note(col="NameServer", lines=["key holds a value: rebuild it from [old.value]"])
+        diagram.note(
+            col="NameServer",
+            lines=[
+                "key holds a value: rebuild it from [old.value]",
+                "which is evaluated here (F42)",
+            ],
+            kind="bad",
+        )
         # by the trait's factory
         diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
-        # which gets the expanded text escaped, so it is not expanded again
+        # which gets the evaluated text escaped, so it is not expanded again
         diagram.note(
             col="SlotFactory",
-            lines=["text that was expanded already is escaped (pyre#40)"],
+            lines=["the evaluated text arrives escaped: not expanded again (d0d844a2b)"],
             kind="good",
         )
         # through the trait's macro
@@ -189,58 +274,146 @@ class TraitValueSequence(pyre.application):
         diagram.call(src="calc", dst="slot", label="node")
         # back to the class
         diagram.unwind("slot", "calc", "SlotFactory", "NameServer", "Component")
+        # the configurator finishes the class
+        diagram.call(src="Component", dst="Configurator", label="configureComponentClass")
+        # by telling each trait
+        diagram.call(src="Configurator", dst="Trait", label="classConfigured")
+        # what each kind of trait does with the settings below its name
+        diagram.note(
+            col="Trait",
+            lines=[
+                "a dict fills its map with the settings below it",
+                "any other property records each one (S8)",
+            ],
+            kind="good",
+        )
+        # which the executive files against the class
+        diagram.call(src="Trait", dst="Executive", label="recordConfigurationError", kind="good")
+        # as a stray setting
+        diagram.note(
+            col="Executive",
+            lines=["a [StraySettingError], filed under the class"],
+        )
+        # back to the configurator
+        diagram.unwind("Executive", "Trait", "Configurator", "Component")
+        # then the class hooks, in the same order as for protocols
+        diagram.note(
+            col="Component",
+            lines=[
+                "pyre_classConfigured, then pyre_classInitialized (F49)",
+                "the registrar, then pyre_classRegistered",
+            ],
+            kind="good",
+        )
+        # and is done
+        diagram.end(col="Component")
         # all done
         return
 
     def instantiate(self, diagram: Sequence) -> None:
         """
-        A component instance registers its traits, then receives its deferred assignments
+        A component instance claims its name, registers its traits, then is configured
         """
         # the class makes an instance
         diagram.trigger(label="C(name=…)", col="Component", sub="Actor.__call__")
-        # which first claims the global settings under its name
-        diagram.note(col="Component", lines=["pull the global settings into its scope"])
-        # by aliasing the short names
-        diagram.call(src="Component", dst="NameServer", label="alias")
-        # which keeps the setting with the higher rank
+        # what happens before the instance exists
+        diagram.note(
+            col="Component",
+            lines=[
+                "an instance registered under the name is returned as it is",
+                "constructor values go in at [construction] rank",
+                "with [globalAliases], global settings are pulled into its scope",
+                "pyre_staged: files named after the instance are loaded",
+            ],
+        )
+        # the inventory asks the executive to register the instance
+        diagram.call(src="Component", dst="Executive", label="registerComponentInstance")
+        # who first decides whether the name is the instance's to take
+        diagram.note(
+            col="Executive",
+            lines=[
+                "assessClaim: a package, a family, or another",
+                "component's trait: a firewall (S6)",
+            ],
+            kind="good",
+        )
+        # the instance takes its name
+        diagram.call(src="Executive", dst="NameServer", label="insert(claim=True)", kind="good")
+        # whatever was there
         diagram.note(
             col="NameServer",
             lines=[
-                "merge [a] into [name.a], by rank",
-                "a [placeholder] there has no processors to carry",
+                "the instance takes its name, whatever the rank",
+                "later assignments compete with its [package] rank",
+                "the slot of the facility building it is taken quietly",
             ],
+            kind="good",
+        )
+        # back to the executive
+        diagram.ret(src="NameServer", dst="Executive")
+        # a plain value it displaced is recorded
+        diagram.note(
+            col="Executive",
+            lines=["a plain value set aside: a [NameClaimedError], filed under the instance"],
+            kind="good",
         )
         # back to the instance
-        diagram.ret(src="NameServer", dst="Component")
-        # then registers its traits
+        diagram.ret(src="Executive", dst="Component")
+        # its slots start from those of its class
+        diagram.note(
+            col="Component",
+            lines=[
+                "instanceSlots: each starts from the class slot's value,",
+                "evaluated now, with no link to the class (F52)",
+                "a default stream opens its file: truncated (pyre#366)",
+            ],
+            kind="bad",
+        )
+        # then it registers its traits
         diagram.note(col="Component", lines=["registerSlots, for every trait"])
         # each one goes into the store
         diagram.call(src="Component", dst="NameServer", label="insert")
-        # at the lowest rank, following the class
+        # at the lowest rank
+        diagram.note(col="NameServer", lines=["at [defaults] rank, with the [instanceSlot]"])
+        # a key that was only referred to is evaluated too
+        diagram.note(
+            col="NameServer",
+            lines=["key holds a [placeholder]: its value raises [UnresolvedNodeError] (s32)"],
+            kind="bad",
+        )
+        # but an existing setting is rebuilt from its value
         diagram.note(
             col="NameServer",
             lines=[
-                "at [defaults] rank, a reference to the class slot",
-                "followed until the instance first reads the trait",
+                "key holds a value: rebuild it from [old.value]",
+                "which is evaluated here (F42)",
             ],
-            kind="good",
+            kind="bad",
         )
-        # a key that was only referred to gives way to the default
-        diagram.note(col="NameServer", lines=["key holds a [placeholder]: build from the default"])
-        # but an existing setting is rebuilt from its value
-        diagram.note(col="NameServer", lines=["key holds a value: rebuild it from [old.value]"])
         # by the trait's factory
-        diagram.call(src="NameServer", dst="SlotFactory", label="__call__", kind="bad")
-        # which gets the expanded text escaped, so it is not expanded again
+        diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
+        # a setting found in the store is escaped before it is rebuilt
         diagram.note(
             col="SlotFactory",
-            lines=["text that was expanded already is escaped (pyre#40)"],
+            lines=["a setting found in the store arrives escaped (d0d844a2b)"],
             kind="good",
         )
-        # but where a reference to a component that does not exist yet is evaluated too early
+        # but the seed from the class arrives as plain text, already expanded once
         diagram.note(
             col="SlotFactory",
-            lines=["a forward reference raises [UnresolvedNodeError] (s43)"],
+            lines=[
+                "but a seed from the class arrives as text already expanded:",
+                "its escaped braces are expanded again (pyre#40, open)",
+            ],
+            kind="bad",
+        )
+        # and where a reference to a name nobody has set is evaluated too early
+        diagram.note(
+            col="SlotFactory",
+            lines=[
+                "a forward reference, or a name nobody set, raises",
+                "a bare [UnresolvedNodeError] at construction (s43, F42)",
+            ],
             kind="bad",
         )
         # through the trait's macro
@@ -258,7 +431,10 @@ class TraitValueSequence(pyre.application):
         # once the trait is known and with the source untouched
         diagram.note(
             col="NameServer",
-            lines=["via [pyre_setTrait]", "the trait is known, and the source is intact"],
+            lines=[
+                "via [pyre_setTrait]",
+                "the trait is known, and the source is intact",
+            ],
             kind="good",
         )
         # so the right factory builds the slot
@@ -269,8 +445,39 @@ class TraitValueSequence(pyre.application):
         diagram.call(src="SlotFactory", dst="calc", label="macro")
         # into the slot node
         diagram.call(src="calc", dst="slot", label="node")
+        # back to the configurator
+        diagram.unwind("slot", "calc", "SlotFactory", "NameServer", "Configurator")
+        # then tells each trait
+        diagram.call(src="Configurator", dst="Trait", label="instanceConfigured")
+        # what each kind of trait does with the settings below its name
+        diagram.note(
+            col="Trait",
+            lines=[
+                "a dict fills its map, conditional entries too",
+                "any other property records each setting below it (S8)",
+            ],
+            kind="good",
+        )
+        # which the executive files against the instance
+        diagram.call(src="Trait", dst="Executive", label="recordConfigurationError", kind="good")
+        # as a stray setting
+        diagram.note(col="Executive", lines=["a [StraySettingError], filed under the instance"])
         # back to the instance
-        diagram.unwind("slot", "calc", "SlotFactory", "NameServer", "Configurator", "Component")
+        diagram.unwind("Executive", "Trait", "Configurator", "Component")
+        # the hooks report instead of raising
+        diagram.note(
+            col="Component",
+            lines=[
+                "pyre_configured: its errors, recorded as a [ConfigurationError]",
+                "pyre_initialized: as an [InitializationError] (S4b)",
+                "the instance is built anyway",
+            ],
+            kind="good",
+        )
+        # and the instance is announced
+        diagram.note(col="Component", lines=["the registrar, then pyre_registered"])
+        # and is done
+        diagram.end(col="Component")
         # all done
         return
 
@@ -281,63 +488,37 @@ class TraitValueSequence(pyre.application):
         # the assignment reaches the inventory
         diagram.trigger(label="c.t = value", col="Component", sub="explicit rank")
         # which sets the value of the trait
-        diagram.note(col="Component", lines=["setTraitValue"])
+        diagram.note(col="Component", lines=["pyre_setTrait, then setTraitValue"])
         # in the store
         diagram.call(src="Component", dst="NameServer", label="insert")
         # with the trait known
-        diagram.note(col="NameServer", lines=["at [explicit] rank, with the factory of the trait"])
+        diagram.note(
+            col="NameServer",
+            lines=["at [explicit] rank, with the factory of the trait"],
+        )
+        # a weaker assignment leaves nothing behind
+        diagram.note(
+            col="NameServer",
+            lines=["a lower rank than the one there: dropped, without a trace (for S4d)"],
+            kind="bad",
+        )
         # whose factory builds the slot
         diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
         # choosing by the python type of the value
         diagram.note(
-            col="SlotFactory", lines=["text goes through the macro, anything else is [native]"]
+            col="SlotFactory",
+            lines=["text goes through the macro, anything else is [native]"],
         )
         # through a macro or a native node
         diagram.call(src="SlotFactory", dst="calc", label="macro · native")
         # into the slot node
         diagram.call(src="calc", dst="slot", label="node")
-        # which takes the place of the old one
-        diagram.note(
-            col="slot",
-            lines=["on a class: the instances that follow it see the change"],
-            kind="good",
-        )
         # back to the inventory
         diagram.unwind("slot", "calc", "SlotFactory", "NameServer", "Component")
-        # all done
-        return
-
-    def delete(self, diagram: Sequence) -> None:
-        """
-        Code deletes a trait of a named component
-        """
-        # the deletion reaches the component
-        diagram.trigger(label="del c.t", col="Component", sub="pyre_deleteTrait")
-        # which can only give up a value it has
-        diagram.note(
-            col="Component",
-            lines=[
-                "still following its class: [TraitUnsetError]",
-                "read or set: give the value up",
-            ],
-        )
-        # by putting back what the trait started with
-        diagram.call(src="Component", dst="NameServer", label="insert", kind="good")
-        # whatever the rank of the value it replaces
-        diagram.note(
-            col="NameServer",
-            lines=[
-                "at [defaults] rank, claiming the node",
-                "a reference to the class slot, followed again",
-            ],
-            kind="good",
-        )
-        # the factory takes the reference as it is
-        diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
-        # which becomes the slot
-        diagram.call(src="SlotFactory", dst="slot", label="replace")
-        # back to the component
-        diagram.unwind("slot", "SlotFactory", "NameServer", "Component")
+        # which tells the owner
+        diagram.note(col="Component", lines=["pyre_traitModified, once cooked"])
+        # and is done
+        diagram.end(col="Component")
         # all done
         return
 
@@ -345,26 +526,32 @@ class TraitValueSequence(pyre.application):
         """
         The first read of a trait computes its value
         """
-        # reading the trait asks the slot for its value
-        diagram.trigger(label="c.t", col="slot", sub="first read only")
+        # reading the trait goes through its descriptor
+        diagram.trigger(label="c.t", col="Trait", sub="Slotted.__get__")
+        # which asks the slot for its value
+        diagram.call(src="Trait", dst="slot", label="value")
         # which is computed once
-        diagram.note(col="slot", lines=["computed once, then kept"])
+        diagram.note(col="slot", lines=["first read only: computed once, then kept"])
         # from the values of its operands
         diagram.call(src="slot", dst="calc", label="operands")
         # references contribute their text
         diagram.note(
-            col="calc", lines=["the values of the referents are spliced as [str] (s25)"], kind="bad"
+            col="calc",
+            lines=["the values of the referents are spliced as [str] (s25)"],
+            kind="bad",
         )
-        # except the unset ones
+        # including the unset ones
         diagram.note(
-            col="calc", lines=["a [None] referent makes the value [None] (s45)"], kind="good"
+            col="calc",
+            lines=["a [None] referent becomes the text [None] (s45)"],
+            kind="bad",
         )
         # back to the slot
         diagram.ret(src="calc", dst="slot")
         # whose postprocessor is the trait
         diagram.call(src="slot", dst="Trait", label="process")
         # say so
-        diagram.note(col="Trait", lines=["the postprocessor of the slot"])
+        diagram.note(col="Trait", lines=["the postprocessor of the slot, through SlotFactory"])
         # unset stays unset
         diagram.note(
             col="Trait",
@@ -376,26 +563,91 @@ class TraitValueSequence(pyre.application):
         # then asks its schema to convert
         diagram.call(src="Trait", dst="Schema", label="coerce")
         # parsing the text a second time
-        diagram.note(col="Schema", lines=["a second parse: eval, units, split, strptime"])
+        diagram.note(
+            col="Schema",
+            lines=[
+                "a second parse: eval, units, split, strptime",
+                "eval with a closed set of builtins (F38)",
+                "a block per kind, then a refusal (F41)",
+            ],
+        )
         # back to the trait
         diagram.ret(src="Schema", dst="Trait")
         # then applies its own rules
         diagram.note(col="Trait", lines=["normalizers, then validators"])
+        # a refusal names what it needs to
+        diagram.note(
+            col="Trait",
+            lines=[
+                "a refusal becomes a [TraitValueError] that names",
+                "the trait, where its value was set, and its owner (S1)",
+            ],
+            kind="good",
+        )
         # back to the slot
         diagram.ret(src="Trait", dst="slot")
-        # which hands out the value
-        diagram.note(col="slot", lines=["the trait's value"])
-        # and, in an instance that follows its class, stops following
+        # and to the descriptor
+        diagram.ret(src="slot", dst="Trait")
+        # which turns any other error of the framework into a refusal too
         diagram.note(
-            col="slot",
+            col="Trait",
+            lines=["any other pyre error while computing: a [TraitValueError] too (S4c)"],
+            kind="good",
+        )
+        # and hands out the value
+        diagram.note(col="Trait", lines=["the trait's value"])
+        # and is done
+        diagram.end(col="Trait")
+        # all done
+        return
+
+    def check(self, diagram: Sequence) -> None:
+        """
+        The application asks for every configuration error at once, when it is ready
+        """
+        # the application decides when its configuration is complete
+        diagram.trigger(
+            label="pyre_validateConfiguration()",
+            col="Component",
+            sub="the application's call",
+        )
+        # the framework never calls it
+        diagram.note(
+            col="Component",
+            lines=["the framework calls none of the checks or reports (S4b)"],
+        )
+        # every trait is read
+        diagram.call(src="Component", dst="Trait", label="read every trait", kind="good")
+        # the way any read is
+        diagram.note(
+            col="Trait",
+            lines=["as in [c.t]; facilities are followed into their components"],
+        )
+        # back to the component
+        diagram.ret(src="Trait", dst="Component")
+        # each refusal goes into the pile once
+        diagram.call(
+            src="Component",
+            dst="Executive",
+            label="recordConfigurationError",
+            kind="good",
+        )
+        # once, however often it is read
+        diagram.note(col="Executive", lines=["a refusal already filed is not filed again"])
+        # back to the component
+        diagram.ret(src="Executive", dst="Component")
+        # what comes back
+        diagram.note(
+            col="Component",
             lines=[
-                "an instance keeps what it read, like a cached property",
-                "and remembers where it came from",
+                "returns the errors filed under it: those found now,",
+                "and those recorded while it was built and configured",
+                "[Pyre.validateConfiguration] does this for every class and instance",
             ],
             kind="good",
         )
         # and is done
-        diagram.end(col="slot")
+        diagram.end(col="Component")
         # all done
         return
 
@@ -482,7 +734,10 @@ class TraitValueSequence(pyre.application):
         # and filling in the rest, without asking a placeholder for its value
         diagram.note(
             col="NameServer",
-            lines=["key holds a placeholder, or nothing:", "insert the default at [defaults] rank"],
+            lines=[
+                "key holds a placeholder, or nothing:",
+                "insert the default at [defaults] rank",
+            ],
             kind="good",
         )
         # the trait becomes the postprocessor of the slot
@@ -676,12 +931,17 @@ class TraitValueSequence(pyre.application):
         """
         # the author decides when the configuration is complete
         diagram.trigger(
-            label="app.pyre_validateConfiguration()", col="Component", sub="when ready (s39)"
+            label="app.pyre_validateConfiguration()",
+            col="Component",
+            sub="when ready (s39)",
         )
         # of the class defaults and of the instance, skipping what the developer marked lazy
         diagram.note(
             col="Component",
-            lines=["every slot of the class, then of the instance", "except the [lazy] ones"],
+            lines=[
+                "every slot of the class, then of the instance",
+                "except the [lazy] ones",
+            ],
         )
         # every slot is checked
         diagram.call(src="Component", dst="slot", label="check", kind="good")
@@ -690,7 +950,10 @@ class TraitValueSequence(pyre.application):
         # or may reach a name nobody has set, which goes in the report like any other failure
         diagram.note(
             col="slot",
-            lines=["pending: it reaches a [placeholder]", "its [UnresolvedNodeError] is reported"],
+            lines=[
+                "pending: it reaches a [placeholder]",
+                "its [UnresolvedNodeError] is reported",
+            ],
             kind="good",
         )
         # through the chain, without keeping what it computes
@@ -760,7 +1023,11 @@ class TraitValueSequence(pyre.application):
         # the writer asks each slot what to record
         diagram.trigger(label="save", col="codec", sub="pfg, yaml writers")
         # what it records is undecided
-        diagram.note(col="codec", lines=["open: record the source or the value? (Q4)"], kind="open")
+        diagram.note(
+            col="codec",
+            lines=["open: record the source or the value? (Q4)"],
+            kind="open",
+        )
         # the writer asks the slot
         diagram.call(src="codec", dst="slot", label="source · value")
         # back to the writer
@@ -779,7 +1046,9 @@ class TraitValueSequence(pyre.application):
         diagram.note(col="codec", lines=["escape the braces (s24)"], kind="good")
         # and what the format itself would misread
         diagram.note(
-            col="codec", lines=["escape the syntax of the format itself (s22)"], kind="good"
+            col="codec",
+            lines=["escape the syntax of the format itself (s22)"],
+            kind="good",
         )
         # and is done
         diagram.end(col="codec")
@@ -793,6 +1062,7 @@ class TraitValueSequence(pyre.application):
             "cols": [
                 "codec",
                 "Configurator",
+                "Executive",
                 "Component",
                 "NameServer",
                 "SlotFactory",
@@ -801,16 +1071,17 @@ class TraitValueSequence(pyre.application):
                 "Trait",
                 "Schema",
             ],
-            "scenarios": [boot, load, declare, instantiate, assign, delete, read],
+            "scenarios": [boot, load, declare, instantiate, assign, read, check],
             "label": (
-                "Sequence of calls that carry a trait value from each source to the trait: boot,"
-                " loading a document, declaring a class, making an instance, assigning from code,"
-                " deleting from code, and reading the trait."
+                "Sequence of calls that carry a trait value from each source to the trait, as pyre"
+                " is once pyre#363 is merged: boot, loading a document, declaring a class, making"
+                " an instance, assigning from code, reading the trait, and checking the"
+                " configuration."
             ),
-            "intro": """<p>Who calls whom, and when, as a value travels from its source to a trait. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Drawn in the notation of <code>doc/diagrams/design/component-construction.graffle</code>, as a candidate to replace the flow diagram in the <a href="https://claude.ai/artifact/NUhiziGjjNuNxGxZNhPTSJ" target="_blank" rel="noopener">guide</a>. Generated by <code>etc/introspection/trait-value-sequence.py</code>.</p>
-    <p class="muted">Lifelines: <b>codec</b> is the command line parser or a document reader; <b>calc</b> is the node algebra the name server is built on (interpolations, expressions, variables, placeholders); <b>slot</b> is the node that ends up holding the value, a calc node itself; <b>Trait</b> owns its <b>SlotFactory</b> and derives from its <b>Schema</b>.</p>
+            "intro": """<p>Who calls whom, and when, as a value travels from its source to a trait, as pyre is once <a href="https://github.com/pyre/pyre/pull/363" target="_blank" rel="noopener">pyre#363</a> is merged into <code>main</code>, which already holds pyre#364. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Drawn in the notation of <code>doc/diagrams/design/component-construction.graffle</code>, as a candidate to replace the flow diagram in the <a href="https://claude.ai/artifact/NUhiziGjjNuNxGxZNhPTSJ" target="_blank" rel="noopener">guide</a>. Generated by <code>etc/introspection/trait-value-sequence.py</code>.</p>
+    <p class="muted">Lifelines: <b>codec</b> is the command line parser or a document reader; <b>Executive</b> registers classes and instances and keeps the pile of configuration errors; <b>calc</b> is the node algebra the name server is built on (interpolations, expressions, variables, placeholders); <b>slot</b> is the node that ends up holding the value, a calc node itself; <b>Trait</b> owns its <b>SlotFactory</b> and derives from its <b>Schema</b>. Labels such as S6 and F42 are steps and findings on the <a href="https://claude.ai/artifact/AXAJnwZnqVRZfHH7cZvA7V" target="_blank" rel="noopener">tracking page</a>; s-numbers are entries in the <a href="https://claude.ai/artifact/Ce2kiJWGiZMJM9ZJNFJtxN" target="_blank" rel="noopener">ledger</a>.</p>
 """,
-            "key": """<div class="key"><span class="g"><b>green</b>: entry points; the one path that builds a slot once</span><span class="r"><b>red</b>: defects</span><span class="t"><b>dashed</b>: what starts a scenario</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>""",
+            "key": """<div class="key"><span class="g"><b>green</b>: entry points; what works as it should, including what pyre#363 fixed</span><span class="r"><b>red</b>: defects</span><span class="t"><b>dashed</b>: what starts a scenario</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>""",
         },
         "proposed": {
             "title": "trait value strawman",
@@ -839,7 +1110,6 @@ class TraitValueSequence(pyre.application):
                 " the trait, checking the configuration, and saving it."
             ),
             "intro": """<p>The strawman: the same sources and the same lifelines as <a href="https://claude.ai/artifact/7hTb8C5yHnG918GSFJECkb" target="_blank" rel="noopener">the path today</a>, minus <b>SlotFactory</b>. A value is deposited as a node built from its source alone; a trait that arrives later attaches itself to that node as its postprocessor instead of rebuilding it from its value. Nothing is expanded twice, a placeholder is replaced rather than rebuilt from, the text is parsed once, by the schema, and a single check reports every error on demand. Generated by <code>etc/introspection/trait-value-sequence.py --design=proposed</code>.</p>
-<p class="muted"><b>Possibly stale:</b> this design was drawn against the code before instances started to follow their classes until they read a trait, and before <code>del</code> and the provenance of following instances were settled; it is kept as it was until the design is revisited.</p>
 <p class="muted">Q1-Q4 are open questions in the guide, and Q8 is settled by s51; s-numbers are entries in the ledger. The two calc tests named in the declaration scenario show that the algebra already supports attaching a postprocessor late.</p>
 """,
             "key": """<div class="key"><span class="g"><b>green</b>: what changes, or stays because it works</span><span class="o"><b>amber</b>: open question</span><span class="r"><b>red</b>: cost of the design</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>""",

@@ -79,16 +79,16 @@ class Sequence:
         if self._lastNote == (col, self.y):
             # gets set apart from it
             self.gap(h=5)
+        # nothing else happens on these rows, so the lines may run across the diagram
+        x, anchor = self.x[col] - 14, "start"
+        # unless the widest of them would run past the right edge
+        if x + max(self._span(text=line) for line in lines) > self.width - 8:
+            # in which case they all end at the lifeline instead, so the note stays aligned
+            x, anchor = self.x[col] + 14, "end"
         # go through the lines
         for line in lines:
             # make room
             self.gap(h=14)
-            # nothing else happens on this row, so the line may run across the diagram
-            x, anchor = self.x[col] - 14, "start"
-            # unless it would run past the right edge
-            if x + self._span(text=line) > self.width - 8:
-                # in which case it ends at the lifeline instead
-                x, anchor = self.x[col] + 14, "end"
             # write it
             self._rich(x=x, y=self.y, text=line, cls=f"note {kind}", anchor=anchor)
         # remember where this note ended
