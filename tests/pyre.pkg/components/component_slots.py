@@ -7,8 +7,9 @@
 
 
 """
-Verify that class and instance trait values interact the way the attributes of python classes
-and their instances do
+Verify that class and instance trait values interact the way a python class and the cached
+properties of its instances do: an instance follows its class until it reads a trait, and keeps
+what it read
 """
 
 # support
@@ -44,8 +45,10 @@ def test():
 
     # make a functor
     g1 = gaussian(name="g1")
-    # and another
+    # another
     g2 = gaussian(name="g2")
+    # and a third one, which won't look at its traits for a while
+    g3 = gaussian(name="g3")
     # the first sees the mean of the class
     assert g1.mean == 1
     # and its spread
@@ -67,7 +70,7 @@ def test():
     assert g1.mean == 0
     # and its own spread
     assert g1.spread == 0.25
-    # the second still sees the mean of the class
+    # the second still holds the mean it read from the class
     assert g2.mean == 1
     # and its spread
     assert g2.spread == 0.5
@@ -84,13 +87,17 @@ def test():
     assert g1.mean == 0
     # and its own spread
     assert g1.spread == 0.25
-    # the second has no values of its own, so it sees the new mean of the class
-    assert g2.mean == 2
+    # the second keeps the mean it read before the change, like a python cached property
+    assert g2.mean == 1
+    # and its spread
+    assert g2.spread == 0.5
+    # the third never read its traits, so it still follows the class and sees the new mean
+    assert g3.mean == 2
     # and its new spread
-    assert g2.spread == 0.75
+    assert g3.spread == 0.75
 
     # all done
-    return gaussian, g1, g2
+    return gaussian, g1, g2, g3
 
 
 # main

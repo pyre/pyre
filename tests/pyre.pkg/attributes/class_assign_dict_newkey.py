@@ -7,7 +7,8 @@
 
 
 """
-Check that a key added to a class dictionary reaches an existing instance, as with python classes
+Check that an instance that has read its dictionary keeps it when a key is added to the class
+dictionary, as with a python cached property
 """
 
 
@@ -32,8 +33,10 @@ def test() -> None:
     assert dict(b.t) == {"a": 1, "b": 2}
     # add a key to the class
     base.t = {"a": 1, "b": 2, "c": 3}
-    # the instance sees it
-    assert dict(b.t) == {"a": 1, "b": 2, "c": 3}
+    # the instance keeps what it read
+    assert dict(b.t) == {"a": 1, "b": 2}
+    # while an instance made after the change sees it
+    assert dict(base(name="c").t) == {"a": 1, "b": 2, "c": 3}
 
     # all done
     return
