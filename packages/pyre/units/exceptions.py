@@ -56,4 +56,23 @@ class CompatibilityError(UnitError):
         return
 
 
+class UnknownUnitError(UnitError, NameError):
+    """
+    Exception raised when the text of a quantity uses a name that is neither a unit nor anything
+    else a quantity may use
+    """
+
+    # public data
+    description = "{0.name!r} is not a unit"
+
+    # meta-methods
+    def __init__(self, name, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the name
+        self.name = name
+        # all done
+        return
+
+
 # end of file
