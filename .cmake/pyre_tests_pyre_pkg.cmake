@@ -17,6 +17,14 @@ pyre_test_python_testcase(tests/pyre.pkg/primitives/path_tuple.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/pathhash.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/path.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/uri.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_add.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_authority.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_controls.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_fragment.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_ipv6.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_parse_copy.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_port.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_scheme.py)
 
 # the {path_resolution} test requires setup+cleanup
 # the setup involves making a directory with a bunchof symbolic links
@@ -277,6 +285,8 @@ pyre_test_python_testcase(tests/pyre.pkg/schemata/casting_reason.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/tuples.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/uris.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/uris_blanks.py)
+pyre_test_python_testcase(tests/pyre.pkg/schemata/uris_emptymap.py)
+pyre_test_python_testcase(tests/pyre.pkg/schemata/uris_numbers.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/components_unresolved.py)
 pyre_test_python_testcase(tests/pyre.pkg/schemata/typed.py)
 
