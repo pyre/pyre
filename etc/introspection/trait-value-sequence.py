@@ -173,16 +173,14 @@ class TraitValueSequence(pyre.application):
         # a key that was only referred to gives way to the default
         diagram.note(col="NameServer", lines=["key holds a [placeholder]: build from the default"])
         # but a key that was deposited earlier is rebuilt from its value
-        diagram.note(
-            col="NameServer", lines=["key holds a value: rebuild it from [old.value]"], kind="bad"
-        )
+        diagram.note(col="NameServer", lines=["key holds a value: rebuild it from [old.value]"])
         # by the trait's factory
-        diagram.call(src="NameServer", dst="SlotFactory", label="__call__", kind="bad")
-        # which expands the expanded text again
+        diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
+        # which gets the expanded text escaped, so it is not expanded again
         diagram.note(
             col="SlotFactory",
-            lines=["the expanded text goes through the macro of the trait again"],
-            kind="bad",
+            lines=["text that was expanded already is escaped (pyre#40)"],
+            kind="good",
         )
         # through the trait's macro
         diagram.call(src="SlotFactory", dst="calc", label="macro")
@@ -217,22 +215,28 @@ class TraitValueSequence(pyre.application):
         diagram.note(col="Component", lines=["registerSlots, for every trait"])
         # each one goes into the store
         diagram.call(src="Component", dst="NameServer", label="insert")
-        # at the lowest rank, with the class's value
+        # at the lowest rank, following the class
         diagram.note(
             col="NameServer",
-            lines=["at [defaults] rank, a reference to the class slot (s51)"],
+            lines=[
+                "at [defaults] rank, a reference to the class slot",
+                "followed until the instance first reads the trait",
+            ],
+            kind="good",
         )
         # a key that was only referred to gives way to the default
         diagram.note(col="NameServer", lines=["key holds a [placeholder]: build from the default"])
         # but an existing setting is rebuilt from its value
-        diagram.note(
-            col="NameServer", lines=["key holds a value: rebuild it from [old.value]"], kind="bad"
-        )
+        diagram.note(col="NameServer", lines=["key holds a value: rebuild it from [old.value]"])
         # by the trait's factory
         diagram.call(src="NameServer", dst="SlotFactory", label="__call__", kind="bad")
-        # which is where escapes are lost
-        diagram.note(col="SlotFactory", lines=["expanded twice (pyre#40)"], kind="bad")
-        # and where a reference to a component that does not exist yet is evaluated too early
+        # which gets the expanded text escaped, so it is not expanded again
+        diagram.note(
+            col="SlotFactory",
+            lines=["text that was expanded already is escaped (pyre#40)"],
+            kind="good",
+        )
+        # but where a reference to a component that does not exist yet is evaluated too early
         diagram.note(
             col="SlotFactory",
             lines=["a forward reference raises [UnresolvedNodeError] (s43)"],
@@ -291,8 +295,48 @@ class TraitValueSequence(pyre.application):
         diagram.call(src="SlotFactory", dst="calc", label="macro · native")
         # into the slot node
         diagram.call(src="calc", dst="slot", label="node")
+        # which takes the place of the old one
+        diagram.note(
+            col="slot",
+            lines=["on a class: the instances that follow it see the change"],
+            kind="good",
+        )
         # back to the inventory
         diagram.unwind("slot", "calc", "SlotFactory", "NameServer", "Component")
+        # all done
+        return
+
+    def delete(self, diagram: Sequence) -> None:
+        """
+        Code deletes a trait of a named component
+        """
+        # the deletion reaches the component
+        diagram.trigger(label="del c.t", col="Component", sub="pyre_deleteTrait")
+        # which can only give up a value it has
+        diagram.note(
+            col="Component",
+            lines=[
+                "still following its class: [TraitUnsetError]",
+                "read or set: give the value up",
+            ],
+        )
+        # by putting back what the trait started with
+        diagram.call(src="Component", dst="NameServer", label="insert", kind="good")
+        # whatever the rank of the value it replaces
+        diagram.note(
+            col="NameServer",
+            lines=[
+                "at [defaults] rank, claiming the node",
+                "a reference to the class slot, followed again",
+            ],
+            kind="good",
+        )
+        # the factory takes the reference as it is
+        diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
+        # which becomes the slot
+        diagram.call(src="SlotFactory", dst="slot", label="replace")
+        # back to the component
+        diagram.unwind("slot", "SlotFactory", "NameServer", "Component")
         # all done
         return
 
@@ -310,9 +354,9 @@ class TraitValueSequence(pyre.application):
         diagram.note(
             col="calc", lines=["the values of the referents are spliced as [str] (s25)"], kind="bad"
         )
-        # including the unset ones
+        # except the unset ones
         diagram.note(
-            col="calc", lines=["a [None] referent becomes the text [None] (s45)"], kind="bad"
+            col="calc", lines=["a [None] referent makes the value [None] (s45)"], kind="good"
         )
         # back to the slot
         diagram.ret(src="calc", dst="slot")
@@ -340,6 +384,15 @@ class TraitValueSequence(pyre.application):
         diagram.ret(src="Trait", dst="slot")
         # which hands out the value
         diagram.note(col="slot", lines=["the trait's value"])
+        # and, in an instance that follows its class, stops following
+        diagram.note(
+            col="slot",
+            lines=[
+                "an instance keeps what it read, like a cached property",
+                "and remembers where it came from",
+            ],
+            kind="good",
+        )
         # and is done
         diagram.end(col="slot")
         # all done
@@ -747,11 +800,11 @@ class TraitValueSequence(pyre.application):
                 "Trait",
                 "Schema",
             ],
-            "scenarios": [boot, load, declare, instantiate, assign, read],
+            "scenarios": [boot, load, declare, instantiate, assign, delete, read],
             "label": (
                 "Sequence of calls that carry a trait value from each source to the trait: boot,"
                 " loading a document, declaring a class, making an instance, assigning from code,"
-                " and reading the trait."
+                " deleting from code, and reading the trait."
             ),
             "intro": """<p>Who calls whom, and when, as a value travels from its source to a trait. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Drawn in the notation of <code>doc/diagrams/design/component-construction.graffle</code>, as a candidate to replace the flow diagram in the <a href="https://claude.ai/artifact/NUhiziGjjNuNxGxZNhPTSJ" target="_blank" rel="noopener">guide</a>. Generated by <code>etc/introspection/trait-value-sequence.py</code>.</p>
     <p class="muted">Lifelines: <b>codec</b> is the command line parser or a document reader; <b>calc</b> is the node algebra the name server is built on (interpolations, expressions, variables, placeholders); <b>slot</b> is the node that ends up holding the value, a calc node itself; <b>Trait</b> owns its <b>SlotFactory</b> and derives from its <b>Schema</b>.</p>
@@ -785,6 +838,7 @@ class TraitValueSequence(pyre.application):
                 " the trait, checking the configuration, and saving it."
             ),
             "intro": """<p>The strawman: the same sources and the same lifelines as <a href="https://claude.ai/artifact/7hTb8C5yHnG918GSFJECkb" target="_blank" rel="noopener">the path today</a>, minus <b>SlotFactory</b>. A value is deposited as a node built from its source alone; a trait that arrives later attaches itself to that node as its postprocessor instead of rebuilding it from its value. Nothing is expanded twice, a placeholder is replaced rather than rebuilt from, the text is parsed once, by the schema, and a single check reports every error on demand. Generated by <code>etc/introspection/trait-value-sequence.py --design=proposed</code>.</p>
+<p class="muted"><b>Possibly stale:</b> this design was drawn against the code before instances started to follow their classes until they read a trait, and before <code>del</code> and the provenance of following instances were settled; it is kept as it was until the design is revisited.</p>
 <p class="muted">Q1-Q4 are open questions in the guide, and Q8 is settled by s51; s-numbers are entries in the ledger. The two calc tests named in the declaration scenario show that the algebra already supports attaching a postprocessor late.</p>
 """,
             "key": """<div class="key"><span class="g"><b>green</b>: what changes, or stays because it works</span><span class="o"><b>amber</b>: open question</span><span class="r"><b>red</b>: cost of the design</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>""",
