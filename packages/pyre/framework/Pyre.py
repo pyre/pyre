@@ -54,6 +54,10 @@ class Pyre(Executive):
         Check the configuration of every component class and instance i know, record what they
         refuse in my pile, and return it; the framework never calls this, so an application
         decides when, and whether, to check
+
+        N.B.: the check reads every trait, so it materializes the configured state of every
+        instance as of that moment: from then on, they no longer follow later changes to their
+        classes
         """
         # a check that reaches an instance through another one does not repeat it
         visited = set()
