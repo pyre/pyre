@@ -218,8 +218,8 @@ class URI:
         """
         # if {other} is not a string
         if not isinstance(other, str):
-            # i don't know what to do
-            raise NotImplemented
+            # i don't know what to do, so let python look for another way, or complain
+            return NotImplemented
         # otherwise, turn me into a string and add {other}
         new = str(self) + other
         # coerce that into a uri and return it
