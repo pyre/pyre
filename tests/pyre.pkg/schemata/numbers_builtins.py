@@ -96,10 +96,12 @@ def test() -> None:
     try:
         # coerce text that imports a module
         schema.coerce(value="[__import__('os').getpid()]")
-    # it must be refused
-    except DisallowedFunctionError as error:
+    # it must be refused, the way numbers refuse it
+    except schema.CastingError as error:
         # because of the builtin it names
-        assert error.name == "__import__", error.name
+        assert isinstance(error.error, DisallowedFunctionError), repr(error.error)
+        # which the complaint keeps
+        assert error.error.name == "__import__", error.error.name
     # if it is not refused at all
     else:
         # say so
