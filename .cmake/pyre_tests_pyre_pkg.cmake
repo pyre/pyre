@@ -24,7 +24,9 @@ pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_fragment.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_ipv6.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_parse_copy.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_port.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_roundtrip.py)
 pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_scheme.py)
+pyre_test_python_testcase(tests/pyre.pkg/primitives/uri_scheme_case.py)
 
 # the {path_resolution} test requires setup+cleanup
 # the setup involves making a directory with a bunchof symbolic links
