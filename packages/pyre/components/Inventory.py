@@ -72,7 +72,7 @@ class Inventory(Dashboard):
         Return an iterable over the trait value storage
         """
         # i don't know how to do it, but my children had better
-        raise NotImplementedError("class {.__name__!r} must implement 'getSlots'".format(cls))
+        raise NotImplementedError(f"class '{type(self).__name__}' must implement 'getSlots'")
 
     # support for giving up values
     @classmethod
