@@ -67,15 +67,6 @@ class Facility(Slotted, schemata.component):
         return self.pyre_nameserver.variable(**kwds)
 
     # framework hooks triggered by the construction of instances
-    def instanceSeed(self, classSlot, key=None):
-        """
-        Compute the value the slot of a new instance, registered under {key}, starts with, out of
-        {classSlot}, the slot of its class: what the class slot holds, since an instance builds
-        its component out of the recipe of its class and keeps no link to it
-        """
-        # copy the recipe
-        return self.instanceCopy(classSlot=classSlot)
-
     # interface
     def coerce(self, value, anonymous=False, **kwds):
         """
