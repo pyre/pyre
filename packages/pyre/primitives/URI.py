@@ -6,6 +6,7 @@
 
 
 # externals
+import ipaddress
 import re
 import typing
 
@@ -53,18 +54,27 @@ class URI:
         if not authority:
             # not much to do
             return (None,) * 4
-        # parse it
-        match = self._authorityParser.match(authority)
-        # if it fails
-        if not match:
-            # bail
+        # attempt to
+        try:
+            # split it into its parts
+            userinfo, host, port = self._authority(text=authority, value=authority)
+        # if it is not a valid authority, which can only happen to a uri that was not parsed
+        except self.ParsingError:
+            # there is nothing to report
             return (None,) * 4
-        # otherwise, extract the username
-        user = match.group("user")
-        port = match.group("port")
-        password = match.group("passwd")
-        host = match.group("host")
-        # and return the fields
+        # a user information without a colon
+        if userinfo is None:
+            # names neither a user nor a password
+            user, password = None, None
+        # otherwise
+        else:
+            # split it at the first colon
+            user, colon, password = userinfo.partition(":")
+            # a password is there only after a colon
+            password = password if colon else None
+        # an empty port is the same as no port at all
+        port = port if port else None
+        # return the fields
         return host, port, user, password
 
     # interface
@@ -99,21 +109,57 @@ class URI:
         if isinstance(value, Path):
             # build a {file} uri and return it
             return cls(scheme="file", address=value)
-        # otherwise, assume it is a string and parse it
+        # otherwise, assume it is a string; control characters belong nowhere in a uri, while
+        # blanks are kept, since they are part of the names of the resources users type
+        if cls._controls.search(value):
+            # so complain
+            raise cls.ParsingError(
+                value=value, description="{0.value!r} is not a uri: it holds a control character"
+            )
+        # split it into its parts
         match = cls._uriParser.match(value)
-        # if unsuccessful
+        # which fails only for text that starts with an ampersand, a rule older than RFC 3986
         if not match:
-            # set up the error message
-            msg = "unrecognizable URI {0.value!r}"
-            # and complain
-            raise cls.ParsingError(value=value, description=msg)
-
-        # otherwise, extract the parts
+            # so complain
+            raise cls.ParsingError(
+                value=value, description="{0.value!r} is not a uri: it starts with '&'"
+            )
+        # extract the parts
         thescheme = match.group("scheme")
         theauthority = match.group("authority")
         theaddress = match.group("address")
         thequery = match.group("query")
         thefragment = match.group("fragment")
+        # a scheme starts with a letter, followed by letters, digits, plus, minus or dot
+        if thescheme is not None and not cls._schemeParser.match(thescheme):
+            # anything else is not one
+            raise cls.ParsingError(
+                value=value,
+                description=(
+                    "{0.value!r} is not a uri: a scheme starts with a letter, followed by"
+                    " letters, digits, '+', '-' or '.'"
+                ),
+            )
+        # an authority
+        if theauthority is not None:
+            # must split into its parts
+            cls._authority(text=theauthority, value=value)
+        # without a scheme or an authority, a colon before the first slash would read as a scheme
+        if thescheme is None and theauthority is None and ":" in theaddress.partition("/")[0]:
+            # so RFC 3986 does not allow one there
+            raise cls.ParsingError(
+                value=value,
+                description=(
+                    "{0.value!r} is not a uri: without a scheme, a colon may not come before the"
+                    " first slash"
+                ),
+            )
+        # a fragment ends the uri
+        if thefragment is not None and "#" in thefragment:
+            # so it cannot hold another one
+            raise cls.ParsingError(
+                value=value, description="{0.value!r} is not a uri: it has more than one fragment"
+            )
         # build a uri and return it
         return cls(
             scheme=thescheme if thescheme is not None else scheme,
@@ -198,9 +244,89 @@ class URI:
         return self.uri
 
     # implementation details
+    @classmethod
+    def _authority(cls, text, value):
+        """
+        Split the authority {text} of the uri {value} into its user information, host and port,
+        as RFC 3986 spells them; the host of an IP literal comes back without its brackets
+        """
+        # split the authority
+        match = cls._authorityParser.match(text)
+        # if it does not split
+        if not match:
+            # complain
+            raise cls.ParsingError(
+                value=value,
+                description=(
+                    "{0.value!r} is not a uri: its authority is not of the form"
+                    " [user[:password]@]host[:port], with a numeric port"
+                ),
+            )
+        # get the user information
+        userinfo = match.group("userinfo")
+        # and the host, which is either an IP literal
+        literal = match.group("literal")
+        # or a registered name, or an IPv4 address
+        host = match.group("host")
+        # the user information and a registered name
+        for part in (userinfo, host):
+            # may not hold the characters RFC 3986 excludes
+            if part is not None and cls._excluded.search(part):
+                # so complain
+                raise cls.ParsingError(
+                    value=value,
+                    description=(
+                        "{0.value!r} is not a uri: its authority holds a blank, a brace, or one"
+                        ' of the characters < > " \\ ^ ` | [ ]'
+                    ),
+                )
+        # an IP literal
+        if literal is not None:
+            # must be an IPv6 address, or a future one
+            cls._literal(text=literal, value=value)
+            # whose host is the address itself
+            host = literal
+        # hand back the parts
+        return userinfo, host, match.group("port")
+
+    @classmethod
+    def _literal(cls, text, value):
+        """
+        Check that the IP literal {text} of the uri {value} is an IPv6 address, or a future one
+        """
+        # a future IP literal names its version
+        if cls._futureParser.match(text):
+            # and is good as it is
+            return text
+        # a zone is spelled with a percent sign, which RFC 3986 does not allow in a literal
+        if "%" not in text:
+            # attempt to
+            try:
+                # interpret the rest as an IPv6 address
+                ipaddress.IPv6Address(text)
+            # if it is not one
+            except ipaddress.AddressValueError:
+                # fall through to the complaint
+                pass
+            # if it is one
+            else:
+                # it is good
+                return text
+        # anything else is not an IP literal
+        raise cls.ParsingError(
+            value=value,
+            description=(
+                "{0.value!r} is not a uri: the host in brackets is neither an IPv6 address nor a"
+                " future IP literal"
+            ),
+        )
+
+    # the generic split of RFC 3986, appendix B, which every text matches, except the ones pyre
+    # refuses because they start with an ampersand
     _uriParser = re.compile(
-        # adapted from http://regexlib.com/Search.aspx?k=URL
-        # disallow '&' at the beginning of uri
+        # disallow '&' at the beginning of uri, as does the regexlib.com pattern this split came
+        # with, presumably so text that continues a query is not mistaken for a uri; RFC 3986
+        # allows it, but the rule is kept
         r"^(?=[^&])"
         # grab the scheme
         r"(?:(?P<scheme>[^:/?#]+):)?"
@@ -211,17 +337,32 @@ class URI:
         # the query, i.e. the ?key=value&... chunks
         r"(?:\?(?P<query>[^#]*))?"
         # and the fragment
-        r"(?:#(?P<fragment>.*))?"
+        r"(?:#(?P<fragment>.*))?",
+        # the address may span lines, so the control check can see them
+        re.DOTALL,
     )
 
+    # a scheme: a letter, followed by letters, digits, plus, minus or dot
+    _schemeParser = re.compile(r"^[A-Za-z][A-Za-z0-9+.\-]*$")
+
+    # an authority: user information, a host, and a port, which is a number, or empty
     _authorityParser = re.compile(
-        # user info
-        r"((?P<user>[^@:]+)(:(?P<passwd>.*))?@)?"
-        # the host
-        r"(?P<host>[^@:]+)"
+        # the user information, which holds no @
+        r"^(?:(?P<userinfo>[^@]*)@)?"
+        # the host: an IP literal in brackets, or a registered name
+        r"(?:\[(?P<literal>[^\]]*)\]|(?P<host>[^:@\[\]]*))"
         # the optional port number
-        r"(:(?P<port>\d+))?"
+        r"(?::(?P<port>[0-9]*))?$"
     )
+
+    # a future IP literal: a version, and an address of letters, digits and some punctuation
+    _futureParser = re.compile(r"^[vV][0-9A-Fa-f]+\.[A-Za-z0-9\-._~!$&'()*+,;=:]+$")
+
+    # the characters RFC 3986 excludes from user information and host names
+    _excluded = re.compile(r'[ "<>\\^`{|}\[\]]')
+
+    # control characters, which RFC 3986 excludes from every part of a uri
+    _controls = re.compile(r"[\x00-\x1f\x7f]")
 
     __slots__ = ("scheme", "authority", "address", "query", "fragment")
 
