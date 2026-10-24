@@ -22,7 +22,7 @@ class URI(Schema):
 
     # constants
     typename = "uri"  # the name of my type
-    complaint = "could not coerce {0.value!r} into a URI"
+    complaint = "could not coerce {0.value!r} into a URI"  # what i say when i refuse a value
 
     # interface
     def coerce(self, value, **kwds):
