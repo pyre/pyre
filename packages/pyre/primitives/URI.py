@@ -126,11 +126,15 @@ class URI:
             raise cls.ParsingError(
                 value=value, description="{0.value!r} is not a uri: it starts with '&'"
             )
-        # extract the parts
+        # extract the parts: the scheme
         thescheme = match.group("scheme")
+        # the authority
         theauthority = match.group("authority")
+        # the address
         theaddress = match.group("address")
+        # the query
         thequery = match.group("query")
+        # and the fragment
         thefragment = match.group("fragment")
         # a scheme starts with a letter, followed by letters, digits, plus, minus or dot
         if thescheme is not None and not cls._schemeParser.match(thescheme):
@@ -366,6 +370,7 @@ class URI:
     # control characters, which RFC 3986 excludes from every part of a uri
     _controls = re.compile(r"[\x00-\x1f\x7f]")
 
+    # my parts are all i hold, so i need no dictionary
     __slots__ = ("scheme", "authority", "address", "query", "fragment")
 
 
