@@ -21,9 +21,12 @@ class Dimensional:
     # public data
     # representational choices
     fundamental = ("kg", "m", "s", "A", "K", "mol", "cd")  # the SI fundamental units
+    # the derivation of quantities without units
     zero = (0,) * len(fundamental)
     # default values
+    # a magnitude of nothing
     value = 0
+    # and no units
     derivation = zero
 
     # interface
@@ -49,8 +52,11 @@ class Dimensional:
             {value}: the magnitude
             {derivation}: a tuple with the exponents of the fundamental SI units
         """
+        # save my magnitude
         self.value = value
+        # and my units
         self.derivation = derivation
+        # all done
         return
 
     # addition
@@ -103,11 +109,13 @@ class Dimensional:
             # dispatch the operation to the individual entries
             return type(other)(self * entry for entry in other)
 
-        # otherwise,  get my value
+        # otherwise, get my value
         value = self.value
         # attempt to interpret {other} as a dimensional
         try:
+            # by multiplying by its magnitude
             value *= other.value
+        # if it isn't one
         except AttributeError:
             # the only legal alternative is that {other} is a numeric type
             try:
@@ -117,15 +125,17 @@ class Dimensional:
             except TypeError:
                 # report an error
                 raise self.CompatibilityError(operation="multiplication", op1=self, op2=other)
-            # if i am dimensionless, just return the value
+            # if i am dimensionless
             if self.derivation == self.zero:
+                # just return the value
                 return value
             # otherwise, return a new dimensional
             return Dimensional(value=value, derivation=self.derivation)
         # otherwise, compute the units
         derivation = tuple(map(operator.add, self.derivation, other.derivation))
-        # check whether the units canceled
+        # if the units canceled
         if derivation == self.zero:
+            # the product is a plain number
             return value
         # otherwise build a new one and return it
         return Dimensional(value, derivation)
@@ -139,9 +149,11 @@ class Dimensional:
         value = self.value
         # attempt to interpret {other} as a dimensional
         try:
+            # by dividing by its magnitude
             value /= other.value
+        # if it isn't one
         except AttributeError:
-            # the only legal alternative is that {other} is a numaric type
+            # the only legal alternative is that {other} is a numeric type
             try:
                 # divide
                 value /= other
@@ -149,15 +161,17 @@ class Dimensional:
             except TypeError:
                 # report an error
                 raise self.CompatibilityError(operation="division", op1=self, op2=other)
-            # if i am dimensionless, just return the value
+            # if i am dimensionless
             if self.derivation == self.zero:
+                # just return the value
                 return value
             # otherwise, build a dimensional and return it
             return Dimensional(value=value, derivation=self.derivation)
         # otherwise compute the units
         derivation = tuple(map(operator.sub, self.derivation, other.derivation))
-        # check whether the units canceled
+        # if the units canceled
         if derivation == self.zero:
+            # the quotient is a plain number
             return value
         # and return a new dimensional
         return Dimensional(value=value, derivation=derivation)
@@ -385,13 +399,17 @@ class Dimensional:
         """
         Conversion to str
         """
-        # render my derivation
-        derivation = self._strDerivation()
+        # render my units
+        label = self.label()
+        # if they are all in the denominator
+        if label.startswith("1/"):
+            # divide my value by them
+            return str(self.value) + label[1:]
         # if I have units
-        if derivation:
-            # render my value and my derivation
-            return str(self.value) + "*" + self._strDerivation()
-        # otherwise, I am dimensionless do just render my value
+        if label:
+            # render my value and my units
+            return str(self.value) + "*" + label
+        # otherwise, I am dimensionless so just render my value
         return str(self.value)
 
     def __format__(self, code):
@@ -415,7 +433,7 @@ class Dimensional:
         fields = {
             "value": "",
             "base": Dimensional(value=1, derivation=self.derivation),
-            "label": self._strDerivation(),
+            "label": self.label(),
         }
         # if the user supplied a format specifier
         if code:
@@ -428,9 +446,11 @@ class Dimensional:
             # render in a way recognizable by the parser
             pretty = False
 
-        # get the fields
+        # get the format of the magnitude
         value = fields["value"]
+        # the scale it is measured against
         base = fields["base"]
+        # and the label of its units
         label = fields["label"]
         # convert the base specification if necessary
         if isinstance(base, str):
@@ -464,27 +484,54 @@ class Dimensional:
         # otherwise use the plural
         return format(magnitude, value) + op + plural
 
-    # implementation details
-    def _strDerivation(self):
+    def label(self):
         """
-        Build a representation of the fundamental unit labels raised to the exponents specified
-        in my derivation.
+        Spell out my units the way a person writes them: the fundamental units with positive
+        exponents first, and those with negative ones after a slash; a quantity without units
+        spells nothing
 
         The unit parser can parse this textual representation and convert it back into a
         dimensional quantity.
         """
-        return "*".join(
-            "{}**{}".format(label, exponent) if exponent != 1 else label
-            for label, exponent in zip(self.fundamental, self.derivation)
-            if exponent
-        )
+        # pair the fundamental units with their exponents
+        factors = list(zip(self.fundamental, self.derivation))
+        # the ones with positive exponents make the numerator
+        numerator = [self._power(label=label, exponent=e) for label, e in factors if e > 0]
+        # and the ones with negative exponents, the denominator
+        denominator = [self._power(label=label, exponent=-e) for label, e in factors if e < 0]
+        # without units in the denominator
+        if not denominator:
+            # the numerator is all there is
+            return "*".join(numerator)
+        # units only in the denominator still need something above the slash
+        top = "*".join(numerator) or "1"
+        # a denominator of a single unit
+        if len(denominator) == 1:
+            # needs no parentheses
+            return f"{top}/{denominator[0]}"
+        # but one with more units does, so it reads back as written
+        return f"{top}/({'*'.join(denominator)})"
+
+    # implementation details
+    def _power(self, label, exponent):
+        """
+        Spell out the fundamental unit {label} raised to {exponent}
+        """
+        # the first power
+        if exponent == 1:
+            # is the label alone
+            return label
+        # and any other is written as a power
+        return f"{label}**{exponent:g}"
 
 
 # just in case users care about our ordering of the exponents
 fundamental = Dimensional.fundamental
 
 # instances
+# nothing, without units
 zero = Dimensional(0, Dimensional.zero)
+# and one, without units, under both of its names
 one = dimensionless = Dimensional(1, Dimensional.zero)
 
 
