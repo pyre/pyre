@@ -245,11 +245,11 @@ class TraitValueSequence(pyre.application):
             col="NameServer",
             lines=["at [defaults] rank, with the [classSlot] of the trait"],
         )
-        # a key that was only referred to is evaluated too
+        # a key that was only referred to gives way to the default
         diagram.note(
             col="NameServer",
-            lines=["key holds a [placeholder]: its value raises [UnresolvedNodeError] (s32)"],
-            kind="bad",
+            lines=["key holds a [placeholder]: the default takes over (s32)"],
+            kind="good",
         )
         # but a key that was deposited earlier is rebuilt from its value
         diagram.note(
@@ -363,11 +363,11 @@ class TraitValueSequence(pyre.application):
         diagram.note(
             col="Component",
             lines=[
-                "instanceSlots: each starts from the class slot's value,",
-                "evaluated now, with no link to the class (F52)",
-                "a default stream opens its file: truncated (pyre#366)",
+                "instanceSlots: each starts as a reference to the class slot,",
+                "followed until the instance first reads the trait;",
+                "nothing is processed, so a default stream opens no file (pyre#366)",
             ],
-            kind="bad",
+            kind="good",
         )
         # then it registers its traits
         diagram.note(col="Component", lines=["registerSlots, for every trait"])
@@ -375,11 +375,11 @@ class TraitValueSequence(pyre.application):
         diagram.call(src="Component", dst="NameServer", label="insert")
         # at the lowest rank
         diagram.note(col="NameServer", lines=["at [defaults] rank, with the [instanceSlot]"])
-        # a key that was only referred to is evaluated too
+        # a key that was only referred to gives way to the default
         diagram.note(
             col="NameServer",
-            lines=["key holds a [placeholder]: its value raises [UnresolvedNodeError] (s32)"],
-            kind="bad",
+            lines=["key holds a [placeholder]: the default takes over (s32)"],
+            kind="good",
         )
         # but an existing setting is rebuilt from its value
         diagram.note(
@@ -398,14 +398,11 @@ class TraitValueSequence(pyre.application):
             lines=["a setting found in the store arrives escaped (d0d844a2b)"],
             kind="good",
         )
-        # but the seed from the class arrives as plain text, already expanded once
+        # and the seed from the class is a node, which is used as it is
         diagram.note(
             col="SlotFactory",
-            lines=[
-                "but a seed from the class arrives as text already expanded:",
-                "its escaped braces are expanded again (pyre#40, open)",
-            ],
-            kind="bad",
+            lines=["a seed from the class is a reference, used as it is (pyre#40)"],
+            kind="good",
         )
         # and where a reference to a name nobody has set is evaluated too early
         diagram.note(
@@ -513,8 +510,52 @@ class TraitValueSequence(pyre.application):
         diagram.call(src="SlotFactory", dst="calc", label="macro · native")
         # into the slot node
         diagram.call(src="calc", dst="slot", label="node")
+        # which takes the place of the old one
+        diagram.note(
+            col="slot",
+            lines=["on a class: the instances that follow it see the change"],
+            kind="good",
+        )
         # back to the inventory
         diagram.unwind("slot", "calc", "SlotFactory", "NameServer", "Component")
+        # which tells the owner
+        diagram.note(col="Component", lines=["pyre_traitModified, once cooked"])
+        # and is done
+        diagram.end(col="Component")
+        # all done
+        return
+
+    def delete(self, diagram: Sequence) -> None:
+        """
+        Code deletes a trait of a named component
+        """
+        # the deletion reaches the component
+        diagram.trigger(label="del c.t", col="Component", sub="pyre_deleteTrait")
+        # which can only give up a value it has
+        diagram.note(
+            col="Component",
+            lines=[
+                "still following its class: a [TraitUnsetError]",
+                "read or set: the value is given up",
+            ],
+        )
+        # by putting back what the trait started with
+        diagram.call(src="Component", dst="NameServer", label="insert(claim=True)", kind="good")
+        # whatever the rank of the value it replaces
+        diagram.note(
+            col="NameServer",
+            lines=[
+                "at [defaults] rank, whatever the rank there",
+                "a reference to the class slot, followed again",
+            ],
+            kind="good",
+        )
+        # the factory takes the reference as it is
+        diagram.call(src="NameServer", dst="SlotFactory", label="__call__")
+        # which becomes the slot
+        diagram.call(src="SlotFactory", dst="slot", label="replace")
+        # back to the component
+        diagram.unwind("slot", "SlotFactory", "NameServer", "Component")
         # which tells the owner
         diagram.note(col="Component", lines=["pyre_traitModified, once cooked"])
         # and is done
@@ -540,11 +581,11 @@ class TraitValueSequence(pyre.application):
             lines=["the values of the referents are spliced as [str] (s25)"],
             kind="bad",
         )
-        # including the unset ones
+        # except the unset ones
         diagram.note(
             col="calc",
-            lines=["a [None] referent becomes the text [None] (s45)"],
-            kind="bad",
+            lines=["a [None] referent makes the value [None] (s45)"],
+            kind="good",
         )
         # back to the slot
         diagram.ret(src="calc", dst="slot")
@@ -594,6 +635,15 @@ class TraitValueSequence(pyre.application):
             lines=["any other pyre error while computing: a [TraitValueError] too (S4c)"],
             kind="good",
         )
+        # an instance that follows its class stops there
+        diagram.note(
+            col="Trait",
+            lines=[
+                "an instance that follows its class keeps the value from now on,",
+                "and remembers where it came from, like a cached property",
+            ],
+            kind="good",
+        )
         # and hands out the value
         diagram.note(col="Trait", lines=["the trait's value"])
         # and is done
@@ -621,7 +671,10 @@ class TraitValueSequence(pyre.application):
         # the way any read is
         diagram.note(
             col="Trait",
-            lines=["as in [c.t]; facilities are followed into their components"],
+            lines=[
+                "as in [c.t]; facilities are followed into their components",
+                "so every instance it reads keeps its values from now on",
+            ],
         )
         # back to the component
         diagram.ret(src="Trait", dst="Component")
@@ -1071,17 +1124,17 @@ class TraitValueSequence(pyre.application):
                 "Trait",
                 "Schema",
             ],
-            "scenarios": [boot, load, declare, instantiate, assign, read, check],
+            "scenarios": [boot, load, declare, instantiate, assign, delete, read, check],
             "label": (
                 "Sequence of calls that carry a trait value from each source to the trait, as pyre"
-                " is once pyre#363 is merged: boot, loading a document, declaring a class, making"
-                " an instance, assigning from code, reading the trait, and checking the"
-                " configuration."
+                " is once pyre#375 is merged: boot, loading a document, declaring a class, making"
+                " an instance, assigning from code, deleting from code, reading the trait, and"
+                " checking the configuration."
             ),
-            "intro": """<p>Who calls whom, and when, as a value travels from its source to a trait, as pyre is once <a href="https://github.com/pyre/pyre/pull/363" target="_blank" rel="noopener">pyre#363</a> is merged into <code>main</code>, which already holds pyre#364. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Drawn in the notation of <code>doc/diagrams/design/component-construction.graffle</code>, as a candidate to replace the flow diagram in the <a href="https://claude.ai/artifact/NUhiziGjjNuNxGxZNhPTSJ" target="_blank" rel="noopener">guide</a>. Generated by <code>etc/introspection/trait-value-sequence.py</code>.</p>
+            "intro": """<p>Who calls whom, and when, as a value travels from its source to a trait, as pyre is once <a href="https://github.com/pyre/pyre/pull/375" target="_blank" rel="noopener">pyre#375</a> is merged into <code>main</code>. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Drawn in the notation of <code>doc/diagrams/design/component-construction.graffle</code>, as a candidate to replace the flow diagram in the <a href="https://claude.ai/artifact/NUhiziGjjNuNxGxZNhPTSJ" target="_blank" rel="noopener">guide</a>. Generated by <code>etc/introspection/trait-value-sequence.py</code>.</p>
     <p class="muted">Lifelines: <b>codec</b> is the command line parser or a document reader; <b>Executive</b> registers classes and instances and keeps the pile of configuration errors; <b>calc</b> is the node algebra the name server is built on (interpolations, expressions, variables, placeholders); <b>slot</b> is the node that ends up holding the value, a calc node itself; <b>Trait</b> owns its <b>SlotFactory</b> and derives from its <b>Schema</b>. Labels such as S6 and F42 are steps and findings on the <a href="https://claude.ai/artifact/AXAJnwZnqVRZfHH7cZvA7V" target="_blank" rel="noopener">tracking page</a>; s-numbers are entries in the <a href="https://claude.ai/artifact/Ce2kiJWGiZMJM9ZJNFJtxN" target="_blank" rel="noopener">ledger</a>.</p>
 """,
-            "key": """<div class="key"><span class="g"><b>green</b>: entry points; what works as it should, including what pyre#363 fixed</span><span class="r"><b>red</b>: defects</span><span class="t"><b>dashed</b>: what starts a scenario</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>""",
+            "key": """<div class="key"><span class="g"><b>green</b>: entry points; what works as it should, including what was fixed since pyre#363</span><span class="r"><b>red</b>: defects</span><span class="t"><b>dashed</b>: what starts a scenario</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>""",
         },
         "proposed": {
             "title": "trait value strawman",
@@ -1110,6 +1163,7 @@ class TraitValueSequence(pyre.application):
                 " the trait, checking the configuration, and saving it."
             ),
             "intro": """<p>The strawman: the same sources and the same lifelines as <a href="https://claude.ai/artifact/7hTb8C5yHnG918GSFJECkb" target="_blank" rel="noopener">the path today</a>, minus <b>SlotFactory</b>. A value is deposited as a node built from its source alone; a trait that arrives later attaches itself to that node as its postprocessor instead of rebuilding it from its value. Nothing is expanded twice, a placeholder is replaced rather than rebuilt from, the text is parsed once, by the schema, and a single check reports every error on demand. Generated by <code>etc/introspection/trait-value-sequence.py --design=proposed</code>.</p>
+<p class="muted"><b>Possibly stale:</b> this design was drawn against the code before instances started to follow their classes until they read a trait, and before <code>del</code> and the provenance of following instances were settled; it is kept as it was until the design is revisited.</p>
 <p class="muted">Q1-Q4 are open questions in the guide, and Q8 is settled by s51; s-numbers are entries in the ledger. The two calc tests named in the declaration scenario show that the algebra already supports attaching a postprocessor late.</p>
 """,
             "key": """<div class="key"><span class="g"><b>green</b>: what changes, or stays because it works</span><span class="o"><b>amber</b>: open question</span><span class="r"><b>red</b>: cost of the design</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>""",
