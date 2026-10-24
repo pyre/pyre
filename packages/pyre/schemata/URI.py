@@ -5,9 +5,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-# externals
-import collections.abc  # for container identification
-
 # superclass
 from .Schema import Schema
 
@@ -21,6 +18,7 @@ class URI(Schema):
     # types
     from .exceptions import CastingError
     from ..primitives import uri as locator
+    from ..primitives import path
 
     # constants
     typename = "uri"  # the name of my type
@@ -35,13 +33,14 @@ class URI(Schema):
         if isinstance(value, self.locator):
             # leave it alone
             return value
-        # a map with entries does not identify a resource, even though it has text
-        if isinstance(value, collections.abc.Mapping) and value:
-            # so complain
+        # text, numbers and paths name resources by their text, since a file may be named after
+        # a number; a boolean is not one of them, even though python counts it as an integer
+        if isinstance(value, bool) or not isinstance(value, (str, int, float, self.path)):
+            # nothing else names a resource: not a map, empty or not, and not the repr of a
+            # container
             raise self.CastingError(value=value, description=self.complaint)
 
-        # force conversion to a string; this shouldn't fail, unless the {__str__} converter of
-        # {value} is broken, in which case it is almost certain we have a bug...
+        # get the text
         value = str(value)
 
         # attempt to coerce
