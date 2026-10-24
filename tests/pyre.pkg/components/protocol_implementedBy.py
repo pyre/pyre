@@ -93,14 +93,17 @@ def test() -> None:
     assert Derived.pyre_isImplementedBy(Refined)
     # and not the implementers of its ancestor, which are compatible with it for assignments
     assert not Derived.pyre_isImplementedBy(Plain)
+    # including the one that implements both
     assert not Derived.pyre_isImplementedBy(Both)
     # the other protocol recognizes the component that implements both
     assert Other.pyre_isImplementedBy(Both)
     # and nothing else
     assert not Other.pyre_isImplementedBy(Plain)
-    # a component that is compatible but never declared it is not recognized
+    # a component that provides what the protocol requires
     assert Lookalike.pyre_isCompatible(Base)
+    # but never declared it implements it is not recognized
     assert not Base.pyre_isImplementedBy(Lookalike)
+    # and neither are its instances
     assert not Base.pyre_isImplementedBy(Lookalike(name="implemented.impostor"))
     # and neither is anything that is not a component
     for value in (None, 3, "implemented.bases.plain", Base, Derived):
