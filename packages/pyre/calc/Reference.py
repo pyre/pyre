@@ -38,6 +38,17 @@ class Reference:
         # otherwise, ask him for his value
         return referent.value
 
+    def detach(self):
+        """
+        Stop following my referent, and keep what i hold
+        """
+        # stop listening for changes to my referent
+        self.ignore(observables=self.operands)
+        # and stop following it
+        self.keep = False
+        # all done
+        return self
+
     def setValue(self, value):
         """
         Set the value of the node i refer to
@@ -58,15 +69,18 @@ class Reference:
         return authority.onReference(reference=self, **kwds)
 
     # meta-methods
-    def __init__(self, unprocessed=False, **kwds):
+    def __init__(self, unprocessed=False, keep=False, **kwds):
         """
         Refer to my operand; with {unprocessed}, my value is what my referent holds before its
-        postprocessor sees it, so that my own postprocessor is the only one it goes through
+        postprocessor sees it, so that my own postprocessor is the only one it goes through; with
+        {keep}, i follow my referent until my client reads my value and {detach}es me
         """
         # chain up
         super().__init__(**kwds)
         # remember what i hand over
         self.unprocessed = unprocessed
+        # and whether i follow my referent only until i am read
+        self.keep = keep
         # all done
         return
 
