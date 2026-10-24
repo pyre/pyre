@@ -168,7 +168,8 @@ class URI:
             )
         # build a uri and return it
         return cls(
-            scheme=thescheme if thescheme is not None else scheme,
+            # a scheme ignores case, and RFC 3986 spells it in lower case
+            scheme=thescheme.lower() if thescheme is not None else scheme,
             authority=theauthority if theauthority is not None else authority,
             address=theaddress if theaddress is not None else address,
             query=thequery,
