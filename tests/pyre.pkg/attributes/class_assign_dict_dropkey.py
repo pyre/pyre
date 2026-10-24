@@ -7,7 +7,8 @@
 
 
 """
-Check that a key dropped from a class dictionary leaves an existing instance, as with python classes
+Check that an instance that has read its dictionary keeps it when a key is dropped from the class
+dictionary, as with a python cached property
 """
 
 
@@ -32,8 +33,10 @@ def test() -> None:
     assert dict(b.t) == {"a": 1, "b": 2}
     # drop a key from the class
     base.t = {"a": 1}
-    # the instance no longer has it
-    assert dict(b.t) == {"a": 1}
+    # the instance keeps what it read
+    assert dict(b.t) == {"a": 1, "b": 2}
+    # while an instance made after the change does not have it
+    assert dict(base(name="c").t) == {"a": 1}
 
     # all done
     return

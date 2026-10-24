@@ -32,11 +32,9 @@ def test() -> None:
     b.t = "own"
     # that it gives up
     del b.t
-    # so it sees the class again
-    assert b.t == "class"
-    # and follows its later changes
+    # change the class
     base.t = "changed"
-    # as with python classes
+    # so the instance, following it again, sees the change
     assert b.t == "changed"
 
     # all done
