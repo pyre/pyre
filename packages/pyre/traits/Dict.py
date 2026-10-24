@@ -128,13 +128,16 @@ class Dict(Property, schemata.mapping):
         {classSlot}, the slot of its class: a reference to the map of the class, processed, since
         processing the slot is how the entries set for the class gather into it; the instance
         builds its own map out of it, where the entries set for the instance outrank those of
-        the class, and rebuilds it when the class gets a new map
+        the class, and rebuilds it when the class gets a new map, until it first reads the trait
         """
         # get the factory of the slots of instances
         factory = self.instanceSlot
-        # and refer to the map of the class through its processors
+        # and refer to the map of the class through its processors, until the instance reads it
         return classSlot.ref(
-            key=key, preprocessor=factory.preprocess, postprocessor=factory.postprocess
+            key=key,
+            keep=True,
+            preprocessor=factory.preprocess,
+            postprocessor=factory.postprocess,
         )
 
     # visiting

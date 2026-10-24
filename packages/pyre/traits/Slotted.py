@@ -29,37 +29,23 @@ class Slotted(Trait):
     def instanceSeed(self, classSlot, key=None):
         """
         Compute what the slot of a new instance, registered under {key}, starts with, out of
-        {classSlot}, the slot of its class: a reference to it, so that, like the instance of a
-        python class, the instance sees the current value of its class until it has one of its
-        own; the reference hands over what the class slot holds, unprocessed, so that building an
-        instance has none of the side effects of processing a default, such as opening the file
-        of a stream, and the instance processes the value when it reads the trait
+        {classSlot}, the slot of its class: a reference to it, so that the instance sees the
+        current value of its class until it first reads the trait, and keeps what it read from
+        then on, like a python cached property; the reference hands over what the class slot
+        holds, unprocessed, so that building an instance has none of the side effects of
+        processing a default, such as opening the file of a stream, and the instance processes the
+        value when it reads the trait
         """
         # get the factory of the slots of instances
         factory = self.instanceSlot
-        # and refer to the class slot through its processors
+        # and refer to the class slot through its processors, until the instance reads it
         return classSlot.ref(
             key=key,
             unprocessed=True,
+            keep=True,
             preprocessor=factory.preprocess,
             postprocessor=factory.postprocess,
         )
-
-    def instanceCopy(self, classSlot):
-        """
-        Compute a value for the slot of a new instance out of {classSlot}, the slot of its class,
-        for the traits whose instances keep no link to their class: the value it holds, without
-        processing it, so that building an instance has none of the side effects of processing a
-        default; the instance processes the value when it reads the trait
-        """
-        # get the value of the class slot, unprocessed
-        value = classSlot.getUnprocessedValue()
-        # text that was evaluated already
-        if isinstance(value, str):
-            # must reach the instance slot as it is, rather than be evaluated a second time
-            value = self.pyre_nameserver.node.interpolation.escape(value)
-        # hand it over
-        return value
 
     # meta-methods
     def __get__(self, instance, cls):
@@ -97,6 +83,10 @@ class Slotted(Trait):
             refusal.configurable = configurable
             # and raise it in place of the error
             raise refusal from error
+        # a client instance that has read the value
+        if instance is not None:
+            # keeps it
+            instance.pyre_keepTrait(trait=self)
         # if all goes well, return the {value}
         return value
 

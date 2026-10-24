@@ -158,20 +158,18 @@ class Component(Configurable, metaclass=Actor, internal=True):
         locator = tracking.here(level=1) if locator is None else locator
         # get my inventory
         inventory = self.pyre_inventory
-        # the priority of the defaults
-        defaults = self.pyre_executive.priority.defaults
-        # and the priority of the last assignment
-        priority = inventory.getTraitPriority(trait)
-        # a trait that was never set, or that holds what it started with
-        if priority is None or priority.category == defaults.category:
+        # a trait that still follows my class, because it was never set or read
+        if inventory[trait].keep:
             # has no value of its own to give up
             raise self.TraitUnsetError(configurable=self, name=trait.name)
-        # replace the value with what the trait started with, whatever ranks the value had
+        # forget where a value i kept came from
+        inventory.sources.pop(trait, None)
+        # and replace the value with what the trait started with, whatever ranks the value had
         new, old = inventory.setTraitValue(
             trait=trait,
             factory=trait.instanceSlot,
             value=inventory.instanceSeed(trait=trait, instance=self),
-            priority=defaults(),
+            priority=self.pyre_executive.priority.defaults(),
             locator=locator,
             claim=True,
         )
@@ -192,10 +190,86 @@ class Component(Configurable, metaclass=Actor, internal=True):
         inventory = self.pyre_inventory
         # ask it for the value
         value = inventory.getTraitValue(trait)
-        # and the locator
-        locator = inventory.getTraitLocator(trait)
+        # which i now keep
+        self.pyre_keepTrait(trait=trait)
+        # find out where it came from
+        _, locator = self.pyre_traitSource(trait=trait)
         # pass them on
         return value, locator
+
+    def pyre_keepTrait(self, trait):
+        """
+        Keep the value of {trait}, which i have just read: if i was following my class, i stop,
+        and remember where the value came from
+        """
+        # get my inventory
+        inventory = self.pyre_inventory
+        # and the slot of {trait}
+        slot = inventory[trait]
+        # a slot that does not follow my class
+        if not slot.keep:
+            # holds a value that is mine already
+            return self
+        # remember where the value came from
+        inventory.sources[trait] = type(self).pyre_classTraitSource(trait=trait)
+        # and stop following
+        slot.detach()
+        # all done
+        return self
+
+    def pyre_traitSource(self, trait):
+        """
+        Find the priority and the locator of the setting that gave {trait} its value: mine, if i
+        have one; that of the value i read, if i kept one; my class's, if i still follow it
+        """
+        # get my inventory
+        inventory = self.pyre_inventory
+        # a slot that still follows my class
+        if inventory[trait].keep:
+            # has the provenance of my class
+            return type(self).pyre_classTraitSource(trait=trait)
+        # get the priority of the defaults
+        defaults = self.pyre_executive.priority.defaults
+        # and the priority of my own last assignment
+        priority = inventory.getTraitPriority(trait)
+        # a value i kept, and nobody has set since
+        if priority is None or priority.category == defaults.category:
+            # attempt to
+            try:
+                # get where it came from
+                source = inventory.sources[trait]
+            # if i never kept one
+            except KeyError:
+                # the slot holds what i started with
+                source = priority, inventory.getTraitLocator(trait)
+            # either way, report it
+            return source
+        # otherwise, the value is mine
+        return priority, inventory.getTraitLocator(trait)
+
+    @classmethod
+    def pyre_classTraitSource(cls, trait):
+        """
+        Find the priority and the locator of the setting that gave the class slot of {trait} its
+        value: mine, unless i inherit {trait} and nobody has set it on me, in which case it is my
+        ancestor's
+        """
+        # get my inventory
+        inventory = cls.pyre_inventory
+        # the priority of the defaults
+        defaults = cls.pyre_executive.priority.defaults
+        # and the priority of my last assignment
+        priority = inventory.getTraitPriority(trait)
+        # a trait nobody has set on me
+        if priority is None or priority.category == defaults.category:
+            # may come from an ancestor
+            ancestor = inventory.inheritedFrom(component=cls, trait=trait)
+            # if it does
+            if ancestor is not None:
+                # whose provenance it has
+                return ancestor.pyre_classTraitSource(trait=trait)
+        # otherwise, it is mine
+        return priority, inventory.getTraitLocator(trait)
 
     # configuration errors
     @property
@@ -452,8 +526,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         # find the trait descriptor associated with this {attribute}
         trait = self.pyre_trait(alias=attribute)
-        # and return its meta-data
-        return self.pyre_inventory.getTraitPriority(trait)
+        # find out where its value came from
+        priority, _ = self.pyre_traitSource(trait=trait)
+        # and return the priority
+        return priority
 
     def pyre_where(self, attribute=None):
         """
@@ -466,8 +542,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
             return self.pyre_locator
         # otherwise, find the trait descriptor associated with this {attribute}
         trait = self.pyre_trait(alias=attribute)
-        # and return its meta-data
-        return self.pyre_inventory.getTraitLocator(trait)
+        # find out where its value came from
+        _, locator = self.pyre_traitSource(trait=trait)
+        # and return the locator
+        return locator
 
     @classmethod
     def pyre_classWhere(cls, attribute=None):
@@ -480,8 +558,10 @@ class Component(Configurable, metaclass=Actor, internal=True):
             return cls.pyre_locator
         # otherwise, find the trait descriptor associated with this {attribute}
         trait = cls.pyre_trait(alias=attribute)
-        # and return its meta-data
-        return cls.pyre_inventory.getTraitLocator(trait)
+        # find out where its value came from
+        _, locator = cls.pyre_classTraitSource(trait=trait)
+        # and return the locator
+        return locator
 
     # meta methods
     def __new__(cls, name, locator, implicit, pyre_values=None, **kwds):
