@@ -10,6 +10,9 @@ from ..patterns.Singleton import Singleton
 # the evaluator of text
 from ..calc.evaluation import evaluate
 
+# the report of a name that is not a unit
+from .exceptions import UnknownUnitError
+
 
 class Parser(metaclass=Singleton):
     """
@@ -38,9 +41,16 @@ class Parser(metaclass=Singleton):
             # and merge mine in it
             context.update(self.context)
 
-        # evaluate the expression, with access to the builtins a setting may use, and return
-        # the result
-        return evaluate(expression=text, context=context)
+        # attempt to
+        try:
+            # evaluate the expression, with access to the builtins a setting may use
+            quantity = evaluate(expression=text, context=context)
+        # if it uses a name that is in none of my piles, it is most likely a misspelled unit
+        except NameError as error:
+            # so say which one
+            raise UnknownUnitError(name=error.name) from error
+        # if all goes well, return the {quantity}
+        return quantity
 
     # meta methods
     def __init__(self, **kwds):
