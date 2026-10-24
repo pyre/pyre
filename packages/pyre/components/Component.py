@@ -31,8 +31,8 @@ class Component(Configurable, metaclass=Actor, internal=True):
     # framework data
     pyre_inventory = None  # my inventory management strategy
     pyre_implements = None  # my protocol
-    pyre_isComponent = True
-    pyre_cooked = False
+    pyre_isComponent = True  # i am a component
+    pyre_cooked = False  # whether i am fully built
 
     # introspection
     @property
@@ -378,6 +378,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Hook that gets invoked by the framework after the component instance has been
         registered but before any configuration events
         """
+        # nothing to do
         return self
 
     def pyre_configured(self):
@@ -412,6 +413,7 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Hook that gets invoked by the framework right before the component is decommissioned.
         The instance should release all acquired resources.
         """
+        # nothing to do
         return self
 
     # introspection
@@ -458,8 +460,9 @@ class Component(Configurable, metaclass=Actor, internal=True):
         Return the locator associated with {attribute}; if no attribute name is given, return
         the locator of the component instance
         """
-        # if no name is given, return my locator
+        # if no name is given
         if attribute is None:
+            # return my locator
             return self.pyre_locator
         # otherwise, find the trait descriptor associated with this {attribute}
         trait = self.pyre_trait(alias=attribute)
@@ -471,8 +474,9 @@ class Component(Configurable, metaclass=Actor, internal=True):
         """
         Return the component class locator
         """
-        # if no name is given, return my locator
+        # if no name is given
         if attribute is None:
+            # return my locator
             return cls.pyre_locator
         # otherwise, find the trait descriptor associated with this {attribute}
         trait = cls.pyre_trait(alias=attribute)
@@ -661,8 +665,9 @@ class Component(Configurable, metaclass=Actor, internal=True):
             error = cls.ProtocolCompatibilityError(configurable=cls, protocol=spec)
             # add it to the report
             report.incompatibilities[spec].append(error)
-            # bail out if we are in fast mode
+            # if we are in fast mode
             if fast:
+                # bail out
                 return report
 
         # all done

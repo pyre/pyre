@@ -9,6 +9,7 @@
 Definitions for all the exceptions raised by this package
 """
 
+# the base class of my exceptions
 from ..framework.exceptions import FrameworkError
 
 
@@ -280,6 +281,7 @@ class ConfigurationError(ComponentError):
         """
         Splice my errors together
         """
+        # one error per line
         return "\n    ".join(map(str, self.errors))
 
     # meta-methods
@@ -306,6 +308,7 @@ class InitializationError(ComponentError):
         """
         Splice my errors together
         """
+        # one error per line
         return "\n    ".join(map(str, self.errors))
 
     # meta-methods

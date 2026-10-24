@@ -34,6 +34,7 @@ class Actor(Requirement):
         """
         Return the component's family name
         """
+        # ask my class record
         return self.pyre_family()
 
     # meta-methods
@@ -69,8 +70,9 @@ class Actor(Requirement):
         # initialize the record
         super().__init__(name, bases, attributes, **kwds)
 
-        # if this is an internal component, there is nothing further to do
+        # if this is an internal component
         if self.pyre_internal:
+            # there is nothing further to do
             return
 
         # pick the appropriate inventory strategy
