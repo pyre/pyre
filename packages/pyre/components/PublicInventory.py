@@ -115,6 +115,34 @@ class PublicInventory(Inventory):
         # return the priority
         return info.priority
 
+    # support for giving up values
+    def classSeed(self, trait, component):
+        """
+        Compute what the slot of {trait} in {component} starts with: a reference to the slot of
+        the nearest ancestor that has it, or the default of {trait}
+        """
+        # find the slot of the ancestor
+        slot = self.inheritedSlot(component=component, trait=trait)
+        # if there isn't one
+        if slot is None:
+            # {component} starts with the default
+            return trait.default
+        # otherwise, it refers to the slot of its ancestor
+        return slot.ref(
+            key=self.key[trait.name],
+            preprocessor=trait.classSlot.preprocess,
+            postprocessor=trait.classSlot.postprocess,
+        )
+
+    def instanceSeed(self, trait, instance):
+        """
+        Compute what the slot of {trait} in {instance} starts with, out of the slot of its class
+        """
+        # the trait knows
+        return trait.instanceSeed(
+            classSlot=type(instance).pyre_inventory[trait], key=self.key[trait.name]
+        )
+
     def getSlots(self):
         """
         Return an iterable over the trait value storage

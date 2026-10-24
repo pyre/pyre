@@ -107,6 +107,25 @@ class TraitNotFoundError(ComponentError):
         return
 
 
+class TraitUnsetError(ComponentError, AttributeError):
+    """
+    Exception raised when deleting a trait that holds no value of its own
+    """
+
+    # public data
+    description = "{0.configurable} has no value of its own for {0.name!r}"
+
+    # meta-methods
+    def __init__(self, configurable, name, **kwds):
+        # pass it on
+        super().__init__(**kwds)
+        # save the source of the error
+        self.configurable = configurable
+        self.name = name
+        # all done
+        return
+
+
 class ProtocolCompatibilityError(ComponentError):
     """
     Exception raised when a configurable is incompatible with a suggested protocol

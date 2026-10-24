@@ -74,6 +74,41 @@ class Inventory(Dashboard):
         # i don't know how to do it, but my children had better
         raise NotImplementedError("class {.__name__!r} must implement 'getSlots'".format(cls))
 
+    # support for giving up values
+    @classmethod
+    def inheritedSlot(cls, component, trait):
+        """
+        Find the slot of {trait} in the nearest ancestor of {component} that has it; {None} when
+        {component} declares {trait} itself, or when that ancestor is marked {internal} and so
+        has no inventory
+        """
+        # a trait that {component} declares
+        if trait in component.pyre_localTraits:
+            # is its own
+            return None
+        # go through the ancestors of {component}, nearest first
+        for ancestor in component.pyre_pedigree[1:]:
+            # the ones without {trait}
+            if trait not in ancestor.pyre_configurables():
+                # are of no interest
+                continue
+            # get the inventory of the nearest one with it
+            inventory = ancestor.pyre_inventory
+            # ancestors marked {internal} have none
+            if inventory is None:
+                # so {component} acts as if it owned {trait}
+                return None
+            # the others hold the slot
+            return inventory[trait]
+
+        # an inherited trait that no ancestor has is a bug, so access the journal
+        import journal
+
+        # and complain
+        raise journal.firewall("pyre.components").log(
+            f"{component}: could not locate the slot of '{trait.name}'"
+        )
+
     # meta-methods
     def __init__(self, **kwds):
         # chain up

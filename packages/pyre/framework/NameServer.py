@@ -318,12 +318,13 @@ class NameServer(Hierarchical):
             # we have already updated the factory; remember the rank and the provenance of the
             # existing node, in case the new one can't be built
             mark = (meta.priority, meta.locator)
-            # if the existing node ranks below this default, nobody has set the name: the node is
-            # the placeholder a reference left behind, which has no value, or the default of a
-            # component that this one replaces, which is not this component's; if it ranks the
-            # same, it is this very default applied again, as when a map that is rebuilt files its
-            # entries, which refreshes its value
-            if not priority < meta.priority:
+            # if the default claims the node, the setting is given up, as when a trait is
+            # deleted; if the existing node ranks below this default, nobody has set the name:
+            # the node is the placeholder a reference left behind, which has no value, or the
+            # default of a component that this one replaces, which is not this component's; if it
+            # ranks the same, it is this very default applied again, as when a map that is rebuilt
+            # files its entries, which refreshes its value
+            if claim or not priority < meta.priority:
                 # so the default takes over the setting, along with its rank
                 meta.priority = priority
                 # and its provenance
