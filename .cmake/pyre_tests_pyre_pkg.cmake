@@ -817,6 +817,8 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_validate.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate_twice.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_trait_evaluation_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/inventory_getslots.py)
+# a reference to a component that does not exist yet resolves once its evaluation is settled
+# pyre_test_python_testcase(tests/pyre.pkg/components/component_forward_reference.py)
 
 
 #
@@ -831,6 +833,9 @@ pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_facility_subins
 pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_facility_subunread.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_facility_unread.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_instance.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_newinstance.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_shadowed.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_subclass.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/class_assign_subinstance.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/class_del_declared.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/class_del_none.py)
@@ -838,6 +843,11 @@ pyre_test_python_testcase(tests/pyre.pkg/attributes/class_del_subclass.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/classkey_store_facility.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/classkey_store_instance.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/classkey_store_provenance.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/classkey_store_subclass.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_assign_class.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_assign_instance.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_assign_provenance.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_assign_sibling.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_del_classchange.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_del_instance.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_del_none.py)
@@ -845,10 +855,12 @@ pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_del_private.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_del_reconfigure.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_del_store.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_del.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_facility.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_keeps.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_kept_provenance.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_provenance.py)
 pyre_test_python_testcase(tests/pyre.pkg/attributes/instance_read_stream.py)
+pyre_test_python_testcase(tests/pyre.pkg/attributes/instancekey_store_instance.py)
 
 
 #
