@@ -43,11 +43,11 @@ class Configurable(Dashboard):
     pyre_locator = None  # the location of the configurable declaration
     pyre_internal = True  # mark this configurable as not visible to end users
 
-    pyre_isProtocol = False
-    pyre_isComponent = False
+    pyre_isProtocol = False  # i am not a protocol
+    pyre_isComponent = False  # nor a component
 
-    pyre_doc = None
-    pyre_tip = None
+    pyre_doc = None  # my documentation
+    pyre_tip = None  # a short description of what i am for
 
     # basic support for the help system
     def pyre_help(self, indent=" " * 4, **kwds):
@@ -82,7 +82,9 @@ class Configurable(Dashboard):
         """
         # prepare the indent levels
         one = indent + " " * 2
+        # the next one
         two = one + " " * 2
+        # and the one after that
         three = two + " " * 2
         # the configurables shown so far
         seen = set() if seen is None else seen
@@ -105,11 +107,13 @@ class Configurable(Dashboard):
 
             # show me
             yield "{}{.name}:".format(one, trait)
+            # its type
             yield "{}schema: {}".format(two, trait.typename)
             # unless my value is a secret
             yield "{}value: {}".format(two, self._pyre_secret if trait.secret else value)
             # and so is my default, which could hold one
             yield "{}default: {}".format(two, self._pyre_secret if trait.secret else default)
+            # and its description
             yield "{}tip: {}".format(two, tip)
 
             # the configurables my value holds: the value itself, or the items of a container
@@ -158,11 +162,17 @@ class Configurable(Dashboard):
 
         # add my state
         doc["name"] = self.pyre_name
+        # my family is the schema
         doc["schema"] = self.pyre_family()
+        # and my value
         doc["value"] = self.pyre_family()
+        # my documentation
         doc["doc"] = self.__doc__
+        # the descriptions of my traits
         doc["traits"] = traits
+        # of my properties
         doc["properties"] = properties
+        # and of my components
         doc["components"] = components
 
         # get my key
@@ -182,9 +192,11 @@ class Configurable(Dashboard):
             traitAliases = trait.aliases
             # the schema
             traitCategory = trait.category
+            # and its type
             traitType = trait.typename
             # and the documentation
             traitTip = trait.tip
+            # and the full text
             traitDoc = trait.doc
 
             # initialize the trait description
@@ -335,13 +347,15 @@ class Configurable(Dashboard):
         """
         Generate a sequence of all my trait descriptors that are marked as configurable.
         """
+        # pick the configurable ones out of all my traits
         return filter(lambda trait: trait.isConfigurable, cls.pyre_traits())
 
     @classmethod
     def pyre_behaviors(cls):
         """
-        Generate a sequence of all my trait descriptors that are marked as configurable.
+        Generate a sequence of all my trait descriptors that are marked as behaviors
         """
+        # pick the behaviors out of all my traits
         return filter(lambda trait: trait.isBehavior, cls.pyre_traits())
 
     @classmethod
@@ -349,6 +363,7 @@ class Configurable(Dashboard):
         """
         Generate a sequence of all my trait descriptors that are marked as properties
         """
+        # pick the properties out of all my traits
         return filter(lambda trait: trait.isProperty, cls.pyre_traits())
 
     @classmethod
@@ -356,6 +371,7 @@ class Configurable(Dashboard):
         """
         Generate a sequence of all my trait descriptors that are marked as facilities
         """
+        # pick the facilities out of all my traits
         return filter(lambda trait: trait.isFacility, cls.pyre_traits())
 
     @classmethod
@@ -363,6 +379,7 @@ class Configurable(Dashboard):
         """
         Generate a sequence of my local trait descriptors that are marked as configurable.
         """
+        # pick the configurable ones out of my local traits
         return filter(lambda trait: trait.isConfigurable, cls.pyre_localTraits)
 
     @classmethod
@@ -370,6 +387,7 @@ class Configurable(Dashboard):
         """
         Generate a sequence of my local trait descriptors that are marked as behaviors
         """
+        # pick the behaviors out of my local traits
         return filter(lambda trait: trait.isBehavior, cls.pyre_localTraits)
 
     @classmethod
@@ -377,13 +395,15 @@ class Configurable(Dashboard):
         """
         Generate a sequence of my local trait descriptors that are marked as properties
         """
+        # pick the properties out of my local traits
         return filter(lambda trait: trait.isProperty, cls.pyre_localTraits)
 
     @classmethod
     def pyre_localFacilities(cls):
         """
-        Generate a sequence of all my trait descriptors that are marked as facilities
+        Generate a sequence of my local trait descriptors that are marked as facilities
         """
+        # pick the facilities out of my local traits
         return filter(lambda trait: trait.isFacility, cls.pyre_localTraits)
 
     @classmethod
@@ -391,8 +411,9 @@ class Configurable(Dashboard):
         """
         Given the name {alias}, locate and return the associated descriptor
         """
-        # attempt to normalize the given name
+        # attempt to
         try:
+            # normalize the given name
             canonical = cls.pyre_namemap[alias]
         # not one of my traits
         except KeyError:
@@ -407,7 +428,9 @@ class Configurable(Dashboard):
             # we have a bug
             import journal
 
+            # make a channel
             firewall = journal.firewall("pyre.components")
+            # and complain
             raise firewall.log("UNREACHABLE")
 
         # return the trait
@@ -504,6 +527,7 @@ class Configurable(Dashboard):
 
             # get the traits types
             myType = type(mine)
+            # and hers
             herType = type(hers)
 
             # if the two traits are instance of compatible classes
