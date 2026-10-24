@@ -88,8 +88,9 @@ def test():
     # what came from the file
     assert section["label"] == "configured"
     assert section["weight"] == 2.5
-    # containers hold the persistable form of their items, the one the loader reads back
-    assert section["vertices"] == ["(1.0, 2.0)", "(3.0, 4.0)"]
+    # containers hold their items as their schemata render them, numbers as numbers, which the
+    # loader reads back
+    assert section["vertices"] == [[1.0, 2.0], [3.0, 4.0]]
     # what came from the construction
     assert section["count"] == 4
     assert section["home"] == "/var/tmp"
