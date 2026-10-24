@@ -51,8 +51,8 @@ class Sequence(Container):
         if value is None:
             # by leaving it alone
             return None
-        # easy enough
-        return self.container(str(item) for item in value)
+        # render each item the way my schema does, so numbers stay numbers
+        return self.container(self.schema.json(item) for item in value)
 
     # implementation details
     def _coerce(self, value, incognito=True, anonymous=True, **kwds):
