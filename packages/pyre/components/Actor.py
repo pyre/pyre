@@ -222,6 +222,50 @@ class Actor(Requirement):
         # and return
         return
 
+    def __delattr__(self, name):
+        """
+        Trap attribute deletion in my class record instances, so that a trait gives up its value
+        and follows the nearest ancestor that has it, or goes back to its default
+        """
+        # internal attributes
+        if name.startswith("pyre_"):
+            # are deleted normally
+            return super().__delattr__(name)
+        # for the rest, try to
+        try:
+            # normalize the name
+            name = self.pyre_namemap[name]
+        # if it isn't one of my traits
+        except KeyError:
+            # treat as a normal deletion
+            return super().__delattr__(name)
+
+        # the name refers to one of my traits; find it
+        trait = self.pyre_traitmap[name]
+        # build an appropriate locator
+        locator = tracking.here(level=1)
+        # get my inventory
+        inventory = self.pyre_inventory
+        # the priority of the defaults
+        defaults = self.pyre_executive.priority.defaults
+        # and the priority of the last assignment
+        priority = inventory.getTraitPriority(trait)
+        # a trait that was never set, or that holds what it started with
+        if priority is None or priority.category == defaults.category:
+            # has no value of its own to give up
+            raise self.TraitUnsetError(configurable=self, name=trait.name)
+        # replace the value with what the trait started with, whatever ranks the value had
+        inventory.setTraitValue(
+            trait=trait,
+            factory=trait.classSlot,
+            value=inventory.classSeed(trait=trait, component=self),
+            priority=defaults(),
+            locator=locator,
+            claim=True,
+        )
+        # and return
+        return
+
     def __str__(self):
         # get my family name
         family = self.pyre_family()
