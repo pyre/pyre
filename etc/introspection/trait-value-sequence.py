@@ -53,9 +53,10 @@ class TraitValueSequence(pyre.application):
             scenario(self, diagram=diagram)
         # render the diagram
         svg = diagram.render(label=design["label"])
-        # put it in its page
+        # put it in its page, which says how its text is encoded, so the browser reads it right
         page = (
-            f"<title>{design['title']}</title>"
+            '<meta charset="utf-8">'
+            + f"<title>{design['title']}</title>"
             + self.style
             + f'<div class="wrap"><div class="prose"><h1>{design["title"]}</h1>'
             + design["intro"]
