@@ -5,6 +5,7 @@
 # (c) 1998-2026 all rights reserved
 
 
+# the metaclass that makes me a singleton
 from ..patterns.Singleton import Singleton
 
 # the evaluator of text
@@ -54,8 +55,11 @@ class Parser(metaclass=Singleton):
 
     # meta methods
     def __init__(self, **kwds):
+        # chain up
         super().__init__(**kwds)
+        # gather the symbols of the units, which the text of a quantity may use
         self.context = self._initializeContext()
+        # all done
         return
 
     # implementation details
