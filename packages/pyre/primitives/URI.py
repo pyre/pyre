@@ -91,20 +91,22 @@ class URI:
         """
         # if {value} is already a {uri}
         if isinstance(value, cls):
-            # if necessary
-            if value.scheme is None:
-                # adjust the scheme
-                value.scheme = scheme
-            # if necessary
-            if value.authority is None:
-                # adjust the authority
-                value.authority = authority
-            # if necessary
-            if value.address is None:
-                # adjust the address
-                value.address = address
-            # all done
-            return value
+            # and it has all the parts the defaults would fill in
+            if (
+                value.scheme is not None
+                and value.authority is not None
+                and value.address is not None
+            ):
+                # it is used as it is
+                return value
+            # otherwise, fill in the missing parts in a copy, so the original is left alone; a
+            # default reaches only a part that is missing, since {clone} keeps the parts it is
+            # not given
+            return value.clone(
+                scheme=scheme if value.scheme is None else None,
+                authority=authority if value.authority is None else None,
+                address=address if value.address is None else None,
+            )
         # if {value} is a path
         if isinstance(value, Path):
             # build a {file} uri and return it
