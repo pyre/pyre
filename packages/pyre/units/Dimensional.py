@@ -21,9 +21,12 @@ class Dimensional:
     # public data
     # representational choices
     fundamental = ("kg", "m", "s", "A", "K", "mol", "cd")  # the SI fundamental units
+    # the derivation of quantities without units
     zero = (0,) * len(fundamental)
     # default values
+    # a magnitude of nothing
     value = 0
+    # and no units
     derivation = zero
 
     # interface
@@ -49,8 +52,11 @@ class Dimensional:
             {value}: the magnitude
             {derivation}: a tuple with the exponents of the fundamental SI units
         """
+        # save my magnitude
         self.value = value
+        # and my units
         self.derivation = derivation
+        # all done
         return
 
     # addition
@@ -103,11 +109,13 @@ class Dimensional:
             # dispatch the operation to the individual entries
             return type(other)(self * entry for entry in other)
 
-        # otherwise,  get my value
+        # otherwise, get my value
         value = self.value
         # attempt to interpret {other} as a dimensional
         try:
+            # by multiplying by its magnitude
             value *= other.value
+        # if it isn't one
         except AttributeError:
             # the only legal alternative is that {other} is a numeric type
             try:
@@ -117,15 +125,17 @@ class Dimensional:
             except TypeError:
                 # report an error
                 raise self.CompatibilityError(operation="multiplication", op1=self, op2=other)
-            # if i am dimensionless, just return the value
+            # if i am dimensionless
             if self.derivation == self.zero:
+                # just return the value
                 return value
             # otherwise, return a new dimensional
             return Dimensional(value=value, derivation=self.derivation)
         # otherwise, compute the units
         derivation = tuple(map(operator.add, self.derivation, other.derivation))
-        # check whether the units canceled
+        # if the units canceled
         if derivation == self.zero:
+            # the product is a plain number
             return value
         # otherwise build a new one and return it
         return Dimensional(value, derivation)
@@ -139,9 +149,11 @@ class Dimensional:
         value = self.value
         # attempt to interpret {other} as a dimensional
         try:
+            # by dividing by its magnitude
             value /= other.value
+        # if it isn't one
         except AttributeError:
-            # the only legal alternative is that {other} is a numaric type
+            # the only legal alternative is that {other} is a numeric type
             try:
                 # divide
                 value /= other
@@ -149,15 +161,17 @@ class Dimensional:
             except TypeError:
                 # report an error
                 raise self.CompatibilityError(operation="division", op1=self, op2=other)
-            # if i am dimensionless, just return the value
+            # if i am dimensionless
             if self.derivation == self.zero:
+                # just return the value
                 return value
             # otherwise, build a dimensional and return it
             return Dimensional(value=value, derivation=self.derivation)
         # otherwise compute the units
         derivation = tuple(map(operator.sub, self.derivation, other.derivation))
-        # check whether the units canceled
+        # if the units canceled
         if derivation == self.zero:
+            # the quotient is a plain number
             return value
         # and return a new dimensional
         return Dimensional(value=value, derivation=derivation)
@@ -432,9 +446,11 @@ class Dimensional:
             # render in a way recognizable by the parser
             pretty = False
 
-        # get the fields
+        # get the format of the magnitude
         value = fields["value"]
+        # the scale it is measured against
         base = fields["base"]
+        # and the label of its units
         label = fields["label"]
         # convert the base specification if necessary
         if isinstance(base, str):
@@ -513,7 +529,9 @@ class Dimensional:
 fundamental = Dimensional.fundamental
 
 # instances
+# nothing, without units
 zero = Dimensional(0, Dimensional.zero)
+# and one, without units, under both of its names
 one = dimensionless = Dimensional(1, Dimensional.zero)
 
 
