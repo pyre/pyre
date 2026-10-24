@@ -8,9 +8,9 @@
 # the quantities, and the parser of their text
 from ..units import dimensional as Quantity, parser as Parser
 
-# the ways an evaluation can fail, and the units can fail to mix
+# the ways an evaluation can fail, the units can fail to mix, and a name can fail to be a unit
 from ..calc.evaluation import errors
-from ..units.exceptions import UnitError
+from ..units.exceptions import UnitError, UnknownUnitError
 
 # the refusal of a builtin
 from ..calc.exceptions import DisallowedNameError
@@ -117,6 +117,14 @@ class Dimensional(Number):
         except DisallowedNameError as error:
             # say so, in words the user can act on
             raise self.CastingError(value=value, description=str(error), error=error)
+        # if it uses a name the parser does not know
+        except UnknownUnitError as error:
+            # say which one
+            raise self.CastingError(
+                value=value,
+                description=self.complaint + ": {0.error.name!r} is not a unit",
+                error=error,
+            )
         # if it fails in any of the ways an evaluation can, or its units don't mix
         except (*errors, UnitError) as error:
             # complain
