@@ -20,12 +20,12 @@ class Datum(AbstractNode):
     from .Composite import Composite as composite
 
     # new leaves
-    mapping = None
-    sequence = None
-    expression = None
-    interpolation = None
-    reference = None
-    unresolved = None
+    mapping = None  # nodes that hold maps of nodes
+    sequence = None  # nodes that hold sequences of nodes
+    expression = None  # nodes that evaluate expressions
+    interpolation = None  # nodes that interpolate text
+    reference = None  # nodes that refer to other nodes
+    unresolved = None  # markers of names nobody has set
 
     # exceptions; included here for client convenience
     from .exceptions import (
@@ -37,6 +37,8 @@ class Datum(AbstractNode):
     )
 
     # public data
+    keep = False  # whether i follow the nodes i refer to only until my value is first read
+
     @property
     def value(self):
         """

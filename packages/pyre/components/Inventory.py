@@ -76,11 +76,11 @@ class Inventory(Dashboard):
 
     # support for giving up values
     @classmethod
-    def inheritedSlot(cls, component, trait):
+    def inheritedFrom(cls, component, trait):
         """
-        Find the slot of {trait} in the nearest ancestor of {component} that has it; {None} when
-        {component} declares {trait} itself, or when that ancestor is marked {internal} and so
-        has no inventory
+        Find the nearest ancestor of {component} that has {trait}; {None} when {component}
+        declares {trait} itself, or when that ancestor is marked {internal} and so has no
+        inventory
         """
         # a trait that {component} declares
         if trait in component.pyre_localTraits:
@@ -92,14 +92,12 @@ class Inventory(Dashboard):
             if trait not in ancestor.pyre_configurables():
                 # are of no interest
                 continue
-            # get the inventory of the nearest one with it
-            inventory = ancestor.pyre_inventory
-            # ancestors marked {internal} have none
-            if inventory is None:
+            # ancestors marked {internal} have no inventory
+            if ancestor.pyre_inventory is None:
                 # so {component} acts as if it owned {trait}
                 return None
-            # the others hold the slot
-            return inventory[trait]
+            # the nearest of the others is where {trait} comes from
+            return ancestor
 
         # an inherited trait that no ancestor has is a bug, so access the journal
         import journal
@@ -115,6 +113,8 @@ class Inventory(Dashboard):
         super().__init__(**kwds)
         # initialize my table
         self.traits = {}
+        # and the table of where the values my instance has read came from
+        self.sources = {}
         # all done
         return
 
