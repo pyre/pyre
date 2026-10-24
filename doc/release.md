@@ -47,7 +47,7 @@ order it must happen, with the reason for each step and how to check it.
    The fourth pin, `_pyre_release` in `mm` in the `mm` repository (`github.com/aivazis/mm`),
    is different: every CI workflow here clones that repository's `main` and bootstraps from
    its pin on runners where `pyre` is not importable, so a pin that names a release that does
-   not exist yet fails every run with a 404. It moves after the release, in step 14. The README's
+   not exist yet fails every run with a 404. It moves after the release, in step 15. The README's
    release tarball link (`archive/refs/tags/vX.Y.Z.tar.gz`) is the last. A patch release walks
    this item too: the pins name the previous release, which was set moments ago and looks
    current.
@@ -155,12 +155,29 @@ order it must happen, with the reason for each step and how to check it.
    gh pr list --state merged --base main --limit 200
    ```
 
-7. **The checklist itself is current.** If this walk changed the process, update this file
+7. **The guide to trait values matches the code.** `doc/trait-values.md` says which forms a
+   trait value may take from each source, the command line, configuration files, code, and the
+   environment, and which forms are unsupported and why. It is derived from the design record at
+   https://claude.ai/artifact/NUhiziGjjNuNxGxZNhPTSJ and must describe the tagged tree. Every
+   form it calls supported names the test that exercises it; each of those tests exists and ran
+   in the green runs of step 1. Then read what changed since the previous tag in the code the
+   guide describes, and confirm the guide was updated with it:
+
+   ```
+   git log --format='%h %s' vPREV..HEAD -- packages/pyre/schemata packages/pyre/calc \
+       packages/pyre/traits packages/pyre/config packages/pyre/framework/NameServer.py \
+       packages/pyre/weaver/PFG.py doc/trait-values.md
+   ```
+
+   A behavior change without a matching change to the guide blocks the tag until one of the two
+   is fixed.
+
+8. **The checklist itself is current.** If this walk changed the process, update this file
    before the tag so the tag carries the process that produced it.
 
 ## The tag
 
-8. **Tag the tip of main.** An annotated tag, `vX.Y.Z`, with the release title as its message.
+9. **Tag the tip of main.** An annotated tag, `vX.Y.Z`, with the release title as its message.
    Minor releases carry feature work or floor changes; patch releases carry fixes only.
 
    ```
@@ -172,36 +189,36 @@ order it must happen, with the reason for each step and how to check it.
 
 ## The boot bundle
 
-9. **Build the boot bundle from the tagged tree.** The bundle is the pure python of `pyre`,
-   `journal`, `merlin` and `survey` plus the boot entry point, zipped by the `pyre.boot`
-   family of `mm` targets. Its version comes from `git describe`, so it must be built after
-   the tag exists and from a checkout at the tag.
+10. **Build the boot bundle from the tagged tree.** The bundle is the pure python of `pyre`,
+    `journal`, `merlin` and `survey` plus the boot entry point, zipped by the `pyre.boot`
+    family of `mm` targets. Its version comes from `git describe`, so it must be built after
+    the tag exists and from a checkout at the tag.
 
-   ```
-   mm pyre.boot
-   ```
+    ```
+    mm pyre.boot
+    ```
 
-   The archive lands at `{tmpdir}/release/X.Y.Z/pyre-boot.zip`; `mm builder.info` shows the
-   staging directory. Check that `unzip -l` lists `__main__.py` and the four packages, and that
-   `python pyre-boot.zip --help` runs.
+    The archive lands at `{tmpdir}/release/X.Y.Z/pyre-boot.zip`; `mm builder.info` shows the
+    staging directory. Check that `unzip -l` lists `__main__.py` and the four packages, and that
+    `python pyre-boot.zip --help` runs.
 
-   Test the bundle before it is uploaded, whether for a new release or as a replacement. With
-   every supported python, in an environment where `pyre` is not otherwise importable and from
-   a directory outside any source tree, import the four packages from the archive
+    Test the bundle before it is uploaded, whether for a new release or as a replacement. With
+    every supported python, in an environment where `pyre` is not otherwise importable and from
+    a directory outside any source tree, import the four packages from the archive
 
-   ```
-   env -i PATH=/usr/bin:/bin HOME=$PWD PYTHONPATH=$PWD/pyre-boot.zip \
-       python3.X -B -c "import pyre, journal, merlin, survey; print(pyre.__file__)"
-   ```
+    ```
+    env -i PATH=/usr/bin:/bin HOME=$PWD PYTHONPATH=$PWD/pyre-boot.zip \
+        python3.X -B -c "import pyre, journal, merlin, survey; print(pyre.__file__)"
+    ```
 
-   and confirm that the path printed is inside `pyre-boot.zip`. The bundle carries no
-   bindings, so this is what catches code that assumes them at import time; python 3.14 defers
-   the evaluation of annotations, so a bundle that passes there can still fail on the older
-   versions.
+    and confirm that the path printed is inside `pyre-boot.zip`. The bundle carries no
+    bindings, so this is what catches code that assumes them at import time; python 3.14 defers
+    the evaluation of annotations, so a bundle that passes there can still fail on the older
+    versions.
 
 ## The GitHub release
 
-10. **Create the release on the tag**, with the title, the notes, and the boot bundle attached.
+11. **Create the release on the tag**, with the title, the notes, and the boot bundle attached.
 
     ```
     gh release create vX.Y.Z --title "title" --notes-file notes.md pyre-boot.zip
@@ -211,7 +228,7 @@ order it must happen, with the reason for each step and how to check it.
     attached in the same command rather than uploaded afterwards. The `mm` bootstrap fetches
     `releases/download/vX.Y.Z/pyre-boot.zip`, so the asset name is fixed.
 
-11. **Verify the bootstrap, both ways.** On a host without `pyre`, or in a fresh environment,
+12. **Verify the bootstrap, both ways.** On a host without `pyre`, or in a fresh environment,
     `mm` from the `mm` repository downloads the bundle and runs; that exercises only the
     `sys.path` bootstrap. The installer is a separate path: in a fresh conda environment with
     what the core needs, and no `pyre` importable
@@ -244,7 +261,7 @@ order it must happen, with the reason for each step and how to check it.
 
 ## The distributions
 
-12. **PyPI.** Publishing the release triggers `pypi-source` (the sdist) and `pypi-wheels` (one
+13. **PyPI.** Publishing the release triggers `pypi-source` (the sdist) and `pypi-wheels` (one
     wheel per interpreter and platform in the matrix). Both upload through trusted publishing
     in the `pypi` environment. Watch them to completion:
 
@@ -264,7 +281,7 @@ order it must happen, with the reason for each step and how to check it.
     has its own delete, under the release's file list), keep the sdist, and cut a patch
     release.
 
-13. **conda-forge.** The feedstock at `github.com/conda-forge/pyre-feedstock` builds from
+14. **conda-forge.** The feedstock at `github.com/conda-forge/pyre-feedstock` builds from
     the GitHub tag tarball. The bot opens a version bump pull request within hours of the
     release; if it does not, open one by hand: `recipe/meta.yaml` gets the new version, the
     `sha256` of `https://github.com/pyre/pyre/archive/vX.Y.Z.tar.gz`, and `build: number: 0`.
@@ -283,13 +300,13 @@ order it must happen, with the reason for each step and how to check it.
 
 ## After the release
 
-14. **Update the pins that could not be verified before.** The pin in the `mm` repository
+15. **Update the pins that could not be verified before.** The pin in the `mm` repository
     names the new release now that its boot bundle is published; check that
     `releases/download/vX.Y.Z/pyre-boot.zip` downloads before merging it. If the bootstrap in
-    either repository needed changes discovered in step 11, they land on `main` after the
+    either repository needed changes discovered in step 12, they land on `main` after the
     release and ride the next one.
 
-15. **Record what the walk taught.** Anything that surprised, failed, or had to be done by
+16. **Record what the walk taught.** Anything that surprised, failed, or had to be done by
     hand goes into this file.
 
 
