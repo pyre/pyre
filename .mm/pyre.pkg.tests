@@ -29,6 +29,7 @@ tests.pyre.pkg.memory.ordered.clean := memory_ordered_test.dat
 tests.pyre.pkg.envi.write.clean := envi_write_test.hdr
 tests.pyre.pkg.config.yaml_editor_save.clean := yaml_editor_save.yaml
 tests.pyre.pkg.config.recipe_containers.clean := recipe_containers.yaml
+tests.pyre.pkg.config.recipe_numbers.clean := recipe_numbers.yaml
 tests.pyre.pkg.config.persist.clean := persist-state.yaml
 tests.pyre.pkg.config.recipe_braces.clean := recipe_braces.yaml
 tests.pyre.pkg.framework.executive_guesses.clean := executive_guesses.scratch
