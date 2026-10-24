@@ -148,6 +148,40 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # all done
         return
 
+    def pyre_deleteTrait(self, alias, locator=None):
+        """
+        Give up the value of the trait named {alias}, so that it follows my class again
+        """
+        # identify the trait descriptor
+        trait = self.pyre_trait(alias)
+        # build a locator
+        locator = tracking.here(level=1) if locator is None else locator
+        # get my inventory
+        inventory = self.pyre_inventory
+        # the priority of the defaults
+        defaults = self.pyre_executive.priority.defaults
+        # and the priority of the last assignment
+        priority = inventory.getTraitPriority(trait)
+        # a trait that was never set, or that holds what it started with
+        if priority is None or priority.category == defaults.category:
+            # has no value of its own to give up
+            raise self.TraitUnsetError(configurable=self, name=trait.name)
+        # replace the value with what the trait started with, whatever ranks the value had
+        new, old = inventory.setTraitValue(
+            trait=trait,
+            factory=trait.instanceSlot,
+            value=inventory.instanceSeed(trait=trait, instance=self),
+            priority=defaults(),
+            locator=locator,
+            claim=True,
+        )
+        # if i am fully built
+        if self.pyre_cooked:
+            # invoke the hook
+            self.pyre_traitModified(trait=trait, new=new, old=old)
+        # all done
+        return
+
     def pyre_getTrait(self, alias):
         """
         Retrieve the value and meta-data associated with the trait named {alias}
@@ -571,6 +605,25 @@ class Component(Configurable, metaclass=Actor, internal=True):
         except self.TraitNotFoundError:
             # this must be a non-trait attribute
             super().__setattr__(name, value)
+
+        # all done
+        return
+
+    def __delattr__(self, name):
+        """
+        Trap attribute deletion, so that a trait gives up its value and follows my class again
+        """
+        # we must record the location of the caller; {pyre_deleteTrait} doesn't know the correct
+        # stack depth whenever this method is involved
+        locator = tracking.here(level=1)
+        # attempt to
+        try:
+            # give up the value of the trait
+            self.pyre_deleteTrait(alias=name, locator=locator)
+        # if this fails
+        except self.TraitNotFoundError:
+            # this must be a non-trait attribute
+            super().__delattr__(name)
 
         # all done
         return
