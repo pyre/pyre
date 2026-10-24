@@ -59,8 +59,9 @@ def test():
     assert list(h.pyre_suggest(trait=helpful.pyre_trait(alias="size"))) == []
     # but it suggests multiples of its size for its total
     assert list(h.pyre_suggest(trait=helpful.pyre_trait(alias="total"))) == [4, 8, 12]
-    # and the suggestions follow its state
+    # and the suggestions follow its state: change its size
     h.size = 5
+    # and its suggestions for the total change with it
     assert list(h.pyre_suggest(trait=helpful.pyre_trait(alias="total"))) == [5, 10, 15]
 
     # all done
@@ -69,6 +70,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
