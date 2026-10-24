@@ -24,16 +24,19 @@ class PrivateInventory(Inventory):
     key = None  # components with private inventories have no keys
 
     # slot access
-    def setTraitValue(self, trait, factory, value, **kwds):
+    def setTraitValue(self, trait, factory, value, priority=None, **kwds):
         """
-        Set the value of the slot associated with {trait}
+        Set the value of the slot associated with {trait}, and remember the {priority} of the
+        assignment
         """
         # grab the old slot
         old = self.traits[trait]
         # use the factory to make a new slot
         new = factory(value=value, current=old)
-        # and attach the new one
+        # attach the new one
         self.traits[trait] = new
+        # and remember the rank of the assignment
+        self.priorities[trait] = priority
         # all done
         return new, old
 
@@ -55,10 +58,10 @@ class PrivateInventory(Inventory):
 
     def getTraitPriority(self, trait):
         """
-        Retrieve the priority of the last assignment for this {trait}
+        Retrieve the priority of the last assignment for this {trait}; {None} if there was none
         """
-        # private inventories don't track trait meta-data (yet)
-        return None
+        # private inventories track the rank of assignments, and nothing else
+        return self.priorities.get(trait)
 
     def getSlots(self):
         """
@@ -66,6 +69,30 @@ class PrivateInventory(Inventory):
         """
         # that's what i store in my trait map
         return self.traits.values()
+
+    # support for giving up values
+    def classSeed(self, trait, component):
+        """
+        Compute what the slot of {trait} in {component} starts with: a reference to the slot of
+        the nearest ancestor that has it, or the default of {trait}
+        """
+        # find the slot of the ancestor
+        slot = self.inheritedSlot(component=component, trait=trait)
+        # if there isn't one
+        if slot is None:
+            # {component} starts with the default
+            return trait.default
+        # otherwise, it refers to the slot of its ancestor
+        return slot.ref(
+            preprocessor=trait.classSlot.preprocess, postprocessor=trait.classSlot.postprocess
+        )
+
+    def instanceSeed(self, trait, instance):
+        """
+        Compute what the slot of {trait} in {instance} starts with, out of the slot of its class
+        """
+        # the trait knows
+        return trait.instanceSeed(classSlot=type(instance).pyre_inventory[trait])
 
     # support for building component classes and instances
     @classmethod
@@ -216,6 +243,15 @@ class PrivateInventory(Inventory):
             slot = factory(value=value)
             # hand the trait and the default value from the class record
             yield trait, slot
+        # all done
+        return
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # initialize the table of the ranks of assignments
+        self.priorities = {}
         # all done
         return
 
