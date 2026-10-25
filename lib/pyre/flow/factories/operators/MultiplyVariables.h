@@ -13,22 +13,23 @@
 // my superclass
 #include "Binary.h"
 
-// add two tiles to make a third
+// multiply two variables to make a third
 template <class op1T, class op2T, class resultT>
-class pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT> :
-    public Binary<pyre::flow::products::Tile, op1T, op2T, resultT> {
+class pyre::flow::factories::operators::Multiply<
+    pyre::flow::products::Variable, op1T, op2T, resultT> :
+    public Binary<pyre::flow::products::Variable, op1T, op2T, resultT> {
     // type aliases
 public:
     // me
-    using self_type = Add<products::Tile, op1T, op2T, resultT>;
+    using self_type = Multiply<products::Variable, op1T, op2T, resultT>;
     // my superclass
-    using super_type = Binary<products::Tile, op1T, op2T, resultT>;
+    using super_type = Binary<products::Variable, op1T, op2T, resultT>;
     // types from my superclass
     using name_type = typename super_type::name_type;
     using sentinel_type = typename super_type::sentinel_type;
 
     // ref to me
-    using factory_ref_type = std::shared_ptr<Add>;
+    using factory_ref_type = std::shared_ptr<Multiply>;
 
     // factory
 public:
@@ -37,9 +38,9 @@ public:
     // metamethods
 public:
     // destructor
-    inline virtual ~Add();
+    inline virtual ~Multiply();
     // constructor; DON'T CALL
-    inline Add(sentinel_type, const name_type &);
+    inline Multiply(sentinel_type, const name_type &);
 
     // flow protocol
 public:
@@ -48,7 +49,7 @@ public:
 };
 
 // get the inline definitions
-#include "AddTiles.icc"
+#include "MultiplyVariables.icc"
 
 
 // end of file

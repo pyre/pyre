@@ -43,7 +43,7 @@ using float32_t = tile_t<float>;
 // the encoded image
 using image_t = pyre::viz::products::images::bmp_t;
 // the factories this pipeline needs
-using selector_t = pyre::flow::factories::selectors::amplitude_t<complex64_t, float64_t>;
+using modulus_t = pyre::flow::factories::operators::amplitude_t<complex64_t, float64_t>;
 using normalizer_t = pyre::flow::factories::filters::parametric_t<float64_t, float32_t>;
 using colormap_t = pyre::viz::factories::colormaps::gray_t<float32_t>;
 using codec_t = pyre::viz::factories::codecs::bmp_t<float32_t>;
@@ -73,7 +73,7 @@ makeCatalog() -> catalog_t
     // and the encoded image
     catalog.registerProduct<image_t>();
     // the factories
-    catalog.registerFactory<selector_t>();
+    catalog.registerFactory<modulus_t>();
     catalog.registerFactory<normalizer_t>();
     catalog.registerFactory<colormap_t>();
     catalog.registerFactory<codec_t>();
@@ -117,7 +117,7 @@ amplitudeRecipe() -> recipe_t
         { "green", float32_t::declSelf(), {} },
         { "blue", float32_t::declSelf(), {} },
         { "image", image_t::declSelf(), {} },
-        { "amplitude", selector_t::declSelf(), {} },
+        { "amplitude", modulus_t::declSelf(), {} },
         { "normalizer", normalizer_t::declSelf(), { { "interval", interval_t { 0, 10 } } } },
         { "gray", colormap_t::declSelf(), {} },
         { "bmp", codec_t::declSelf(), {} },
@@ -222,13 +222,13 @@ handBuilt(shape_t shape) -> std::vector<char>
     auto blue = float32_t::create("blue", shape, 0.0f);
     auto image = image_t::create("image", shape);
     // the factories
-    auto selector = selector_t::create("amplitude");
+    auto modulus = modulus_t::create("amplitude");
     auto normalizer = normalizer_t::create("normalizer", { 0, 10 });
     auto colormap = colormap_t::create("gray");
     auto codec = codec_t::create("bmp");
     // the wiring
-    selector->signal(signal);
-    selector->amplitude(magnitude);
+    modulus->signal(signal);
+    modulus->amplitude(magnitude);
     normalizer->signal(magnitude);
     normalizer->normalized(normalized);
     colormap->data(normalized);
@@ -258,8 +258,8 @@ handBuilt(shape_t shape) -> std::vector<char>
     colormap->removeOutput("blue");
     normalizer->removeInput("signal");
     normalizer->removeOutput("normalized");
-    selector->removeInput("signal");
-    selector->removeOutput("amplitude");
+    modulus->removeInput("signal");
+    modulus->removeOutput("amplitude");
     // and hand off the bytes
     return copy;
 }

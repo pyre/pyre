@@ -15,7 +15,7 @@
 
 // multiply two tiles to make a third
 template <class op1T, class op2T, class resultT>
-class pyre::flow::factories::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT> :
+class pyre::flow::factories::operators::Multiply<pyre::flow::products::Tile, op1T, op2T, resultT> :
     public Binary<pyre::flow::products::Tile, op1T, op2T, resultT> {
     // type aliases
 public:

@@ -9,39 +9,39 @@
 
 
 // my declarations
-#include "Real.h"
+#include "Imaginary.h"
 
 
 // simulate my c++ declaration
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::declSelf() -> string_type
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::declSelf() -> string_type
 {
     // the type alias, with the declarations of my slots
-    return "pyre::flow::factories::selectors::real_t<" + signal_type::declSelf() + ", "
-         + real_type::declSelf() + ">";
+    return "pyre::flow::factories::accessors::imaginary_t<" + signal_type::declSelf() + ", "
+         + imaginary_type::declSelf() + ">";
 }
 
 
 // the human readable form of my class name
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::className() -> string_type
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::className() -> string_type
 {
     // my kind
-    return "Real";
+    return "Imaginary";
 }
 
 
 // the descriptions of my slots
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::declSlots() -> const slots_type &
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::declSlots() -> const slots_type &
 {
     // my slots, in the order i declare them
     static const slots_type table {
         slot_type::input<signal_type>("signal"),
-        slot_type::output<real_type>("real"),
+        slot_type::output<imaginary_type>("imaginary"),
     };
     // hand them off
     return table;
@@ -49,9 +49,10 @@ pyre::flow::factories::selectors::Real<signalT, realT>::declSlots() -> const slo
 
 
 // the descriptions of my settings
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::declSettings() -> const settings_type &
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::declSettings()
+    -> const settings_type &
 {
     // i have none that can be changed by name
     static const settings_type table {};
@@ -61,9 +62,10 @@ pyre::flow::factories::selectors::Real<signalT, realT>::declSettings() -> const 
 
 
 // the descriptions of my slots
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::slots() const -> const slots_type &
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::slots() const
+    -> const slots_type &
 {
     // the ones of my type
     return declSlots();
@@ -71,9 +73,10 @@ pyre::flow::factories::selectors::Real<signalT, realT>::slots() const -> const s
 
 
 // the descriptions of my settings
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::settings() const -> const settings_type &
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::settings() const
+    -> const settings_type &
 {
     // the ones of my type
     return declSettings();
@@ -81,21 +84,21 @@ pyre::flow::factories::selectors::Real<signalT, realT>::settings() const -> cons
 
 
 // factory
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::create(const name_type & name)
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::create(const name_type & name)
     -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
-    auto ref = std::make_shared<Real>(sentinel_type(), name);
+    auto ref = std::make_shared<Imaginary>(sentinel_type(), name);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.flow.factories.selectors.real.create");
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.accessors.imaginary.create");
     // show me
     channel
         // where
         << pyre::journal::at()
         // the factory
-        << "real '" << ref->name() << "' at " << ref.get() << ": create"
+        << "imaginary '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl;
@@ -104,64 +107,65 @@ pyre::flow::factories::selectors::Real<signalT, realT>::create(const name_type &
 }
 
 // constructor
-template <class signalT, class realT>
-pyre::flow::factories::selectors::Real<signalT, realT>::Real(
+template <class signalT, class imaginaryT>
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::Imaginary(
     sentinel_type sentinel, const name_type & name) :
     // superclass
     super_type(sentinel, name)
 {}
 
 // destructor
-template <class signalT, class realT>
-pyre::flow::factories::selectors::Real<signalT, realT>::~Real()
+template <class signalT, class imaginaryT>
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::~Imaginary()
 {}
 
 // accessors
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::signal() -> signal_ref_type
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::signal() -> signal_ref_type
 {
     // look up the product bound to my {signal} slot and return it
     return std::dynamic_pointer_cast<signal_type>(input("signal"));
 }
 
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::real() -> real_ref_type
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::imaginary() -> imaginary_ref_type
 {
-    // look up the product bound to my {real} slot and return it
-    return std::dynamic_pointer_cast<real_type>(output("real"));
+    // look up the product bound to my {imaginary} slot and return it
+    return std::dynamic_pointer_cast<imaginary_type>(output("imaginary"));
 }
 
 // mutators
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::signal(signal_ref_type signal)
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
     // connect my {signal} slot
     addInput("signal", std::static_pointer_cast<pyre::flow::protocols::Product>(signal));
     // make a self reference
-    auto self = std::dynamic_pointer_cast<Real>(ref());
+    auto self = std::dynamic_pointer_cast<Imaginary>(ref());
     // and return it
     return self;
 }
 
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::real(real_ref_type real) -> factory_ref_type
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::imaginary(
+    imaginary_ref_type imaginary) -> factory_ref_type
 {
-    // connect my {real} slot
-    addOutput("real", std::static_pointer_cast<pyre::flow::protocols::Product>(real));
+    // connect my {imaginary} slot
+    addOutput("imaginary", std::static_pointer_cast<pyre::flow::protocols::Product>(imaginary));
     // make a self reference
-    auto self = std::dynamic_pointer_cast<Real>(ref());
+    auto self = std::dynamic_pointer_cast<Imaginary>(ref());
     // and return it
     return self;
 }
 
-template <class signalT, class realT>
+template <class signalT, class imaginaryT>
 auto
-pyre::flow::factories::selectors::Real<signalT, realT>::make(
+pyre::flow::factories::accessors::Imaginary<signalT, imaginaryT>::make(
     const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
@@ -170,23 +174,23 @@ pyre::flow::factories::selectors::Real<signalT, realT>::make(
     // get my input
     auto s = signal();
     // get my output
-    auto r = real();
+    auto i = imaginary();
 
     // the bound products must be shape compatible; the current implementation only requires
     // that products have the same number of cells
     auto pixels = s->shape().cells();
     // verify consistency
-    bool ok = pixels == r->shape().cells();
+    bool ok = pixels == i->shape().cells();
     // if something is off
     if (!ok) {
         // make a channel
-        auto channel = pyre::journal::error_t("pyre.flow.factories.selectors.real");
+        auto channel = pyre::journal::error_t("pyre.flow.factories.accessors.imaginary");
         // complain
         channel
             // where
             << pyre::journal::at()
             // who
-            << "real factory '" << name() << "' at " << this << ":"
+            << "imaginary factory '" << name() << "' at " << this << ":"
             << pyre::journal::newline
             // what
             << "shape mismatch in the input and output slots"
@@ -207,8 +211,8 @@ pyre::flow::factories::selectors::Real<signalT, realT>::make(
             // indent
             << pyre::journal::indent
             // details
-            // real
-            << "real: " << r->shape()
+            // imaginary
+            << "imaginary: " << i->shape()
             << pyre::journal::newline
             // outdent
             << pyre::journal::outdent
@@ -222,14 +226,14 @@ pyre::flow::factories::selectors::Real<signalT, realT>::make(
     // inputs
     auto sData = s->read();
     // outputs
-    auto rData = r->write();
+    auto iData = i->write();
 
     // go through the cells
     for (auto pixel = 0; pixel < pixels; ++pixel) {
         // read
         auto sValue = sData[pixel];
-        // compute the real part and write
-        rData[pixel] = sValue.real();
+        // compute the imaginary part and write
+        iData[pixel] = sValue.imag();
     }
 
     // all done

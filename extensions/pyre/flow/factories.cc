@@ -26,9 +26,9 @@ namespace pyre::py::flow {
         catalog
             .registerFactory<pyre::flow::factories::sources::slice_t<raster_t<cellT>, signal_t>>();
         // the parts of a complex value
-        catalog.registerFactory<pyre::flow::factories::selectors::amplitude_t<signal_t, real_t>>();
-        catalog.registerFactory<pyre::flow::factories::selectors::real_t<signal_t, real_t>>();
-        catalog.registerFactory<pyre::flow::factories::selectors::imaginary_t<signal_t, real_t>>();
+        catalog.registerFactory<pyre::flow::factories::operators::amplitude_t<signal_t, real_t>>();
+        catalog.registerFactory<pyre::flow::factories::accessors::real_t<signal_t, real_t>>();
+        catalog.registerFactory<pyre::flow::factories::accessors::imaginary_t<signal_t, real_t>>();
         // and its phase, placed in an interval
         catalog.registerFactory<pyre::flow::factories::filters::cycle_t<signal_t, real_t>>();
         // all done

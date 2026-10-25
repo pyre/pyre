@@ -32,7 +32,7 @@ using float32_t = tile_t<float>;
 // the encoded image
 using image_t = pyre::viz::products::images::bmp_t;
 // the factories
-using amplitude_t = pyre::flow::factories::selectors::amplitude_t<complex64_t, float64_t>;
+using amplitude_t = pyre::flow::factories::operators::amplitude_t<complex64_t, float64_t>;
 using normalizer_t = pyre::flow::factories::filters::parametric_t<float64_t, float32_t>;
 using colormap_t = pyre::viz::factories::colormaps::gray_t<float32_t>;
 using codec_t = pyre::viz::factories::codecs::bmp_t<float32_t>;
@@ -67,7 +67,7 @@ main(int argc, char * argv[])
     // every template parameter spelled out
     assert(
         amplitude_t::declSelf()
-        == std::string("pyre::flow::factories::selectors::amplitude_t<") + complex64 + ", "
+        == std::string("pyre::flow::factories::operators::amplitude_t<") + complex64 + ", "
                + float64 + ">");
     assert(
         normalizer_t::declSelf()

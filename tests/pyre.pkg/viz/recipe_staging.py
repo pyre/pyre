@@ -24,10 +24,13 @@ def amplitude():
 
     # make a recipe
     recipe = pyre.flow.recipe()
-    # the factories
+    # the factories: the amplitude of the samples
     recipe.factory(name="amplitude", protocol=Unary, pin=pyre.viz.operators.amplitude())
+    # its normalizer
     recipe.factory(name="normalizer", protocol=pyre.viz.normalizer, settings={"interval": (0, 10)})
+    # the colormap that paints it gray
     recipe.factory(name="gray", protocol=pyre.viz.colormap, pin=pyre.viz.colormaps.gray())
+    # and the encoder of the image
     recipe.factory(name="bmp", protocol=pyre.viz.encoder)
     # the products
     for name in ("signal", "magnitude", "normalized", "red", "green", "blue", "image"):
@@ -62,15 +65,18 @@ def test():
 
     # the catalog
     catalog = pyre.libpyre.flow.catalog()
-    # the tiles of complex samples and of doubles
+    # the tiles of complex samples
     complex64 = pyre.flow.recipes.plan.tile(catalog=catalog, cell="complex64")
+    # of doubles
     float64 = pyre.flow.recipes.plan.tile(catalog=catalog, cell="float64")
+    # and of floats
     float32 = pyre.flow.recipes.plan.tile(catalog=catalog, cell="float32")
 
     # stage the recipe, starting from complex samples
     plan = amplitude().stage(catalog=catalog, products={"signal": complex64})
     # every product has a type
     kinds = plan.kinds
+    # the signal is made of complex samples
     assert kinds["signal"] == complex64
     # the magnitudes are doubles, since that is what the amplitude engine makes
     assert kinds["magnitude"] == float64
@@ -78,10 +84,13 @@ def test():
     assert kinds["normalized"] == kinds["red"] == float32
     # the image is a bitmap
     assert kinds["image"] == "pyre::viz::products::images::bmp_t"
-    # and every factory has the engine that fits
-    assert kinds["amplitude"].startswith("pyre::flow::factories::selectors::amplitude_t<")
+    # and every factory has the engine that fits: the amplitude
+    assert kinds["amplitude"].startswith("pyre::flow::factories::operators::amplitude_t<")
+    # the normalizer
     assert kinds["normalizer"].startswith("pyre::flow::factories::filters::parametric_t<")
+    # the colormap
     assert kinds["gray"].startswith("pyre::viz::factories::colormaps::gray_t<")
+    # and the encoder
     assert kinds["bmp"].startswith("pyre::viz::factories::codecs::bmp_t<")
 
     # a signal of doubles
@@ -106,9 +115,11 @@ def test():
         # that names the product
         assert error.node == "signal"
 
-    # a product bound to nothing
+    # a recipe
     recipe = amplitude()
+    # with a product bound to nothing
     recipe.product(name="loose")
+    # when staged
     try:
         # has no type
         recipe.stage(catalog=catalog, products={"signal": complex64})
@@ -119,9 +130,11 @@ def test():
         # that names the product
         assert error.node == "loose"
 
-    # a factory pinned to nothing, whose protocol has no default
+    # a recipe
     recipe = pyre.flow.recipe()
+    # with a factory pinned to nothing, whose protocol has no default
     recipe.factory(name="operator", protocol=Unary)
+    # when staged
     try:
         # has no component to stage
         recipe.stage(catalog=catalog)

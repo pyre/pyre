@@ -15,10 +15,10 @@
 // simulate my c++ declaration
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::declSelf() -> string_type
+pyre::flow::factories::operators::Phase<signalT, phaseT>::declSelf() -> string_type
 {
     // the type alias, with the declarations of my slots
-    return "pyre::flow::factories::selectors::phase_t<" + signal_type::declSelf() + ", "
+    return "pyre::flow::factories::operators::phase_t<" + signal_type::declSelf() + ", "
          + phase_type::declSelf() + ">";
 }
 
@@ -26,7 +26,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::declSelf() -> string_t
 // the human readable form of my class name
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::className() -> string_type
+pyre::flow::factories::operators::Phase<signalT, phaseT>::className() -> string_type
 {
     // my kind
     return "Phase";
@@ -36,7 +36,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::className() -> string_
 // the descriptions of my slots
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::declSlots() -> const slots_type &
+pyre::flow::factories::operators::Phase<signalT, phaseT>::declSlots() -> const slots_type &
 {
     // my slots, in the order i declare them
     static const slots_type table {
@@ -51,7 +51,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::declSlots() -> const s
 // the descriptions of my settings
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::declSettings() -> const settings_type &
+pyre::flow::factories::operators::Phase<signalT, phaseT>::declSettings() -> const settings_type &
 {
     // i have none that can be changed by name
     static const settings_type table {};
@@ -63,7 +63,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::declSettings() -> cons
 // the descriptions of my slots
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::slots() const -> const slots_type &
+pyre::flow::factories::operators::Phase<signalT, phaseT>::slots() const -> const slots_type &
 {
     // the ones of my type
     return declSlots();
@@ -73,7 +73,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::slots() const -> const
 // the descriptions of my settings
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::settings() const -> const settings_type &
+pyre::flow::factories::operators::Phase<signalT, phaseT>::settings() const -> const settings_type &
 {
     // the ones of my type
     return declSettings();
@@ -83,13 +83,13 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::settings() const -> co
 // factory
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::create(const name_type & name)
+pyre::flow::factories::operators::Phase<signalT, phaseT>::create(const name_type & name)
     -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Phase>(sentinel_type(), name);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.flow.factories.selectors.phase.create");
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.operators.phase.create");
     // show me
     channel
         // where
@@ -105,7 +105,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::create(const name_type
 
 // constructor
 template <class signalT, class phaseT>
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::Phase(
+pyre::flow::factories::operators::Phase<signalT, phaseT>::Phase(
     sentinel_type sentinel, const name_type & name) :
     // superclass
     super_type(sentinel, name)
@@ -113,13 +113,13 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::Phase(
 
 // destructor
 template <class signalT, class phaseT>
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::~Phase()
+pyre::flow::factories::operators::Phase<signalT, phaseT>::~Phase()
 {}
 
 // accessors
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::signal() -> signal_ref_type
+pyre::flow::factories::operators::Phase<signalT, phaseT>::signal() -> signal_ref_type
 {
     // look up the product bound to my {signal} slot and return it
     return std::dynamic_pointer_cast<signal_type>(input("signal"));
@@ -127,7 +127,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::signal() -> signal_ref
 
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::phase() -> phase_ref_type
+pyre::flow::factories::operators::Phase<signalT, phaseT>::phase() -> phase_ref_type
 {
     // look up the product bound to my {phase} slot and return it
     return std::dynamic_pointer_cast<phase_type>(output("phase"));
@@ -136,7 +136,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::phase() -> phase_ref_t
 // mutators
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::signal(signal_ref_type signal)
+pyre::flow::factories::operators::Phase<signalT, phaseT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
     // connect my {signal} slot
@@ -149,7 +149,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::signal(signal_ref_type
 
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::phase(phase_ref_type phase)
+pyre::flow::factories::operators::Phase<signalT, phaseT>::phase(phase_ref_type phase)
     -> factory_ref_type
 {
     // connect my {phase} slot
@@ -162,7 +162,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::phase(phase_ref_type p
 
 template <class signalT, class phaseT>
 auto
-pyre::flow::factories::selectors::Phase<signalT, phaseT>::make(
+pyre::flow::factories::operators::Phase<signalT, phaseT>::make(
     const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
@@ -181,7 +181,7 @@ pyre::flow::factories::selectors::Phase<signalT, phaseT>::make(
     // if something is off
     if (!ok) {
         // make a channel
-        auto channel = pyre::journal::error_t("pyre.flow.factories.selectors.phase");
+        auto channel = pyre::journal::error_t("pyre.flow.factories.operators.phase");
         // complain
         channel
             // where

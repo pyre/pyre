@@ -32,7 +32,8 @@ using tile_t =
 using complex_t = tile_t<std::complex<double>>;
 using real_t = tile_t<double>;
 // the namespaces of the factories
-namespace selectors = pyre::flow::factories::selectors;
+namespace accessors = pyre::flow::factories::accessors;
+namespace operators = pyre::flow::factories::operators;
 namespace filters = pyre::flow::factories::filters;
 namespace sources = pyre::flow::factories::sources;
 namespace colormaps = pyre::viz::factories::colormaps;
@@ -84,11 +85,13 @@ main(int argc, char * argv[])
     // the color channels a colormap writes
     const auto rgb = slots_t { { "red", false }, { "green", false }, { "blue", false } };
 
-    // selectors
-    check<selectors::amplitude_t<complex_t, real_t>>({ signal, { "amplitude", false } }, {});
-    check<selectors::imaginary_t<complex_t, real_t>>({ signal, { "imaginary", false } }, {});
-    check<selectors::phase_t<complex_t, real_t>>({ signal, { "phase", false } }, {});
-    check<selectors::real_t<complex_t, real_t>>({ signal, { "real", false } }, {});
+    // accessors
+    check<accessors::imaginary_t<complex_t, real_t>>({ signal, { "imaginary", false } }, {});
+    check<accessors::real_t<complex_t, real_t>>({ signal, { "real", false } }, {});
+
+    // functions of a complex value
+    check<operators::amplitude_t<complex_t, real_t>>({ signal, { "amplitude", false } }, {});
+    check<operators::phase_t<complex_t, real_t>>({ signal, { "phase", false } }, {});
 
     // filters
     check<filters::affine_t<real_t, real_t>>(

@@ -29,8 +29,8 @@ using channel_grid_t = pyre::grid::grid_t<packing_t, channel_storage_t>;
 using channel_t = pyre::flow::products::tile_t<channel_grid_t>;
 // image
 using image_t = pyre::viz::products::images::bmp_t;
-// selector
-using amplitude_t = pyre::flow::factories::selectors::amplitude_t<signal_t, channel_t>;
+// the amplitude of a complex value
+using amplitude_t = pyre::flow::factories::operators::amplitude_t<signal_t, channel_t>;
 // color map
 using colormap_t = pyre::viz::factories::colormaps::gray_t<channel_t>;
 // encoder
@@ -71,11 +71,11 @@ main(int argc, char * argv[])
     // and the resulting image
     auto image = image_t::create("image", shape);
 
-    // make the selector
-    auto selector = amplitude_t::create("amplitude");
+    // make the operator
+    auto modulus = amplitude_t::create("amplitude");
     // wire it
-    selector->signal(signal);
-    selector->amplitude(amplitude);
+    modulus->signal(signal);
+    modulus->amplitude(amplitude);
 
     // make the colormap
     auto color = colormap_t::create("gray");

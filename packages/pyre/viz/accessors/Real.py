@@ -9,13 +9,13 @@
 import pyre
 
 # the protocol
-from ..protocols.Selector import Selector
+from ..protocols.Accessor import Accessor
 
 
-# the selector of the real part of a complex signal
-class Real(pyre.flow.factory, family="pyre.viz.selectors.real", implements=Selector):
+# the accessor of the real part of a complex signal
+class Real(pyre.flow.factory, family="pyre.viz.accessors.real", implements=Accessor):
     """
-    The selector that extracts the real part of each sample of a complex signal
+    The accessor that extracts the real part of each sample of a complex signal
     """
 
     # the input
@@ -27,7 +27,7 @@ class Real(pyre.flow.factory, family="pyre.viz.selectors.real", implements=Selec
     real.doc = "the real part of each sample"
 
     # the c++ templates whose instantiations do my work, when a recipe is staged
-    pyre_engines = ("pyre::flow::factories::selectors::real_t",)
+    pyre_engines = ("pyre::flow::factories::accessors::real_t",)
 
 
 # end of file

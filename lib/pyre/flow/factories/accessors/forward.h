@@ -13,17 +13,13 @@
 
 
 // forward declarations
-namespace pyre::flow::factories::selectors {
-    // complex parts
-    template <class signalT, class amplitudeT>
-    class Amplitude;
+namespace pyre::flow::factories::accessors {
+    // the parts of a complex value
     template <class signalT, class imaginaryT>
     class Imaginary;
-    template <class signalT, class phaseT>
-    class Phase;
     template <class signalT, class realT>
     class Real;
-} // namespace pyre::flow::factories::selectors
+} // namespace pyre::flow::factories::accessors
 
 
 // end of file

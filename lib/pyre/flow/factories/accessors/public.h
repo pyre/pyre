@@ -8,13 +8,11 @@
 #pragma once
 
 
-// the api of {pyre::flow::factories::selectors}, with its declarations and the external packages
+// the api of {pyre::flow::factories::accessors}, with its declarations and the external packages
 #include "api.h"
 
 // my classes
-#include "Amplitude.h"
 #include "Imaginary.h"
-#include "Phase.h"
 #include "Real.h"
 
 

@@ -13,28 +13,37 @@ from . import images
 from . import tiles
 
 # factories
+from . import accessors
 from . import readers
 from . import colormaps
 from . import encoders
 from . import filters
 from . import normalizers
 from . import operators
-from . import selectors
 from . import slicers
 
 # easy access to the protocols
-# products
+# of the products: encoded images
 image = images.image
+# the cells of datasets
 raster = protocols.raster
+# and tiles
 tile = tiles.tile
-# factories
+# of the factories: the parts of structured values
+accessor = accessors.accessor
+# the readers of datasets
 reader = readers.reader
+# the maps from values to colors
 colormap = colormaps.colormap
+# the encoders of images
 encoder = encoders.encoder
+# the filters
 filter = filters.filter
+# the normalizers
 normalizer = normalizers.normalizer
+# the operators
 operator = operators.operator
-selector = selectors.selector
+# and the slicers of rasters into tiles
 slicer = slicers.slicer
 
 
