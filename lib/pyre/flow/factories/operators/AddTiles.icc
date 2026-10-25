@@ -15,7 +15,7 @@
 // factory
 template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::create(
+pyre::flow::factories::operators::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::create(
     const name_type & name) -> factory_ref_type
 {
     // make an instance and wrap it in a shared pointer
@@ -38,7 +38,7 @@ pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::cre
 
 // destructor
 template <class op1T, class op2T, class resultT>
-pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::~Add()
+pyre::flow::factories::operators::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::~Add()
 {
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
@@ -58,7 +58,7 @@ pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::~Ad
 
 // constructor
 template <class op1T, class op2T, class resultT>
-pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::Add(
+pyre::flow::factories::operators::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::Add(
     sentinel_type sentinel, const name_type & name) :
     // base class
     super_type(sentinel, name)
@@ -66,7 +66,7 @@ pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::Add
 
 template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::make(
+pyre::flow::factories::operators::Add<pyre::flow::products::Tile, op1T, op2T, resultT>::make(
     const name_type & slot, typename super_type::product_ref_type product) ->
     typename super_type::factory_ref_type
 {

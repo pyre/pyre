@@ -40,7 +40,7 @@ using channel_t = pyre::flow::products::tile_t<channel_grid_t>;
 // the encoded image
 using image_t = pyre::viz::products::images::bmp_t;
 // the factories
-using selector_t = pyre::flow::factories::selectors::amplitude_t<signal_t, real_t>;
+using modulus_t = pyre::flow::factories::operators::amplitude_t<signal_t, real_t>;
 using normalizer_t = pyre::flow::factories::filters::parametric_t<real_t, channel_t>;
 using colormap_t = pyre::viz::factories::colormaps::gray_t<channel_t>;
 using codec_t = pyre::viz::factories::codecs::bmp_t<channel_t>;
@@ -95,23 +95,23 @@ main(int argc, char * argv[])
         auto blue = channel_t::create("blue", shape, 0.0f);
         auto image = image_t::create("image", shape);
         // the factories
-        auto selector = selector_t::create("amplitude");
+        auto modulus = modulus_t::create("amplitude");
         auto normalizer = normalizer_t::create("normalizer", { 0.0, 10.0 });
         auto colormap = colormap_t::create("gray");
         auto codec = codec_t::create("bmp");
 
         // a factory learns its slots only as they are bound: a fresh one has none, so the palette
         // cannot ask a factory what slots to draw, or what products they take
-        assert(selector->inputs().empty() && selector->outputs().empty());
+        assert(modulus->inputs().empty() && modulus->outputs().empty());
         // tiles start out clean, as if they held something worth reading
         assert(!signal->stale() && !amplitude->stale() && !red->stale());
         // while the image starts out stale
         assert(image->stale());
 
         // 2. the wiring: bind each slot, with the setters that know the type of the product
-        // the selector reads the signal and writes the magnitudes
-        selector->signal(signal);
-        selector->amplitude(amplitude);
+        // the operator reads the signal and writes the magnitudes
+        modulus->signal(signal);
+        modulus->amplitude(amplitude);
         // the normalizer reads the magnitudes and writes the normalized values
         normalizer->signal(amplitude);
         normalizer->normalized(normalized);
@@ -128,8 +128,8 @@ main(int argc, char * argv[])
 
         // every binding is visible from both of its ends: the signal knows who reads it
         assert(signal->readers().size() == 1);
-        // and the selector knows what it reads, by slot
-        assert(selector->input("signal") == signal);
+        // and the operator knows what it reads, by slot
+        assert(modulus->input("signal") == signal);
         // a product written by a factory knows its writer
         assert(amplitude->writers().size() == 1);
         // binding an output flushes the product, so everything a factory writes is now stale
@@ -152,7 +152,7 @@ main(int argc, char * argv[])
         assert(names == expected);
         // the distinct nodes
         auto distinct = std::set<std::string>(names.begin(), names.end());
-        // name the eleven nodes on the canvas, with the selector and its output sharing a name
+        // name the eleven nodes on the canvas, with the operator and its output sharing a name
         assert(distinct.size() == 10);
 
         // 4. the first pull: fill the signal with magnitudes 0 through 63
@@ -236,14 +236,14 @@ main(int argc, char * argv[])
             // at the same phases
             doubled[cell] = std::polar(2.0f * cell, 0.1f * cell);
         }
-        // takes the place of the first one at the input of the selector
-        selector->removeInput("signal");
+        // takes the place of the first one at the input of the operator
+        modulus->removeInput("signal");
         // undoing the binding flushed nothing, since what was computed stays valid until a
         // replacement is bound
         assert(!amplitude->stale() && !image->stale());
         // binding the replacement
-        selector->signal(other);
-        // flushes the selector, since what it computes depends on its inputs
+        modulus->signal(other);
+        // flushes the operator, since what it computes depends on its inputs
         assert(amplitude->stale() && image->stale());
         // so the next pull repaints
         image->read();
@@ -251,7 +251,7 @@ main(int argc, char * argv[])
         assert(std::abs(red->read()[5] - 0.25) < 1e-5);
 
         // 7. types: the generic binding takes any product, whatever its type
-        auto stray = selector_t::create("stray");
+        auto stray = modulus_t::create("stray");
         // so a tile of magnitudes is accepted where the signal belongs
         stray->addInput("signal", amplitude);
         // the binding is recorded
@@ -263,8 +263,8 @@ main(int argc, char * argv[])
         stray->removeInput("signal");
 
         // 8. the record of the nodes, before the scope that holds them closes
-        nodes = { signal, other,    amplitude,  normalized,  red,      green, blue,
-                  image,  selector, normalizer, replacement, colormap, codec };
+        nodes = { signal, other,   amplitude,  normalized,  red,      green, blue,
+                  image,  modulus, normalizer, replacement, colormap, codec };
         // factories own their outputs and refer to everything else weakly, so nothing holds
         // the graph together but the references in this scope, which go away with it
     }

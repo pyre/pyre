@@ -11,11 +11,11 @@
 // my dependencies
 #include "forward.h"
 // my superclass
-#include "../protocols/Factory.h"
+#include "../../protocols/Factory.h"
 
 // combine two operands to make a third
 template <template <class> class categoryT, class op1T, class op2T, class resultT>
-class pyre::flow::factories::Binary : public pyre::flow::protocols::Factory {
+class pyre::flow::factories::operators::Binary : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me

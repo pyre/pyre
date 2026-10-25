@@ -9,25 +9,25 @@
 
 
 // my declarations
-#include "MultiplyVariables.h"
+#include "AddVariables.h"
 
 
 // factory
 template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::create(
+pyre::flow::factories::operators::Add<pyre::flow::products::Variable, op1T, op2T, resultT>::create(
     const name_type & name) -> factory_ref_type
 {
     // make an instance and wrap it in a shared pointer
-    auto ref = std::make_shared<Multiply>(sentinel_type(), name);
+    auto ref = std::make_shared<Add>(sentinel_type(), name);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.flow.factories.multiply");
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
     // let me know
     channel
         // where
         << pyre::journal::at()
         // mark
-        << "var multiply '" << ref->name() << "' at " << ref.get() << ": create"
+        << "var add '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl;
@@ -38,16 +38,16 @@ pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resu
 
 // destructor
 template <class op1T, class op2T, class resultT>
-pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::~Multiply()
+pyre::flow::factories::operators::Add<pyre::flow::products::Variable, op1T, op2T, resultT>::~Add()
 {
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.flow.factories.multiply");
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.add");
     // let me know
     channel
         // where
         << pyre::journal::at()
         // mark
-        << "var multiply '" << this->name() << "' at " << this << ": destroy"
+        << "var add '" << this->name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl;
@@ -58,7 +58,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resu
 
 // constructor
 template <class op1T, class op2T, class resultT>
-pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::Multiply(
+pyre::flow::factories::operators::Add<pyre::flow::products::Variable, op1T, op2T, resultT>::Add(
     sentinel_type sentinel, const name_type & name) :
     // base class
     super_type(sentinel, name)
@@ -66,7 +66,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resu
 
 template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resultT>::make(
+pyre::flow::factories::operators::Add<pyre::flow::products::Variable, op1T, op2T, resultT>::make(
     const name_type & slot, typename super_type::product_ref_type product) ->
     typename super_type::factory_ref_type
 {
@@ -76,7 +76,7 @@ pyre::flow::factories::Multiply<pyre::flow::products::Variable, op1T, op2T, resu
     auto op1 = this->op1()->read();
     auto op2 = this->op2()->read();
     // compute
-    auto value = op1 * op2;
+    auto value = op1 + op2;
     // store
     this->result()->write(value);
     // all done

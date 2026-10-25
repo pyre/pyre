@@ -13,25 +13,25 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// compute the phase of a complex signal, in radians
-template <class signalT, class phaseT>
-class pyre::flow::factories::selectors::Phase : public pyre::flow::protocols::Factory {
+// extract the imaginary part of a complex signal
+template <class signalT, class imaginaryT>
+class pyre::flow::factories::accessors::Imaginary : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me
-    using self_type = Phase<signalT, phaseT>;
+    using self_type = Imaginary<signalT, imaginaryT>;
     // my superclass
     using super_type = pyre::flow::protocols::Factory;
     // my slots
     using signal_type = signalT;
-    using phase_type = phaseT;
+    using imaginary_type = imaginaryT;
 
     // ref to me
-    using factory_ref_type = std::shared_ptr<Phase>;
+    using factory_ref_type = std::shared_ptr<Imaginary>;
     // my input slots
     using signal_ref_type = std::shared_ptr<signal_type>;
     // and my output slots
-    using phase_ref_type = std::shared_ptr<phase_type>;
+    using imaginary_ref_type = std::shared_ptr<imaginary_type>;
 
     // the spelling of types
     using string_type = string_t;
@@ -61,23 +61,23 @@ public:
     // metamethods
 public:
     // destructor
-    virtual ~Phase();
+    virtual ~Imaginary();
     // constructor: DON'T CALL
-    inline Phase(sentinel_type, const name_type &);
+    inline Imaginary(sentinel_type, const name_type &);
 
     // accessors
 public:
     // input slots
     auto signal() -> signal_ref_type;
     // output slots
-    auto phase() -> phase_ref_type;
+    auto imaginary() -> imaginary_ref_type;
 
     // mutators
 public:
     // input slots
     auto signal(signal_ref_type) -> factory_ref_type;
     // output slots
-    auto phase(phase_ref_type) -> factory_ref_type;
+    auto imaginary(imaginary_ref_type) -> factory_ref_type;
 
     // flow protocol
 public:
@@ -87,14 +87,14 @@ public:
     // suppressed metamethods
 private:
     // constructors
-    Phase(const Phase &) = delete;
-    Phase & operator=(const Phase &) = delete;
-    Phase(Phase &&) = delete;
-    Phase & operator=(Phase &&) = delete;
+    Imaginary(const Imaginary &) = delete;
+    Imaginary & operator=(const Imaginary &) = delete;
+    Imaginary(Imaginary &&) = delete;
+    Imaginary & operator=(Imaginary &&) = delete;
 };
 
 // get the inline definitions
-#include "Phase.icc"
+#include "Imaginary.icc"
 
 
 // end of file

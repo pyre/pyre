@@ -39,7 +39,7 @@ using float32_t = tile_t<float>;
 // the image
 using image_t = pyre::viz::products::images::bmp_t;
 // the factories
-using selector_t = pyre::flow::factories::selectors::amplitude_t<complex64_t, float64_t>;
+using modulus_t = pyre::flow::factories::operators::amplitude_t<complex64_t, float64_t>;
 using normalizer_t = pyre::flow::factories::filters::parametric_t<float64_t, float32_t>;
 using colormap_t = pyre::viz::factories::colormaps::gray_t<float32_t>;
 using codec_t = pyre::viz::factories::codecs::bmp_t<float32_t>;
@@ -113,10 +113,10 @@ main(int argc, char * argv[])
     assert(float32_t::create("blank", shape)->stale());
 
     // the factories, wired one slot at a time, checking the rule after every binding
-    auto selector = selector_t::create("amplitude");
-    selector->signal(signal);
+    auto modulus = modulus_t::create("amplitude");
+    modulus->signal(signal);
     assert(consistent(products));
-    selector->amplitude(magnitude);
+    modulus->amplitude(magnitude);
     assert(consistent(products));
     // becoming the output of a factory makes a product stale, since its contents are not the
     // factory's yet
@@ -178,11 +178,11 @@ main(int argc, char * argv[])
 
     // a replacement for the signal, bound through the typed setter
     auto other = complex64_t::create("other", shape, { 2.0f, 0.0f });
-    selector->removeInput("signal");
+    modulus->removeInput("signal");
     // undoing the binding flushes nothing
     assert(!image->stale());
-    // binding the replacement flushes the selector
-    selector->signal(other);
+    // binding the replacement flushes the operator
+    modulus->signal(other);
     assert(magnitude->stale() && image->stale());
     // and a pull reaches the new signal
     image->read();

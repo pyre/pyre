@@ -8,25 +8,19 @@
 #pragma once
 
 
-// the forward declarations of {pyre::flow::factories::selectors}
+// the forward declarations of {pyre::flow::factories::accessors}
 #include "forward.h"
 
 
-// selectors
-namespace pyre::flow::factories::selectors {
-    // complex parts
-    template <class signalT, class amplitudeT>
-    using amplitude_t = Amplitude<signalT, amplitudeT>;
-
+// accessors
+namespace pyre::flow::factories::accessors {
+    // the parts of a complex value
     template <class signalT, class imaginaryT>
     using imaginary_t = Imaginary<signalT, imaginaryT>;
 
-    template <class signalT, class phaseT>
-    using phase_t = Phase<signalT, phaseT>;
-
     template <class signalT, class realT>
     using real_t = Real<signalT, realT>;
-} // namespace pyre::flow::factories::selectors
+} // namespace pyre::flow::factories::accessors
 
 
 // end of file

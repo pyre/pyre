@@ -23,7 +23,7 @@ from .Raster import Raster as raster
 from .Image import Image as image
 
 # the protocols of the factories
-from .Selector import Selector as selector
+from .Accessor import Accessor as accessor
 from .Filter import Filter as filter
 from .Operator import Operator as operator
 from .Colormap import Colormap as colormap

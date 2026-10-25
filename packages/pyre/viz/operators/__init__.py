@@ -25,6 +25,18 @@ def amplitude():
     return Amplitude
 
 
+@pyre.foundry(implements=operator, tip="the phase of each sample of a complex signal")
+def phase():
+    """
+    The phase of each sample of a complex signal
+    """
+    # pull the implementation
+    from .Phase import Phase
+
+    # and publish it
+    return Phase
+
+
 @pyre.foundry(implements=operator, tip="the cell-wise sum of two signals")
 def add():
     """

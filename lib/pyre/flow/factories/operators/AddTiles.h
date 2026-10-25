@@ -13,16 +13,16 @@
 // my superclass
 #include "Binary.h"
 
-// add two variables to make a third
+// add two tiles to make a third
 template <class op1T, class op2T, class resultT>
-class pyre::flow::factories::Add<pyre::flow::products::Variable, op1T, op2T, resultT> :
-    public Binary<pyre::flow::products::Variable, op1T, op2T, resultT> {
+class pyre::flow::factories::operators::Add<pyre::flow::products::Tile, op1T, op2T, resultT> :
+    public Binary<pyre::flow::products::Tile, op1T, op2T, resultT> {
     // type aliases
 public:
     // me
-    using self_type = Add<products::Variable, op1T, op2T, resultT>;
+    using self_type = Add<products::Tile, op1T, op2T, resultT>;
     // my superclass
-    using super_type = Binary<products::Variable, op1T, op2T, resultT>;
+    using super_type = Binary<products::Tile, op1T, op2T, resultT>;
     // types from my superclass
     using name_type = typename super_type::name_type;
     using sentinel_type = typename super_type::sentinel_type;
@@ -48,7 +48,7 @@ public:
 };
 
 // get the inline definitions
-#include "AddVariables.icc"
+#include "AddTiles.icc"
 
 
 // end of file

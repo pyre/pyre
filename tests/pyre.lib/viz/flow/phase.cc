@@ -28,8 +28,8 @@ using channel_grid_t = pyre::grid::grid_t<packing_t, channel_storage_t>;
 using channel_t = pyre::flow::products::tile_t<channel_grid_t>;
 // image
 using image_t = pyre::viz::products::images::bmp_t;
-// selector
-using phase_t = pyre::flow::factories::selectors::phase_t<signal_t, channel_t>;
+// the phase of a complex value
+using phase_t = pyre::flow::factories::operators::phase_t<signal_t, channel_t>;
 // color map
 using colormap_t = pyre::viz::factories::colormaps::hsb_t<channel_t>;
 // encoder
@@ -75,11 +75,11 @@ main(int argc, char * argv[])
     // and the resulting image
     auto image = image_t::create("image", shape);
 
-    // make the selector
-    auto selector = phase_t::create("phase");
+    // make the operator
+    auto angle = phase_t::create("phase");
     // wire it
-    selector->signal(signal);
-    selector->phase(phase);
+    angle->signal(signal);
+    angle->phase(phase);
 
     // make the colormap
     auto color = colormap_t::create("hsb");

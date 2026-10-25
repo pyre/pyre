@@ -12,28 +12,26 @@
 #include "forward.h"
 // my superclass
 #include "../../protocols/Factory.h"
-// the magnitude of a cell of any type
-#include "../../utilities.h"
 
-// compute the amplitude of a complex signal
-template <class signalT, class amplitudeT>
-class pyre::flow::factories::selectors::Amplitude : public pyre::flow::protocols::Factory {
+// extract the real part of a complex signal
+template <class signalT, class realT>
+class pyre::flow::factories::accessors::Real : public pyre::flow::protocols::Factory {
     // type aliases
 public:
     // me
-    using self_type = Amplitude<signalT, amplitudeT>;
+    using self_type = Real<signalT, realT>;
     // my superclass
     using super_type = pyre::flow::protocols::Factory;
     // my slots
     using signal_type = signalT;
-    using amplitude_type = amplitudeT;
+    using real_type = realT;
 
     // ref to me
-    using factory_ref_type = std::shared_ptr<Amplitude>;
+    using factory_ref_type = std::shared_ptr<Real>;
     // my input slots
     using signal_ref_type = std::shared_ptr<signal_type>;
     // and my output slots
-    using amplitude_ref_type = std::shared_ptr<amplitude_type>;
+    using real_ref_type = std::shared_ptr<real_type>;
 
     // the spelling of types
     using string_type = string_t;
@@ -63,23 +61,23 @@ public:
     // metamethods
 public:
     // destructor
-    virtual ~Amplitude();
+    virtual ~Real();
     // constructor: DON'T CALL
-    inline Amplitude(sentinel_type, const name_type &);
+    inline Real(sentinel_type, const name_type &);
 
     // accessors
 public:
     // input slots
     auto signal() -> signal_ref_type;
     // output slots
-    auto amplitude() -> amplitude_ref_type;
+    auto real() -> real_ref_type;
 
     // mutators
 public:
     // input slots
     auto signal(signal_ref_type) -> factory_ref_type;
     // output slots
-    auto amplitude(amplitude_ref_type) -> factory_ref_type;
+    auto real(real_ref_type) -> factory_ref_type;
 
     // flow protocol
 public:
@@ -89,14 +87,14 @@ public:
     // suppressed metamethods
 private:
     // constructors
-    Amplitude(const Amplitude &) = delete;
-    Amplitude & operator=(const Amplitude &) = delete;
-    Amplitude(Amplitude &&) = delete;
-    Amplitude & operator=(Amplitude &&) = delete;
+    Real(const Real &) = delete;
+    Real & operator=(const Real &) = delete;
+    Real(Real &&) = delete;
+    Real & operator=(Real &&) = delete;
 };
 
 // get the inline definitions
-#include "Amplitude.icc"
+#include "Real.icc"
 
 
 // end of file

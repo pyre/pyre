@@ -36,11 +36,11 @@ def test():
             "add": (["op1", "op2"], ["sum"]),
             "amplitude": (["signal"], ["amplitude"]),
             "multiply": (["op1", "op2"], ["product"]),
-        },
-        # the selectors
-        pyre.viz.selectors: {
-            "imaginary": (["signal"], ["imaginary"]),
             "phase": (["signal"], ["phase"]),
+        },
+        # the accessors
+        pyre.viz.accessors: {
+            "imaginary": (["signal"], ["imaginary"]),
             "real": (["signal"], ["real"]),
         },
         # the colormaps
@@ -71,12 +71,17 @@ def test():
             # and so must its outputs
             assert [trait.name for trait in factory.pyre_outputTraits] == outputs
 
-    # the settings that the c++ factories take, with their defaults
+    # the settings that the c++ factories take, with their defaults: the decimation level
     assert pyre.viz.filters.decimate().level == 0
+    # the interval of the normalizer
     assert pyre.viz.normalizers.parametric().interval == (0, 1)
+    # the threshold of the hue/luminosity colormap
     assert pyre.viz.colormaps.hl().threshold == 0.4
+    # the number of bins of the geometric filter
     assert pyre.viz.filters.geometric().bins == 10
+    # and its ratio
     assert pyre.viz.filters.geometric().ratio == 2
+    # and the number of bins of the uniform filter
     assert pyre.viz.filters.uniform().bins == 10
 
     # all done

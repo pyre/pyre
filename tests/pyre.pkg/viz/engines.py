@@ -24,7 +24,7 @@ def test():
 
     # the categories of factories
     categories = [
-        pyre.viz.selector,
+        pyre.viz.accessor,
         pyre.viz.operator,
         pyre.viz.normalizer,
         pyre.viz.filter,
@@ -49,6 +49,7 @@ def test():
         assert templates <= instantiated, (family, templates - instantiated)
     # and every template in the catalog is named by some component
     claimed = set().union(*named.values())
+    # so nothing in the catalog is left unclaimed
     assert instantiated <= claimed, instantiated - claimed
 
     # all done

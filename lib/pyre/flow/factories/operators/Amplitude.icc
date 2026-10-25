@@ -15,10 +15,10 @@
 // simulate my c++ declaration
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSelf() -> string_type
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::declSelf() -> string_type
 {
     // the type alias, with the declarations of my slots
-    return "pyre::flow::factories::selectors::amplitude_t<" + signal_type::declSelf() + ", "
+    return "pyre::flow::factories::operators::amplitude_t<" + signal_type::declSelf() + ", "
          + amplitude_type::declSelf() + ">";
 }
 
@@ -26,7 +26,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSelf() -> 
 // the human readable form of my class name
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::className() -> string_type
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::className() -> string_type
 {
     // my kind
     return "Amplitude";
@@ -36,7 +36,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::className() ->
 // the descriptions of my slots
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSlots() -> const slots_type &
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::declSlots() -> const slots_type &
 {
     // my slots, in the order i declare them
     static const slots_type table {
@@ -51,7 +51,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSlots() ->
 // the descriptions of my settings
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSettings()
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::declSettings()
     -> const settings_type &
 {
     // i have none
@@ -64,7 +64,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::declSettings()
 // the descriptions of my slots
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::slots() const
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::slots() const
     -> const slots_type &
 {
     // the ones of my type
@@ -75,7 +75,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::slots() const
 // the descriptions of my settings
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::settings() const
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::settings() const
     -> const settings_type &
 {
     // the ones of my type
@@ -86,13 +86,13 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::settings() con
 // factory
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::create(const name_type & name)
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::create(const name_type & name)
     -> factory_ref_type
 {
     // build an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Amplitude>(sentinel_type(), name);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.flow.factories.selectors.amplitude.create");
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.operators.amplitude.create");
     // show me
     channel
         // where
@@ -108,7 +108,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::create(const n
 
 // constructor
 template <class signalT, class amplitudeT>
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::Amplitude(
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::Amplitude(
     sentinel_type sentinel, const name_type & name) :
     // superclass
     super_type(sentinel, name)
@@ -116,13 +116,13 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::Amplitude(
 
 // destructor
 template <class signalT, class amplitudeT>
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::~Amplitude()
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::~Amplitude()
 {}
 
 // accessors
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::signal() -> signal_ref_type
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::signal() -> signal_ref_type
 {
     // look up the product bound to my {signal} slot and return it
     return std::dynamic_pointer_cast<signal_type>(input("signal"));
@@ -130,7 +130,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::signal() -> si
 
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::amplitude() -> amplitude_ref_type
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::amplitude() -> amplitude_ref_type
 {
     // look up the product bound to my {amplitude} slot and return it
     return std::dynamic_pointer_cast<amplitude_type>(output("amplitude"));
@@ -139,7 +139,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::amplitude() ->
 // mutators
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::signal(signal_ref_type signal)
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::signal(signal_ref_type signal)
     -> factory_ref_type
 {
     // connect my {signal} slot
@@ -152,7 +152,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::signal(signal_
 
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::amplitude(
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::amplitude(
     amplitude_ref_type amplitude) -> factory_ref_type
 {
     // connect my {amplitude} slot
@@ -165,7 +165,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::amplitude(
 
 template <class signalT, class amplitudeT>
 auto
-pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::make(
+pyre::flow::factories::operators::Amplitude<signalT, amplitudeT>::make(
     const name_type & slot, super_type::product_ref_type product) -> super_type::factory_ref_type
 {
     // chain up
@@ -184,7 +184,7 @@ pyre::flow::factories::selectors::Amplitude<signalT, amplitudeT>::make(
     // if something is off
     if (!ok) {
         // make a channel
-        auto channel = pyre::journal::error_t("pyre.flow.factories.selectors.amplitude");
+        auto channel = pyre::journal::error_t("pyre.flow.factories.operators.amplitude");
         // complain
         channel
             // where

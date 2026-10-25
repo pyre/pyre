@@ -26,7 +26,7 @@ using grid_t = pyre::grid::grid_t<packing_t, storage_t>;
 // the products
 using product_t = pyre::flow::products::tile_t<grid_t>;
 // build the operator
-using factory_t = pyre::flow::factories::multiply_tiles_t<grid_t>;
+using factory_t = pyre::flow::factories::operators::multiply_tiles_t<grid_t>;
 
 // driver
 int

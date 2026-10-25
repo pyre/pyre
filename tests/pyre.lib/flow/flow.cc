@@ -29,7 +29,7 @@ main(int argc, char * argv[])
 
     // signal
     auto signal = product_t::create();
-    // selector
+    // the amplitude of the signal
     auto amplitude = factory_t::create();
     // the data tile
     auto tile = product_t::create();
