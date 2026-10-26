@@ -49,16 +49,16 @@ def add():
     return Add
 
 
-@pyre.foundry(implements=operator, tip="the cell-wise product of two signals")
-def multiply():
+@pyre.foundry(implements=operator, tip="the cell-wise difference of two signals")
+def subtract():
     """
-    The cell-wise product of two signals
+    The cell-wise difference of two signals
     """
     # pull the implementation
-    from .Multiply import Multiply
+    from .Subtract import Subtract
 
     # and publish it
-    return Multiply
+    return Subtract
 
 
 # end of file

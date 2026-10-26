@@ -25,8 +25,11 @@ class Add(pyre.flow.factory, family="pyre.viz.operators.add", implements=Binary)
     op2.doc = "the second operand"
 
     # the output
-    sum = pyre.viz.tile.output()
-    sum.doc = "the sum of the two signals"
+    result = pyre.viz.tile.output()
+    result.doc = "the sum of the two signals"
+
+    # the c++ templates whose instantiations do my work, when a recipe is staged
+    pyre_engines = ("pyre::flow::factories::operators::add_t",)
 
 
 # end of file
