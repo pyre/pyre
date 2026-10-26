@@ -11,6 +11,9 @@ import pyre
 # the protocol
 from ..protocols.Contents import Contents
 
+# the solver of selections i hand out
+from .Selector import Selector
+
 
 # the contents of a file, held in memory
 class Memory(pyre.flow.product, family="pyre.viz.contents.memory", implements=Contents):
@@ -44,12 +47,12 @@ class Memory(pyre.flow.product, family="pyre.viz.contents.memory", implements=Co
             for axis in self.axes
         }
 
-    def match(self, selection: dict) -> dict | None:
+    def selector(self) -> Selector:
         """
-        The entry whose value along every axis is the one in {selection}, if there is one
+        Make a selector that solves selections over my axes and my datasets
         """
-        # look for it
-        return next((entry for entry in self.entries if entry["selector"] == selection), None)
+        # hand it my axes and my datasets
+        return Selector(axes=self.axes, entries=self.entries)
 
     # introspection
     def pyre_describe(self):
