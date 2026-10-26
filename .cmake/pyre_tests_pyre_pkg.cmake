@@ -1308,6 +1308,7 @@ pyre_test_python_testcase(tests/pyre.pkg/viz/recipe_scalars.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/recipe_realize.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/recipe_slice.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/recipe_staging.py)
+pyre_test_python_testcase(tests/pyre.pkg/viz/selector.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/slots.py)
 pyre_test_python_testcase(tests/pyre.pkg/viz/specifications.py)
 
