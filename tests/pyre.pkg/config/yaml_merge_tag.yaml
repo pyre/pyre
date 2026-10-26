@@ -1,0 +1,16 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+tags:
+  merge:
+    # a map to merge from
+    base: &base {x: 1}
+    # a map that merges it, a tag the reader folds into the map it builds
+    derived: {<<: *base, y: 2}
+
+
+# end of file

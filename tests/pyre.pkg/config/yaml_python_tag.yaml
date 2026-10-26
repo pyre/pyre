@@ -1,0 +1,16 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+tags:
+  python:
+    # a setting that is dropped, since the file is refused
+    applied: yes
+    # a python tag that calls a function while the file is read
+    called: !!python/object/apply:builtins.len [[1, 2, 3]]
+
+
+# end of file
