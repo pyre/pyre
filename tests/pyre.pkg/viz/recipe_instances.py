@@ -10,8 +10,7 @@
 A product becomes an instance when an instance writes it, in whichever order its writer and its
 readers become instances: it adopts the product its writer holds, every reader instance is bound
 to it, and it goes back to its specification once no instance writes it; undoing a binding takes
-the product away from its readers, but its writer keeps what it made, so a product that was made
-stays made; a product someone pinned by hand is left alone, and an unbound input holds nothing
+the product away from its readers and its writer, which is no longer asked to make it; a product someone pinned by hand is left alone, and an unbound input holds nothing
 """
 
 
@@ -105,8 +104,10 @@ def test() -> None:
     assert contents.level == "protocol"
     # and the picker holds nothing
     assert picker.contents is None
-    # while the reader keeps what it made
-    assert reader.contents is own and not own.pyre_stale
+    # and neither does the reader
+    assert reader.contents is None
+    # which is no longer one of the writers of what it made
+    assert reader not in own.pyre_factories
 
     # the other order: the picker goes back to its class
     recipe.pin(name="picker", pin=Match)
@@ -114,12 +115,16 @@ def test() -> None:
     recipe.pin(name="reader", pin=reader)
     # which makes the contents an instance
     assert contents.level == "instance"
-    # the product the reader made already
-    assert contents.pin is own and not own.pyre_stale
+    # a new one, which the reader holds
+    assert contents.pin is reader.contents and contents.pin is not own
+    # and must make again
+    assert contents.pin.pyre_stale
     # and the picker, when it becomes one
     recipe.pin(name="picker", pin=picker)
     # reads it
     assert picker.contents is contents.pin
+    # remember it
+    again = contents.pin
 
     # unbinding the reader
     recipe.unbind(factory="reader", slot="contents")
@@ -127,8 +132,10 @@ def test() -> None:
     assert contents.level == "protocol"
     # and the picker holds nothing
     assert picker.contents is None
-    # but the reader keeps what it made, which is still made
-    assert reader.contents is own and not own.pyre_stale
+    # and neither does the reader
+    assert reader.contents is None
+    # which is no longer one of the writers of what it made
+    assert reader not in again.pyre_factories
 
     # a product
     mine = pyre.viz.contents.memory()(name="tests.pyre.viz.recipe_instances.mine")
