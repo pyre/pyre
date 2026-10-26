@@ -12,6 +12,26 @@
 #include "Variable.h"
 
 
+// simulate my c++ declaration
+template <typename valueT>
+auto
+pyre::flow::products::Variable<valueT>::declSelf() -> string_type
+{
+    // the type alias, with the declaration of my value
+    return "pyre::flow::products::var_t<" + pyre::memory::CellName<cell_type>::decl() + ">";
+}
+
+
+// the human readable form of my class name
+template <typename valueT>
+auto
+pyre::flow::products::Variable<valueT>::className() -> string_type
+{
+    // my kind, and the name of my value
+    return "Variable" + pyre::memory::CellName<cell_type>::name();
+}
+
+
 // factory
 template <typename valueT>
 auto
