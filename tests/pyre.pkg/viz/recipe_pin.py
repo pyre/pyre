@@ -87,17 +87,17 @@ def test():
     # written by the amplitude
     recipe.bind(factory="source", slot="amplitude", product="magnitude")
 
-    # a selector that takes any tile
-    recipe.factory(name="selector", protocol=pyre.viz.selector, pin=pyre.viz.selectors.real())
+    # an accessor that takes any tile
+    recipe.factory(name="accessor", protocol=pyre.viz.accessor, pin=pyre.viz.accessors.real())
     # reads the magnitudes
-    recipe.bind(factory="selector", slot="signal", product="magnitude")
+    recipe.bind(factory="accessor", slot="signal", product="magnitude")
 
-    # a selector whose slot of the same name expects complex tiles, which magnitudes are not
+    # an accessor whose slot of the same name expects complex tiles, which magnitudes are not
     class Complex(
-        pyre.flow.factory, family="tests.pyre.viz.selectors.complex", implements=pyre.viz.selector
+        pyre.flow.factory, family="tests.pyre.viz.accessors.complex", implements=pyre.viz.accessor
     ):
         """
-        A selector that reads complex tiles
+        A accessor that reads complex tiles
         """
 
         # the input
@@ -105,20 +105,20 @@ def test():
         # the output
         real = pyre.viz.tile.output()
 
-    # so pinning the selector to it, which keeps the slot but changes what it expects
+    # so pinning the accessor to it, which keeps the slot but changes what it expects
     try:
         # is refused
-        recipe.pin(name="selector", pin=Complex)
+        recipe.pin(name="accessor", pin=Complex)
         # so we can't get here
         assert False, "unreachable"
     # by raising
     except IncompatibleBindingError as error:
         # that names the slot
-        assert (error.node, error.slot, error.product) == ("selector", "signal", "magnitude")
-    # and the selector is as it was, still bound
-    assert recipe.node(name="selector").pin is pyre.viz.selectors.real()
+        assert (error.node, error.slot, error.product) == ("accessor", "signal", "magnitude")
+    # and the accessor is as it was, still bound
+    assert recipe.node(name="accessor").pin is pyre.viz.accessors.real()
     # and still reading the magnitudes
-    assert recipe.binding(factory="selector", slot="signal").product == "magnitude"
+    assert recipe.binding(factory="accessor", slot="signal").product == "magnitude"
 
     # all done
     return
