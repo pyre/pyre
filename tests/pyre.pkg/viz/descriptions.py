@@ -33,10 +33,10 @@ def test():
         },
         # the operators
         pyre.viz.operators: {
-            "add": (["op1", "op2"], ["sum"]),
+            "add": (["op1", "op2"], ["result"]),
             "amplitude": (["signal"], ["amplitude"]),
-            "multiply": (["op1", "op2"], ["product"]),
             "phase": (["signal"], ["phase"]),
+            "subtract": (["op1", "op2"], ["result"]),
         },
         # the accessors
         pyre.viz.accessors: {
