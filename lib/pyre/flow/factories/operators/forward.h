@@ -11,29 +11,21 @@
 // my dependencies
 #include "../../forward.h"
 #include "../../products/forward.h"
+// the rules of arithmetic
+#include "concepts.h"
 
 
 // forward declarations
 namespace pyre::flow::factories::operators {
     // binary operators
-    template <template <typename> class categoryT, class op1T, class op2T, class resultT>
+    template <class op1T, class op2T, class resultT>
     class Binary;
 
-    // addition; the general case is not implemented
-    template <template <typename> class categoryT, class op1T, class op2T, class resultT>
-    class Add;
-    template <class op1T, class op2T, class resultT>
-    class Add<products::Tile, op1T, op2T, resultT>;
-    template <class op1T, class op2T, class resultT>
-    class Add<products::Variable, op1T, op2T, resultT>;
-
-    // multiplication; the general case is not implemented
-    template <template <typename> class categoryT, class op1T, class op2T, class resultT>
-    class Multiply;
-    template <class op1T, class op2T, class resultT>
-    class Multiply<products::Tile, op1T, op2T, resultT>;
-    template <class op1T, class op2T, class resultT>
-    class Multiply<products::Variable, op1T, op2T, resultT>;
+    // the arithmetic: an operation, such as {std::plus<>}, that combines two operands, each a
+    // scalar or a tile, as long as the math says the combination makes sense
+    template <class operationT, class op1T, class op2T, class resultT>
+        requires arithmetic_c<operationT, op1T, op2T, resultT>
+    class Arithmetic;
 
     // functions of a complex value
     template <class signalT, class amplitudeT>

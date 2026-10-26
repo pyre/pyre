@@ -14,21 +14,26 @@
 
 // operators
 namespace pyre::flow::factories::operators {
+    // the arithmetic; the result is a tile when either operand is one, and otherwise a scalar
     // addition
-    // atoms
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using add_variables_t = Add<products::Variable, op1T, op2T, resultT>;
-    // tiles
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using add_tiles_t = Add<products::Tile, op1T, op2T, resultT>;
+    template <
+        class op1T, class op2T = op1T, class resultT = std::conditional_t<tile_c<op2T>, op2T, op1T>>
+    using add_t = Arithmetic<std::plus<>, op1T, op2T, resultT>;
+
+    // subtraction
+    template <
+        class op1T, class op2T = op1T, class resultT = std::conditional_t<tile_c<op2T>, op2T, op1T>>
+    using subtract_t = Arithmetic<std::minus<>, op1T, op2T, resultT>;
 
     // multiplication
-    // atoms
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using multiply_variables_t = Multiply<products::Variable, op1T, op2T, resultT>;
-    // tiles
-    template <class op1T, class op2T = op1T, class resultT = op1T>
-    using multiply_tiles_t = Multiply<products::Tile, op1T, op2T, resultT>;
+    template <
+        class op1T, class op2T = op1T, class resultT = std::conditional_t<tile_c<op2T>, op2T, op1T>>
+    using multiply_t = Arithmetic<std::multiplies<>, op1T, op2T, resultT>;
+
+    // division
+    template <
+        class op1T, class op2T = op1T, class resultT = std::conditional_t<tile_c<op2T>, op2T, op1T>>
+    using divide_t = Arithmetic<std::divides<>, op1T, op2T, resultT>;
 
     // functions of a complex value
     template <class signalT, class amplitudeT>

@@ -12,44 +12,89 @@
 #include "Binary.h"
 
 
+// the descriptions of my slots
+template <class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::declSlots() -> const slots_type &
+{
+    // my slots, in the order i declare them
+    static const slots_type table {
+        slot_type::input<op1_type>("op1"),
+        slot_type::input<op2_type>("op2"),
+        slot_type::output<result_type>("result"),
+    };
+    // hand them off
+    return table;
+}
+
+// the descriptions of my settings
+template <class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::declSettings()
+    -> const settings_type &
+{
+    // i have none
+    static const settings_type table {};
+    // hand them off
+    return table;
+}
+
+// the descriptions of my slots
+template <class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::slots() const -> const slots_type &
+{
+    // the ones of my type
+    return declSlots();
+}
+
+// the descriptions of my settings
+template <class op1T, class op2T, class resultT>
+auto
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::settings() const
+    -> const settings_type &
+{
+    // the ones of my type
+    return declSettings();
+}
+
 // constructor
-template <template <class> class categoryT, class op1T, class op2T, class resultT>
-pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::Binary(
+template <class op1T, class op2T, class resultT>
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::Binary(
     sentinel_type sentinel, const name_type & name) :
     // base class
     super_type(sentinel, name)
 {}
 
 // accessors
-template <template <class> class categoryT, class op1T, class op2T, class resultT>
+template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::op1() -> op1_ref_type
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::op1() -> op1_ref_type
 {
     // look up the product bound to my {op1} slot and return it
     return std::dynamic_pointer_cast<op1_type>(input("op1"));
 }
 
-template <template <class> class categoryT, class op1T, class op2T, class resultT>
+template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::op2() -> op2_ref_type
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::op2() -> op2_ref_type
 {
     // look up the product bound to my {op2} slot and return it
     return std::dynamic_pointer_cast<op2_type>(input("op2"));
 }
 
-template <template <class> class categoryT, class op1T, class op2T, class resultT>
+template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::result()
-    -> result_ref_type
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::result() -> result_ref_type
 {
     // look up the product bound to my {result} slot and return it
     return std::dynamic_pointer_cast<result_type>(output("result"));
 }
 
 // mutators
-template <template <class> class categoryT, class op1T, class op2T, class resultT>
+template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::op1(op1_ref_type op1)
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::op1(op1_ref_type op1)
     -> factory_ref_type
 {
     // bind {op1} to its slots
@@ -60,9 +105,9 @@ pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::op1(op
     return self;
 }
 
-template <template <class> class categoryT, class op1T, class op2T, class resultT>
+template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::op2(op2_ref_type op2)
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::op2(op2_ref_type op2)
     -> factory_ref_type
 {
     // bind {op2} to its slots
@@ -73,10 +118,10 @@ pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::op2(op
     return self;
 }
 
-template <template <class> class categoryT, class op1T, class op2T, class resultT>
+template <class op1T, class op2T, class resultT>
 auto
-pyre::flow::factories::operators::Binary<categoryT, op1T, op2T, resultT>::result(
-    result_ref_type result) -> factory_ref_type
+pyre::flow::factories::operators::Binary<op1T, op2T, resultT>::result(result_ref_type result)
+    -> factory_ref_type
 {
     // bind {result} to its slots
     addOutput("result", std::static_pointer_cast<pyre::flow::protocols::Product>(result));

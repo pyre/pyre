@@ -14,12 +14,7 @@
 // my classes
 // arithmetic
 #include "Binary.h"
-// addition
-#include "AddTiles.h"
-#include "AddVariables.h"
-// multiplication
-#include "MultiplyTiles.h"
-#include "MultiplyVariables.h"
+#include "Arithmetic.h"
 // functions of a complex value
 #include "Amplitude.h"
 #include "Phase.h"
