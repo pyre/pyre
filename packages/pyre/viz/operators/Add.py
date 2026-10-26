@@ -21,6 +21,7 @@ class Add(pyre.flow.factory, family="pyre.viz.operators.add", implements=Binary)
     # the inputs
     op1 = pyre.viz.tile.input()
     op1.doc = "the first operand"
+    # and the second operand
     op2 = pyre.viz.tile.input()
     op2.doc = "the second operand"
 

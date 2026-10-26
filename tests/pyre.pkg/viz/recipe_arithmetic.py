@@ -27,8 +27,9 @@ def test():
     for name in ("a", "b", "sum", "difference"):
         # one at a time
         recipe.product(name=name)
-    # the factories
+    # the factories: the sum
     recipe.factory(name="add", pin=pyre.viz.operators.add())
+    # and the difference
     recipe.factory(name="subtract", pin=pyre.viz.operators.subtract())
     # the bindings
     for factory, slot, product in [
@@ -49,6 +50,7 @@ def test():
         plan.kinds["add"]
         == f"pyre::flow::factories::operators::add_t<{float64}, {float64}, {float64}>"
     )
+    # both of them
     assert (
         plan.kinds["subtract"]
         == f"pyre::flow::factories::operators::subtract_t<{float64}, {float64}, {float64}>"
@@ -60,18 +62,23 @@ def test():
     with plan.realize(shape=shape) as graph:
         # get the cells of the operands
         a = graph["a"].write()
+        # both of them
         b = graph["b"].write()
-        # go through them
+        # go through their lines
         for i in range(shape[0]):
+            # and their samples
             for j in range(shape[1]):
                 # and fill them with values that tell the cells apart
                 a[i, j] = 10 * i + j
+                # differently in each operand
                 b[i, j] = 0.5 * j
         # pull the results
         total = graph["sum"].read()
+        # both of them
         difference = graph["difference"].read()
-        # go through their cells
+        # go through their lines
         for i in range(shape[0]):
+            # and their samples
             for j in range(shape[1]):
                 # the sum
                 assert total[i, j] == 10 * i + 1.5 * j
