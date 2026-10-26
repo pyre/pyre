@@ -20,7 +20,9 @@ class Parser:
     from ...parsing.exceptions import ParsingError
 
     # constants
+    # the separator of a component's family from its name in a key
     typeSeparator = "#"
+    # the separator of the levels of a key
     scopeSeparator = "."
     # the prefix of the tags of the yaml specification, which documents spell "!!"
     standard = "tag:yaml.org,2002:"
@@ -80,9 +82,11 @@ class Parser:
 
         # make a channel
         channel = journal.warning("pyre.config.yaml")
-        # and complain
+        # say what is missing
         channel.line(f"could not locate support for 'yaml'")
+        # and what needed it
         channel.line(f"while attempting to parse '{uri}'")
+        # and complain
         channel.log()
 
         # all done
@@ -103,8 +107,9 @@ class Parser:
         Build a parsing error out of {error}, raised by the yaml loader because the document at
         {uri} is not well formed, that says what is wrong and where
         """
-        # the loader describes the problem, and what it was doing when it ran into it
+        # the loader describes the problem
         problem = getattr(error, "problem", None) or str(error)
+        # and what it was doing when it ran into it
         context = getattr(error, "context", None)
         # put the two together
         description = f"{context}: {problem}" if context else problem
@@ -222,9 +227,10 @@ class Parser:
             conditions = constraints[0:]
             # the key is always a string; yaml interprets keys that are valid numbers
             key = str(loader.construct_object(keyNode))
-            # record where the entry sits in the file; the marks count from zero, people
-            # count from one
+            # find where the entry starts
             mark = keyNode.start_mark
+            # and record where it sits in the file; the marks count from zero, people count
+            # from one
             where = pyre.tracking.chain(
                 this=pyre.tracking.file(source=uri, line=mark.line + 1, column=mark.column + 1),
                 next=locator,
