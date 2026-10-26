@@ -212,13 +212,23 @@ pyre_test_driver(tests/pyre.lib/timers/wall_timer_stop.cc)
 
 
 # flow
+pyre_test_driver(tests/pyre.lib/flow/add_shift.cc)
 pyre_test_driver(tests/pyre.lib/flow/add_tiles.cc)
 pyre_test_driver(tests/pyre.lib/flow/add_variables.cc)
+pyre_test_driver(tests/pyre.lib/flow/arithmetic_rules.cc)
+pyre_test_driver(tests/pyre.lib/flow/arithmetic_shapes.cc)
+pyre_test_driver(tests/pyre.lib/flow/arithmetic_spelling.cc)
 pyre_test_driver(tests/pyre.lib/flow/calc_tiles.cc)
 pyre_test_driver(tests/pyre.lib/flow/calc_variables.cc)
+pyre_test_driver(tests/pyre.lib/flow/divide_complex.cc)
+pyre_test_driver(tests/pyre.lib/flow/divide_scale.cc)
+pyre_test_driver(tests/pyre.lib/flow/divide_variables.cc)
 pyre_test_driver(tests/pyre.lib/flow/flow.cc)
-pyre_test_driver(tests/pyre.lib/flow/multiply_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/multiply_scale.cc)
 pyre_test_driver(tests/pyre.lib/flow/multiply_variables.cc)
+pyre_test_driver(tests/pyre.lib/flow/subtract_shift.cc)
+pyre_test_driver(tests/pyre.lib/flow/subtract_tiles.cc)
+pyre_test_driver(tests/pyre.lib/flow/subtract_variables.cc)
 
 
 # viz
