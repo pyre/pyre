@@ -210,11 +210,9 @@ class Recipe:
             holder = (
                 previous if binding.factory == name else self.factoryNode(name=binding.factory).pin
             )
-            # a reader loses the product, but a writer keeps what it made, whether or not anyone
-            # reads it
-            if holder.pyre_trait(alias=binding.slot).input:
-                # so clear the slot of a reader
-                setattr(holder, binding.slot, None)
+            # loses the product, whether it reads it or writes it, so a writer that is gone is no
+            # longer asked to make it
+            setattr(holder, binding.slot, None)
         # forget the bindings of the slots that are gone
         self.bindings = [b for b in self.bindings if b not in gone]
         # and make the ones that are live with the new pin
@@ -351,10 +349,10 @@ class Recipe:
         maker = self.factoryNode(name=factory)
         # and the product
         stock = self.productNode(name=binding.product)
-        # when both ends are instances, the binding was a live one; a reader loses the product,
-        # but a writer keeps what it made, whether or not anyone reads it
-        if maker.level == "instance" and stock.level == "instance" and self.reads(binding=binding):
-            # so clear the slot of a reader
+        # when both ends are instances, the binding was a live one
+        if maker.level == "instance" and stock.level == "instance":
+            # so the factory loses the product, whether it reads it or writes it, and a writer
+            # that is unbound is no longer asked to make it
             setattr(maker.pin, slot, None)
         # the product may have lost the last instance that writes it
         self.demote(product=binding.product)
