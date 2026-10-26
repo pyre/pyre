@@ -67,33 +67,19 @@ class Match(pyre.flow.factory, family="pyre.viz.pickers.match", implements=Picke
         """
         Pick the dataset that matches my selection out of my contents
         """
-        # get my contents
-        contents = self.contents
+        # get a selector from my contents
+        selector = self.contents.selector()
         # and my selection
         selection = dict(self.selection)
-        # the axes it leaves out
-        missing = [axis for axis in contents.axes if axis not in selection]
-        # if there are any
-        if missing:
-            # name them the way a person would list them
-            axes = (
-                ", ".join(missing[:-1]) + " or " + missing[-1] if len(missing) > 1 else missing[0]
-            )
-            # nothing can be picked, until the selection names a value for each of them
-            raise self.ProductionError(
-                node=self, product="dataset", reason=f"the selection names no {axes}"
-            )
-        # look for the dataset
-        entry = contents.match(selection=selection)
-        # if there is none
-        if entry is None:
-            # the selection, the way it reads
-            named = ", ".join(f"{axis}={value}" for axis, value in selection.items())
-            # say so
-            raise self.ProductionError(
-                node=self, product="dataset", reason=f"no dataset matches the selection {named}"
-            )
-        # otherwise, fill my output with it
+        # find out whether it picks a dataset
+        reason = selector.refusal(selection=selection)
+        # if it doesn't
+        if reason is not None:
+            # nothing can be made, for the reason the selector gives
+            raise self.ProductionError(node=self, product="dataset", reason=reason)
+        # otherwise, get the dataset it picks
+        entry = selector.pick(selection=selection)
+        # fill my output with it
         self.dataset.fill(selector=entry["selector"], source=entry.get("source"))
         # and chain up
         return super().pyre_run(**kwds)
