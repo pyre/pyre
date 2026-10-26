@@ -113,7 +113,11 @@ class URI:
         if isinstance(value, Path):
             # build a {file} uri and return it
             return cls(scheme="file", address=value)
-        # otherwise, assume it is a string; control characters belong nowhere in a uri, while
+        # otherwise, assume it is a string; empty text names nothing
+        if value == "":
+            # so complain
+            raise cls.ParsingError(value=value, description="{0.value!r} is not a uri: it is empty")
+        # control characters belong nowhere in a uri, while
         # blanks are kept, since they are part of the names of the resources users type
         if cls._controls.search(value):
             # so complain
