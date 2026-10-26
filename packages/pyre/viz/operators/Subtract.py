@@ -21,6 +21,7 @@ class Subtract(pyre.flow.factory, family="pyre.viz.operators.subtract", implemen
     # the inputs
     op1 = pyre.viz.tile.input()
     op1.doc = "the signal to subtract from"
+    # and the signal to take away
     op2 = pyre.viz.tile.input()
     op2.doc = "the signal to subtract"
 
