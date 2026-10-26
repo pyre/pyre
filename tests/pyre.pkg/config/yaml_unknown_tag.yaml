@@ -1,0 +1,16 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+tags:
+  unknown:
+    # a setting that is dropped, since the file is refused
+    applied: yes
+    # a tag that no part of pyre gives a meaning to
+    extended: !extend [a, b]
+
+
+# end of file
