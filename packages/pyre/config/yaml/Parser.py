@@ -22,6 +22,8 @@ class Parser:
     # constants
     typeSeparator = "#"
     scopeSeparator = "."
+    # the prefix of the tags of the yaml specification, which documents spell "!!"
+    standard = "tag:yaml.org,2002:"
 
     # interface
     def parse(self, uri, stream, locator):
@@ -38,8 +40,9 @@ class Parser:
             pass
         # if it succeeds
         else:
-            # look for the fast loader, falling back to the pure python implementation
-            factory = getattr(yaml, "CLoader", yaml.Loader)
+            # look for the fast safe loader, falling back to the pure python implementation; the
+            # safe loaders build only the standard yaml types, so no tag can import or call python
+            factory = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
             # build a loader over the stream
             loader = factory(stream)
             # carefully, since the loader holds on to the stream
@@ -47,16 +50,26 @@ class Parser:
                 # compose the node tree rather than loading the document, so that every node
                 # keeps the mark that says where in the file it came from
                 doc = loader.get_single_node()
-            # if the document is not well formed
+                # refuse the document if it holds a tag the loader cannot build
+                self.screen(node=doc, loader=loader, uri=uri, locator=locator)
+                # and harvest its contents
+                configuration = self.process(doc=doc, loader=loader, uri=uri, locator=locator)
+            # if the document is not well formed, or the loader cannot build one of its values
             except yaml.YAMLError as error:
                 # record what is wrong, and where
                 self.errors.append(self.malformed(error=error, uri=uri, locator=locator))
                 # there is nothing to harvest
                 return ()
+            # if the document holds a tag the loader cannot build
+            except self.ParsingError as error:
+                # record it
+                self.errors.append(error)
+                # there is nothing to harvest
+                return ()
             # if all is well
             else:
-                # process the contents
-                return self.process(doc=doc, loader=loader, uri=uri, locator=locator)
+                # hand over the contents
+                return configuration
             # release the loader
             finally:
                 # in every case
@@ -105,6 +118,59 @@ class Parser:
         )
         # build the error and return it
         return self.ParsingError(description=description, locator=where)
+
+    def screen(self, node, loader, uri, locator):
+        """
+        Refuse the document at {uri}, whose node tree is rooted at {node}, if any of its nodes
+        carries a tag that {loader} cannot build
+        """
+        # get the node types
+        import yaml
+
+        # the tags the loader builds by name, and the merge keys it folds into their mappings
+        known = set(loader.yaml_constructors) | {self.standard + "merge", self.standard + "value"}
+        # the prefixes of the families of tags it builds
+        families = tuple(loader.yaml_multi_constructors)
+        # the nodes left to look at; an empty document has none
+        pending = [] if node is None else [node]
+        # and the ones already seen, since an alias shares the node of its anchor
+        seen = set()
+        # as long as there are nodes left
+        while pending:
+            # grab the next one in document order
+            node = pending.pop()
+            # if it was seen before
+            if id(node) in seen:
+                # move on
+                continue
+            # otherwise, mark it
+            seen.add(id(node))
+            # if the loader cannot build its tag
+            if node.tag not in known and not node.tag.startswith(families):
+                # spell the tag the way the document does
+                tag = node.tag.replace(self.standard, "!!", 1)
+                # find where the node starts
+                mark = node.start_mark
+                # and place it in the file, after the reason the file was read; the marks count
+                # from zero, people count from one
+                where = pyre.tracking.chain(
+                    this=pyre.tracking.file(source=uri, line=mark.line + 1, column=mark.column + 1),
+                    next=locator,
+                )
+                # and refuse the document
+                raise self.ParsingError(
+                    description=f"the tag '{tag}' is not supported", locator=where
+                )
+            # a mapping holds pairs of nodes
+            if isinstance(node, yaml.MappingNode):
+                # look at each one, in order
+                pending.extend(reversed([part for pair in node.value for part in pair]))
+            # a sequence holds nodes
+            elif isinstance(node, yaml.SequenceNode):
+                # look at each one, in order
+                pending.extend(reversed(node.value))
+        # all done
+        return
 
     def process(self, doc, loader, uri, locator):
         """
