@@ -94,6 +94,12 @@ pyre::py::flow::factories(py::module &)
     // a constant, such as a saturation or a brightness
     catalog.registerFactory<pyre::flow::factories::filters::constant_t<float64_t>>();
 
+    // the arithmetic of tiles of reals
+    // the sum of two tiles
+    catalog.registerFactory<pyre::flow::factories::operators::add_t<float64_t>>();
+    // and their difference
+    catalog.registerFactory<pyre::flow::factories::operators::subtract_t<float64_t>>();
+
     // all done
     return;
 }
