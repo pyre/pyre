@@ -19,7 +19,7 @@ using cell_t = double;
 // the products
 using product_t = pyre::flow::products::var_t<cell_t>;
 // build the operator
-using factory_t = pyre::flow::factories::operators::add_variables_t<cell_t>;
+using factory_t = pyre::flow::factories::operators::add_t<product_t>;
 
 // driver
 int
