@@ -41,6 +41,11 @@ pyre::flow::catalog::Catalog::registerProduct() -> const product_entry_type &
             // is made with its own defaults
             return productT::create(name, shape);
         }
+        // a product that has no shape, such as a scalar, and says how to make one from a name
+        else if constexpr (requires { productT::create(name); }) {
+            // is made with its own defaults, whatever the shape of the graph
+            return productT::create(name);
+        }
         // and the rest, such as a raster over a dataset in a file, come into a graph made by
         // whoever opened their source
         else {
@@ -63,9 +68,10 @@ pyre::flow::catalog::Catalog::registerProduct() -> const product_entry_type &
     }
     // everything else
     else {
-        // can be made from a shape only if it says how
-        makes =
-            requires(const name_type & name, shape_type shape) { productT::create(name, shape); };
+        // can be made only if it says how, from a shape or, if it has none, from a name alone
+        makes = requires(const name_type & name, shape_type shape) {
+            productT::create(name, shape);
+        } || requires(const name_type & name) { productT::create(name); };
     }
     // the declaration of the type
     auto decl = productT::declSelf();
