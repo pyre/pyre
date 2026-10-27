@@ -40,7 +40,7 @@ main(int argc, char * argv[])
     // make the factory
     auto constant = constant_t::create("constant", value);
     // wire it
-    constant->tile(tile);
+    constant->result(tile);
 
     // go through the tile contents
     for (auto v : tile->read()) {
