@@ -82,14 +82,15 @@ class Inventory(Dashboard):
         declares {trait} itself, or when that ancestor is marked {internal} and so has no
         inventory
         """
-        # a trait that {component} declares
-        if trait in component.pyre_localTraits:
+        # traits are algebraic nodes whose {==} builds an expression that is always true, so
+        # look them up in sets, which match them by identity; a trait that {component} declares
+        if trait in set(component.pyre_localTraits):
             # is its own
             return None
         # go through the ancestors of {component}, nearest first
         for ancestor in component.pyre_pedigree[1:]:
             # the ones without {trait}
-            if trait not in ancestor.pyre_configurables():
+            if trait not in set(ancestor.pyre_configurables()):
                 # are of no interest
                 continue
             # ancestors marked {internal} have no inventory
