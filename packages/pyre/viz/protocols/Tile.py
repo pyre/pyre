@@ -5,15 +5,18 @@
 # (c) 1998-2026 all rights reserved
 
 
-# support
-import pyre
+# superclass
+from .Quantity import Quantity
 
 
 # the protocol for data tiles
-class Tile(pyre.flow.specification, family="pyre.viz.tiles"):
+class Tile(Quantity, family="pyre.viz.tiles"):
     """
     The protocol for typed data tiles with a specific storage strategy
     """
+
+    # the c++ product templates whose instantiations satisfy me
+    pyre_products = ("pyre::flow::products::tile_t",)
 
     # framework hooks
     @classmethod

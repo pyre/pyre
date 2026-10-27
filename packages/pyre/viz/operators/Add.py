@@ -12,22 +12,23 @@ import pyre
 from ..protocols.Binary import Binary
 
 
-# the cell-wise sum of two signals
+# the sum of two quantities
 class Add(pyre.flow.factory, family="pyre.viz.operators.add", implements=Binary):
     """
-    The operator that adds two signals, sample by sample
+    The operator that adds two quantities: two tiles, cell by cell; a tile and a scalar, on
+    either side, which adds the scalar to every cell; or two scalars
     """
 
     # the inputs
-    op1 = pyre.viz.tile.input()
+    op1 = pyre.viz.quantity.input()
     op1.doc = "the first operand"
     # and the second operand
-    op2 = pyre.viz.tile.input()
+    op2 = pyre.viz.quantity.input()
     op2.doc = "the second operand"
 
     # the output
-    result = pyre.viz.tile.output()
-    result.doc = "the sum of the two signals"
+    result = pyre.viz.quantity.output()
+    result.doc = "the sum of the two operands"
 
     # the c++ templates whose instantiations do my work, when a recipe is staged
     pyre_engines = ("pyre::flow::factories::operators::add_t",)

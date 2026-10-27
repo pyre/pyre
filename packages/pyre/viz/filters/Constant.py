@@ -12,21 +12,21 @@ import pyre
 from ..protocols.Filter import Filter
 
 
-# a source of a constant signal
+# a source of a constant quantity
 class Constant(pyre.flow.factory, family="pyre.viz.filters.constant", implements=Filter):
     """
-    A source of a signal that has the same {value} everywhere, e.g. for the parts of a
-    colormap that do not vary
+    A source of a quantity that has the same {value} everywhere: a tile, e.g. for the parts of
+    a colormap that do not vary, or a scalar, e.g. a scale or a shift
     """
 
     # user configurable state
     value = pyre.properties.float()
     value.default = 0
-    value.doc = "the value of every sample"
+    value.doc = "the value of every cell of a tile, or of a scalar"
 
     # the output
-    tile = pyre.viz.tile.output()
-    tile.doc = "the constant signal"
+    result = pyre.viz.quantity.output()
+    result.doc = "the constant quantity"
 
     # the c++ templates whose instantiations do my work, when a recipe is staged
     pyre_engines = ("pyre::flow::factories::filters::constant_t",)

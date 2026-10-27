@@ -37,10 +37,10 @@ def phase():
     return Phase
 
 
-@pyre.foundry(implements=operator, tip="the cell-wise sum of two signals")
+@pyre.foundry(implements=operator, tip="the sum of two quantities")
 def add():
     """
-    The cell-wise sum of two signals
+    The sum of two quantities
     """
     # pull the implementation
     from .Add import Add
@@ -49,16 +49,40 @@ def add():
     return Add
 
 
-@pyre.foundry(implements=operator, tip="the cell-wise difference of two signals")
+@pyre.foundry(implements=operator, tip="the difference of two quantities")
 def subtract():
     """
-    The cell-wise difference of two signals
+    The difference of two quantities
     """
     # pull the implementation
     from .Subtract import Subtract
 
     # and publish it
     return Subtract
+
+
+@pyre.foundry(implements=operator, tip="the product of a tile and a scalar, or of two scalars")
+def multiply():
+    """
+    The product of a tile and a scalar, or of two scalars
+    """
+    # pull the implementation
+    from .Multiply import Multiply
+
+    # and publish it
+    return Multiply
+
+
+@pyre.foundry(implements=operator, tip="the quotient of a tile or a scalar by a scalar")
+def divide():
+    """
+    The quotient of a tile or a scalar by a scalar
+    """
+    # pull the implementation
+    from .Divide import Divide
+
+    # and publish it
+    return Divide
 
 
 # end of file

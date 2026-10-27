@@ -25,10 +25,10 @@ def affine():
     return Affine
 
 
-@pyre.foundry(implements=filter, tip="a source of a constant signal")
+@pyre.foundry(implements=filter, tip="a source of a constant quantity")
 def constant():
     """
-    A source of a constant signal
+    A source of a constant quantity
     """
     # pull the implementation
     from .Constant import Constant

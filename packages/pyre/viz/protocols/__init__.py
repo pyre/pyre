@@ -6,6 +6,9 @@
 
 
 # the specifications of the products
+# the products that hold numbers
+from .Quantity import Quantity as quantity
+
 # tiles
 from .Tile import Tile as tile
 
@@ -15,6 +18,9 @@ from .Real import Real as real
 from .Magnitude import Magnitude as magnitude
 from .Unit import Unit as unit
 from .Channel import Channel as channel
+
+# scalars
+from .Scalar import Scalar as scalar
 
 # the cells of a dataset
 from .Raster import Raster as raster
