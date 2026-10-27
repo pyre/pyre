@@ -52,14 +52,16 @@ public:
     inline auto className() const -> const name_type &;
     // the declaration of the type of their cells; empty for products that are not grids of cells
     inline auto cell() const -> const decl_type &;
-    // whether i can make products from a shape; products that wrap cells they do not own come
-    // into a graph made by whoever owns the cells
+    // whether i can make products from a shape, which products with no shape, such as scalars,
+    // ignore; products that wrap cells they do not own come into a graph made by whoever owns the
+    // cells
     inline auto makes() const -> bool;
 
     // interface
 public:
-    // make a product named {name} of the given {shape}; nothing for products that wrap cells they
-    // do not own, which come into a graph made by whoever owns the cells
+    // make a product named {name} of the given {shape}, which products with no shape ignore;
+    // nothing for products that wrap cells they do not own, which come into a graph made by
+    // whoever owns the cells
     inline auto make(const name_type & name, shape_type shape) const -> product_ref_type;
 
     // implementation details - data
