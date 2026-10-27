@@ -54,7 +54,7 @@ def test():
     # so the recipe has no bindings left
     assert recipe.bindings == []
     # and it has the new slots
-    assert list(node.slots) == ["op1", "op2", "sum"]
+    assert list(node.slots) == ["op1", "op2", "result"]
     # bind one of them
     recipe.bind(factory="op", slot="op1", product="signal")
 
