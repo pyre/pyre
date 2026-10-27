@@ -22,7 +22,7 @@ namespace pyre::flow::factories::filters {
     template <class signalT, class cycleT>
     using cycle_t = Cycle<signalT, cycleT>;
 
-    // generate a tile filled with a constant
+    // generate a product that holds a constant: a tile, or a scalar
     template <class constantT>
     using constant_t = Constant<constantT>;
 

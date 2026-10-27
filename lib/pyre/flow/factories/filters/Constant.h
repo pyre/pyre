@@ -13,7 +13,8 @@
 // my superclass
 #include "../../protocols/Factory.h"
 
-// generate a tile filled with a value
+// generate a product that holds a value everywhere: a tile with every cell set to it, or a
+// scalar set to it
 template <class constantT>
 class pyre::flow::factories::filters::Constant : public pyre::flow::protocols::Factory {
     // type aliases
@@ -66,17 +67,17 @@ public:
 
     // accessors
 public:
-    // get the tile fill value
+    // get my value
     auto value() const -> cell_type;
-    // get the product bound to my {tile} slot
-    auto tile() -> product_ref_type;
+    // get the product bound to my {result} slot
+    auto result() -> product_ref_type;
 
     // mutators
 public:
-    // set the tile fill value
+    // set my value
     auto value(cell_type value) -> factory_ref_type;
-    // set the product bound to my {tile} slot
-    auto tile(product_ref_type) -> factory_ref_type;
+    // set the product bound to my {result} slot
+    auto result(product_ref_type) -> factory_ref_type;
 
     // flow protocol
 public:

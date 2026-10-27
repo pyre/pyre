@@ -39,7 +39,7 @@ pyre::flow::factories::filters::Constant<constantT>::declSlots() -> const slots_
 {
     // my slots, in the order i declare them
     static const slots_type table {
-        slot_type::output<product_type>("tile"),
+        slot_type::output<product_type>("result"),
     };
     // hand them off
     return table;
@@ -155,10 +155,10 @@ pyre::flow::factories::filters::Constant<constantT>::value() const -> cell_type
 
 template <class constantT>
 auto
-pyre::flow::factories::filters::Constant<constantT>::tile() -> product_ref_type
+pyre::flow::factories::filters::Constant<constantT>::result() -> product_ref_type
 {
-    // look up the product bound to my {tile} slot and return it
-    return std::dynamic_pointer_cast<product_type>(output("tile"));
+    // look up the product bound to my {result} slot and return it
+    return std::dynamic_pointer_cast<product_type>(output("result"));
 }
 
 // mutators
@@ -178,10 +178,11 @@ pyre::flow::factories::filters::Constant<constantT>::value(cell_type value) -> f
 
 template <class constantT>
 auto
-pyre::flow::factories::filters::Constant<constantT>::tile(product_ref_type tile) -> factory_ref_type
+pyre::flow::factories::filters::Constant<constantT>::result(product_ref_type result)
+    -> factory_ref_type
 {
-    // bind {tile} to my slot
-    addOutput("tile", std::static_pointer_cast<pyre::flow::protocols::Product>(tile));
+    // bind {result} to my slot
+    addOutput("result", std::static_pointer_cast<pyre::flow::protocols::Product>(result));
     // make a self reference
     auto self = std::dynamic_pointer_cast<Constant>(ref());
     // and return it
@@ -197,10 +198,18 @@ pyre::flow::factories::filters::Constant<constantT>::make(
 {
     // chain up
     auto self = super_type::make(slot, product);
-    // get write access to the tile data
-    auto & data = tile()->write();
-    // fill it with my value
-    std::fill(data.begin(), data.end(), _value);
+    // a tile
+    if constexpr (requires { typename product_type::grid_type; }) {
+        // gets write access to its cells
+        auto & data = result()->write();
+        // and has every one of them set to my value
+        std::fill(data.begin(), data.end(), _value);
+    }
+    // a scalar
+    else {
+        // is set to my value
+        result()->write(_value);
+    }
     // all done
     return self;
 }
