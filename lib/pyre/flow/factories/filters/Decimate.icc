@@ -90,13 +90,13 @@ pyre::flow::factories::filters::Decimate<signalT>::create(const name_type & name
     // make an instance and wrap it in a shared pointer
     auto ref = std::make_shared<Decimate>(sentinel_type(), name, level);
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.flow.factories.filters.constant");
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.filters.decimate");
     // let me know
     channel
         // where
         << pyre::journal::at()
         // mark
-        << "constant '" << ref->name() << "' at " << ref.get() << ": create"
+        << "decimate '" << ref->name() << "' at " << ref.get() << ": create"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl;
@@ -110,13 +110,13 @@ template <class signalT>
 pyre::flow::factories::filters::Decimate<signalT>::~Decimate()
 {
     // make a channel
-    auto channel = pyre::journal::debug_t("pyre.flow.factories.filters.constant");
+    auto channel = pyre::journal::debug_t("pyre.flow.factories.filters.decimate");
     // let me know
     channel
         // where
         << pyre::journal::at()
         // mark
-        << "constant '" << name() << "' at " << this << ": destroy"
+        << "decimate '" << name() << "' at " << this << ": destroy"
         << pyre::journal::newline
         // flush
         << pyre::journal::endl;
