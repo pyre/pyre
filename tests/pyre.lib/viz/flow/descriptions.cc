@@ -31,6 +31,8 @@ using tile_t =
 // the tiles
 using complex_t = tile_t<std::complex<double>>;
 using real_t = tile_t<double>;
+// and the scalars
+using scalar_t = pyre::flow::products::var_t<double>;
 // the namespaces of the factories
 namespace accessors = pyre::flow::factories::accessors;
 namespace operators = pyre::flow::factories::operators;
@@ -96,8 +98,9 @@ main(int argc, char * argv[])
     // filters
     check<filters::affine_t<real_t, real_t>>(
         { signal, { "affine", false } }, { { "interval", "interval" } });
-    check<filters::constant_t<real_t>>({ { "tile", false } }, { { "value", "double" } });
-    check<filters::constant_t<complex_t>>({ { "tile", false } }, {});
+    check<filters::constant_t<real_t>>({ { "result", false } }, { { "value", "double" } });
+    check<filters::constant_t<complex_t>>({ { "result", false } }, {});
+    check<filters::constant_t<scalar_t>>({ { "result", false } }, { { "value", "double" } });
     check<filters::cycle_t<complex_t, real_t>>(
         { signal, { "cycle", false } }, { { "interval", "interval" } });
     check<filters::decimate_t<real_t>>({ signal, { "decimated", false } }, { { "level", "int" } });
