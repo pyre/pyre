@@ -98,6 +98,15 @@
     spelling) would make them independent of the network; it belongs with the launcher
     vocabulary that is moving to mm ({mpi.launch})
 
+  - vacuous trait comparisons (found 2026-10-27): traits are {pyre.algebraic} nodes, so {==}
+    between two of them builds an operator node, which is always true; comparing tuples or
+    lists of traits, as in {assert derived.pyre_localTraits == localTraits} or {assert
+    list(cls.pyre_traits()) == allTraits}, therefore checks only their lengths, and {trait
+    in <tuple or iterator>} is true for any non-empty pile; 13 files under {tests/} make such
+    comparisons ({component_inheritance_multi.py} among them); compare by identity instead,
+    e.g. {all(a is b for a, b in zip(x, y))} after a length check, or with a helper the
+    suites share; {Inventory.inheritedFrom} was the one case in the package itself
+
 - docker:
 
   - stand up a postgres server in the rolling cell, maybe others, maybe all of them, so the
