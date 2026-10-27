@@ -57,6 +57,8 @@ pyre::py::flow::factories(py::module &)
     // the tiles of reals
     using float64_t = tile_t<pyre::memory::float64_t>;
     using float32_t = tile_t<pyre::memory::float32_t>;
+    // and the scalars of reals
+    using scalar64_t = var_t<pyre::memory::float64_t>;
 
     // get the catalog
     auto & catalog = registry();
@@ -93,12 +95,27 @@ pyre::py::flow::factories(py::module &)
     catalog.registerFactory<pyre::flow::factories::filters::affine_t<float64_t, float64_t>>();
     // a constant, such as a saturation or a brightness
     catalog.registerFactory<pyre::flow::factories::filters::constant_t<float64_t>>();
+    // and a constant scalar, such as a scale or a shift
+    catalog.registerFactory<pyre::flow::factories::filters::constant_t<scalar64_t>>();
 
-    // the arithmetic of tiles of reals
-    // the sum of two tiles
+    // the arithmetic of the tiles and the scalars of reals, every combination the math allows
+    // sums: of two tiles, a tile and a scalar on either side, and two scalars
     catalog.registerFactory<pyre::flow::factories::operators::add_t<float64_t>>();
-    // and their difference
+    catalog.registerFactory<pyre::flow::factories::operators::add_t<float64_t, scalar64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::add_t<scalar64_t, float64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::add_t<scalar64_t>>();
+    // differences, the same way
     catalog.registerFactory<pyre::flow::factories::operators::subtract_t<float64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::subtract_t<float64_t, scalar64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::subtract_t<scalar64_t, float64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::subtract_t<scalar64_t>>();
+    // products: a tile scaled by a scalar on either side, and two scalars
+    catalog.registerFactory<pyre::flow::factories::operators::multiply_t<float64_t, scalar64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::multiply_t<scalar64_t, float64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::multiply_t<scalar64_t>>();
+    // and quotients: a tile by a scalar, and two scalars
+    catalog.registerFactory<pyre::flow::factories::operators::divide_t<float64_t, scalar64_t>>();
+    catalog.registerFactory<pyre::flow::factories::operators::divide_t<scalar64_t>>();
 
     // all done
     return;

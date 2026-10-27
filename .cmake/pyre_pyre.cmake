@@ -181,6 +181,7 @@ function(pyre_pyreModule)
     extensions/pyre/flow/nodes.cc
     extensions/pyre/flow/rasters.cc
     extensions/pyre/flow/tiles.cc
+    extensions/pyre/flow/variables.cc
     extensions/pyre/grid/__init__.cc
     extensions/pyre/memory/__init__.cc
     extensions/pyre/memory/cells.cc

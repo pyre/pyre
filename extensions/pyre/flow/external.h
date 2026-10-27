@@ -35,6 +35,9 @@ namespace pyre::py::flow {
     template <typename cellT>
     using tile_t =
         pyre::flow::products::tile_t<pyre::grid::grid_t<packing_t, pyre::memory::heap_t<cellT>>>;
+    // a variable that holds a value of type {cellT}
+    template <typename cellT>
+    using var_t = pyre::flow::products::var_t<cellT>;
     // a grid over read-only cells of type {cellT} that live elsewhere, such as in a python buffer
     template <typename cellT>
     using viewgrid_t = pyre::grid::grid_t<packing_t, pyre::memory::constview_t<cellT>>;
