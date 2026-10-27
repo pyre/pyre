@@ -26,24 +26,30 @@ def test():
         assert issubclass(spec, tiles.tile), spec
     # magnitudes and unit values are real values
     assert issubclass(tiles.magnitude, tiles.real)
+    # both of them
     assert issubclass(tiles.unit, tiles.real)
     # and a color channel is a unit value
     assert issubclass(tiles.channel, tiles.unit)
     # complex values are not real ones, nor the other way around
     assert not issubclass(tiles.complex, tiles.real)
+    # either way
     assert not issubclass(tiles.real, tiles.complex)
     # and each has a family of its own, under the tiles
     assert tiles.real.pyre_family() == "pyre.viz.tiles.real"
+    # every one of them
     assert tiles.channel.pyre_family() == "pyre.viz.tiles.channel"
 
     # tiles and scalars are both quantities
     assert issubclass(pyre.viz.tile, pyre.viz.quantity)
+    # both of them
     assert issubclass(pyre.viz.scalar, pyre.viz.quantity)
     # but neither is the other
     assert not issubclass(pyre.viz.scalar, pyre.viz.tile)
+    # either way
     assert not issubclass(pyre.viz.tile, pyre.viz.scalar)
     # each names the c++ products that satisfy it
     assert pyre.viz.tile.pyre_products == ("pyre::flow::products::tile_t",)
+    # both of them
     assert pyre.viz.scalar.pyre_products == ("pyre::flow::products::var_t",)
     # and so do its refinements
     assert tiles.channel.pyre_products == pyre.viz.tile.pyre_products
@@ -67,8 +73,11 @@ def test():
     scale = Scale(name="scale")
     # its slots are typed by the refinements
     assert [trait.name for trait in Scale.pyre_inputTraits] == ["signal"]
+    # in both directions
     assert [trait.name for trait in Scale.pyre_outputTraits] == ["scaled"]
+    # the input expects real values
     assert Scale.pyre_trait(alias="signal").protocol is tiles.real
+    # and the output unit ones
     assert Scale.pyre_trait(alias="scaled").protocol is tiles.unit
 
     # a tile on the heap
@@ -79,7 +88,9 @@ def test():
     assert scale.signal is signal
     # as does another one to the output that expects unit values
     scaled = tiles.heap()(name="scaled")
+    # binds the same way
     scale.scaled = scaled
+    # and is there too
     assert scale.scaled is scaled
 
     # the components of the amplitude pipeline type their slots by the specifications, in order

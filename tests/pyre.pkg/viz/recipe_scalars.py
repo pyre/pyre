@@ -115,11 +115,13 @@ def check(*, graph, shape: tuple, value: float) -> None:
     """
     Check the cells of the results of {graph}, whose scalar has the given {value}
     """
-    # pull the results
+    # pull the results: the sum
     shifted = graph["shifted"].read()
-    # all of them
+    # the difference
     negated = graph["negated"].read()
+    # the product
     scaled = graph["scaled"].read()
+    # and the quotient
     quotient = graph["quotient"].read()
     # go through their lines
     for i in range(shape[0]):
