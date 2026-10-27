@@ -10,6 +10,7 @@ from . import protocols
 
 # products
 from . import images
+from . import scalars
 from . import tiles
 
 # factories
@@ -27,8 +28,12 @@ from . import slicers
 image = images.image
 # the cells of datasets
 raster = protocols.raster
-# and tiles
+# tiles
 tile = tiles.tile
+# scalars
+scalar = scalars.scalar
+# and either one
+quantity = protocols.quantity
 # of the factories: the parts of structured values
 accessor = accessors.accessor
 # the readers of datasets
