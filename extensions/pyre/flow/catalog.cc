@@ -61,8 +61,9 @@ pyre::py::flow::catalog(py::module & m)
         // the implementation
         &product_entry_t::makes,
         // the docstring
-        "whether i can make my products from a shape; products that wrap cells they do not own "
-        "come into a graph made by whoever owns the cells");
+        "whether i can make my products from a shape, which products with no shape, such as "
+        "scalars, ignore; products that wrap cells they do not own come into a graph made by "
+        "whoever owns the cells");
     // the declaration of the type of its cells
     productEntry.def_property_readonly(
         // the name
