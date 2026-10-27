@@ -75,6 +75,19 @@ def test():
     # and not a unary one
     assert not issubclass(add.pyre_implements, Unary)
 
+    # the rest of the arithmetic
+    for name in ("subtract", "multiply", "divide"):
+        # each one
+        operator = getattr(operators, name)()
+        # lives under the operators
+        assert operator.pyre_family() == f"pyre.viz.operators.{name}"
+        # is a binary operator
+        assert issubclass(operator.pyre_implements, Binary), name
+        # whose operands and result are quantities, tiles or scalars
+        for slot in ("op1", "op2", "result"):
+            # one slot at a time
+            assert operator.pyre_trait(alias=slot).protocol is pyre.viz.quantity, (name, slot)
+
     # the palette asks the operator protocol for its implementers
     found = {
         implementer.pyre_family()

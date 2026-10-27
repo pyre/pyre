@@ -22,7 +22,7 @@ def test():
         # the filters
         pyre.viz.filters: {
             "affine": (["signal"], ["affine"]),
-            "constant": ([], ["tile"]),
+            "constant": ([], ["result"]),
             "cycle": (["signal"], ["cycle"]),
             "decimate": (["signal"], ["decimated"]),
             "geometric": (["signal"], ["bin"]),
@@ -35,6 +35,8 @@ def test():
         pyre.viz.operators: {
             "add": (["op1", "op2"], ["result"]),
             "amplitude": (["signal"], ["amplitude"]),
+            "divide": (["op1", "op2"], ["result"]),
+            "multiply": (["op1", "op2"], ["result"]),
             "phase": (["signal"], ["phase"]),
             "subtract": (["op1", "op2"], ["result"]),
         },

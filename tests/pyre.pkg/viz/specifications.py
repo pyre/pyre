@@ -36,6 +36,22 @@ def test():
     assert tiles.real.pyre_family() == "pyre.viz.tiles.real"
     assert tiles.channel.pyre_family() == "pyre.viz.tiles.channel"
 
+    # tiles and scalars are both quantities
+    assert issubclass(pyre.viz.tile, pyre.viz.quantity)
+    assert issubclass(pyre.viz.scalar, pyre.viz.quantity)
+    # but neither is the other
+    assert not issubclass(pyre.viz.scalar, pyre.viz.tile)
+    assert not issubclass(pyre.viz.tile, pyre.viz.scalar)
+    # each names the c++ products that satisfy it
+    assert pyre.viz.tile.pyre_products == ("pyre::flow::products::tile_t",)
+    assert pyre.viz.scalar.pyre_products == ("pyre::flow::products::var_t",)
+    # and so do its refinements
+    assert tiles.channel.pyre_products == pyre.viz.tile.pyre_products
+    # while a quantity, which may be either, names none
+    assert pyre.viz.quantity.pyre_products == ()
+    # the default scalar is a variable
+    assert pyre.viz.scalar.pyre_default().pyre_family() == "pyre.viz.scalars.variable"
+
     # a factory whose slots are typed by refinements
     class Scale(pyre.flow.factory, family="tests.pyre.viz.scale"):
         """
