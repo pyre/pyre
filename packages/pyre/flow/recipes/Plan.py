@@ -91,12 +91,24 @@ class Plan:
         catalog = catalogs() if catalog is None else catalog
         # the types of the products that are pinned
         kinds = dict(products or {})
-        # go through them
+        # the c++ product templates each product may be an instantiation of, as its specification
+        # says, by name; a product whose specification says nothing may be any of them
+        admitted = {
+            product.name: cls.templates(specification=recipe.specification(product=product.name))
+            for product in recipe.products()
+        }
+        # go through the pinned ones
         for name, decl in kinds.items():
             # a type the catalog cannot make
             if decl not in catalog.products:
                 # cannot be pinned
                 raise UnresolvedProductError(node=name, reason=f"the catalog cannot make {decl}")
+            # a type the specification of the product rules out
+            if not cls.admits(templates=admitted.get(name, ()), decl=decl):
+                # cannot be pinned either
+                raise UnresolvedProductError(
+                    node=name, reason=f"{decl} does not satisfy its specification"
+                )
         # the factories, in the order the data flows through them
         order = recipe.ordered()
         # the products the factories that compute in python make, by name
@@ -132,10 +144,13 @@ class Plan:
                 # its slots, by name
                 slots = {slot.name: slot for slot in entry.slots}
                 # an engine fits if it has every slot the recipe binds, taking the products of
-                # the types the neighbors settled on
+                # the types the neighbors settled on, which their specifications admit
                 if not all(
                     b.slot in slots
                     and kinds.get(b.product, slots[b.slot].product) == slots[b.slot].product
+                    and cls.admits(
+                        templates=admitted.get(b.product, ()), decl=slots[b.slot].product
+                    )
                     for b in bindings
                 ):
                     # this one does not
@@ -268,6 +283,28 @@ class Plan:
             )
         # hand it off
         return default
+
+    @classmethod
+    def templates(cls, *, specification) -> tuple:
+        """
+        The c++ product templates whose instantiations satisfy {specification}; none means any
+        """
+        # a product with no specification
+        if specification is None:
+            # may be anything
+            return ()
+        # otherwise, ask the specification
+        return tuple(getattr(specification, "pyre_products", ()))
+
+    @classmethod
+    def admits(cls, *, templates: tuple, decl: str) -> bool:
+        """
+        Check whether the product type declared as {decl} instantiates one of {templates}, which
+        admit anything when there are none
+        """
+        # no templates admit anything; otherwise, the name of the template before its arguments
+        # must be among them
+        return not templates or decl.split("<", 1)[0] in templates
 
     @classmethod
     def engines(cls, *, node, catalog) -> list:
