@@ -533,9 +533,12 @@ pyre_test_python_testcase(tests/pyre.pkg/tracking/lookup.py)
 pyre_test_python_testcase(tests/pyre.pkg/tracking/command.py)
 pyre_test_python_testcase(tests/pyre.pkg/tracking/file.py)
 pyre_test_python_testcase(tests/pyre.pkg/tracking/fileregion.py)
+pyre_test_python_testcase(tests/pyre.pkg/tracking/fileregion_unknown.py)
 pyre_test_python_testcase(tests/pyre.pkg/tracking/script.py)
+pyre_test_python_testcase(tests/pyre.pkg/tracking/script_unknown.py)
 pyre_test_python_testcase(tests/pyre.pkg/tracking/chain.py)
 pyre_test_python_testcase(tests/pyre.pkg/tracking/here.py)
+pyre_test_python_testcase(tests/pyre.pkg/tracking/tracker_untracked.py)
 
 
 #
