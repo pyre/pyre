@@ -34,11 +34,13 @@ class File:
         """
         # start with the file
         text = [f"file={str(self.source)!r}"]
-        # add the line, if known
+        # if the line is known
         if self.line is not None:
+            # add it
             text.append(f"line={self.line!r}")
-        # and the column, if known
+        # if the column is known
         if self.column is not None:
+            # add it too
             text.append(f"column={self.column!r}")
         # put it all together
         return ", ".join(text)
