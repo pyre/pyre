@@ -9,26 +9,34 @@
 import collections
 
 
-# class declaration
+# a log of the values keys have taken
 class Tracker:
     """
     Record the values a key has taken
     """
 
-    def getHistory(self, key):
+    # interface
+    def getHistory(self, key: object) -> list:
         """
         Retrieve the historical record associated with a particular {key}
         """
-        return self.log[key]
+        # look it up without leaving an empty record behind for keys that were never tracked
+        return self.log.get(key, [])
 
-    def track(self, key, node):
+    def track(self, key: object, node: object) -> None:
         """
-        Add {value} to the history of {key}
+        Add {node} to the history of {key}
         """
+        # append it to the record
         self.log[key].append(node)
+        # all done
         return
 
-    def __init__(self, **kwds):
+    # meta methods
+    def __init__(self, **kwds) -> None:
+        """
+        Start with an empty log
+        """
         # chain up
         super().__init__(**kwds)
         # the index of historical values
