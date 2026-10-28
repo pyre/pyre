@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import sys
+
 # factories
 from .Chain import Chain as chain
 from .Command import Command as command
@@ -16,18 +19,22 @@ from .Simple import Simple as simple
 from .Tracker import Tracker as tracker
 
 # constants
-# the stack depth of the caller relative to {traceback.extract_stack}, taking into account the
-# frame added by {pyre} itself
+# for clients that walk the output of {traceback.extract_stack}: when a function calls it, its
+# caller is this many entries from the end of the list
 callerStackDepth = 2
 
 
 # in case we just don't know
-def unknown():
+def unknown() -> simple:
+    """
+    Build a locator for a source nobody can name
+    """
+    # a simple locator that says so
     return simple(source="<unknown>")
 
 
 # dynamic locators
-def here(level=0):
+def here(level: int = 0) -> script:
     """
     Build a locator that records the caller's location
 
@@ -35,12 +42,10 @@ def here(level=0):
     originating location. The default, {level}=0, indicates to use the caller's location;
     setting {level} to 1 will use the caller's caller's location, and so on.
     """
-    # externals
-    import sys
-
     # get the frame of the requested caller, which is all a locator needs; a stack trace would
-    # also read the text of every line in it from the source files, which is never used
-    frame = sys._getframe(callerStackDepth + level - 1)
+    # also read the text of every line in it from the source files, which is never used; my own
+    # frame is at depth zero, so the caller is one frame further up
+    frame = sys._getframe(1 + level)
     # get its code
     code = frame.f_code
     # hand its location to the script locator
