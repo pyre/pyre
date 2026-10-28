@@ -35,11 +35,13 @@ class Script:
         """
         # start with the file
         text = [f"file={str(self.source)!r}"]
-        # add the line, if known
+        # if the line is known
         if self.line is not None:
+            # add it
             text.append(f"line={self.line!r}")
-        # and the function, if known
+        # if the function is known
         if self.function is not None:
+            # add it too
             text.append(f"function={self.function!r}")
         # put it all together
         return ", ".join(text)
