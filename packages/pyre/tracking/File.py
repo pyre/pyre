@@ -5,28 +5,42 @@
 # (c) 1998-2026 all rights reserved
 
 
-# declaration
+# a locator for a position within a file
 class File:
     """
     A locator that records a position within a file
     """
 
     # meta methods
-    def __init__(self, source, line=None, column=None):
-        # save my info
+    def __init__(
+        self, source: object, line: int | None = None, column: int | None = None, **kwds
+    ) -> None:
+        """
+        Record the {line} and {column} of a position within {source}
+        """
+        # chain up
+        super().__init__(**kwds)
+        # save the file
         self.source = source
+        # and the position within it, either part of which may be unknown
         self.line = line
         self.column = column
         # all done
         return
 
-    def __str__(self):
-        text = ["file={!r}".format(str(self.source))]
+    def __str__(self) -> str:
+        """
+        Render the file and whatever is known of the position within it
+        """
+        # start with the file
+        text = [f"file={str(self.source)!r}"]
+        # add the line, if known
         if self.line is not None:
-            text.append("line={.line!r}".format(self))
+            text.append(f"line={self.line!r}")
+        # and the column, if known
         if self.column is not None:
-            text.append("column={.column!r}".format(self))
-
+            text.append(f"column={self.column!r}")
+        # put it all together
         return ", ".join(text)
 
     # implementation details
