@@ -63,7 +63,8 @@ force-exclude = "^/(templates/.*|tests/pyre\\.pkg/framework/sample_syntaxerror\\
 
 # spell checking of the prose in comments, docstrings, and documentation; the exclusions are
 # checked in and reviewed like any other change: {ignore-words} lists real words that
-# codespell mistakes for misspellings, {exclude-file} lists exact lines that are right as they
+# codespell mistakes for misspellings, and that VS Code's spell checker reads too, so both accept
+# the same words, {exclude-file} lists exact lines that are right as they
 # are, and {ignore-regex} leaves out mixed case identifiers such as {copyIn} or {cellsT},
 # which are code rather than prose
 [tool.codespell]

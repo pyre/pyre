@@ -1,6 +1,16 @@
+aïvázis
 checkin
+dataspace
+graphene
+hyperslab
 implementor
 implementors
+injective
+interferograms
+interprocess
 loner
+metaclasses
+metamethods
+nisar
 raison
 tread
