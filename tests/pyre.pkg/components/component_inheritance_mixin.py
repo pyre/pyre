@@ -59,9 +59,7 @@ def test() -> None:
     # and that it reads the trait of the base through the mixin as well
     assert instance.common == "common"
     # verify that the value it kept carries the provenance of the declaring ancestor
-    assert instance.pyre_traitSource(trait=archive) == archival.pyre_classTraitSource(
-        trait=archive
-    )
+    assert instance.pyre_traitSource(trait=archive) == archival.pyre_classTraitSource(trait=archive)
 
     # all done
     return
