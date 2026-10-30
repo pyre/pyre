@@ -9,6 +9,7 @@
 # journal
 #
 pyre_test_driver(tests/journal.lib/alert_sanity.cc)
+pyre_test_driver(tests/journal.lib/alert_severity_tag.cc)
 pyre_test_driver(tests/journal.lib/ansi_ansi.cc)
 pyre_test_driver_env(tests/journal.lib/ansi_emulates.cc TERM=foo 0)
 pyre_test_driver_env_case(tests/journal.lib/ansi_emulates.cc TERM=xterm 1)
