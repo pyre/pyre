@@ -1343,6 +1343,16 @@ pyre_test_python_testcase(tests/pyre.pkg/http/deferred_cancel.py)
 pyre_test_python_testcase(tests/pyre.pkg/http/hub_framing.py)
 pyre_test_python_testcase(tests/pyre.pkg/http/sse_chunk.py)
 pyre_test_python_testcase(tests/pyre.pkg/http/transmit.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/journal_mirror.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/journal_serial.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/journal_history.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/journal_batch.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/journal_census.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/server_hello.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/server_notify_coalesce.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/server_describe.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/server_streams.py)
+pyre_test_python_testcase(tests/pyre.pkg/http/server_shutdown.py)
 
 
 #
