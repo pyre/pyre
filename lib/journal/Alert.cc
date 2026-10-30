@@ -50,10 +50,14 @@ pyre::journal::Alert::header(
     // and get the reset sequence
     auto resetColor = palette["reset"];
 
-    // try to lookup the application name
+    // look up the registered application name, treating a missing note as empty
     auto cursor = notes.find("application");
-    // if it's there, use it; otherwise use the {severity}
-    auto tag = (cursor != notes.end()) ? cursor->second : severity;
+    // grab its value, or an empty string when the note is absent
+    auto application = (cursor != notes.end()) ? cursor->second : severity.substr(0, 0);
+    // the application is unset while the note is empty or still carries the sentinel default
+    auto unset = application.empty() || application == chronicler_t::unregistered;
+    // tag with the application name when one is registered, otherwise the channel severity
+    auto tag = unset ? severity : application;
     // inject
     buffer
         // the tag, along with a space

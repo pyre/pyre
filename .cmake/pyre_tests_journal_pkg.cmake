@@ -9,6 +9,7 @@
 # journal
 #
 pyre_test_python_testcase(tests/journal.pkg/alert_sanity.py)
+pyre_test_python_testcase(tests/journal.pkg/alert_severity_tag.py)
 pyre_test_python_testcase(tests/journal.pkg/alert_long_filename.py)
 pyre_test_python_testcase(tests/journal.pkg/boot_device.py)
 pyre_test_python_testcase(tests/journal.pkg/boot_handoff.py)

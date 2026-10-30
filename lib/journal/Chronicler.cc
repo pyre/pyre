@@ -280,9 +280,9 @@ initializeGlobals() -> chronicler_t::notes_type
     // make a table
     chronicler_t::notes_type table;
 
-    // initialize the expected metadata with default values; applications are expected to
-    // replace these with values that are more sensible
-    table["application"] = "journal";
+    // seed the {application} note with the sentinel that marks it as not yet set; applications
+    // are expected to replace it with a name of their own
+    table["application"] = chronicler_t::unregistered;
 
     // return it
     return table;

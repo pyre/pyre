@@ -19,11 +19,20 @@ class Chronicler(metaclass=pyre.patterns.singleton):
     The manager of the journal global state
     """
 
-    # public data
+    # constants
+    # the value the {application} note carries until an application registers its own name; the
+    # renderers treat it, like the empty string, as "no application registered"
+    unregistered = "journal"
+
+    # no metadata
     notes = None
+    # no device
     device = None
+    # decor flag
     decor = 1
+    # detail level
     detail = 1
+    # set margin
     margin = " " * 2
 
     # interface
@@ -103,7 +112,9 @@ class Chronicler(metaclass=pyre.patterns.singleton):
             notes
             if notes is not None
             else {
-                "application": "journal",  # this key is required; applications should override
+                # seed the {application} note with the sentinel that marks it as not yet set;
+                # applications are expected to replace it with a name of their own
+                "application": self.unregistered,
             }
         )
 
