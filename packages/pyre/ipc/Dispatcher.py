@@ -42,6 +42,14 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         Stop monitoring all communication channels
         """
 
+    @pyre.provides
+    def close(self):
+        """
+        Release all operating system resources and stop watching
+
+        N.B.: after {close}, a dispatcher watches nothing and should not be used again
+        """
+
     # event scheduling
     @pyre.provides
     def alarm(self, interval, call):
@@ -50,19 +58,19 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         a dimensional quantity from {pyre.units} with units of time
         """
 
-    @pyre.export
+    @pyre.provides
     def whenReadReady(self, channel, call):
         """
         Add {call} to the list of routines to call when {channel} is ready to be read
         """
 
-    @pyre.export
+    @pyre.provides
     def whenWriteReady(self, channel, call):
         """
         Add {call} to the list of routines to call when {channel} is ready to be written
         """
 
-    @pyre.export
+    @pyre.provides
     def whenException(self, channel, call):
         """
         Add {call} to the list of routines to call when something exceptional has happened

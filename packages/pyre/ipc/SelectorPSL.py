@@ -166,6 +166,20 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         return
 
     @pyre.export
+    def close(self):
+        """
+        Release all system resources and stop watching for events
+        """
+        # stop watching, in case a handler is closing me from inside the event loop
+        self._watching = False
+        # release the kernel selector. in the standard library, selectors hold themselves in a
+        # reference cycle, so their descriptor outlives me unless it is released explicitly. the
+        # selector tolerates being closed more than once, so this should be harmless
+        self._selector.close()
+        # all done
+        return
+
+    @pyre.export
     def watch(self):
         """
         Start monitoring the registered event sources
@@ -240,6 +254,15 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         # are held weakly, so the record vanishes with the channel
         self._forgotten = weakref.WeakSet()
 
+        # all done
+        return
+
+    def __del__(self):
+        """
+        Clean up
+        """
+        # release any operating system resources on the way out
+        self.close()
         # all done
         return
 
