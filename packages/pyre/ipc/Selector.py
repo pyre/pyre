@@ -136,6 +136,16 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         return
 
     @pyre.export
+    def close(self):
+        """
+        Release all system resources and stop watching for events
+        """
+        # adjust my state
+        self._watching = False
+        # all done
+        return
+
+    @pyre.export
     def watch(self):
         """
         Enter an indefinite loop of monitoring all registered event sources and invoking the
@@ -328,6 +338,15 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
 
         self._debug = journal.debug("pyre.ipc.selector")
 
+        # all done
+        return
+
+    def __del__(self):
+        """
+        Clean up
+        """
+        # release any operating system resources on the way out
+        self.close()
         # all done
         return
 
