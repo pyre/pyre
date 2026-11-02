@@ -75,8 +75,9 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         Add {call} to the list of routines to call when something exceptional has happened
         to {channel}
         """
-        # add both endpoints to the pile
+        # add the inbound endpoint to the pile
         self._exception[channel.inbound].append(self._event(channel=channel, handler=call, **kwds))
+        # and the outbound one
         self._exception[channel.outbound].append(self._event(channel=channel, handler=call, **kwds))
         # and return
         return
@@ -92,9 +93,11 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         self._forgotten.add(channel)
         # go through the endpoints of the channel
         for endpoint in {channel.inbound, channel.outbound}:
-            # and drop its handlers from every pile
+            # drop its read handlers
             self._read.pop(endpoint, None)
+            # its write handlers
             self._write.pop(endpoint, None)
+            # and the ones watching for exceptions
             self._exception.pop(endpoint, None)
         # all done
         return
@@ -159,33 +162,48 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         while self._watching:
             # compute how long i am allowed to be asleep
             timeout = self.poll()
-            # construct the descriptor containers
+            # the descriptors to watch for reading
             iwtd = self._read.keys()
+            # for writing
             owtd = self._write.keys()
+            # and for exceptions
             ewtd = self._exception.keys()
 
             # if anybody is listening
             if channel:
-                # show them how long i may sleep
+                # announce the cycle
                 channel.line("watching:")
+                # show them how long i may sleep
                 channel.line(f"    max sleep: {timeout}")
-                # the input channels
+                # if there are input channels
                 if iwtd:
-                    channel.line(f"      read:")
+                    # label them
+                    channel.line("      read:")
+                # go through the descriptors watched for reading
                 for fd in iwtd:
+                    # and the handlers registered against each one
                     for event in self._read[fd]:
+                        # show the channel
                         channel.line(f"        {event.channel}")
-                # the output channels
+                # if there are output channels
                 if owtd:
+                    # label them
                     channel.line("      write:")
+                # go through the descriptors watched for writing
                 for fd in owtd:
+                    # and the handlers registered against each one
                     for event in self._write[fd]:
+                        # show the channel
                         channel.line(f"        {event.channel}")
-                # and the channels that are watching for exceptions
+                # if there are channels watched for exceptions
                 if ewtd:
+                    # label them
                     channel.line("      exception:")
+                # go through their descriptors
                 for fd in ewtd:
+                    # and the handlers registered against each one
                     for event in self._exception[fd]:
+                        # show the channel
                         channel.line(f"        {event.channel}")
                 # flush
                 channel.log()
@@ -208,6 +226,7 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
             # library retries after running its handler (PEP 475), so a signal reaches the loop
             # only through the relay, as a read event
             try:
+                # collect the descriptors that are ready
                 reads, writes, excepts = select.select(iwtd, owtd, ewtd, timeout)
             # a registration whose descriptor died behind our back poisons the whole call
             except (OSError, ValueError):
@@ -218,19 +237,24 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
 
             # if anybody is listening
             if channel:
-                # show them what woke me up
+                # announce what woke me up
                 channel.line("activity detected:")
+                # the descriptors ready for reading
                 channel.line(f"      read clients: {len(reads)}")
+                # for writing
                 channel.line(f"      write clients: {len(writes)}")
+                # and the exceptional ones
                 channel.line(f"      except clients: {len(excepts)}")
                 # and the alarms that may be due
                 channel.line(f"    raising alarms: {len(self._alarms)} registered")
                 # flush
                 channel.log()
 
-            # dispatch to the handlers of file events
+            # dispatch to the handlers of exceptional conditions
             self.dispatch(index=self._exception, entities=excepts)
+            # then to the writers
             self.dispatch(index=self._write, entities=writes)
+            # and the readers
             self.dispatch(index=self._read, entities=reads)
             # raise the overdue alarms
             self.awaken()
@@ -333,9 +357,10 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
         # are held weakly, so the record vanishes with the channel
         self._forgotten = weakref.WeakSet()
 
-        # my debug aspect
+        # get the journal
         import journal
 
+        # and make my debug channel
         self._debug = journal.debug("pyre.ipc.selector")
 
         # all done
@@ -353,14 +378,24 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
     # implementation details
     # private types
     class _event:
-        """Encapsulate a channel and the associated call-back"""
+        """
+        Encapsulate a channel and the associated call-back
+        """
 
         def __init__(self, channel, handler, **kwds):
+            """
+            Record the {handler} to invoke when {channel} is ready, and the context to hand it
+            """
+            # the channel
             self.channel = channel
+            # the handler
             self.handler = handler
+            # and the extra arguments for the handler
             self.context = kwds
+            # all done
             return
 
+        # restrict the attributes to the ones above
         __slots__ = ("channel", "handler", "context")
 
     # private data

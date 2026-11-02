@@ -115,8 +115,9 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         self._forgotten.add(channel)
         # go through the endpoints of the channel
         for endpoint in {channel.inbound, channel.outbound}:
-            # drop its handlers
+            # drop its read handlers
             self._read.pop(endpoint, None)
+            # and its write handlers
             self._write.pop(endpoint, None)
             # carefully, since its registration may be gone, or its descriptor already closed
             try:
@@ -186,8 +187,9 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         # get my selector
         selector = self._selector
-        # my registration tables
+        # my read registrations
         read = self._read
+        # and my write registrations
         write = self._write
         # reset my state
         self._watching = True
@@ -314,6 +316,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
                     )
                     # describe what happened
                     channel.line(f"discarding a handler of {event.channel}")
+                    # and why
                     channel.line(f"after it raised {error}")
                     # flush
                     channel.log()
@@ -417,8 +420,9 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
             self._arm(key=key, mask=mask)
         # if the endpoint is dead
         except (ValueError, OSError):
-            # its handlers can never fire again; drop them
+            # its handlers can never fire again; drop its read handlers
             self._read.pop(key, None)
+            # and its write handlers
             self._write.pop(key, None)
         # all done
         return
