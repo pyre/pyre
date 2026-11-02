@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import collections.abc
+
 # support
 import pyre
 
@@ -36,7 +39,7 @@ class Match(pyre.flow.factory, family="pyre.viz.pickers.match", implements=Picke
     dataset.doc = "the dataset that matches the selection"
 
     # framework hooks
-    def pyre_suggest(self, trait):
+    def pyre_suggest(self, trait) -> collections.abc.Iterable[object]:
         """
         Suggest the selections that pick a dataset, one for every dataset in my contents, which
         are pulled from my reader to find out; i have no suggestions for my other traits
