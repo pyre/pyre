@@ -97,12 +97,22 @@ def scenario(transport):
     s.watch()
 
     # the fresh registration must have fired
-    assert fired, f"phantom registration: the reused descriptor never fired"
+    assert fired, "phantom registration: the reused descriptor never fired"
+    # release the replacement pair, so the next scenario starts with nothing left behind for
+    # the collector to close in the middle of it
+    for channel in replacement["pair"]:
+        # one end at a time
+        channel.close()
+    # and the selector, for the same reason
+    s.close()
     # all done
     return
 
 
 def test():
+    """
+    Run the close-and-reuse scenario over each kind of channel
+    """
     # the scenario must hold over socket pairs, whose table keys are channel objects
     scenario(transport=pyre.ipc.newSocket())
     # and over pipes, whose table keys are raw descriptor numbers
