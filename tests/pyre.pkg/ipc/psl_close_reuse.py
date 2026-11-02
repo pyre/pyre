@@ -43,8 +43,9 @@ def scenario(transport):
         """
         # drain the byte that woke us
         channel.read(minlen=1, maxlen=1)
-        # close both ends, freeing their descriptor numbers
+        # close the end we watch, freeing its descriptor numbers
         parent.close()
+        # and its peer
         child.close()
         # open a fresh pair; the kernel hands back the lowest free numbers
         p, c = transport.open()
@@ -52,9 +53,11 @@ def scenario(transport):
         replacement["pair"] = (p, c)
         # find the end that reincarnated the old number
         fresh = p if (p.inbound if isinstance(p.inbound, int) else p.fileno()) == old else c
+        # and its peer
         other = c if fresh is p else p
-        # this scenario is about number reuse; insist it actually happened
+        # get the descriptor number of the fresh end
         freshfd = fresh.inbound if isinstance(fresh.inbound, int) else fresh.fileno()
+        # this scenario is about number reuse; insist it actually happened
         assert freshfd == old
         # register interest with the same mask as the channel just closed
         s.whenReadReady(channel=fresh, call=survivor)
@@ -123,6 +126,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
