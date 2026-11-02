@@ -167,7 +167,8 @@ class Protocol(Configurable, metaclass=Role, internal=True):
         """
         My role in the application design; typically the singular form of my family name
         """
-        # by default, the name of my class
+        # by convention, a protocol class is named after the singular form of its family name, so
+        # the name of my class, in lower case, is my role
         return cls.__name__.lower()
 
     @classmethod
