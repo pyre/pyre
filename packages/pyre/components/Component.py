@@ -494,14 +494,14 @@ class Component(Configurable, metaclass=Actor, internal=True):
         # nothing to do
         return self
 
-    def pyre_suggest(self, trait):
+    def pyre_suggest(self, trait) -> collections.abc.Iterable[object]:
         """
-        Generate values that make sense for {trait}, given my current state, for an interface that
+        Suggest values that make sense for {trait}, given my current state, for an interface that
         helps a person configure me; components that know their way around their traits override
         this, and the rest have no suggestions
         """
         # by default, there are none
-        return []
+        return ()
 
     # introspection
     @classmethod
