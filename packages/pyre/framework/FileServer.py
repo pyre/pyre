@@ -84,8 +84,8 @@ class FileServer(Filesystem):
             try:
                 # open it
                 stream = open(uri.address, **kwds)
-            # if {uri} maps to a non-existent file
-            except FileNotFoundError:
+            # if {uri} maps to a non-existent file, or passes through a file on its way to it
+            except (FileNotFoundError, NotADirectoryError):
                 # complain
                 raise self.SourceNotFoundError(filesystem=self, node=None, uri=uri)
             # if {uri} maps to a folder
@@ -115,8 +115,8 @@ class FileServer(Filesystem):
             try:
                 # get the node
                 node = self[uri.address]
-            # if {uri} is not in my logical namespace
-            except self.NotFoundError as error:
+            # if {uri} is not in my logical namespace, or passes through a file on its way to it
+            except (self.NotFoundError, self.FolderError) as error:
                 # complain
                 raise self.SourceNotFoundError(filesystem=self, node=error.node, uri=uri)
 
