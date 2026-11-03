@@ -83,9 +83,13 @@ def test() -> None:
                     channel.line(f"opening {uri!r} raised the wrong error")
                     # and the details
                     channel.indent()
+                    # what it should have raised
                     channel.line(f"expected: {expected.__name__}")
+                    # what it raised instead
                     channel.line(f"raised: {type(error).__name__}: {error}")
+                    # where to look
                     channel.line("look in: framework/FileServer.py, FileServer.open")
+                    # and that's all
                     channel.outdent()
             # if it opens
             else:

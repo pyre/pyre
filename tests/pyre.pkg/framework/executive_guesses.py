@@ -35,8 +35,11 @@ def test() -> None:
     if not executive.guesses:
         # so there should be some
         channel.line("booting left no missed guesses behind")
+        # followed by the details
         channel.indent()
+        # where to look
         channel.line("look in: framework/Executive.py, Executive.configureStem")
+        # and that's all
         channel.outdent()
     # each of them must be a source that is not there
     for guess in executive.guesses:
@@ -57,8 +60,11 @@ def test() -> None:
     if not executive.errors or "executive_guesses.missing.cfg" not in str(executive.errors[-1]):
         # if not, say so
         channel.line("a missing file named explicitly is not among the errors")
+        # followed by the details
         channel.indent()
+        # where to look
         channel.line("look in: framework/Executive.py, Executive.loadConfiguration")
+        # and that's all
         channel.outdent()
 
     # make a folder where a guess will look for a file, under a scratch folder named after me
@@ -77,9 +83,13 @@ def test() -> None:
     if len(found) != 1 or not isinstance(found[0], executive.fileserver.IsFolderError):
         # if not, say so
         channel.line("a guess that is a folder is not exactly one error")
+        # followed by the details
         channel.indent()
+        # the errors the search recorded
         channel.line(f"errors: {[str(error) for error in found]}")
+        # where to look
         channel.line("look in: framework/Executive.py, Executive.configureStem")
+        # and that's all
         channel.outdent()
     # and the other encodings must be missed guesses
     missed = len(executive.guesses) - guesses
@@ -87,10 +97,13 @@ def test() -> None:
     if missed != len(executive.configurator.encodings()) - 1:
         # if not, say so
         channel.line(f"the search missed {missed} guesses")
+        # followed by the details
         channel.indent()
+        # what it should have missed
         channel.line(
             f"expected: one for each of {list(executive.configurator.encodings())}, but cfg"
         )
+        # and that's all
         channel.outdent()
 
     # put a file in the scratch folder by the name of the folder of a stem, the way an
@@ -108,9 +121,13 @@ def test() -> None:
     if found:
         # say so
         channel.line("a guess whose path passes through a file is an error")
+        # followed by the details
         channel.indent()
+        # the errors the search recorded
         channel.line(f"errors: {[str(error) for error in found]}")
+        # where to look
         channel.line("look in: framework/FileServer.py, FileServer.open")
+        # and that's all
         channel.outdent()
     # every encoding must be a missed guess
     missed = len(executive.guesses) - guesses
@@ -118,8 +135,11 @@ def test() -> None:
     if missed != len(executive.configurator.encodings()):
         # if not, say so
         channel.line(f"the search through a file missed {missed} guesses")
+        # followed by the details
         channel.indent()
+        # what it should have missed
         channel.line(f"expected: one for each of {list(executive.configurator.encodings())}")
+        # and that's all
         channel.outdent()
 
     # clean up
