@@ -217,10 +217,10 @@ def spelling(*, root: str, base: str | None) -> list:
 
 def python(*, root: str, base: str | None) -> list:
     """
-    Check that every tracked python source is formatted by black
+    Check that every tracked python source and stub is formatted by black
     """
     # the files
-    files = tracked(root=root, extensions=(".py",))
+    files = tracked(root=root, extensions=(".py", ".pyi"))
     # check them
     # the exclusions in {pyproject.toml} apply even to files named on the command line
     result = run(command=["black", "--check", *files], cwd=root)
@@ -302,8 +302,8 @@ def preambles(*, root: str, base: str | None) -> list:
 def layout(*, name: str, text: str) -> list:
     """
     Check the preamble and postamble of the file {name}, whose contents are {text}: the mode,
-    coding, spacer, author and copyright lines, two blank lines before the body, and two more
-    before the end of file marker
+    coding, spacer, author and copyright lines, then the blank lines the kind of file calls for
+    before the body and before the end of file marker
     """
     # an empty file
     if not text:
@@ -318,13 +318,16 @@ def layout(*, name: str, text: str) -> list:
     # split into lines, without the empty one after the final newline
     lines = text.rstrip("\n").split("\n")
     # the copyright line sits in the preamble, near the top
-    idx = next((i for i, line in enumerate(lines[:15]) if COPYRIGHT_LINE.match(line)), None)
+    idx, copyright = next(
+        ((i, match) for i, line in enumerate(lines[:15]) if (match := COPYRIGHT_LINE.match(line))),
+        (None, None),
+    )
     # a file without one
-    if idx is None:
+    if idx is None or copyright is None:
         # is missing its preamble, and nothing else can be said about it
         return problems + ["no '(c) 1998-YYYY all rights reserved' in its preamble"]
     # the comment marker is whatever precedes the copyright
-    prefix = COPYRIGHT_LINE.match(lines[idx]).group("prefix")
+    prefix = copyright.group("prefix")
     # a block comment preamble opens on a line of its own
     opener = next((i for i in range(idx - 1, -1, -1) if lines[i].strip() in OPENERS), None)
     # the comment lines start right after the opener, or with the first line that carries the
@@ -380,8 +383,9 @@ def layout(*, name: str, text: str) -> list:
         blanks += 1
     # the first line of the body
     body = lines[nxt + blanks] if nxt + blanks < len(lines) else ""
-    # a c++ header keeps its code guard next to the preamble, as does a markdown document
-    gap = 1 if body.startswith("// code guard") or name.endswith(".md") else 2
+    # a c++ header keeps its code guard next to the preamble, as does a markdown document, and
+    # black keeps the body of a python stub one line away from it
+    gap = 1 if body.startswith("// code guard") or name.endswith((".md", ".pyi")) else 2
     # check
     if blanks != gap:
         # and complain
@@ -400,8 +404,9 @@ def layout(*, name: str, text: str) -> list:
     while blanks < len(lines) - 1 and not lines[-2 - blanks]:
         # one at a time
         blanks += 1
-    # black puts a single blank line after imports, so python decides for itself
-    allowed = (1, 2) if name.endswith(".py") else (2,)
+    # black puts a single blank line after imports, so python decides for itself, and a single
+    # one at the end of a python stub
+    allowed = (1, 2) if name.endswith(".py") else (1,) if name.endswith(".pyi") else (2,)
     # a file with no body shares the blank lines after the preamble
     if len(lines) - 1 - blanks == nxt:
         # so its count is the one that matters
@@ -409,7 +414,9 @@ def layout(*, name: str, text: str) -> list:
     # check
     if blanks not in allowed:
         # and complain
-        problems.append(f"{blanks} blank lines before the end of file marker, instead of 2")
+        problems.append(
+            f"{blanks} blank lines before the end of file marker, instead of {allowed[-1]}"
+        )
     # hand off the complaints
     return problems
 
@@ -489,7 +496,7 @@ def uncommented(*, lines: list, trailing: set, body: list) -> list:
             previous, (ast.Import, ast.ImportFrom)
         ):
             # shares its comment, if the two are adjacent
-            if statement.lineno - previous.end_lineno != 1:
+            if not adjacent(statement=statement, previous=previous):
                 # otherwise it starts a group that needs one of its own
                 offenders.extend(missing(lines=lines, trailing=trailing, statement=statement))
         # the metadata of a declaration, such as the documentation of a trait, that follows it
@@ -556,11 +563,22 @@ def annotates(*, statement: ast.stmt, previous: ast.stmt | None) -> bool:
         return False
     # of the subject of the statement right above it
     return (
-        previous is not None
-        and statement.lineno - previous.end_lineno == 1
+        adjacent(statement=statement, previous=previous)
         and subject(statement=statement) is not None
         and subject(statement=statement) == subject(statement=previous)
     )
+
+
+def adjacent(*, statement: ast.stmt, previous: ast.stmt | None) -> bool:
+    """
+    Check whether {statement} starts on the line right after the end of {previous}
+    """
+    # a statement with nothing before it, or after one whose extent is unknown
+    if previous is None or previous.end_lineno is None:
+        # has no neighbor
+        return False
+    # otherwise, the two are neighbors when no line separates them
+    return statement.lineno - previous.end_lineno == 1
 
 
 def missing(*, lines: list, trailing: set, statement: ast.stmt) -> list:

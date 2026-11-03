@@ -276,6 +276,11 @@ def layouts() -> None:
             preamble(comment="#", language="makefile") + "\nall:\n\n\n# end of file\n",
             "1 blank lines after the preamble",
         ),
+        # a python stub spaced like a python source
+        "loose.pyi": (
+            preamble(comment="#", language="python") + "\n\nx: int\n\n\n# end of file\n",
+            "2 blank lines after the preamble, instead of 1",
+        ),
         # extra blank lines at the end
         "trail.toml": (
             preamble(comment="#", language="toml") + "\n\nkey = 1\n\n\n# end of file\n\n",
@@ -283,8 +288,10 @@ def layouts() -> None:
         ),
     }
     # the departures the checker must not flag: a header with its code guard, a markdown
-    # document, a dockerfile, a script, a stylesheet, and a file the repository exempts
+    # document, a python stub as black lays it out, a dockerfile, a script, a stylesheet, and a
+    # file the repository exempts
     fine = {
+        "tight.pyi": preamble(comment="#", language="python") + "\nx: int\n\n# end of file\n",
         "guard.icc": preamble(comment="//", language="c++")
         + "\n// code guard\n#pragma once\n\n\n// end of file\n",
         "doc.md": "<!--\n-*- markdown -*-\n-*- coding: utf-8 -*-\n\n"
