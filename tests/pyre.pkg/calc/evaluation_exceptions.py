@@ -65,7 +65,7 @@ def test() -> None:
             "TimeoutError",
         ],
         # imports, which a setting can't make
-        "a setting can't import": ["ImportError", "ModuleNotFoundError"],
+        "a setting can't import": ["ImportCycleError", "ImportError", "ModuleNotFoundError"],
         # the failures of the interpreter itself, which are not mistakes in a setting
         "failures of the interpreter are not mistakes in a setting": [
             "BufferError",
