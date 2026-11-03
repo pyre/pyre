@@ -48,9 +48,11 @@ class FileServer(Filesystem):
     XDG_CONFIG = primitives.path("~/.config")
     # the legacy path of the user configuration directory on the physical filesystem
     DOT_PYRE = primitives.path("~/.pyre")
-    # the logical names for the configuration directories
+    # the logical names for the configuration directories: the user's
     USER_DIR = primitives.path("/__pyre/user")
+    # the directory the application started in
     STARTUP_DIR = primitives.path("/__pyre/startup")
+    # and the one where packages park their configuration
     PACKAGES_DIR = primitives.path("/__pyre/packages")
 
     # public data
@@ -202,9 +204,9 @@ class FileServer(Filesystem):
             userdir = self[self.USER_DIR / name]
         # if not there
         except self.NotFoundError:
+            # print("    not there")
             # nothing to do: the user directory was discovered at level 1 during boot, so the
             # directory really does not exist
-            # print("    not there")
             pass
         # if it is there
         else:
@@ -217,6 +219,7 @@ class FileServer(Filesystem):
         # print(f"  package prefix: {prefix}")
         # not much to do if there isn't one
         if not prefix:
+            # so hand the package back
             return package
 
         # otherwise, mount/get the associated filesystem
@@ -235,8 +238,8 @@ class FileServer(Filesystem):
 
         # if the configuration folder is empty
         if not config.contents:
-            # it might be because we haven't explored it yet
             # print("    expanding it")
+            # it might be because we haven't explored it yet
             config.discover(levels=1)
 
         # look for configuration files
@@ -251,14 +254,14 @@ class FileServer(Filesystem):
             except fs.NotFoundError:
                 # bail
                 continue
-            # if it is there, mount it within the package directory
             # print(f"  mounting {self.PACKAGES_DIR / filename}")
+            # if it is there, mount it within the package directory
             self[self.PACKAGES_DIR / filename] = cfgfile
 
         # look for the configuration folder
         try:
-            # get the associated node
             # print(f"  looking for {package.CONFIG}/{name}")
+            # get the associated node
             cfgdir = config[name]
         # if it's not there
         except fs.NotFoundError:
@@ -267,8 +270,8 @@ class FileServer(Filesystem):
             pass
         # if it is there
         else:
-            # attach it
             # print("    mounting it")
+            # attach it
             self[self.PACKAGES_DIR / name] = cfgdir.discover()
 
         # all done
