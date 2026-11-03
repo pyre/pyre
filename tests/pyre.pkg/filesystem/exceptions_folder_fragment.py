@@ -33,9 +33,13 @@ def test() -> None:
     if "'/startup/app' is not a folder" not in message:
         # if not, say so
         channel.line("the message does not name the node by its path")
+        # followed by the details
         channel.indent()
+        # the message it made
         channel.line(f"message: {message}")
+        # where to look
         channel.line("look in: filesystem/exceptions.py, FolderError.description")
+        # and that's all
         channel.outdent()
         # and complain
         channel.log()
