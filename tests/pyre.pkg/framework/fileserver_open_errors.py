@@ -7,9 +7,9 @@
 
 
 """
-The fileserver tells apart the ways a source can fail to open: a source that is not there, a
-folder, and a file it may not read, whether named by a local path or through the virtual
-filesystem
+The fileserver tells apart the ways a source can fail to open: a source that is not there, even
+when its path passes through a file, a folder, and a file it may not read, whether named by a
+local path or through the virtual filesystem
 """
 
 
@@ -29,6 +29,10 @@ def test() -> None:
     os.mkdir(scratch)
     # put a folder in it
     os.mkdir(os.path.join(scratch, "folder"))
+    # and a file, which a path can pass through on its way to a source that can't be there
+    with open(os.path.join(scratch, "plain"), "w") as stream:
+        # with some content
+        stream.write("plain\n")
     # and a file nobody may read
     locked = os.path.join(scratch, "locked")
     # by making it
@@ -56,6 +60,7 @@ def test() -> None:
     # the sources, and the error each one must raise
     cases = [
         ("missing", fileserver.SourceNotFoundError),
+        ("plain/missing", fileserver.SourceNotFoundError),
         ("folder", fileserver.IsFolderError),
     ]
     # unless i can read anything
