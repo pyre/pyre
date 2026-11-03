@@ -34,7 +34,6 @@ class Folder(Node):
     # exceptions
     from .exceptions import (
         FolderInsertionError,
-        NotRootError,
         FolderError,
         IsFolderError,
         NotFoundError,
