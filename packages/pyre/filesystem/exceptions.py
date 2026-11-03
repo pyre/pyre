@@ -9,6 +9,7 @@
 Definitions for all the exceptions raised by this package
 """
 
+# the base class of all framework errors
 from ..framework.exceptions import FrameworkError
 
 
