@@ -106,7 +106,7 @@ class FolderError(FilesystemError):
     """
 
     # public data
-    description = "while looking for {0.rep!r}: {0.fragment!r} is not a folder"
+    description = "while looking for {0.rep!r}: '{0.fragment}' is not a folder"
 
     # meta-methods
     def __init__(self, fragment, **kwds):
