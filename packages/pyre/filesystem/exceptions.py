@@ -146,16 +146,6 @@ class FolderInsertionError(FilesystemError):
         return
 
 
-class NotRootError(FilesystemError):
-    """
-    Exception raised when attempting to insert a node with an absolute uri at a location other
-    than the root of the filesystem a folder
-    """
-
-    # public data
-    description = "cannot insert absolute path {0.rep!r} in node {0.target!r}"
-
-
 class SearchError(GenericError):
     """
     Exception raised when a query of a data catalog cannot be run
