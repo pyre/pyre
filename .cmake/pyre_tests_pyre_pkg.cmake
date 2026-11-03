@@ -136,6 +136,7 @@ pyre_test_python_testcase(tests/pyre.pkg/units/subtraction_incompatible.py)
 #
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/sanity.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/exceptions.py)
+pyre_test_python_testcase(tests/pyre.pkg/filesystem/exceptions_folder_fragment.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/node.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/folder.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/filesystem.py)
