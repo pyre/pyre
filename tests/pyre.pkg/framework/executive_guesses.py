@@ -7,9 +7,9 @@
 
 
 """
-The configuration files the executive guesses at and does not find go to a pile of their own;
-a guess that is there but cannot be read, and a file named explicitly that is not there, are
-errors
+The configuration files the executive guesses at and does not find go to a pile of their own,
+even when the path of a guess passes through a file; a guess that is there but cannot be read,
+and a file named explicitly that is not there, are errors
 """
 
 
@@ -92,6 +92,36 @@ def test() -> None:
             f"expected: one for each of {list(executive.configurator.encodings())}, but cfg"
         )
         channel.outdent()
+
+    # put a file in the scratch folder by the name of the folder of a stem, the way an
+    # application's script sits in the directory it runs from
+    with open(os.path.join(scratch, "app"), "w") as stream:
+        # with some content
+        stream.write("app\n")
+    # count the piles
+    guesses, errors = len(executive.guesses), len(executive.errors)
+    # search for configuration files named {app/app} in it
+    executive.configureStem(stem="app/app", cfgpath=[scratch], locator=pyre.tracking.here(level=0))
+    # nothing may be an error
+    found = executive.errors[errors:]
+    # if something is
+    if found:
+        # say so
+        channel.line("a guess whose path passes through a file is an error")
+        channel.indent()
+        channel.line(f"errors: {[str(error) for error in found]}")
+        channel.line("look in: framework/FileServer.py, FileServer.open")
+        channel.outdent()
+    # every encoding must be a missed guess
+    missed = len(executive.guesses) - guesses
+    # one for each
+    if missed != len(executive.configurator.encodings()):
+        # if not, say so
+        channel.line(f"the search through a file missed {missed} guesses")
+        channel.indent()
+        channel.line(f"expected: one for each of {list(executive.configurator.encodings())}")
+        channel.outdent()
+
     # clean up
     shutil.rmtree(scratch)
 
