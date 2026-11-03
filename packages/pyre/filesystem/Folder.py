@@ -224,12 +224,15 @@ class Folder(Node):
         try:
             # iterate over the names
             for name in uri.names:
+                # descending one level with each
                 node = node.contents[name]
-        # if node is not a folder, report failure
+        # if node is not a folder
         except AttributeError:
+            # {uri} is not among my children
             return False
-        # if {name} is not among the contents of node, report failure
+        # if {name} is not among the contents of node
         except KeyError:
+            # {uri} is not among my children either
             return False
         # if we get this far, report success
         return True
@@ -245,6 +248,7 @@ class Folder(Node):
         try:
             # hunt down the target node
             for name in uri.names:
+                # one level at a time
                 node = node.contents[name]
         # if any of the folder lookups fail
         except KeyError:
