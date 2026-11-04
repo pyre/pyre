@@ -26,7 +26,14 @@ if(NOT PYRE_VERSION)
 
     # ask git for the pyre version
     pyre_getVersion()
+else()
+    # the caller supplied the version, so find the revision of the source separately
+    pyre_getRevision()
 endif()
+
+# stamp the version record with the date and the year of the build
+string(TIMESTAMP TODAY UTC)
+string(TIMESTAMP YEAR "%Y" UTC)
 
 # set up the project
 project(PYRE VERSION "${PYRE_VERSION}" LANGUAGES CXX)
