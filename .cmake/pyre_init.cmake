@@ -93,10 +93,54 @@ function(pyre_getVersion)
 
   set(PYRE_VERSION "${REPO_MAJOR}.${REPO_MINOR}.${REPO_MICRO}" PARENT_SCOPE)
   set(REVISION ${REPO_COMMIT} PARENT_SCOPE)
-  string(TIMESTAMP TODAY PARENT_SCOPE)
 
   # all done
 endfunction(pyre_getVersion)
+
+
+# find the revision of the source when the caller supplies the version
+function(pyre_getRevision)
+  # a clone knows its own revision
+  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
+    # so, if git is around
+    find_package(Git)
+    if(Git_FOUND)
+      # ask it for the commit that is checked out, abbreviated the way {git describe} does
+      execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --short=9 HEAD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE GIT_REVPARSE_STATUS
+        OUTPUT_VARIABLE GIT_REVPARSE_COMMIT
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+        )
+      # and use it, if it answered
+      if("${GIT_REVPARSE_STATUS}" STREQUAL "0")
+        set(REVISION ${GIT_REVPARSE_COMMIT} PARENT_SCOPE)
+        return()
+      endif()
+    endif()
+  endif()
+
+  # a tarball made by {git archive} carries the commit in its archival record, where git
+  # has filled in the placeholder on the way out
+  set(ARCHIVAL ${CMAKE_CURRENT_SOURCE_DIR}/.git_archival.txt)
+  if(EXISTS ${ARCHIVAL})
+    # look for the commit
+    file(STRINGS ${ARCHIVAL} ARCHIVAL_NODE REGEX "^node: [0-9a-f]+$")
+    # and, if it is there, abbreviate it the same way
+    if(ARCHIVAL_NODE)
+      string(REGEX REPLACE "^node: ([0-9a-f]+)$" "\\1" ARCHIVAL_COMMIT "${ARCHIVAL_NODE}")
+      string(SUBSTRING ${ARCHIVAL_COMMIT} 0 9 ARCHIVAL_COMMIT)
+      set(REVISION ${ARCHIVAL_COMMIT} PARENT_SCOPE)
+      return()
+    endif()
+  endif()
+
+  # otherwise, the revision is unknown
+  set(REVISION "" PARENT_SCOPE)
+  # all done
+endfunction(pyre_getRevision)
 
 
 # end of file
