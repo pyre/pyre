@@ -24,7 +24,7 @@ define toolchain.init =
     ${eval toolchain.$(1).doc ?=}
     # the ecosystem the tool belongs to; drives how the pin is stored and installed
     ${eval toolchain.$(1).kind ?= node}
-    # the exact version to pin
+    # the version it is pinned to, or the range of versions it follows
     ${eval toolchain.$(1).version ?=}
     # the directory that holds both the installation and mm's configuration for the tool
     ${eval toolchain.$(1).home := $(toolchains.home)/$(1)}

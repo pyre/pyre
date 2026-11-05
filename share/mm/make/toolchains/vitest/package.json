@@ -1,0 +1,9 @@
+{
+    "name": "mm-toolchain-vitest",
+    "version": "5.0.0",
+    "private": true,
+    "description": "vitest toolchain managed by mm, following the releases of its major version",
+    "dependencies": {
+        "vitest": "^5"
+    }
+}

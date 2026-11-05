@@ -15,7 +15,7 @@ toolchains.info:
 	@${call log.sec,"  actions",}
 	@${call log.help,"<tool>.install","fetch and install it (a deliberate online action)"}
 	@${call log.help,"<tool>.verify","check it is present; fails a build if it is missing"}
-	@${call log.help,"<tool>.update","reinstall it against the pinned version"}
+	@${call log.help,"<tool>.update","bring it up to date with the versions its manifest allows"}
 	@${call log.help,"<tool>.info","show its settings"}
 	@${call log.help,"<tool>.clean","remove the installation"}
 

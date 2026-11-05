@@ -1,0 +1,11 @@
+{
+    "name": "mm-toolchain-eslint",
+    "version": "10.0.0",
+    "private": true,
+    "description": "eslint toolchain managed by mm, following the releases of the major versions of its parts",
+    "dependencies": {
+        "eslint": "^10",
+        "@stylistic/eslint-plugin": "^5",
+        "eslint-plugin-comment-length": "^2"
+    }
+}
