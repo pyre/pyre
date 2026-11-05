@@ -64,6 +64,33 @@ function(pyre_destinationInit)
 endfunction(pyre_destinationInit)
 
 
+# teach an installed binary to find our libraries by a path relative to its own location, so the
+# prefix keeps working wherever it is moved
+function(pyre_installRpath target destination)
+  # find the directory the binary is installed in
+  get_filename_component(PYRE_INSTALL_HOME ${destination} ABSOLUTE
+                         BASE_DIR ${CMAKE_INSTALL_PREFIX})
+  # and the way from there to our libraries
+  file(RELATIVE_PATH PYRE_INSTALL_LIBRARIES ${PYRE_INSTALL_HOME} ${CMAKE_INSTALL_FULL_LIBDIR})
+  # the loader has its own name for the directory of the binary on each platform
+  if(APPLE)
+    set(PYRE_INSTALL_ORIGIN "@loader_path")
+  else()
+    set(PYRE_INSTALL_ORIGIN "$ORIGIN")
+  endif()
+  # a binary that lives next to our libraries needs only its own directory
+  if("${PYRE_INSTALL_LIBRARIES}" STREQUAL "")
+    set(PYRE_INSTALL_RPATH "${PYRE_INSTALL_ORIGIN}")
+  # everything else walks over to them
+  else()
+    set(PYRE_INSTALL_RPATH "${PYRE_INSTALL_ORIGIN}/${PYRE_INSTALL_LIBRARIES}")
+  endif()
+  # record the path with the target
+  set_target_properties(${target} PROPERTIES INSTALL_RPATH "${PYRE_INSTALL_RPATH}")
+  # all done
+endfunction(pyre_installRpath)
+
+
 # ask git for the most recent tag and use it to build the version
 function(pyre_getVersion)
   # git

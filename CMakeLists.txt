@@ -57,26 +57,14 @@ option(PYRE_BUILD_BENCHMARKS "Build pyre's benchmark suite" OFF)
 # hmmmmm
 include(GNUInstallDirs)
 
-# RPATH handling
-# https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
-# use, i.e. don't skip the full RPATH for the build tree
+# run time paths; see https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
+# binaries in the build tree find our libraries where they are built
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
-
-# when building, don't use the install RPATH already
-# (but later on when installing)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
+# installed binaries find our libraries by a path relative to their own location, which each of
+# them records as it is installed, and the libraries of their dependencies wherever the build
+# found them
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# the RPATH to be used when installing, but only if it's not a system directory
-if(NOT (CMAKE_INSTALL_FULL_LIBDIR IN_LIST
-        CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES))
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
-endif()
 
 include(pyre_journal)
 include(pyre_pyre)

@@ -99,6 +99,8 @@ function(pyre_cudaModule)
       LIBRARY
       DESTINATION ${PYRE_DEST_PACKAGES}/cuda
       )
+    # and find our libraries from where it is installed
+    pyre_installRpath(cudamodule ${PYRE_DEST_PACKAGES}/cuda)
   endif()
 endfunction(pyre_cudaModule)
 

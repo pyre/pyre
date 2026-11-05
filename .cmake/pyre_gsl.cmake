@@ -72,6 +72,8 @@ function(pyre_gslModule)
       LIBRARY
       DESTINATION ${PYRE_DEST_PACKAGES}/gsl
       )
+    # and find our libraries from where it is installed
+    pyre_installRpath(gslmodule ${PYRE_DEST_PACKAGES}/gsl)
   endif()
   # all done
 endfunction(pyre_gslModule)
