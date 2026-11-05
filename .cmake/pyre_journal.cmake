@@ -95,6 +95,8 @@ function(pyre_journalLib)
     EXPORT pyre-targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
+  # and find our libraries from where it is installed
+  pyre_installRpath(journal ${CMAKE_INSTALL_LIBDIR})
   # and publish it; journal is consumable entirely on its own
   pyre_exportTarget(journal journal)
 
@@ -135,6 +137,8 @@ function(pyre_journalModule)
     LIBRARY
     DESTINATION ${PYRE_DEST_PACKAGES}/journal/ext
     )
+  # and find our libraries from where it is installed
+  pyre_installRpath(journalmodule ${PYRE_DEST_PACKAGES}/journal/ext)
 endfunction(pyre_journalModule)
 
 

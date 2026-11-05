@@ -110,6 +110,8 @@ function(pyre_mpiModule)
       LIBRARY
       DESTINATION ${PYRE_DEST_PACKAGES}/mpi
       )
+    # and find our libraries from where it is installed
+    pyre_installRpath(mpimodule ${PYRE_DEST_PACKAGES}/mpi)
   endif()
   # all done
 endfunction(pyre_mpiModule)

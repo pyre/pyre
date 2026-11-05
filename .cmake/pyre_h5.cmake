@@ -171,6 +171,8 @@ function(pyre_h5Module)
       LIBRARY
       DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
       )
+    # and find our libraries from where it is installed
+    pyre_installRpath(h5module ${PYRE_DEST_PACKAGES}/pyre/extensions)
   endif(HDF5_FOUND)
 endfunction(pyre_h5Module)
 

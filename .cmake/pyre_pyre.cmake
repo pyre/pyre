@@ -153,6 +153,8 @@ function(pyre_pyreLib)
     EXPORT pyre-targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
+  # and find our libraries from where it is installed
+  pyre_installRpath(pyre ${CMAKE_INSTALL_LIBDIR})
   # and publish it, so consumers can ask for it by name
   pyre_exportTarget(pyre pyre)
 
@@ -224,6 +226,9 @@ function(pyre_pyreModule)
     LIBRARY
     DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
     )
+  # and find our libraries from where they are installed
+  pyre_installRpath(hostmodule ${PYRE_DEST_PACKAGES}/pyre/extensions)
+  pyre_installRpath(pyremodule ${PYRE_DEST_PACKAGES}/pyre/extensions)
 endfunction(pyre_pyreModule)
 
 
@@ -246,6 +251,8 @@ function(pyre_pyreBin)
       RUNTIME
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       )
+    # and find our libraries from where it is installed
+    pyre_installRpath(python.pyre ${CMAKE_INSTALL_BINDIR})
   endif()
   # install the scripts
   install(
