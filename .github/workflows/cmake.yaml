@@ -165,5 +165,18 @@ jobs:
           prefix: ${{runner.temp}}/install
           cxx: ${{matrix.cxx}}
 
+      - name: move the installed package
+        run: |
+          # the installed binaries find our libraries by paths relative to their own location, so
+          # the prefix keeps working wherever it is moved; nothing runs from it after this step
+          echo " -- moving the prefix"
+          mv ${prefix} ${moved}
+          echo " -- loading every extension module from its new location"
+          python${pythonVersion} ${{github.workspace}}/pyre/etc/ci/relocation.py ${moved}
+        env:
+          prefix: ${{runner.temp}}/install
+          moved: ${{runner.temp}}/moved
+          pythonVersion: ${{matrix.python}}
+
 
 # end of file
