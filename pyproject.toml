@@ -109,5 +109,15 @@ where = ["packages"]
 include = ["pyre*", "journal*", "merlin*", "mpi*", "gsl*", "survey*", "cuda*"]
 namespaces = false
 
+# wheel repair
+# the extension modules find our libraries by a path relative to their own place in the install
+# tree; in the wheel, the libraries move to its data tree and that path leads nowhere, so the
+# repair tools also search the install tree that scikit-build leaves behind
+[tool.cibuildwheel.macos]
+repair-wheel-command = "DYLD_LIBRARY_PATH=$(echo {project}/_skbuild/*/cmake-install/lib) delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
+
+[tool.cibuildwheel.linux]
+repair-wheel-command = "LD_LIBRARY_PATH=$(echo {project}/_skbuild/*/cmake-install/lib) auditwheel repair -w {dest_dir} {wheel}"
+
 
 # end of file
