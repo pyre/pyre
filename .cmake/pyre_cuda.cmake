@@ -93,14 +93,8 @@ function(pyre_cudaModule)
       extensions/cuda/metadata.cc
     )
 
-    # install the cuda extensions
-    install(
-      TARGETS cudamodule
-      LIBRARY
-      DESTINATION ${PYRE_DEST_PACKAGES}/cuda
-      )
-    # and find our libraries from where it is installed
-    pyre_installRpath(cudamodule ${PYRE_DEST_PACKAGES}/cuda)
+    # install the cuda extension
+    pyre_installBinary(cudamodule ${PYRE_DEST_PACKAGES}/cuda)
   endif()
 endfunction(pyre_cudaModule)
 

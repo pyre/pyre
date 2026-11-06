@@ -64,44 +64,63 @@ function(pyre_destinationInit)
 endfunction(pyre_destinationInit)
 
 
-# teach an installed binary where to find our libraries: by a path relative to its own location
-# when the binary and the libraries both live in the prefix, so the prefix keeps working wherever
-# it is moved, and by the place they are installed in otherwise
-function(pyre_installRpath target destination)
+# install a binary in {destination}, absolute or relative to the prefix, and teach it where to
+# find our libraries: by a path relative to its own location when the binary and the libraries
+# both live in the prefix, so the prefix keeps working wherever it is moved, and by the place the
+# libraries are installed in otherwise; a binary that consumers can ask for by name names its
+# export set after the EXPORT keyword
+function(pyre_installBinary target destination)
+  # collect the export set, if any
+  cmake_parse_arguments(PARSE_ARGV 2 binary "" "EXPORT" "")
+  # programs go where programs are installed, and everything else is a library
+  get_target_property(type ${target} TYPE)
+  if(type STREQUAL "EXECUTABLE")
+    set(kind RUNTIME)
+  else()
+    set(kind LIBRARY)
+  endif()
+  # add the binary to its export set, when it has one
+  set(exports "")
+  if(DEFINED binary_EXPORT)
+    set(exports EXPORT ${binary_EXPORT})
+  endif()
+  # install it
+  install(TARGETS ${target} ${exports} ${kind} DESTINATION ${destination})
+
   # find the directory the binary is installed in
-  get_filename_component(PYRE_INSTALL_HOME ${destination} ABSOLUTE
-                         BASE_DIR ${CMAKE_INSTALL_PREFIX})
+  cmake_path(ABSOLUTE_PATH destination BASE_DIRECTORY "${CMAKE_INSTALL_PREFIX}" NORMALIZE
+             OUTPUT_VARIABLE home)
   # a relative path survives a move only when both ends of it move with the prefix
-  cmake_path(IS_PREFIX CMAKE_INSTALL_PREFIX "${PYRE_INSTALL_HOME}" NORMALIZE
-             PYRE_INSTALL_HOME_INSIDE)
+  cmake_path(IS_PREFIX CMAKE_INSTALL_PREFIX "${home}" NORMALIZE homeMoves)
   cmake_path(IS_PREFIX CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_FULL_LIBDIR}" NORMALIZE
-             PYRE_INSTALL_LIBDIR_INSIDE)
+             librariesMove)
   # when either one lives elsewhere, the installation cannot be moved anyway
-  if(NOT (PYRE_INSTALL_HOME_INSIDE AND PYRE_INSTALL_LIBDIR_INSIDE))
+  if(NOT (homeMoves AND librariesMove))
     # so the binary looks for our libraries where they are installed
     set_target_properties(${target} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
     # and we are done
     return()
   endif()
   # otherwise, find the way from the binary to our libraries
-  file(RELATIVE_PATH PYRE_INSTALL_LIBRARIES ${PYRE_INSTALL_HOME} ${CMAKE_INSTALL_FULL_LIBDIR})
+  set(libraries "${CMAKE_INSTALL_FULL_LIBDIR}")
+  cmake_path(RELATIVE_PATH libraries BASE_DIRECTORY "${home}" OUTPUT_VARIABLE path)
   # the loader has its own name for the directory of the binary on each platform
   if(APPLE)
-    set(PYRE_INSTALL_ORIGIN "@loader_path")
+    set(origin "@loader_path")
   else()
-    set(PYRE_INSTALL_ORIGIN "$ORIGIN")
+    set(origin "$ORIGIN")
   endif()
   # a binary that lives next to our libraries needs only its own directory
-  if("${PYRE_INSTALL_LIBRARIES}" STREQUAL "")
-    set(PYRE_INSTALL_RPATH "${PYRE_INSTALL_ORIGIN}")
+  if(path STREQUAL ".")
+    set(rpath "${origin}")
   # everything else walks over to them
   else()
-    set(PYRE_INSTALL_RPATH "${PYRE_INSTALL_ORIGIN}/${PYRE_INSTALL_LIBRARIES}")
+    set(rpath "${origin}/${path}")
   endif()
   # record the path with the target
-  set_target_properties(${target} PROPERTIES INSTALL_RPATH "${PYRE_INSTALL_RPATH}")
+  set_target_properties(${target} PROPERTIES INSTALL_RPATH "${rpath}")
   # all done
-endfunction(pyre_installRpath)
+endfunction(pyre_installBinary)
 
 
 # ask git for the most recent tag and use it to build the version

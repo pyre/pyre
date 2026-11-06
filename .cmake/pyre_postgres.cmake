@@ -87,13 +87,7 @@ function(pyre_postgresModule)
       )
 
     # install the extension
-    install(
-      TARGETS postgresmodule
-      LIBRARY
-      DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
-      )
-    # and find our libraries from where it is installed
-    pyre_installRpath(postgresmodule ${PYRE_DEST_PACKAGES}/pyre/extensions)
+    pyre_installBinary(postgresmodule ${PYRE_DEST_PACKAGES}/pyre/extensions)
   endif()
   # all done
 endfunction(pyre_postgresModule)

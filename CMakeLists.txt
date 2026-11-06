@@ -61,9 +61,8 @@ include(GNUInstallDirs)
 # binaries in the build tree find our libraries where they are built
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-# installed binaries find our libraries by a path relative to their own location, which each of
-# them records as it is installed, and the libraries of their dependencies wherever the build
-# found them
+# installed binaries find our libraries by the path {pyre_installBinary} records for each of them,
+# and the libraries of their dependencies wherever the build found them
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 include(pyre_journal)
