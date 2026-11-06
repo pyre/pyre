@@ -156,26 +156,8 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         if len(chunk) == 0:
             # show me
             application.debug.log(f"connection from {channel.peer} was closed")
-            # close the connection
-            channel.close()
-            # if this channel was a streaming subscriber, drop it from the hub
-            if self.hub is not None:
-                # so we stop buffering events for a connection that is gone
-                self.hub.unsubscribe(channel)
-            # if a deferred response was parked on this connection
-            parked = self.parked.pop(channel, None)
-            # let it know
-            if parked is not None:
-                # that nobody is waiting for its document any more
-                parked.cancel()
-            # check whether we know this peer
-            try:
-                # in which case, forget him
-                del self.requests[channel]
-            # if not
-            except KeyError:
-                # no problem
-                pass
+            # close our end too, and forget the connection
+            self.hangup(channel=channel)
             # stop listening
             return False
 
@@ -323,6 +305,27 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
         # build the stream
         return self.eventStream(server=self, topic=self.Journal.topic, opening=opening)
 
+    def hangup(self, channel):
+        """
+        Close {channel} and forget everything i hold for the conversation on it
+        """
+        # close the connection
+        channel.close()
+        # if this channel was a streaming subscriber, drop it from the hub
+        if self.hub is not None:
+            # so we stop buffering events for a connection that is gone
+            self.hub.unsubscribe(channel)
+        # if a deferred response was parked on this connection
+        parked = self.parked.pop(channel, None)
+        # let it know
+        if parked is not None:
+            # that nobody is waiting for its document any more
+            parked.cancel()
+        # and forget any request that was still arriving on it
+        self.requests.pop(channel, None)
+        # all done
+        return
+
     def fulfill(self, request):
         """
         Fulfill the given fully formed client {request}
@@ -339,6 +342,13 @@ class Server(pyre.nexus.server, family="pyre.nexus.servers.http"):
             self.parked[channel] = response
             # and keep watching the channel so we can tell when the peer hangs up
             return True
+
+        # a response that is no response at all
+        if response.hangup:
+            # closes the connection without a word, and forgets it
+            self.hangup(channel=channel)
+            # and stops listening
+            return False
 
         # if this is a streaming response
         if response.streaming:

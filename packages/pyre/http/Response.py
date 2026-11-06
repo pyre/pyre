@@ -46,6 +46,8 @@ class Response(NexusError):
     alive = True
     # route me down the server's streaming path instead of render-once
     streaming = False
+    # close the connection without sending anything
+    hangup = False
 
     # a file whose contents are my body, which the server hands to the kernel to send instead of
     # asking me to render it; i own it, and the server closes it once it is on the wire
@@ -69,8 +71,9 @@ class Response(NexusError):
         self.encoding = encoding
         # build the headers
         headers = Headers()
-        #  decorate
+        # name the server
         headers["Server"] = server.name
+        # and stamp the time of the response
         headers["Date"] = self.timestamp()
         # attach
         self.headers = headers
@@ -89,11 +92,13 @@ class Response(NexusError):
         # unpack
         year, month, day, hh, mm, ss, wd, y, z = time.gmtime(tick)
         # render and return
-        return "{}, {:02} {} {} {:02}:{:02}:{:02} GMT".format(
-            self.weekdays[wd], day, self.months[month], year, hh, mm, ss
+        return (
+            f"{self.weekdays[wd]}, {day:02} {self.months[month]} {year} "
+            f"{hh:02}:{mm:02}:{ss:02} GMT"
         )
 
     # private data
+    # the names of the months, from one
     months = (
         None,
         "Jan",
@@ -110,6 +115,7 @@ class Response(NexusError):
         "Dec",
     )
 
+    # and of the days of the week, from monday
     weekdays = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
 
