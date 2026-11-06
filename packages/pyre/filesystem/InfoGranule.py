@@ -24,7 +24,8 @@ class InfoGranule(InfoFile):
         self.record = record
         # the total size of the granule payload, in bytes
         self.size = size
-        # the direct access links to the granule payload
+        # the links to the granule payload, by the scheme of the route that reaches it, e.g. the
+        # {https} ones through the data center and the {s3} ones straight to its storage
         self.links = links
         # the start of the acquisition
         self.begin = begin
