@@ -64,13 +64,26 @@ function(pyre_destinationInit)
 endfunction(pyre_destinationInit)
 
 
-# teach an installed binary to find our libraries by a path relative to its own location, so the
-# prefix keeps working wherever it is moved
+# teach an installed binary where to find our libraries: by a path relative to its own location
+# when the binary and the libraries both live in the prefix, so the prefix keeps working wherever
+# it is moved, and by the place they are installed in otherwise
 function(pyre_installRpath target destination)
   # find the directory the binary is installed in
   get_filename_component(PYRE_INSTALL_HOME ${destination} ABSOLUTE
                          BASE_DIR ${CMAKE_INSTALL_PREFIX})
-  # and the way from there to our libraries
+  # a relative path survives a move only when both ends of it move with the prefix
+  cmake_path(IS_PREFIX CMAKE_INSTALL_PREFIX "${PYRE_INSTALL_HOME}" NORMALIZE
+             PYRE_INSTALL_HOME_INSIDE)
+  cmake_path(IS_PREFIX CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_FULL_LIBDIR}" NORMALIZE
+             PYRE_INSTALL_LIBDIR_INSIDE)
+  # when either one lives elsewhere, the installation cannot be moved anyway
+  if(NOT (PYRE_INSTALL_HOME_INSIDE AND PYRE_INSTALL_LIBDIR_INSIDE))
+    # so the binary looks for our libraries where they are installed
+    set_target_properties(${target} PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
+    # and we are done
+    return()
+  endif()
+  # otherwise, find the way from the binary to our libraries
   file(RELATIVE_PATH PYRE_INSTALL_LIBRARIES ${PYRE_INSTALL_HOME} ${CMAKE_INSTALL_FULL_LIBDIR})
   # the loader has its own name for the directory of the binary on each platform
   if(APPLE)
