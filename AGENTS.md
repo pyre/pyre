@@ -495,6 +495,10 @@ To check a build, list what the core shared objects need, with `readelf -d` on l
   source or a test updates those lists in the same pull request; mm finds files on its own, so
   an mm build that passes says nothing about the cmake one. Headers are picked up by directory.
   The cmake build runs on every pull request, in `pr-cmake`.
+- Build in an environment whose libraries do not compete with the ones being built: a binary
+  looks up all of its libraries in one ordered list of directories, so a second copy of a library
+  anywhere on that list, such as another `pyre` or a separately built `hdf5`, can be loaded in
+  place of the one the build linked against, whatever the order.
 - Test against what `mm` installs, never against the source tree. `mm builder.info` reports the
   install prefix; check it before relying on a result, and point `PATH` and `PYTHONPATH` at its
   `bin` and `packages` directories for anything run outside mm. Running python with the working
