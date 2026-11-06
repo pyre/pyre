@@ -36,6 +36,7 @@ def extensions(packages: str) -> list[str]:
         for filename in files:
             # skip anything that is not an extension module
             if not filename.endswith(".so"):
+                # by moving on to the next one
                 continue
             # the module name is the part of the filename before its platform tag
             module = filename.split(".")[0]
@@ -100,8 +101,9 @@ def main() -> int:
         failures.append(f"no extension modules under '{packages}'")
     # import each one
     for name in names:
-        # by name
+        # attempt to load it
         try:
+            # by name
             importlib.import_module(name)
         # a module whose libraries cannot be found does not load
         except ImportError as error:
@@ -112,6 +114,7 @@ def main() -> int:
     for image in loaded():
         # skip the ones that are not ours
         if not os.path.basename(image).startswith(LIBRARIES):
+            # by moving on to the next one
             continue
         # ours must come from the moved prefix
         if not os.path.realpath(image).startswith(prefix + os.sep):
@@ -120,6 +123,7 @@ def main() -> int:
 
     # report the failures
     for failure in failures:
+        # one per line
         print(failure)
     # and turn them into the exit status
     return 1 if failures else 0
