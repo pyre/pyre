@@ -166,13 +166,7 @@ function(pyre_h5Module)
       extensions/h5/types/unix.cc
       )
     # install
-    install(
-      TARGETS h5module
-      LIBRARY
-      DESTINATION ${PYRE_DEST_PACKAGES}/pyre/extensions
-      )
-    # and find our libraries from where it is installed
-    pyre_installRpath(h5module ${PYRE_DEST_PACKAGES}/pyre/extensions)
+    pyre_installBinary(h5module ${PYRE_DEST_PACKAGES}/pyre/extensions)
   endif(HDF5_FOUND)
 endfunction(pyre_h5Module)
 
