@@ -141,7 +141,7 @@ jobs:
           echo " -- testing pyre"
           # the postgres suites, both the c++ library and the extension, need a running server,
           # which this runner does not have
-          ctest -E postgres
+          ctest --output-on-failure -E postgres
 
       - name: consume the installed package
         run: |
