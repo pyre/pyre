@@ -178,6 +178,13 @@ You may need to replace `gcc` with whatever is available in your environment; on
 Incidentally, the directory `~/.config/pyre` is the home for configuration files for all `pyre`
 applications, including yours, so we will be adding more files here later on.
 
+Build in an environment whose libraries do not compete with the ones being built. A program
+finds its shared libraries by searching one ordered list of directories, and the first file
+with the right name wins; a second copy of a library, such as an older `pyre` or an `hdf5` built
+separately, anywhere on that list can be loaded in place of the one the build linked against.
+The simplest way to stay safe is to build `pyre` into the environment that supplies its
+dependencies, as `mode: conda` does, or into an environment that does not already contain `pyre`.
+
 ### Building
 
 The next step is to build `pyre`. We will invoke `mm` a few times, so you may find
