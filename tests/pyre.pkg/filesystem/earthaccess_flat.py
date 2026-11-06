@@ -54,9 +54,11 @@ def test():
 
     # mount the filesystem
     fs = pyre.filesystem.earthaccess(query={"short_name": "product"}, count=2, engine=engine)
-    # before discovery, there is nothing on the tree and no sync
+    # before discovery, there is nothing on the tree
     assert not fs.contents
+    # no sync
     assert fs.info(node=fs).sync is None
+    # and no count of matches
     assert fs.hits is None
 
     # discover
@@ -80,10 +82,11 @@ def test():
     assert info.record is page[1]
     # the payload size adds up the files
     assert info.size == 21
-    # only the direct access links are kept
-    assert info.links == ["s3://bucket/g2/g2.h5"]
-    # the acquisition window is there
+    # the links to the payload are kept, by scheme, and the link to the browse image is not
+    assert info.links == {"https": ["https://daac/g2.h5"], "s3": ["s3://bucket/g2/g2.h5"]}
+    # the acquisition window is there: its start
     assert info.begin == "2026-01-02T00:00:00Z"
+    # and its end
     assert info.end == "2026-01-02T00:00:10Z"
     # and the sync stamp matches the root's
     assert info.sync == fs.info(node=fs).sync

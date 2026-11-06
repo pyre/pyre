@@ -50,6 +50,8 @@ class EarthAccess(Filesystem):
     # public data
     # the number of granules the catalog reports for my query, as of the last sync
     hits = None
+    # the kinds of the links of a catalog record that lead to the payload of its granule
+    payloadTypes = ("GET DATA", "GET DATA VIA DIRECT ACCESS")
 
     # interface
     def discover(self, root=None, levels=0, **kwds):
@@ -196,12 +198,20 @@ class EarthAccess(Filesystem):
             int(entry.get("SizeInBytes", 0))
             for entry in payload.get("ArchiveAndDistributionInformation", [])
         )
-        # collect the direct access links
-        links = [
-            entry["URL"]
-            for entry in umm.get("RelatedUrls", [])
-            if entry.get("Type") == "GET DATA VIA DIRECT ACCESS"
-        ]
+        # collect the links to the payload, by the scheme of the route that reaches it: the
+        # repository marks those that go through the data center as {GET DATA}, and those that
+        # go straight to its storage as {GET DATA VIA DIRECT ACCESS}
+        links = {}
+        # go through the links of the record
+        for entry in umm.get("RelatedUrls", []):
+            # skip the ones that lead to anything other than the payload
+            if entry.get("Type") not in self.payloadTypes:
+                # such as browse images and metadata
+                continue
+            # get the location
+            url = entry["URL"]
+            # and file it under its scheme
+            links.setdefault(primitives.uri.parse(url).scheme, []).append(url)
         # get the acquisition time range
         window = umm.get("TemporalExtent", {}).get("RangeDateTime", {})
         # build the metadata and return it
