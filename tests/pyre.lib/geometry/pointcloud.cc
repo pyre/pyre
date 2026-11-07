@@ -21,8 +21,8 @@ main()
     cloud_t cloud(2);
 
     // add a couple of points
-    cloud[0] = { 0., 0., 1. };
-    cloud[1] = { 1., 0., 1. };
+    cloud[0] = cloud_t::point_type { 0., 0., 1. };
+    cloud[1] = cloud_t::point_type { 1., 0., 1. };
 
     // make a channel
     pyre::journal::debug_t channel("pyre.geometry");
