@@ -17,6 +17,17 @@ pyre_test_driver(tests/pyre.lib/algebra/bcd.cc)
 pyre_test_driver(tests/pyre.lib/geometry/point.cc)
 pyre_test_driver(tests/pyre.lib/geometry/pointcloud.cc)
 pyre_test_driver(tests/pyre.lib/geometry/brick.cc)
+pyre_test_driver(tests/pyre.lib/geometry/brick_size.cc)
+pyre_test_driver(tests/pyre.lib/geometry/concepts.cc)
+pyre_test_driver(tests/pyre.lib/geometry/euclidean_distance.cc)
+pyre_test_driver(tests/pyre.lib/geometry/euclidean_affine.cc)
+pyre_test_driver(tests/pyre.lib/geometry/sphere_distance.cc)
+pyre_test_driver(tests/pyre.lib/geometry/ellipsoid_wgs84.cc)
+pyre_test_driver(tests/pyre.lib/geometry/lonlat_roundtrip.cc)
+pyre_test_driver(tests/pyre.lib/geometry/timeline_affine.cc)
+pyre_test_driver(tests/pyre.lib/geometry/lattice_contains.cc)
+pyre_test_driver(tests/pyre.lib/geometry/product_point.cc)
+pyre_test_driver(tests/pyre.lib/geometry/referencesystem.cc)
 
 
 # grid

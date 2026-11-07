@@ -16,8 +16,8 @@ int
 main()
 {
     // type aliases
-    typedef pyre::geometry::point_t<3, double> point3d_t;
-    typedef pyre::geometry::brick_t<3, point3d_t> brick3d_t;
+    using point3d_t = pyre::geometry::point_t<pyre::geometry::euclidean_t<3>>;
+    using brick3d_t = pyre::geometry::brick_t<3, point3d_t>;
     // make a bunch of points
     point3d_t p000 { 0., 0., 0. };
     point3d_t p100 { 1., 0., 0. };

@@ -16,7 +16,7 @@ int
 main()
 {
     // type alias
-    typedef pyre::geometry::point_t<3, double> point3d_t;
+    using point3d_t = pyre::geometry::point_t<pyre::geometry::euclidean_t<3>>;
     // make a point
     point3d_t p { 0., 0., 0. };
 
