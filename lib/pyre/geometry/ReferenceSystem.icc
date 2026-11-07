@@ -1,0 +1,60 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "ReferenceSystem.h"
+
+
+// metamethods
+template <class chartT>
+pyre::geometry::ReferenceSystem<chartT>::ReferenceSystem(
+    const space_type & space, const chart_type & chart, const string_type & authority,
+    code_type code) :
+    _space { space },
+    _chart { chart },
+    _authority { authority },
+    _code { code }
+{}
+
+// interface
+template <class chartT>
+auto
+pyre::geometry::ReferenceSystem<chartT>::space() const -> const space_type &
+{
+    // easy enough
+    return _space;
+}
+
+template <class chartT>
+auto
+pyre::geometry::ReferenceSystem<chartT>::chart() const -> const chart_type &
+{
+    // easy enough
+    return _chart;
+}
+
+template <class chartT>
+auto
+pyre::geometry::ReferenceSystem<chartT>::authority() const -> const string_type &
+{
+    // easy enough
+    return _authority;
+}
+
+template <class chartT>
+auto
+pyre::geometry::ReferenceSystem<chartT>::code() const -> code_type
+{
+    // easy enough
+    return _code;
+}
+
+
+// end of file

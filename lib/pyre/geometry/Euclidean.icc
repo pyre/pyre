@@ -1,0 +1,107 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Euclidean.h"
+
+
+// interface
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Euclidean<dim>::dimension() -> size_type
+{
+    // easy enough
+    return dim;
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Euclidean<dim>::distance(const point_type & p, const point_type & q) const
+    -> distance_type
+{
+    // the vector between the two points
+    auto v = difference(p.data(), q.data());
+    // accumulate the square of its length
+    auto sum = coordinate_type { 0 };
+    // one axis at a time
+    for (auto component : v) {
+        // by folding in the contribution of this axis
+        sum += component * component;
+    }
+    // the length is its square root
+    return std::sqrt(sum);
+}
+
+// the affine structure
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Euclidean<dim>::difference(const rep_type & p, const rep_type & q) -> vector_type
+{
+    // make room for the vector
+    auto v = vector_type {};
+    // and fill it, one axis at a time
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // with the change of the coordinate along it
+        v[axis] = p[axis] - q[axis];
+    }
+    // all done
+    return v;
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Euclidean<dim>::translate(const rep_type & p, const vector_type & v) -> rep_type
+{
+    // make room for the point
+    auto r = rep_type {};
+    // and fill it, one axis at a time
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // by moving the coordinate by the component of the vector along it
+        r[axis] = p[axis] + v[axis];
+    }
+    // all done
+    return r;
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Euclidean<dim>::opposite(const vector_type & v) -> vector_type
+{
+    // make room for the result
+    auto r = vector_type {};
+    // and fill it, one axis at a time
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // with the reversed component
+        r[axis] = -v[axis];
+    }
+    // all done
+    return r;
+}
+
+// rendering
+template <std::size_t dim>
+auto
+pyre::geometry::Euclidean<dim>::inject(std::ostream & stream, const rep_type & p) -> void
+{
+    // go through the coordinates
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // separate each one from the one before it
+        if (axis > 0) {
+            stream << ", ";
+        }
+        // and write it
+        stream << p[axis];
+    }
+    // all done
+    return;
+}
+
+
+// end of file

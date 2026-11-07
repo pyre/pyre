@@ -1,0 +1,75 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Ellipsoid.h"
+
+
+// metamethods
+constexpr pyre::geometry::Ellipsoid::Ellipsoid(double semimajor, double flattening) :
+    _semimajor { semimajor },
+    _flattening { flattening }
+{}
+
+constexpr auto
+pyre::geometry::Ellipsoid::wgs84() -> Ellipsoid
+{
+    // the defining constants of the world geodetic system of 1984
+    return Ellipsoid(6378137.0, 1 / 298.257223563);
+}
+
+// interface
+constexpr auto
+pyre::geometry::Ellipsoid::dimension() -> size_type
+{
+    // the ellipsoid is a surface
+    return 2;
+}
+
+constexpr auto
+pyre::geometry::Ellipsoid::semimajor() const -> double
+{
+    // easy enough
+    return _semimajor;
+}
+
+constexpr auto
+pyre::geometry::Ellipsoid::semiminor() const -> double
+{
+    // the polar radius is the equatorial one, flattened
+    return _semimajor * (1 - _flattening);
+}
+
+constexpr auto
+pyre::geometry::Ellipsoid::flattening() const -> double
+{
+    // easy enough
+    return _flattening;
+}
+
+constexpr auto
+pyre::geometry::Ellipsoid::squaredEccentricity() const -> double
+{
+    // the eccentricity follows from the flattening
+    return _flattening * (2 - _flattening);
+}
+
+// rendering
+inline auto
+pyre::geometry::Ellipsoid::inject(std::ostream & stream, const rep_type & p) -> void
+{
+    // write the components of the unit normal
+    stream << p[0] << ", " << p[1] << ", " << p[2];
+    // all done
+    return;
+}
+
+
+// end of file

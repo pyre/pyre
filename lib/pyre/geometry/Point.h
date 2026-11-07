@@ -12,39 +12,62 @@
 #include "forward.h"
 
 
-// declaration of points
-template <std::size_t dim, typename dataT>
+// an element of a space; the space decides how its points are stored, so a point carries no
+// instance of its space, and the measures that depend on the parameters of the space, such as
+// the radius of a sphere, are computed by the space
+template <class spaceT>
 class pyre::geometry::Point {
-    // types
+    // type aliases
 public:
     // me
-    using self_type = Point<dim, dataT>;
-    typedef dataT data_type;
-    typedef std::size_t size_type;
-    typedef std::array<data_type, dim> rep_type;
+    using self_type = Point<spaceT>;
+    // my space
+    using space_type = spaceT;
+    // my storage
+    using rep_type = typename space_type::rep_type;
+    // indices
+    using size_type = size_t;
 
-    // meta-methods
+    // metamethods
 public:
-    template <typename... coordT>
-    inline Point(coordT... coordinate);
+    // build a point from the parts of its storage; copies and moves of points are left to the
+    // members below
+    template <typename... argT>
+        requires(
+            not(sizeof...(argT) == 1
+                and (std::is_same_v<std::remove_cvref_t<argT>, self_type> and ...)))
+    constexpr explicit Point(argT &&... args);
+
+    // the rest
+    constexpr Point(const Point &) = default;
+    constexpr Point(Point &&) = default;
+    constexpr Point & operator=(const Point &) = default;
+    constexpr Point & operator=(Point &&) = default;
+    constexpr ~Point() = default;
+
+    // equality
+    constexpr auto operator==(const Point &) const -> bool = default;
 
     // interface
 public:
     // the dimension of the underlying space
-    inline constexpr static auto dimension();
-    // access to my contents
-    const auto & data() const;
+    static constexpr auto dimension() -> size_type;
+    // access to my storage
+    constexpr auto data() const -> const rep_type &;
 
-    // indexed access
-    inline auto operator[](size_type item) const;
+    // indexed access, for the spaces whose points are arrays
+    constexpr auto operator[](size_type item) const
+        requires requires(const rep_type & rep) { rep[0]; };
 
-    // support for ranged for loops
-    inline auto begin() const;
-    inline auto end() const;
+    // support for ranged for loops, for the spaces whose points are arrays
+    constexpr auto begin() const
+        requires requires(const rep_type & rep) { rep.cbegin(); };
+    constexpr auto end() const
+        requires requires(const rep_type & rep) { rep.cend(); };
 
-    // implementation details
+    // implementation details - data
 private:
-    rep_type _coordinates;
+    rep_type _rep;
 };
 
 

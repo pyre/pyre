@@ -12,28 +12,38 @@
 #include "forward.h"
 
 
-// Representation of a logical d-dimensional parallelepiped
-// A brick is a container of 2^d nodes whose actual type is a template parameter
-
-// declaration of bricks
+// a logical parallelepiped of dimension {dim}: a container of its 2^dim corners, whose type is a
+// template parameter; the space the corners live in may have more dimensions than the brick
 template <std::size_t dim, typename nodeT>
 class pyre::geometry::Brick {
-    // types
+    // type aliases
 public:
     // me
     using self_type = Brick<dim, nodeT>;
-    // export my template parameters
-    typedef nodeT node_type;
-    // my parts
-    typedef std::array<node_type, 1 << dim> rep_type; // 2^d nodes of a type of your choice
-    // convenience
-    typedef size_t size_type;
-    typedef std::pair<typename node_type::rep_type, typename node_type::rep_type> box_type;
+    // my corners
+    using node_type = nodeT;
+    // my parts: 2^dim corners
+    using rep_type = std::array<node_type, 1 << dim>;
+    // indices
+    using size_type = size_t;
+    // my bounding box, as its lowest and highest corners
+    using box_type = std::pair<typename node_type::rep_type, typename node_type::rep_type>;
 
-    // meta-methods
+    // metamethods
 public:
+    // build a brick from its corners; copies and moves of bricks are left to the members below
     template <typename... cornerT>
+        requires(
+            not(sizeof...(cornerT) == 1
+                and (std::is_same_v<std::remove_cvref_t<cornerT>, self_type> and ...)))
     inline Brick(cornerT... corner);
+
+    // the rest
+    Brick(const Brick &) = default;
+    Brick(Brick &&) = default;
+    Brick & operator=(const Brick &) = default;
+    Brick & operator=(Brick &&) = default;
+    ~Brick() = default;
 
     // interface
 public:

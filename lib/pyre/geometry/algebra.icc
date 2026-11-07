@@ -1,0 +1,46 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "algebra.h"
+
+
+// the vector from {q} to {p}
+template <pyre::geometry::affine_space_c spaceT>
+constexpr auto
+pyre::geometry::operator-(const Point<spaceT> & p, const Point<spaceT> & q) ->
+    typename spaceT::vector_type
+{
+    // the space knows how to subtract its points
+    return spaceT::difference(p.data(), q.data());
+}
+
+// the point {p} translated by the vector {v}
+template <pyre::geometry::affine_space_c spaceT>
+constexpr auto
+pyre::geometry::operator+(const Point<spaceT> & p, const typename spaceT::vector_type & v)
+    -> Point<spaceT>
+{
+    // the space knows how to translate its points
+    return Point<spaceT>(spaceT::translate(p.data(), v));
+}
+
+// the point {p} translated by the opposite of the vector {v}
+template <pyre::geometry::affine_space_c spaceT>
+constexpr auto
+pyre::geometry::operator-(const Point<spaceT> & p, const typename spaceT::vector_type & v)
+    -> Point<spaceT>
+{
+    // translate by the opposite vector
+    return Point<spaceT>(spaceT::translate(p.data(), spaceT::opposite(v)));
+}
+
+
+// end of file

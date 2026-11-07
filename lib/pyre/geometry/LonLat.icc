@@ -1,0 +1,48 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "LonLat.h"
+
+
+// interface
+template <class spaceT>
+auto
+pyre::geometry::LonLat<spaceT>::point(const coordinates_type & coordinates) const -> point_type
+{
+    // the radians in a degree
+    constexpr auto radians = std::numbers::pi / 180;
+    // convert the angles
+    auto lambda = coordinates[0] * radians;
+    auto phi = coordinates[1] * radians;
+    // the normal makes the latitude with the equatorial plane, and its projection on that plane
+    // makes the longitude with the prime meridian
+    return point_type(
+        std::cos(phi) * std::cos(lambda), std::cos(phi) * std::sin(lambda), std::sin(phi));
+}
+
+template <class spaceT>
+auto
+pyre::geometry::LonLat<spaceT>::coordinates(const point_type & p) const -> coordinates_type
+{
+    // the degrees in a radian
+    constexpr auto degrees = 180 / std::numbers::pi;
+    // unpack the normal
+    const auto & n = p.data();
+    // the longitude is the direction of its projection on the equatorial plane
+    auto lambda = std::atan2(n[1], n[0]);
+    // and the latitude its elevation above that plane
+    auto phi = std::atan2(n[2], std::hypot(n[0], n[1]));
+    // all done
+    return { lambda * degrees, phi * degrees };
+}
+
+
+// end of file

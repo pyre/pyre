@@ -1,0 +1,64 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Product.h"
+
+
+// metamethods
+template <class firstT, class secondT>
+constexpr pyre::geometry::Product<firstT, secondT>::Product(
+    const first_type & first, const second_type & second) :
+    _first { first },
+    _second { second }
+{}
+
+// interface
+template <class firstT, class secondT>
+constexpr auto
+pyre::geometry::Product<firstT, secondT>::dimension() -> size_type
+{
+    // add up the dimensions of my factors
+    return first_type::dimension() + second_type::dimension();
+}
+
+template <class firstT, class secondT>
+constexpr auto
+pyre::geometry::Product<firstT, secondT>::first() const -> const first_type &
+{
+    // easy enough
+    return _first;
+}
+
+template <class firstT, class secondT>
+constexpr auto
+pyre::geometry::Product<firstT, secondT>::second() const -> const second_type &
+{
+    // easy enough
+    return _second;
+}
+
+// rendering
+template <class firstT, class secondT>
+auto
+pyre::geometry::Product<firstT, secondT>::inject(std::ostream & stream, const rep_type & p) -> void
+{
+    // write each part the way its factor writes it
+    stream << "(";
+    first_type::inject(stream, p.first.data());
+    stream << "), (";
+    second_type::inject(stream, p.second.data());
+    stream << ")";
+    // all done
+    return;
+}
+
+
+// end of file

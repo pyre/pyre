@@ -10,7 +10,14 @@
 
 // externals
 #include <stdexcept>
+#include <algorithm>
 #include <array>
+#include <chrono>
+#include <cmath>
+#include <concepts>
+#include <numbers>
+#include <string>
+#include <type_traits>
 #include <vector>
 #include <valarray>
 #include <utility>

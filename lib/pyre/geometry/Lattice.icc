@@ -1,0 +1,102 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Lattice.h"
+
+
+// metamethods
+template <std::size_t dim>
+constexpr pyre::geometry::Lattice<dim>::Lattice(const rep_type & lowest, const rep_type & highest) :
+    _lowest { lowest },
+    _highest { highest }
+{}
+
+// interface
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Lattice<dim>::dimension() -> size_type
+{
+    // easy enough
+    return dim;
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Lattice<dim>::lowest() const -> const rep_type &
+{
+    // easy enough
+    return _lowest;
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Lattice<dim>::highest() const -> const rep_type &
+{
+    // easy enough
+    return _highest;
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Lattice<dim>::cells() const -> size_type
+{
+    // start with an empty product
+    auto cells = size_type { 1 };
+    // go through the axes
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // the span of this one
+        auto span = _highest[axis] - _lowest[axis] + 1;
+        // an axis with no points leaves the lattice empty
+        if (span <= 0) {
+            return 0;
+        }
+        // otherwise, fold in its contribution
+        cells *= static_cast<size_type>(span);
+    }
+    // all done
+    return cells;
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Lattice<dim>::contains(const point_type & p) const -> bool
+{
+    // go through the axes
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // a point outside the span of any one of them is not mine
+        if (p[axis] < _lowest[axis] or p[axis] > _highest[axis]) {
+            return false;
+        }
+    }
+    // all others are
+    return true;
+}
+
+// rendering
+template <std::size_t dim>
+auto
+pyre::geometry::Lattice<dim>::inject(std::ostream & stream, const rep_type & p) -> void
+{
+    // go through the coordinates
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // separate each one from the one before it
+        if (axis > 0) {
+            stream << ", ";
+        }
+        // and write it
+        stream << p[axis];
+    }
+    // all done
+    return;
+}
+
+
+// end of file
