@@ -24,11 +24,13 @@ def test():
     timeline = geometry.Timeline()
     # an interval on it
     interval = timeline.interval(lower=10, upper=20)
-    # knows its ends
+    # knows its lower end
     assert interval.lower.coordinate == 10
+    # and its upper one
     assert interval.upper.coordinate == 20
-    # holds them
+    # holds the lower one
     assert interval.contains(point=timeline.point(coordinate=10))
+    # and the upper one
     assert interval.contains(point=timeline.point(coordinate=20))
     # but nothing beyond them
     assert not interval.contains(point=timeline.point(coordinate=21))
@@ -50,8 +52,9 @@ def test():
 
     # an interval with its ends out of order
     backwards = timeline.interval(lower=20, upper=10)
-    # is the empty one
+    # is empty
     assert backwards.empty
+    # and the same as the empty interval
     assert backwards == geometry.TimelineInterval()
     # and writes itself as the empty set
     assert repr(backwards) == "{}"
