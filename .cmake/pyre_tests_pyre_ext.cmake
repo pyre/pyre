@@ -51,5 +51,10 @@ pyre_test_python_testcase(tests/pyre.ext/memory/views.py)
 # the drivers leave their scratch products behind so they can be inspected; sweep them
 pyre_test_python_cleanup(memory_ordered_test.dat tests/pyre.ext/memory/ordered.py)
 
+# the geometry bindings test suite
+pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_points.py)
+pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_intervals.py)
+pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_relations.py)
+
 
 # end of file
