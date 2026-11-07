@@ -18,6 +18,7 @@
 #include <initializer_list>
 #include <limits>
 #include <numbers>
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <vector>

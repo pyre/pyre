@@ -31,9 +31,15 @@
 #include "ReferenceSystem.h"
 // the affine structure
 #include "algebra.h"
+// the predicates on the sphere
+#include "spherical.h"
 // shapes
 #include "Interval.h"
 #include "Collection.h"
+#include "Box.h"
+#include "Path.h"
+#include "Ring.h"
+#include "Polygon.h"
 // constructions and relations
 #include "constructions.h"
 #include "relations.h"

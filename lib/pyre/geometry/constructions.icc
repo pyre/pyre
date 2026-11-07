@@ -37,5 +37,86 @@ pyre::geometry::hull(const Interval<lineT> & a, const Interval<lineT> & b) -> In
     return Interval<lineT>(lower, upper);
 }
 
+// the hull of two boxes
+template <class chartT>
+auto
+pyre::geometry::hull(const Box<chartT> & a, const Box<chartT> & b) -> Box<chartT>
+{
+    // the empty box adds nothing to the other one
+    if (a.empty()) {
+        return b;
+    }
+    // either way
+    if (b.empty()) {
+        return a;
+    }
+    // the parallels reach from the lower of the south edges to the higher of the north edges
+    auto south = std::min(a.south(), b.south());
+    auto north = std::max(a.north(), b.north());
+    // a box that holds every longitude
+    if (a.full() || b.full()) {
+        // makes the hull hold them all
+        return Box<chartT>(-180, south, 180, north);
+    }
+    // otherwise, the hull starts at the west edge of one of the boxes and runs east far enough to
+    // cover the other; to measure it, how far east of {from} the longitude {to} is, within a turn
+    auto east = [](double from, double to) {
+        // the difference
+        auto degrees = to - from;
+        // brought within a single turn
+        return degrees - 360 * std::floor(degrees / 360);
+    };
+    // starting at the west edge of {a}, the hull reaches to the farther of the two east edges
+    auto fromA = std::max(a.width(), east(a.west(), b.west()) + b.width());
+    // and starting at the west edge of {b}
+    auto fromB = std::max(b.width(), east(b.west(), a.west()) + a.width());
+    // a hull that goes all the way around either way
+    if (std::min(fromA, fromB) >= 360) {
+        // holds every longitude
+        return Box<chartT>(-180, south, 180, north);
+    }
+    // otherwise, the narrower of the two is the hull
+    auto [west, width] =
+        fromA <= fromB ? std::pair { a.west(), fromA } : std::pair { b.west(), fromB };
+    // with its east edge brought back to the usual range
+    return Box<chartT>(west, south, std::remainder(west + width, 360.0), north);
+}
+
+// orienting rings
+template <class chartT>
+auto
+pyre::geometry::orient(const Ring<chartT> & ring) -> Ring<chartT>
+{
+    // a ring around more than half the sphere bounds the larger of its two regions
+    if (ring.area() > 2 * std::numbers::pi) {
+        // so walk it the other way
+        return ring.reversed();
+    }
+    // otherwise, it is already walked the right way
+    return ring;
+}
+
+template <class chartT>
+auto
+pyre::geometry::orient(const Polygon<chartT> & polygon) -> Polygon<chartT>
+{
+    // the rings, oriented
+    auto rings = typename Polygon<chartT>::rings_type {};
+    // go through the rings of the polygon
+    for (const auto & ring : polygon.rings()) {
+        // the first one bounds the polygon, so it goes around the smaller region
+        if (rings.empty()) {
+            rings.push_back(orient(ring));
+            // and that's all for it
+            continue;
+        }
+        // the others are holes, whose region to the left is everything outside of them, so they
+        // go around the larger region
+        rings.push_back(ring.area() < 2 * std::numbers::pi ? ring.reversed() : ring);
+    }
+    // all done
+    return Polygon<chartT>(rings);
+}
+
 
 // end of file

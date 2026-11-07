@@ -1,0 +1,52 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Polygon.h"
+
+
+// metamethods
+template <class chartT>
+pyre::geometry::Polygon<chartT>::Polygon(const rings_type & rings) : _rings { rings }
+{}
+
+// interface
+template <class chartT>
+auto
+pyre::geometry::Polygon<chartT>::rings() const -> const rings_type &
+{
+    // easy enough
+    return _rings;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Polygon<chartT>::contains(const point_type & p) const -> bool
+{
+    // the point must be in the region of every ring
+    return std::all_of(
+        _rings.begin(), _rings.end(), [&p](const ring_type & ring) { return ring.contains(p); });
+}
+
+template <class chartT>
+auto
+pyre::geometry::Polygon<chartT>::envelope() const -> envelope_type
+{
+    // a polygon without rings
+    if (_rings.empty()) {
+        // is the whole sphere
+        return envelope_type::sphere();
+    }
+    // otherwise, the region of the first ring holds the polygon, and the others only take away
+    return _rings.front().envelope();
+}
+
+
+// end of file

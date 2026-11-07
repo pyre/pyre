@@ -58,6 +58,18 @@ namespace pyre::geometry {
     // finite unions of shapes
     template <class shapeT>
     class Collection;
+    // the boxes of a longitude-latitude chart
+    template <class chartT>
+    class Box;
+    // sequences of vertices joined by edges
+    template <class chartT>
+    class Path;
+    // closed sequences of vertices, and the regions they bound
+    template <class chartT>
+    class Ring;
+    // the regions bound by rings
+    template <class chartT>
+    class Polygon;
 
     // point cloud
     template <typename pointT>
@@ -70,6 +82,11 @@ namespace pyre::geometry {
 
 // the pairs of shapes that know how to compute the symmetric relations
 namespace pyre::geometry::relations {
+}
+
+
+// the predicates of geometry on the unit sphere
+namespace pyre::geometry::spherical {
 }
 
 
