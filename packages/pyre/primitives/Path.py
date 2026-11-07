@@ -530,12 +530,34 @@ class Path(tuple):
         # if we are supposed to build the intermediate levels, delegate to the system routine
         return os.makedirs(self, exist_ok=exist_ok, **kwds)
 
-    def touch(self, mode=0x666, exist_ok=True):
+    def touch(self, mode=0o666, exist_ok=True):
         """
-        Create a file at his path
+        Create a file at my location, with the permissions in {mode} as filtered by the umask; if
+        the file exists already and {exist_ok} is {True}, mark it as accessed and modified now,
+        otherwise raise {FileExistsError}
         """
+        # if an existing file is acceptable
+        if exist_ok:
+            # attempt to
+            try:
+                # mark it as accessed and modified now
+                os.utime(self)
+            # if it isn't there
+            except FileNotFoundError:
+                # move on to creating it
+                pass
+            # otherwise
+            else:
+                # we are done
+                return
+        # the file is opened for writing, and must not exist unless that is acceptable
+        flags = os.O_CREAT | os.O_WRONLY | (0 if exist_ok else os.O_EXCL)
+        # create it
+        descriptor = os.open(self, flags, mode)
+        # and let it go
+        os.close(descriptor)
         # all done
-        raise NotImplementedError("NYI!")
+        return
 
     # constructors
     @classmethod
