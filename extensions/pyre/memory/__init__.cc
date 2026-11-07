@@ -26,12 +26,13 @@ pyre::py::memory::__init__(py::module & m) -> void
     // storage strategies
     // basic buffers
     buffers::__init__(memory);
+    // borrowed memory, which derives from the buffers; slicing the strategies that follow
+    // makes a view
+    views::__init__(memory);
     // buffers on the heap
     heaps::__init__(memory);
     // file backed memory
     maps::__init__(memory);
-    // borrowed memory
-    views::__init__(memory);
 
     // all done
     return;
