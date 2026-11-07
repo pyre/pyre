@@ -197,6 +197,14 @@ function(pyre_pyreModule)
     extensions/pyre/chroma/ansi.cc
     extensions/pyre/chroma/color.cc
     extensions/pyre/chroma/rgb.cc
+    # geometry
+    extensions/pyre/geometry/__init__.cc
+    extensions/pyre/geometry/Collection.cc
+    extensions/pyre/geometry/Interval.cc
+    extensions/pyre/geometry/Point.cc
+    extensions/pyre/geometry/Timeline.cc
+    extensions/pyre/geometry/constructions.cc
+    extensions/pyre/geometry/relations.cc
   )
 
   # host
