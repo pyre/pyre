@@ -28,6 +28,12 @@ pyre_test_driver(tests/pyre.lib/geometry/timeline_affine.cc)
 pyre_test_driver(tests/pyre.lib/geometry/lattice_contains.cc)
 pyre_test_driver(tests/pyre.lib/geometry/product_point.cc)
 pyre_test_driver(tests/pyre.lib/geometry/referencesystem.cc)
+pyre_test_driver(tests/pyre.lib/geometry/interval_ends.cc)
+pyre_test_driver(tests/pyre.lib/geometry/interval_intersects.cc)
+pyre_test_driver(tests/pyre.lib/geometry/interval_covers.cc)
+pyre_test_driver(tests/pyre.lib/geometry/interval_hull.cc)
+pyre_test_driver(tests/pyre.lib/geometry/collection_intersects.cc)
+pyre_test_driver(tests/pyre.lib/geometry/collection_covers.cc)
 
 
 # grid
