@@ -61,6 +61,15 @@ public:
     // the opposite of {v}
     static constexpr auto opposite(const vector_type & v) -> vector_type;
 
+    // the order of the line, when i am one
+public:
+    // the coordinate of a point of the line
+    static constexpr auto coordinate(const rep_type & p) -> coordinate_type
+        requires(dim == 1);
+    // the point of the line at the given coordinate
+    static constexpr auto fromCoordinate(coordinate_type x) -> rep_type
+        requires(dim == 1);
+
     // rendering
 public:
     // write a point as its comma separated coordinates

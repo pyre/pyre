@@ -77,6 +77,21 @@ pyre::geometry::Timeline::opposite(const vector_type & v) -> vector_type
     return -v;
 }
 
+// the order of the line
+constexpr auto
+pyre::geometry::Timeline::coordinate(const rep_type & p) -> coordinate_type
+{
+    // an instant is its seconds since the epoch
+    return p;
+}
+
+constexpr auto
+pyre::geometry::Timeline::fromCoordinate(coordinate_type x) -> rep_type
+{
+    // and so is the instant at a coordinate
+    return x;
+}
+
 // rendering
 inline auto
 pyre::geometry::Timeline::inject(std::ostream & stream, const rep_type & p) -> void

@@ -1,0 +1,158 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Interval.h"
+
+
+// metamethods
+template <class lineT>
+constexpr pyre::geometry::Interval<lineT>::Interval() :
+    // the empty interval runs from the top of the line to its bottom
+    _lower { line_type::fromCoordinate(highest()) },
+    _upper { line_type::fromCoordinate(lowest()) }
+{}
+
+template <class lineT>
+constexpr pyre::geometry::Interval<lineT>::Interval(
+    const point_type & lower, const point_type & upper) :
+    // an interval with its ends out of order holds nothing, so it is the empty one
+    _lower { line_type::coordinate(lower.data()) > line_type::coordinate(upper.data()) ?
+                 point_type(line_type::fromCoordinate(highest())) :
+                 lower },
+    _upper { line_type::coordinate(lower.data()) > line_type::coordinate(upper.data()) ?
+                 point_type(line_type::fromCoordinate(lowest())) :
+                 upper }
+{}
+
+// the unbounded intervals
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::line() -> self_type
+{
+    // from one end of the line to the other
+    return self_type(
+        point_type(line_type::fromCoordinate(lowest())),
+        point_type(line_type::fromCoordinate(highest())));
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::from(const point_type & lower) -> self_type
+{
+    // from {lower} to the top of the line
+    return self_type(lower, point_type(line_type::fromCoordinate(highest())));
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::until(const point_type & upper) -> self_type
+{
+    // from the bottom of the line to {upper}
+    return self_type(point_type(line_type::fromCoordinate(lowest())), upper);
+}
+
+// interface
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::lower() const -> point_type
+{
+    // easy enough
+    return _lower;
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::upper() const -> point_type
+{
+    // easy enough
+    return _upper;
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::empty() const -> bool
+{
+    // only the empty interval has its ends out of order
+    return line_type::coordinate(_lower.data()) > line_type::coordinate(_upper.data());
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::boundedBelow() const -> bool
+{
+    // unless my lower end is the bottom of the line
+    return line_type::coordinate(_lower.data()) != lowest();
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::boundedAbove() const -> bool
+{
+    // unless my upper end is the top of the line
+    return line_type::coordinate(_upper.data()) != highest();
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::contains(const point_type & p) const -> bool
+{
+    // the coordinate of the point
+    auto x = line_type::coordinate(p.data());
+    // lies between the coordinates of my ends, which are mine too
+    return line_type::coordinate(_lower.data()) <= x and x <= line_type::coordinate(_upper.data());
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::envelope() const -> envelope_type
+{
+    // an interval is its own envelope
+    return *this;
+}
+
+// implementation details
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::lowest() -> coordinate_type
+{
+    // the bottom of the line
+    return -std::numeric_limits<coordinate_type>::infinity();
+}
+
+template <class lineT>
+constexpr auto
+pyre::geometry::Interval<lineT>::highest() -> coordinate_type
+{
+    // the top of the line
+    return std::numeric_limits<coordinate_type>::infinity();
+}
+
+// stream injection
+template <class lineT>
+auto
+pyre::geometry::operator<<(std::ostream & stream, const Interval<lineT> & interval)
+    -> std::ostream &
+{
+    // the empty interval
+    if (interval.empty()) {
+        // is the empty set
+        stream << "{}";
+        // and there is nothing else to write
+        return stream;
+    }
+    // the others are written by their ends
+    stream << "[" << interval.lower() << ", " << interval.upper() << "]";
+    // all done
+    return stream;
+}
+
+
+// end of file

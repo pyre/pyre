@@ -31,6 +31,12 @@
 #include "ReferenceSystem.h"
 // the affine structure
 #include "algebra.h"
+// shapes
+#include "Interval.h"
+#include "Collection.h"
+// constructions and relations
+#include "constructions.h"
+#include "relations.h"
 // point clouds and bricks
 #include "PointCloud.h"
 #include "Brick.h"

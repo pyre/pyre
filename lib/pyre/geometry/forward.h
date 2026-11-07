@@ -51,6 +51,14 @@ namespace pyre::geometry {
     template <class chartT>
     class ReferenceSystem;
 
+    // shapes
+    // the closed intervals of a line
+    template <class lineT>
+    class Interval;
+    // finite unions of shapes
+    template <class shapeT>
+    class Collection;
+
     // point cloud
     template <typename pointT>
     class PointCloud;
@@ -60,12 +68,21 @@ namespace pyre::geometry {
 } // namespace pyre::geometry
 
 
+// the pairs of shapes that know how to compute the symmetric relations
+namespace pyre::geometry::relations {
+}
+
+
 // operators
 namespace pyre::geometry {
     // stream injection: overload the global operator<<
     // points
     template <class spaceT>
     inline auto operator<<(std::ostream & stream, const Point<spaceT> & point) -> std::ostream &;
+    // intervals
+    template <class lineT>
+    inline auto operator<<(std::ostream & stream, const Interval<lineT> & interval)
+        -> std::ostream &;
     // bricks
     template <size_t dim, typename nodeT>
     inline auto & operator<<(std::ostream & stream, const Brick<dim, nodeT> & brick);

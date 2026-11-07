@@ -39,6 +39,12 @@ namespace pyre::geometry {
     template <class chartT>
     using referencesystem_t = ReferenceSystem<chartT>;
 
+    // shapes
+    template <class lineT = timeline_t>
+    using interval_t = Interval<lineT>;
+    template <class shapeT>
+    using collection_t = Collection<shapeT>;
+
     // point cloud
     template <typename pointT = point_t<>>
     using cloud_t = PointCloud<pointT>;
