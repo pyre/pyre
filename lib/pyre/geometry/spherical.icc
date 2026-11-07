@@ -1,0 +1,383 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "spherical.h"
+
+
+// arithmetic in twice the precision of a double
+auto
+pyre::geometry::spherical::quickSum(double a, double b) -> twofold_t
+{
+    // the rounded sum
+    auto sum = a + b;
+    // and what rounding lost
+    return { sum, b - (sum - a) };
+}
+
+auto
+pyre::geometry::spherical::twoSum(double a, double b) -> twofold_t
+{
+    // the rounded sum
+    auto sum = a + b;
+    // the part of it that came from {b}
+    auto part = sum - a;
+    // and what rounding lost from each of the two
+    return { sum, (a - (sum - part)) + (b - part) };
+}
+
+auto
+pyre::geometry::spherical::twoProduct(double a, double b) -> twofold_t
+{
+    // the rounded product
+    auto product = a * b;
+    // and what rounding lost, which a fused multiply-add computes exactly
+    return { product, std::fma(a, b, -product) };
+}
+
+auto
+pyre::geometry::spherical::add(const twofold_t & a, const twofold_t & b) -> twofold_t
+{
+    // add the large parts exactly
+    auto sum = twoSum(a.high, b.high);
+    // fold in the small parts
+    auto low = sum.low + a.low + b.low;
+    // and renormalize
+    return quickSum(sum.high, low);
+}
+
+auto
+pyre::geometry::spherical::productDifference(double a, double b, double c, double d) -> twofold_t
+{
+    // the first product
+    auto first = twoProduct(a, b);
+    // and the second
+    auto second = twoProduct(c, d);
+    // and their difference
+    return add(first, { -second.high, -second.low });
+}
+
+auto
+pyre::geometry::spherical::scale(const twofold_t & a, double b) -> twofold_t
+{
+    // the product of the large part, exactly
+    auto product = twoProduct(a.high, b);
+    // fold in the product of the small part
+    auto low = product.low + a.low * b;
+    // and renormalize
+    return quickSum(product.high, low);
+}
+
+
+// the algebra of vectors
+auto
+pyre::geometry::spherical::dot(const vector_t & a, const vector_t & b) -> double
+{
+    // the sum of the products of the components
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+auto
+pyre::geometry::spherical::cross(const vector_t & a, const vector_t & b) -> vector_t
+{
+    // the components of the vector product
+    return {
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    };
+}
+
+auto
+pyre::geometry::spherical::normalize(const vector_t & a) -> vector_t
+{
+    // the length of the vector
+    auto length = std::sqrt(dot(a, a));
+    // scale each component by it
+    return { a[0] / length, a[1] / length, a[2] / length };
+}
+
+// the orientation
+auto
+pyre::geometry::spherical::orientation(const vector_t & a, const vector_t & b, const vector_t & c)
+    -> int
+{
+    // the determinant of the three vectors, {a} against the normal of the plane of {b} and {c}
+    auto determinant = dot(a, cross(b, c));
+    // the same sum with every term taken by its size, which bounds the rounding error
+    auto size = std::abs(a[0]) * (std::abs(b[1] * c[2]) + std::abs(b[2] * c[1]))
+              + std::abs(a[1]) * (std::abs(b[2] * c[0]) + std::abs(b[0] * c[2]))
+              + std::abs(a[2]) * (std::abs(b[0] * c[1]) + std::abs(b[1] * c[0]));
+    // the precision of a double
+    constexpr auto epsilon = std::numeric_limits<double>::epsilon();
+    // a determinant well clear of its rounding error
+    if (std::abs(determinant) > 8 * epsilon * size) {
+        // has the right sign
+        return determinant > 0 ? 1 : -1;
+    }
+    // otherwise, compute it again in twice the precision: the three minors of {b} and {c}
+    auto first = productDifference(b[1], c[2], b[2], c[1]);
+    auto second = productDifference(b[2], c[0], b[0], c[2]);
+    auto third = productDifference(b[0], c[1], b[1], c[0]);
+    // weighted by the components of {a}
+    auto careful = add(add(scale(first, a[0]), scale(second, a[1])), scale(third, a[2]));
+    // a determinant that is still within the rounding error of this precision
+    if (std::abs(careful.high) <= 64 * epsilon * epsilon * size) {
+        // puts {c} on the great circle
+        return 0;
+    }
+    // otherwise, its sign is the side
+    return careful.high > 0 ? 1 : -1;
+}
+
+auto
+pyre::geometry::spherical::ordered(
+    const vector_t & a, const vector_t & b, const vector_t & c, const vector_t & o) -> bool
+{
+    // the three directions are in order when at least two of the three pairs, {a} to {b}, {b} to
+    // {c} and {c} back to {a}, turn counterclockwise around {o}; a pair of directions that
+    // coincide counts as turning in the first two comparisons and not in the third, which keeps
+    // the answer consistent when two of the directions are the same
+    auto turns = 0;
+    // from {a} to {b}
+    if (orientation(b, o, a) >= 0) {
+        ++turns;
+    }
+    // from {b} to {c}
+    if (orientation(c, o, b) >= 0) {
+        ++turns;
+    }
+    // and from {c} back to {a}
+    if (orientation(a, o, c) > 0) {
+        ++turns;
+    }
+    // all done
+    return turns >= 2;
+}
+
+// arcs
+auto
+pyre::geometry::spherical::onArc(const vector_t & a, const vector_t & b, const vector_t & p) -> bool
+{
+    // the plane of the arc
+    auto normal = cross(a, b);
+    // an arc whose ends are closer than the tolerance
+    if (dot(normal, normal) <= tolerance * tolerance) {
+        // is a single point, and {p} is on it when it is that close to it
+        auto offset = cross(a, p);
+        // on the same side of the sphere
+        return dot(offset, offset) <= tolerance * tolerance && dot(a, p) > 0;
+    }
+    // otherwise, scale the normal to unit length
+    normal = normalize(normal);
+    // the distance of the point from the plane of the arc, the sine of its angle from the circle,
+    // must be within the tolerance
+    if (std::abs(dot(normal, p)) > tolerance) {
+        // or the point is off the arc
+        return false;
+    }
+    // a point of the circle is on the arc when it is past {a} and short of {b}, as one walks the
+    // arc, again within the tolerance; the arc is shorter than half the circle, so a point on it
+    // is within a quarter turn of the midpoint of its ends, which rules out the points of the
+    // circle across from the arc
+    return dot(cross(a, p), normal) >= -tolerance && dot(cross(p, b), normal) >= -tolerance
+        && dot(p, a) + dot(p, b) >= 0;
+}
+
+auto
+pyre::geometry::spherical::meets(
+    const vector_t & a, const vector_t & b, const vector_t & c, const vector_t & d) -> bool
+{
+    // an end of either arc on the other means they touch
+    if (onArc(a, b, c) || onArc(a, b, d) || onArc(c, d, a) || onArc(c, d, b)) {
+        // so they meet
+        return true;
+    }
+    // otherwise, they meet if they cross
+    return crosses(a, b, c, d);
+}
+
+auto
+pyre::geometry::spherical::crosses(
+    const vector_t & a, const vector_t & b, const vector_t & c, const vector_t & d) -> bool
+{
+    // the ends of the second arc must be on opposite sides of the circle of the first
+    auto acb = -orientation(a, b, c);
+    auto bda = orientation(a, b, d);
+    // and neither of them on it
+    if (acb == 0 || bda != acb) {
+        // otherwise there is no crossing inside both
+        return false;
+    }
+    // the ends of the first arc must be on opposite sides of the circle of the second, in the
+    // same sense: the two circles meet at two antipodal points, and only one of them can be on
+    // both arcs, the one where all four sides agree
+    auto cbd = -orientation(c, d, b);
+    auto dac = orientation(c, d, a);
+    // the arcs cross when they do
+    return cbd == acb && dac == acb;
+}
+
+auto
+pyre::geometry::spherical::highest(const vector_t & a, const vector_t & b) -> double
+{
+    // the latitude of a unit vector
+    auto latitude = [](const vector_t & v) {
+        return std::atan2(v[2], std::hypot(v[0], v[1]));
+    };
+    // the higher of the two ends
+    auto end = std::max(latitude(a), latitude(b));
+    // the plane of the arc
+    auto normal = cross(a, b);
+    // the direction of the pole, without its part along the normal, points at the highest
+    // point of the great circle
+    auto top = vector_t { -normal[2] * normal[0], -normal[2] * normal[1],
+                          normal[0] * normal[0] + normal[1] * normal[1] };
+    // a circle that is the equator, or an arc whose ends coincide, has no top of its own
+    if (dot(top, top) == 0) {
+        // so the ends are as high as it goes
+        return end;
+    }
+    // the top of the circle
+    top = normalize(top);
+    // when it is past {a} and short of {b}, as one walks the arc, it is on the arc, since the arc
+    // is shorter than half the circle; then it is the highest point of the arc
+    if (dot(cross(a, top), normal) >= 0 && dot(cross(top, b), normal) >= 0) {
+        // so its latitude is the answer
+        return std::max(end, latitude(top));
+    }
+    // otherwise, the arc is highest at one of its ends
+    return end;
+}
+
+auto
+pyre::geometry::spherical::lowest(const vector_t & a, const vector_t & b) -> double
+{
+    // the southernmost point of the arc is the mirror image, across the equator, of the
+    // northernmost point of the mirror image of the arc
+    auto mirror = [](const vector_t & v) {
+        return vector_t { v[0], v[1], -v[2] };
+    };
+    // so ask for that, and reverse the latitude
+    return -highest(mirror(a), mirror(b));
+}
+
+// chains of arcs
+auto
+pyre::geometry::spherical::meets(const std::vector<vector_t> & a, const std::vector<vector_t> & b)
+    -> bool
+{
+    // a chain of a single point
+    if (a.size() == 1) {
+        // meets the other chain when the point is on one of its arcs
+        for (auto arc = std::size_t { 1 }; arc < b.size(); ++arc) {
+            // if it is on this one
+            if (onArc(b[arc - 1], b[arc], a.front())) {
+                // they meet
+                return true;
+            }
+        }
+        // or when the other chain is the same single point, within the tolerance
+        return b.size() == 1 && onArc(b.front(), b.front(), a.front());
+    }
+    // the other way around
+    if (b.size() == 1) {
+        // ask the same question
+        return meets(b, a);
+    }
+    // otherwise, go through the arcs of the first chain
+    for (auto first = std::size_t { 1 }; first < a.size(); ++first) {
+        // and the arcs of the second
+        for (auto second = std::size_t { 1 }; second < b.size(); ++second) {
+            // if these two meet
+            if (meets(a[first - 1], a[first], b[second - 1], b[second])) {
+                // so do the chains
+                return true;
+            }
+        }
+    }
+    // otherwise, they don't
+    return false;
+}
+
+// tracing edges
+template <class chartT>
+auto
+pyre::geometry::spherical::trace(
+    const chartT & chart, const std::vector<Point<typename chartT::space_type>> & vertices,
+    bool geodesic, bool closed) -> std::vector<vector_t>
+{
+    // the points, in order
+    auto points = std::vector<vector_t> {};
+    // nothing to trace
+    if (vertices.empty()) {
+        // makes no points
+        return points;
+    }
+    // the vertices to walk through: all of them, and the first one again for a closed sequence
+    auto walk = vertices;
+    // if the sequence is closed
+    if (closed) {
+        // return to its start
+        walk.push_back(vertices.front());
+    }
+    // add a point to the pile, unless it repeats the one before it
+    auto keep = [&points](const vector_t & point) {
+        // a point that repeats the one before it
+        if (!points.empty() && points.back() == point) {
+            // adds nothing
+            return;
+        }
+        // otherwise, keep it
+        points.push_back(point);
+        // all done
+        return;
+    };
+    // geodesic edges
+    if (geodesic) {
+        // are the arcs between the vertices
+        for (const auto & vertex : walk) {
+            // so the vertices are the points
+            keep(vertex.data());
+        }
+        // all done
+        return points;
+    }
+    // edges straight in the chart are cut into pieces: go through them
+    for (auto edge = std::size_t { 0 }; edge + 1 < walk.size(); ++edge) {
+        // the coordinates of the ends of the edge
+        auto start = chart.coordinates(walk[edge]);
+        auto end = chart.coordinates(walk[edge + 1]);
+        // the change in longitude, the shorter way around
+        auto longitude = std::remainder(end[0] - start[0], 360.0);
+        // and in latitude
+        auto latitude = end[1] - start[1];
+        // the number of pieces
+        auto pieces = std::max(
+            1, static_cast<int>(
+                   std::ceil(std::max(std::abs(longitude), std::abs(latitude)) / chartPiece)));
+        // keep the start of the edge and the points along it, but not its end, which starts the
+        // next edge
+        for (auto piece = 0; piece < pieces; ++piece) {
+            // how far along the edge
+            auto fraction = static_cast<double>(piece) / pieces;
+            // the point there
+            keep(chart.point({ start[0] + fraction * longitude, start[1] + fraction * latitude })
+                     .data());
+        }
+    }
+    // the last edge ends at the last vertex, as given
+    keep(walk.back().data());
+    // all done
+    return points;
+}
+
+
+// end of file

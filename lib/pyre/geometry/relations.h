@@ -13,6 +13,10 @@
 #include "concepts.h"
 #include "Interval.h"
 #include "Collection.h"
+#include "Box.h"
+#include "Path.h"
+#include "Ring.h"
+#include "Polygon.h"
 
 
 // the symmetric relations, as the pairs of shapes that know how to compute them; each pair is
@@ -25,6 +29,38 @@ namespace pyre::geometry::relations {
     // whether a union shares a point with a shape: one of its members does
     template <class shapeT, class otherT>
     constexpr auto intersects(const Collection<shapeT> & a, const otherT & b) -> bool;
+
+    // the shapes on the sphere; the shapes are closed, so shapes that touch intersect, and the
+    // relations between shapes with edges compare their envelopes first, which rules out most
+    // pairs before any arc is examined
+    // whether a box holds a point
+    template <class chartT>
+    auto intersects(const Box<chartT> & a, const Point<typename chartT::space_type> & b) -> bool;
+    // whether two boxes share a point
+    template <class chartT>
+    auto intersects(const Box<chartT> & a, const Box<chartT> & b) -> bool;
+    // whether a point is on a path
+    template <class chartT>
+    auto intersects(const Path<chartT> & a, const Point<typename chartT::space_type> & b) -> bool;
+    // whether two paths meet
+    template <class chartT>
+    auto intersects(const Path<chartT> & a, const Path<chartT> & b) -> bool;
+    // whether a path passes through a box
+    template <class chartT>
+    auto intersects(const Path<chartT> & a, const Box<chartT> & b) -> bool;
+    // whether a polygon holds a point
+    template <class chartT>
+    auto intersects(const Polygon<chartT> & a, const Point<typename chartT::space_type> & b)
+        -> bool;
+    // whether a path passes through a polygon
+    template <class chartT>
+    auto intersects(const Polygon<chartT> & a, const Path<chartT> & b) -> bool;
+    // whether a polygon and a box share a point
+    template <class chartT>
+    auto intersects(const Polygon<chartT> & a, const Box<chartT> & b) -> bool;
+    // whether two polygons share a point
+    template <class chartT>
+    auto intersects(const Polygon<chartT> & a, const Polygon<chartT> & b) -> bool;
 } // namespace pyre::geometry::relations
 
 
@@ -52,6 +88,12 @@ namespace pyre::geometry {
     // between a shape and a union, which the shape covers when it covers every member
     template <class shapeT, class memberT>
     constexpr auto covers(const shapeT & a, const Collection<memberT> & b) -> bool;
+    // between a box and a point
+    template <class chartT>
+    auto covers(const Box<chartT> & a, const Point<typename chartT::space_type> & b) -> bool;
+    // between a polygon and a point
+    template <class chartT>
+    auto covers(const Polygon<chartT> & a, const Point<typename chartT::space_type> & b) -> bool;
 } // namespace pyre::geometry
 
 

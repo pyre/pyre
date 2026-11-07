@@ -1,0 +1,299 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Box.h"
+// the polygons that stand for boxes
+#include "Polygon.h"
+
+
+// metamethods
+template <class chartT>
+constexpr pyre::geometry::Box<chartT>::Box() :
+    // the empty box has its south edge north of its north edge
+    _west { 0 },
+    _south { 90 },
+    _east { 0 },
+    _north { -90 }
+{}
+
+template <class chartT>
+constexpr pyre::geometry::Box<chartT>::Box(double west, double south, double east, double north) :
+    // a box with its parallels out of order holds nothing, so it is the empty one; a box that
+    // reaches all the way around is held from -180 to 180, so that all such boxes are equal
+    _west { south > north ? 0 : (east - west >= 360 ? -180 : west) },
+    _south { south > north ? 90 : south },
+    _east { south > north ? 0 : (east - west >= 360 ? 180 : east) },
+    _north { south > north ? -90 : north }
+{}
+
+// factories
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::sphere() -> self_type
+{
+    // every longitude, from pole to pole
+    return self_type(-180, -90, 180, 90);
+}
+
+template <class chartT>
+auto
+pyre::geometry::Box<chartT>::around(const std::vector<vector_type> & points) -> self_type
+{
+    // no points
+    if (points.empty()) {
+        // fit in the empty box
+        return self_type();
+    }
+    // the degrees in a radian
+    constexpr auto degrees = 180 / std::numbers::pi;
+    // the chart, which names the points
+    auto chart = chart_type();
+    // the coordinates of a point
+    auto coordinates = [&chart](const vector_type & point) {
+        // ask the chart
+        return chart.coordinates(point_type(point));
+    };
+    // the coordinates of the first point
+    auto first = coordinates(points.front());
+    // start the parallels there
+    auto south = first[1];
+    auto north = first[1];
+    // and the meridians, which unwrap as the walk goes around, so that they can reach past the
+    // antimeridian
+    auto longitude = first[0];
+    auto west = longitude;
+    auto east = longitude;
+    // go through the arcs
+    for (auto point = std::size_t { 1 }; point < points.size(); ++point) {
+        // the arc from the point before
+        const auto & start = points[point - 1];
+        const auto & end = points[point];
+        // reaches as far north as its highest point
+        north = std::max(north, spherical::highest(start, end) * degrees);
+        // and as far south as its lowest
+        south = std::min(south, spherical::lowest(start, end) * degrees);
+        // the longitude along a great-circle arc changes the shorter way around, unless the arc
+        // passes over a pole, which the check after the walk catches
+        longitude += std::remainder(coordinates(end)[0] - coordinates(start)[0], 360.0);
+        // stretch the meridians to hold it
+        west = std::min(west, longitude);
+        east = std::max(east, longitude);
+    }
+    // an arc over a pole sweeps every longitude, and so does a walk that goes all the way around;
+    // the extremes of an arc come back with rounding, so a pole within the slack counts
+    if (north >= 90 - slack || south <= -90 + slack || east - west >= 360) {
+        // so the box holds them all
+        return self_type(-180, south, 180, north);
+    }
+    // otherwise, bring the meridians back to the usual range, where a box whose west edge ends up
+    // east of its east edge straddles the antimeridian
+    auto wrap = [](double angle) {
+        return std::remainder(angle, 360.0);
+    };
+    // all done
+    return self_type(wrap(west), south, wrap(east), north);
+}
+
+// interface
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::west() const -> double
+{
+    // easy enough
+    return _west;
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::south() const -> double
+{
+    // easy enough
+    return _south;
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::east() const -> double
+{
+    // easy enough
+    return _east;
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::north() const -> double
+{
+    // easy enough
+    return _north;
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::width() const -> double
+{
+    // a box that reaches all the way around
+    if (_east - _west >= 360) {
+        // spans every degree
+        return 360;
+    }
+    // otherwise, the longitudes run east from the west edge to the east edge
+    auto width = _east - _west;
+    // past the antimeridian, if they must
+    return width < 0 ? width + 360 : width;
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::empty() const -> bool
+{
+    // only the empty box has its parallels out of order
+    return _south > _north;
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::full() const -> bool
+{
+    // when it reaches all the way around
+    return width() >= 360;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Box<chartT>::contains(const point_type & p) const -> bool
+{
+    // the coordinates of the point
+    auto [longitude, latitude] = chart_type().coordinates(p);
+    // must lie within my parallels and my meridians, within the slack
+    return _south - slack <= latitude && latitude <= _north + slack && spans(longitude);
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::envelope() const -> envelope_type
+{
+    // a box is its own envelope
+    return *this;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Box<chartT>::polygon() const -> polygon_type
+{
+    // the chart, which places the points
+    auto chart = chart_type();
+    // a ring through points given by their coordinates, walked as given
+    auto ring = [&chart](const std::vector<std::array<double, 2>> & coordinates) {
+        // the vertices of the ring
+        auto vertices = std::vector<point_type> {};
+        // go through the coordinates
+        for (const auto & pair : coordinates) {
+            // and place each one
+            vertices.push_back(chart.point(pair));
+        }
+        // the points are close enough together to be joined by great-circle arcs
+        return typename polygon_type::ring_type(vertices, true);
+    };
+    // a box that reaches all the way around is a band between two parallels, which is the
+    // intersection of the region south of its north edge and the region north of its south edge
+    if (full()) {
+        // the rings of the band
+        auto rings = std::vector<typename polygon_type::ring_type> {};
+        // the north edge, unless it is the pole, walked west so that the south is to its left
+        if (_north < 90) {
+            rings.push_back(ring(parallel(_north, 180, -360)));
+        }
+        // the south edge, unless it is the pole, walked east so that the north is to its left
+        if (_south > -90) {
+            rings.push_back(ring(parallel(_south, -180, 360)));
+        }
+        // a band from pole to pole has no rings, and is the whole sphere
+        return polygon_type(rings);
+    }
+    // otherwise, walk around the box with its inside to the left: east along the south edge
+    auto points = parallel(_south, _west, width());
+    // north along the east edge
+    auto east = meridian(_west + width(), _south, _north);
+    // west along the north edge
+    auto north = parallel(_north, _west + width(), -width());
+    // and back south along the west edge
+    auto west = meridian(_west, _north, _south);
+    // in that order; the corners repeat where the edges meet, and the ring drops the repeats
+    points.insert(points.end(), east.begin(), east.end());
+    points.insert(points.end(), north.begin(), north.end());
+    points.insert(points.end(), west.begin(), west.end());
+    // a polygon with a single ring
+    return polygon_type({ ring(points) });
+}
+
+// implementation details
+template <class chartT>
+auto
+pyre::geometry::Box<chartT>::meridian(double longitude, double from, double to)
+    -> std::vector<std::array<double, 2>>
+{
+    // the number of pieces, which keeps the arcs short even along a meridian from pole to pole
+    auto pieces =
+        std::max(1, static_cast<int>(std::ceil(std::abs(to - from) / spherical::chartPiece)));
+    // the points
+    auto points = std::vector<std::array<double, 2>> {};
+    // go through them, ends included
+    for (auto piece = 0; piece <= pieces; ++piece) {
+        // how far along the meridian
+        auto fraction = static_cast<double>(piece) / pieces;
+        // the point there
+        points.push_back({ longitude, from + fraction * (to - from) });
+    }
+    // all done
+    return points;
+}
+
+template <class chartT>
+constexpr auto
+pyre::geometry::Box<chartT>::spans(double longitude) const -> bool
+{
+    // a box that reaches all the way around
+    if (full()) {
+        // spans every longitude
+        return true;
+    }
+    // otherwise, how far east of the west edge the longitude is, within a turn
+    auto east = longitude - _west;
+    // brought within a single turn
+    east -= 360 * std::floor(east / 360);
+    // must be within my width; a longitude just short of the west edge comes back as nearly a
+    // whole turn east of it, and counts too
+    return east <= width() + slack || east >= 360 - slack;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Box<chartT>::parallel(double latitude, double from, double degrees)
+    -> std::vector<std::array<double, 2>>
+{
+    // the number of pieces
+    auto pieces =
+        std::max(1, static_cast<int>(std::ceil(std::abs(degrees) / spherical::chartPiece)));
+    // the points
+    auto points = std::vector<std::array<double, 2>> {};
+    // go through them, ends included
+    for (auto piece = 0; piece <= pieces; ++piece) {
+        // how far along the parallel
+        auto fraction = static_cast<double>(piece) / pieces;
+        // the point there
+        points.push_back({ from + fraction * degrees, latitude });
+    }
+    // all done
+    return points;
+}
+
+
+// end of file

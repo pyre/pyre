@@ -39,6 +39,147 @@ pyre::geometry::relations::intersects(const Collection<shapeT> & a, const otherT
 }
 
 
+// the shapes on the sphere
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(
+    const Box<chartT> & a, const Point<typename chartT::space_type> & b) -> bool
+{
+    // the box knows
+    return a.contains(b);
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(const Box<chartT> & a, const Box<chartT> & b) -> bool
+{
+    // an empty box shares nothing
+    if (a.empty() || b.empty()) {
+        return false;
+    }
+    // the parallels of the two must overlap, within the slack of the boxes
+    if (a.north() + a.slack < b.south() || b.north() + b.slack < a.south()) {
+        // or they don't meet
+        return false;
+    }
+    // and so must the meridians: two ranges of longitude overlap when one of them holds the
+    // west edge of the other
+    return a.spans(b.west()) || b.spans(a.west());
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(
+    const Path<chartT> & a, const Point<typename chartT::space_type> & b) -> bool
+{
+    // the path knows
+    return a.contains(b);
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(const Path<chartT> & a, const Path<chartT> & b) -> bool
+{
+    // paths whose envelopes don't meet
+    if (!relations::intersects(a.envelope(), b.envelope())) {
+        // don't either
+        return false;
+    }
+    // otherwise, they meet when their arcs do
+    return spherical::meets(a.arcs(), b.arcs());
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(const Path<chartT> & a, const Box<chartT> & b) -> bool
+{
+    // an empty box
+    if (b.empty()) {
+        // shares nothing
+        return false;
+    }
+    // otherwise, the edges of the box along the parallels are not great circles, so it meets the
+    // path the way the polygon with its points does
+    return relations::intersects(b.polygon(), a);
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(
+    const Polygon<chartT> & a, const Point<typename chartT::space_type> & b) -> bool
+{
+    // the polygon knows
+    return a.contains(b);
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(const Polygon<chartT> & a, const Path<chartT> & b) -> bool
+{
+    // a polygon and a path whose envelopes don't meet
+    if (!relations::intersects(a.envelope(), b.envelope())) {
+        // don't either
+        return false;
+    }
+    // a path that meets the boundary of the polygon
+    for (const auto & ring : a.rings()) {
+        // meets one of its rings
+        if (spherical::meets(ring.arcs(), b.arcs())) {
+            // so it passes through the polygon
+            return true;
+        }
+    }
+    // otherwise, the path is either all inside the polygon or all outside it, and any of its
+    // points tells which
+    return !b.arcs().empty() && a.contains(Point<typename chartT::space_type>(b.arcs().front()));
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(const Polygon<chartT> & a, const Box<chartT> & b) -> bool
+{
+    // an empty box
+    if (b.empty()) {
+        // shares nothing
+        return false;
+    }
+    // otherwise, the edges of the box along the parallels are not great circles, so it meets the
+    // polygon the way the polygon with its points does
+    return relations::intersects(a, b.polygon());
+}
+
+template <class chartT>
+auto
+pyre::geometry::relations::intersects(const Polygon<chartT> & a, const Polygon<chartT> & b) -> bool
+{
+    // the points of the space
+    using point_t = Point<typename chartT::space_type>;
+    // a polygon without rings is the whole sphere, which meets every other polygon
+    if (a.rings().empty() || b.rings().empty()) {
+        return true;
+    }
+    // polygons whose envelopes don't meet
+    if (!relations::intersects(a.envelope(), b.envelope())) {
+        // don't either
+        return false;
+    }
+    // polygons whose boundaries meet
+    for (const auto & first : a.rings()) {
+        // through any ring of each
+        for (const auto & second : b.rings()) {
+            // share the points where they do
+            if (spherical::meets(first.arcs(), second.arcs())) {
+                return true;
+            }
+        }
+    }
+    // otherwise, each polygon is either all inside the other or all outside it, and a point on
+    // its boundary tells which
+    return b.contains(point_t(a.rings().front().arcs().front()))
+        || a.contains(point_t(b.rings().front().arcs().front()));
+}
+
+
 // the relations
 template <class firstT, class secondT>
     requires(
@@ -128,6 +269,24 @@ pyre::geometry::covers(const shapeT & a, const Collection<memberT> & b) -> bool
     // {a} covers the union when it covers every member
     return std::all_of(
         b.begin(), b.end(), [&a](const memberT & member) { return covers(a, member); });
+}
+
+
+template <class chartT>
+auto
+pyre::geometry::covers(const Box<chartT> & a, const Point<typename chartT::space_type> & b) -> bool
+{
+    // a box covers a point when it holds it
+    return a.contains(b);
+}
+
+template <class chartT>
+auto
+pyre::geometry::covers(const Polygon<chartT> & a, const Point<typename chartT::space_type> & b)
+    -> bool
+{
+    // a polygon covers a point when it holds it
+    return a.contains(b);
 }
 
 

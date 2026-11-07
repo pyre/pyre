@@ -1,0 +1,87 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Path.h"
+
+
+// metamethods
+template <class chartT>
+pyre::geometry::Path<chartT>::Path(const vertices_type & vertices, bool geodesic) :
+    _vertices { vertices },
+    _geodesic { geodesic },
+    // trace the edges once, since the relations ask for the arcs over and over
+    _arcs { spherical::trace(chart_type(), vertices, geodesic, false) }
+{}
+
+template <class chartT>
+auto
+pyre::geometry::Path<chartT>::operator==(const Path & other) const -> bool
+{
+    // the same vertices, joined by the same kind of edges
+    return _vertices == other._vertices && _geodesic == other._geodesic;
+}
+
+// interface
+template <class chartT>
+auto
+pyre::geometry::Path<chartT>::vertices() const -> const vertices_type &
+{
+    // easy enough
+    return _vertices;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Path<chartT>::geodesic() const -> bool
+{
+    // easy enough
+    return _geodesic;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Path<chartT>::arcs() const -> const arcs_type &
+{
+    // easy enough
+    return _arcs;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Path<chartT>::contains(const point_type & p) const -> bool
+{
+    // a path of a single point
+    if (_arcs.size() == 1) {
+        // holds just that point, within the tolerance
+        return spherical::onArc(_arcs.front(), _arcs.front(), p.data());
+    }
+    // otherwise, the point must be on one of the arcs
+    for (auto arc = std::size_t { 1 }; arc < _arcs.size(); ++arc) {
+        // if it is on this one
+        if (spherical::onArc(_arcs[arc - 1], _arcs[arc], p.data())) {
+            // it is on the path
+            return true;
+        }
+    }
+    // otherwise, it isn't
+    return false;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Path<chartT>::envelope() const -> envelope_type
+{
+    // the box around the points i trace
+    return envelope_type::around(_arcs);
+}
+
+
+// end of file

@@ -1,0 +1,313 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Ring.h"
+
+
+// metamethods
+template <class chartT>
+pyre::geometry::Ring<chartT>::Ring(const vertices_type & vertices, bool geodesic) :
+    _vertices { vertices },
+    _geodesic { geodesic },
+    // trace the edges once, back to the first vertex, since the relations ask for the arcs over
+    // and over
+    _arcs { spherical::trace(chart_type(), vertices, geodesic, true) },
+    // and settle the side of the references, now that the arcs are traced
+    _references { settle() }
+{}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::operator==(const Ring & other) const -> bool
+{
+    // the same vertices, in the same order, joined by the same kind of edges
+    return _vertices == other._vertices && _geodesic == other._geodesic;
+}
+
+// interface
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::vertices() const -> const vertices_type &
+{
+    // easy enough
+    return _vertices;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::geodesic() const -> bool
+{
+    // easy enough
+    return _geodesic;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::arcs() const -> const arcs_type &
+{
+    // easy enough
+    return _arcs;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::boundary(const point_type & p) const -> bool
+{
+    // ask the arcs
+    return touches(p.data());
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::contains(const point_type & p) const -> bool
+{
+    // the point, as a vector
+    const auto & point = p.data();
+    // a point on me is inside, since the region is closed
+    if (touches(point)) {
+        // so there is nothing further to do
+        return true;
+    }
+    // otherwise, count from the references, one at a time
+    for (const auto & reference : _references) {
+        // the side of the point, unless the arc from the reference is unreliable
+        auto inside = side(point, reference);
+        // when the count is reliable
+        if (inside) {
+            // it is the answer
+            return *inside;
+        }
+    }
+    // a ring too degenerate to bound anything, or a point no reference can reach, is inside only
+    // when it is on the ring, and it isn't
+    return false;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::area() const -> double
+{
+    // a ring of fewer than three distinct points
+    if (_arcs.size() < 4) {
+        // bounds nothing
+        return 0;
+    }
+    // the number of distinct points; the last one repeats the first
+    auto points = _arcs.size() - 1;
+    // the region to the left of the ring has area 2π less the total turn of the walk around it,
+    // by the theorem of Gauss and Bonnet; add up the turns at each point
+    auto turn = 0.0;
+    // go through the points
+    for (auto point = std::size_t { 0 }; point < points; ++point) {
+        // the point before it, the point itself, and the point after it
+        const auto & before = _arcs[(point + points - 1) % points];
+        const auto & here = _arcs[point];
+        const auto & after = _arcs[point + 1];
+        // the planes of the arcs that meet at the point
+        auto incoming = spherical::cross(before, here);
+        auto outgoing = spherical::cross(here, after);
+        // the angle between them is the turn, positive when the walk turns left
+        turn += std::atan2(
+            spherical::dot(spherical::cross(incoming, outgoing), here),
+            spherical::dot(incoming, outgoing));
+    }
+    // all done
+    return 2 * std::numbers::pi - turn;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::reversed() const -> self_type
+{
+    // my vertices, in the opposite order
+    auto vertices = vertices_type(_vertices.rbegin(), _vertices.rend());
+    // make a ring through them, with the same kind of edges
+    return self_type(vertices, _geodesic);
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::envelope() const -> envelope_type
+{
+    // the box around the points i trace
+    auto box = envelope_type::around(_arcs);
+    // a region that holds a pole reaches every longitude, all the way to that pole; check both
+    auto north = contains(point_type(spherical::north));
+    auto south = contains(point_type(spherical::south));
+    // a region that holds neither pole
+    if (!north && !south) {
+        // reaches no further than its boundary
+        return box;
+    }
+    // otherwise, it reaches all the way around, to the pole it holds
+    return envelope_type(-180, south ? -90 : box.south(), 180, north ? 90 : box.north());
+}
+
+// implementation details
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::touches(const vector_type & p) const -> bool
+{
+    // a ring of a single point
+    if (_arcs.size() == 1) {
+        // touches just that point, within the tolerance
+        return spherical::onArc(_arcs.front(), _arcs.front(), p);
+    }
+    // otherwise, the point must be on one of the arcs
+    for (auto arc = std::size_t { 1 }; arc < _arcs.size(); ++arc) {
+        // if it is on this one
+        if (spherical::onArc(_arcs[arc - 1], _arcs[arc], p)) {
+            // it is on the ring
+            return true;
+        }
+    }
+    // otherwise, it isn't
+    return false;
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::side(const vector_type & p, const reference_t & reference) const
+    -> std::optional<bool>
+{
+    // the reference
+    const auto & r = reference.point;
+    // a point nearly across the sphere from the reference has no well defined arc to it
+    if (spherical::dot(p, r) < -0.99) {
+        // so the count is unreliable
+        return std::nullopt;
+    }
+    // an arc that passes through one of the points i trace can't tell a crossing from a touch
+    for (const auto & point : _arcs) {
+        // so if it does
+        if (spherical::onArc(p, r, point)) {
+            // the count is unreliable
+            return std::nullopt;
+        }
+    }
+    // otherwise, count the arcs of the ring the arc from the point to the reference crosses
+    auto crossings = 0;
+    // go through them
+    for (auto arc = std::size_t { 1 }; arc < _arcs.size(); ++arc) {
+        // if the arc to the reference crosses this one
+        if (spherical::crosses(p, r, _arcs[arc - 1], _arcs[arc])) {
+            // count it
+            ++crossings;
+        }
+    }
+    // each crossing flips the side, so the point is on the side of the reference after an even
+    // number of them, and on the other side after an odd number
+    return reference.inside != (crossings % 2 == 1);
+}
+
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::settle() const -> references_type
+{
+    // the references
+    auto references = references_type {};
+    // a ring of fewer than three distinct points
+    if (_arcs.size() < 4) {
+        // bounds nothing, and needs no references
+        return references;
+    }
+    // the number of distinct points; the last one repeats the first
+    auto points = _arcs.size() - 1;
+    // the candidates: directions with no special relation to the coordinate axes or to each
+    // other, so that no ring of real data is likely to pass through them
+    constexpr auto candidates = std::array<vector_type, 6> { {
+        { 0.2869, 0.5774, 0.7643 },
+        { -0.6011, 0.3521, -0.7174 },
+        { 0.4472, -0.8216, -0.3537 },
+        { -0.3110, -0.4410, 0.8418 },
+        { 0.7071, 0.1739, -0.6853 },
+        { -0.8462, -0.2934, 0.4448 },
+    } };
+    // go through them
+    for (const auto & candidate : candidates) {
+        // make a unit vector
+        auto r = spherical::normalize(candidate);
+        // a candidate on the ring
+        if (touches(r)) {
+            // has no side
+            continue;
+        }
+        // otherwise, find its side from a point of the ring: near the point, the region is to the
+        // left of the walk, between the way out and the way back; go through the points
+        for (auto point = std::size_t { 0 }; point < points; ++point) {
+            // the point before it, the point itself, and the point after it
+            const auto & before = _arcs[(point + points - 1) % points];
+            const auto & here = _arcs[point];
+            const auto & after = _arcs[point + 1];
+            // a candidate nearly across the sphere has no well defined arc to the point
+            if (spherical::dot(here, r) < -0.99) {
+                // so try the next point
+                continue;
+            }
+            // a candidate along one of the two edges at the point can't be placed in the wedge
+            if (spherical::orientation(here, r, before) == 0
+                || spherical::orientation(here, r, after) == 0) {
+                // so try the next point
+                continue;
+            }
+            // the arc from the point toward the candidate starts in the region when its direction
+            // lies between the way out of the point and the way back, turning counterclockwise
+            auto starts = spherical::ordered(after, r, before, here);
+            // the arc must not pass through any other point the ring traces
+            auto clear = true;
+            // go through them
+            for (auto other = std::size_t { 0 }; other < points; ++other) {
+                // the point itself is the start of the arc
+                if (other == point) {
+                    // and doesn't count
+                    continue;
+                }
+                // if the arc passes through another point
+                if (spherical::onArc(here, r, _arcs[other])) {
+                    // it can't tell a crossing from a touch
+                    clear = false;
+                    // so stop looking
+                    break;
+                }
+            }
+            // an arc that isn't clear
+            if (!clear) {
+                // means trying the next point
+                continue;
+            }
+            // count the arcs of the ring, other than the two at the point, that the arc to the
+            // candidate crosses
+            auto crossings = 0;
+            // go through them
+            for (auto arc = std::size_t { 1 }; arc < _arcs.size(); ++arc) {
+                // the two arcs that meet at the point
+                if (arc == point || arc == point + 1 || (point == 0 && arc == points)) {
+                    // don't count
+                    continue;
+                }
+                // if the arc to the candidate crosses this one
+                if (spherical::crosses(here, r, _arcs[arc - 1], _arcs[arc])) {
+                    // count it
+                    ++crossings;
+                }
+            }
+            // each crossing flips the side, starting from the side the arc starts on
+            references.push_back({ r, starts != (crossings % 2 == 1) });
+            // one point settles the candidate
+            break;
+        }
+    }
+    // all done
+    return references;
+}
+
+
+// end of file

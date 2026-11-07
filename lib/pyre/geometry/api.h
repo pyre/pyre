@@ -44,6 +44,15 @@ namespace pyre::geometry {
     using interval_t = Interval<lineT>;
     template <class shapeT>
     using collection_t = Collection<shapeT>;
+    // the shapes of the longitude-latitude chart on the sphere
+    template <class chartT = lonlat_t<sphere_t>>
+    using box_t = Box<chartT>;
+    template <class chartT = lonlat_t<sphere_t>>
+    using path_t = Path<chartT>;
+    template <class chartT = lonlat_t<sphere_t>>
+    using ring_t = Ring<chartT>;
+    template <class chartT = lonlat_t<sphere_t>>
+    using polygon_t = Polygon<chartT>;
 
     // point cloud
     template <typename pointT = point_t<>>
