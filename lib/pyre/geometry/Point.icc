@@ -11,81 +11,68 @@
 // my declarations
 #include "Point.h"
 
-// inlines
-template <std::size_t dim, typename dataT>
-template <typename... coordT>
-pyre::geometry::Point<dim, dataT>::Point(coordT... coordinate) : _coordinates { coordinate... }
+
+// metamethods
+template <class spaceT>
+template <typename... argT>
+    requires(
+        not(sizeof...(argT) == 1
+            and (std::is_same_v<std::remove_cvref_t<argT>, pyre::geometry::Point<spaceT>> and ...)))
+constexpr pyre::geometry::Point<spaceT>::Point(argT &&... args) :
+    _rep { std::forward<argT>(args)... }
 {}
 
-template <std::size_t dim, typename dataT>
+// interface
+template <class spaceT>
 constexpr auto
-pyre::geometry::Point<dim, dataT>::dimension()
+pyre::geometry::Point<spaceT>::dimension() -> size_type
 {
-    // delegate
-    return dim;
+    // ask my space
+    return space_type::dimension();
 }
 
-template <std::size_t dim, typename dataT>
-const auto &
-pyre::geometry::Point<dim, dataT>::data() const
+template <class spaceT>
+constexpr auto
+pyre::geometry::Point<spaceT>::data() const -> const rep_type &
 {
-    // delegate
-    return _coordinates;
+    // easy enough
+    return _rep;
 }
 
-template <std::size_t dim, typename dataT>
-auto
-pyre::geometry::Point<dim, dataT>::operator[](size_type index) const
+template <class spaceT>
+constexpr auto
+pyre::geometry::Point<spaceT>::operator[](size_type item) const
+    requires requires(const rep_type & rep) { rep[0]; }
 {
-    // delegate
-    return _coordinates[index];
+    // look up the coordinate
+    return _rep[item];
 }
 
-template <std::size_t dim, typename dataT>
-auto
-pyre::geometry::Point<dim, dataT>::begin() const
+template <class spaceT>
+constexpr auto
+pyre::geometry::Point<spaceT>::begin() const
+    requires requires(const rep_type & rep) { rep.cbegin(); }
 {
-    // delegate
-    return _coordinates.cbegin();
+    // start at my first coordinate
+    return _rep.cbegin();
 }
 
-template <std::size_t dim, typename dataT>
-auto
-pyre::geometry::Point<dim, dataT>::end() const
+template <class spaceT>
+constexpr auto
+pyre::geometry::Point<spaceT>::end() const
+    requires requires(const rep_type & rep) { rep.cend(); }
 {
-    // delegate
-    return _coordinates.cend();
+    // and stop after my last one
+    return _rep.cend();
 }
 
 // global operators
-template <std::size_t dim, typename dataT>
+template <class spaceT>
 auto
-pyre::geometry::operator==(const Point<dim, dataT> & p1, const Point<dim, dataT> & p2)
+pyre::geometry::operator<<(std::ostream & stream, const Point<spaceT> & point) -> std::ostream &
 {
-    // delegate
-    return std::equal(p1.begin(), p1.end(), p2.begin());
-}
-
-template <std::size_t dim, typename dataT>
-auto
-pyre::geometry::operator!=(const Point<dim, dataT> & p1, const Point<dim, dataT> & p2)
-{
-    // delegate
-    return !(p1 == p2);
-}
-
-template <std::size_t dim, typename dataT>
-auto &
-pyre::geometry::operator<<(std::ostream & stream, const Point<dim, dataT> & point)
-{
-    // initialize an iterator
-    auto p = point.begin();
-    // inject up to the last coordinate
-    for (; p != point.end() - 1; ++p) {
-        stream << *p << ", ";
-    }
-    // and now the last one
-    stream << *p;
+    // the space knows how its points are written
+    spaceT::inject(stream, point.data());
     // all done
     return stream;
 }

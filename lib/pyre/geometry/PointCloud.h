@@ -12,20 +12,31 @@
 #include "forward.h"
 
 
-// declaration of points
+// a collection of points
 template <typename pointT>
 class pyre::geometry::PointCloud {
-    // types
+    // type aliases
 public:
     // me
     using self_type = PointCloud<pointT>;
-    typedef pointT point_type;
-    typedef std::size_t size_type;
-    typedef std::vector<point_type> rep_type;
+    // my points
+    using point_type = pointT;
+    // indices
+    using size_type = size_t;
+    // my storage
+    using rep_type = std::vector<point_type>;
 
-    // meta-methods
+    // metamethods
 public:
+    // a cloud of {count} points, each one built by the default constructor of its type
     inline explicit PointCloud(size_type count);
+
+    // the rest
+    PointCloud(const PointCloud &) = default;
+    PointCloud(PointCloud &&) = default;
+    PointCloud & operator=(const PointCloud &) = default;
+    PointCloud & operator=(PointCloud &&) = default;
+    ~PointCloud() = default;
 
     // interface
 public:

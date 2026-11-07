@@ -1,0 +1,68 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Sphere.h"
+
+
+// metamethods
+constexpr pyre::geometry::Sphere::Sphere(double radius) : _radius { radius } {}
+
+// interface
+constexpr auto
+pyre::geometry::Sphere::dimension() -> size_type
+{
+    // the sphere is a surface
+    return 2;
+}
+
+constexpr auto
+pyre::geometry::Sphere::radius() const -> double
+{
+    // easy enough
+    return _radius;
+}
+
+inline auto
+pyre::geometry::Sphere::distance(const point_type & p, const point_type & q) const -> distance_type
+{
+    // the arc subtends the central angle
+    return _radius * angle(p, q);
+}
+
+inline auto
+pyre::geometry::Sphere::angle(const point_type & p, const point_type & q) -> double
+{
+    // unpack the two unit vectors
+    const auto & a = p.data();
+    const auto & b = q.data();
+    // their cross product, whose length is the sine of the angle
+    auto x = a[1] * b[2] - a[2] * b[1];
+    auto y = a[2] * b[0] - a[0] * b[2];
+    auto z = a[0] * b[1] - a[1] * b[0];
+    // and their dot product, its cosine; taking the angle from both keeps it accurate for
+    // points that are close together and for points that are nearly antipodal
+    auto cosine = a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+    // the angle
+    return std::atan2(std::sqrt(x * x + y * y + z * z), cosine);
+}
+
+// rendering
+inline auto
+pyre::geometry::Sphere::inject(std::ostream & stream, const rep_type & p) -> void
+{
+    // write the components of the unit vector
+    stream << p[0] << ", " << p[1] << ", " << p[2];
+    // all done
+    return;
+}
+
+
+// end of file

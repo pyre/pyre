@@ -8,12 +8,30 @@
 #pragma once
 
 
-// the forward declarations, type aliases, and operator declarations
+// the forward declarations, operator declarations, type aliases and concepts
 #include "forward.h"
+#include "api.h"
+#include "concepts.h"
 
 
 // the object model
+// points
 #include "Point.h"
+// spaces
+#include "Euclidean.h"
+#include "Sphere.h"
+#include "Ellipsoid.h"
+#include "Timeline.h"
+#include "Lattice.h"
+#include "Product.h"
+// charts
+#include "Cartesian.h"
+#include "LonLat.h"
+// reference systems
+#include "ReferenceSystem.h"
+// the affine structure
+#include "algebra.h"
+// point clouds and bricks
 #include "PointCloud.h"
 #include "Brick.h"
 

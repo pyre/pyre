@@ -1,0 +1,91 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Timeline.h"
+
+
+// metamethods
+constexpr pyre::geometry::Timeline::Timeline(time_type epoch) : _epoch { epoch } {}
+
+// interface
+constexpr auto
+pyre::geometry::Timeline::dimension() -> size_type
+{
+    // time is a line
+    return 1;
+}
+
+constexpr auto
+pyre::geometry::Timeline::epoch() const -> time_type
+{
+    // easy enough
+    return _epoch;
+}
+
+constexpr auto
+pyre::geometry::Timeline::distance(const point_type & p, const point_type & q) const
+    -> distance_type
+{
+    // the length of the interval, in seconds
+    auto delta = p.data() - q.data();
+    // regardless of its orientation
+    return delta < 0 ? -delta : delta;
+}
+
+// the civil calendar
+constexpr auto
+pyre::geometry::Timeline::point(time_type time) const -> point_type
+{
+    // the instant is the seconds since my epoch
+    return point_type((time - _epoch).count());
+}
+
+constexpr auto
+pyre::geometry::Timeline::time(const point_type & p) const -> time_type
+{
+    // the time is my epoch moved by the seconds of the instant
+    return _epoch + vector_type(p.data());
+}
+
+// the affine structure
+constexpr auto
+pyre::geometry::Timeline::difference(const rep_type & p, const rep_type & q) -> vector_type
+{
+    // the duration between the two instants
+    return vector_type(p - q);
+}
+
+constexpr auto
+pyre::geometry::Timeline::translate(const rep_type & p, const vector_type & v) -> rep_type
+{
+    // the instant moved by the duration
+    return p + v.count();
+}
+
+constexpr auto
+pyre::geometry::Timeline::opposite(const vector_type & v) -> vector_type
+{
+    // the duration, reversed
+    return -v;
+}
+
+// rendering
+inline auto
+pyre::geometry::Timeline::inject(std::ostream & stream, const rep_type & p) -> void
+{
+    // write the seconds since the epoch
+    stream << p;
+    // all done
+    return;
+}
+
+
+// end of file

@@ -1,0 +1,33 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Cartesian.h"
+
+
+// interface
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Cartesian<dim>::point(const coordinates_type & coordinates) const -> point_type
+{
+    // the coordinates are the point
+    return point_type(coordinates);
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Cartesian<dim>::coordinates(const point_type & p) const -> coordinates_type
+{
+    // and the point is its coordinates
+    return p.data();
+}
+
+
+// end of file

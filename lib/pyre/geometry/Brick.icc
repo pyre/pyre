@@ -14,6 +14,9 @@
 // inlines
 template <std::size_t dim, typename nodeT>
 template <typename... cornerT>
+    requires(not(
+        sizeof...(cornerT) == 1
+        and (std::is_same_v<std::remove_cvref_t<cornerT>, pyre::geometry::Brick<dim, nodeT>> and ...)))
 pyre::geometry::Brick<dim, nodeT>::Brick(cornerT... corner) : _corners { corner... }
 {}
 
@@ -37,16 +40,17 @@ template <std::size_t dim, typename nodeT>
 constexpr auto
 pyre::geometry::Brick<dim, nodeT>::size()
 {
-    // ask my point container
-    return 1 << dimension();
+    // a brick has two corners along each of its own axes
+    return 1 << intrinsicDimension();
 }
 
 template <std::size_t dim, typename nodeT>
 auto
 pyre::geometry::Brick<dim, nodeT>::interior(const node_type & p) const
 {
-    // i return a tuple of integers indicating the relative position of {p}
-    std::array<int, dim> flag {};
+    // i return a tuple of integers indicating the relative position of {p} along each axis of
+    // the space
+    std::array<int, node_type::dimension()> flag {};
     // rough check: get my bounding box
     auto bbox = box();
     // and unpack it
