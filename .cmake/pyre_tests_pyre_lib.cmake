@@ -34,6 +34,15 @@ pyre_test_driver(tests/pyre.lib/geometry/interval_covers.cc)
 pyre_test_driver(tests/pyre.lib/geometry/interval_hull.cc)
 pyre_test_driver(tests/pyre.lib/geometry/collection_intersects.cc)
 pyre_test_driver(tests/pyre.lib/geometry/collection_covers.cc)
+pyre_test_driver(tests/pyre.lib/geometry/spherical_orientation.cc)
+pyre_test_driver(tests/pyre.lib/geometry/spherical_arcs.cc)
+pyre_test_driver(tests/pyre.lib/geometry/box_contains.cc)
+pyre_test_driver(tests/pyre.lib/geometry/box_intersects.cc)
+pyre_test_driver(tests/pyre.lib/geometry/ring_contains.cc)
+pyre_test_driver(tests/pyre.lib/geometry/ring_envelope.cc)
+pyre_test_driver(tests/pyre.lib/geometry/ring_edges.cc)
+pyre_test_driver(tests/pyre.lib/geometry/polygon_intersects.cc)
+pyre_test_driver(tests/pyre.lib/geometry/path_intersects.cc)
 
 
 # grid
