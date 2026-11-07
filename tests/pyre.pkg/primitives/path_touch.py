@@ -30,8 +30,9 @@ def test():
         # by removing it
         path.unlink()
 
-    # the umask filters the permissions; reading it means setting it, so put it right back
+    # the umask filters the permissions; reading it means setting it
     umask = os.umask(0)
+    # so put it right back
     os.umask(umask)
     # touch the path
     path.touch()
@@ -40,8 +41,9 @@ def test():
     # with the default permissions, as filtered by the umask
     assert stat.S_IMODE(path.stat().st_mode) == 0o666 & ~umask
 
-    # push its times back by an hour
+    # an hour before the file was made
     past = path.stat().st_mtime - 3600
+    # is where its times go
     os.utime(path, (past, past))
     # touch it again
     path.touch()

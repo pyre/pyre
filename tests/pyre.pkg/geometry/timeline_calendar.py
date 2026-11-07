@@ -34,15 +34,17 @@ def test():
     utc = naive.replace(tzinfo=datetime.UTC)
     # and the same time, two hours east
     east = utc.astimezone(datetime.timezone(datetime.timedelta(hours=2)))
-    # all name the same instant
+    # name the same instant as the time without a zone
     assert timeline.point(time=naive) == timeline.point(time=utc)
+    # and as the time two hours east
     assert timeline.point(time=east) == timeline.point(time=utc)
     # which is the right number of seconds past the epoch
     assert timeline.point(time=utc).coordinate == utc.timestamp()
     # and whose time is the same, in UTC
     assert timeline.time(point=timeline.point(time=east)) == utc
-    # down to the microsecond
+    # a time with microseconds
     precise = utc + datetime.timedelta(microseconds=123456)
+    # comes back unchanged
     assert timeline.time(point=timeline.point(time=precise)) == precise
 
     # a timeline with an epoch of its own
