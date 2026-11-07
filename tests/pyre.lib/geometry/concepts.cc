@@ -6,7 +6,7 @@
 
 
 // check which spaces satisfy which concepts: the spaces with an affine structure, the ones with
-// a metric, and the charts
+// a metric, the lines, and the charts
 
 
 // portability
@@ -42,6 +42,14 @@ static_assert(geometry::metric_space_c<geometry::timeline_t>);
 // the ellipsoid does not, yet, and the lattice has no metric
 static_assert(not geometry::metric_space_c<geometry::ellipsoid_t>);
 static_assert(not geometry::metric_space_c<geometry::lattice_t<2>>);
+
+// the timeline and the euclidean line are lines
+static_assert(geometry::line_c<geometry::timeline_t>);
+static_assert(geometry::line_c<geometry::euclidean_t<1>>);
+// but the spaces of more dimensions are not
+static_assert(not geometry::line_c<geometry::euclidean_t<2>>);
+static_assert(not geometry::line_c<geometry::sphere_t>);
+static_assert(not geometry::line_c<geometry::lattice_t<1>>);
 
 // the charts are charts
 static_assert(geometry::chart_c<geometry::cartesian_t<2>>);
