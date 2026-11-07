@@ -19,6 +19,7 @@
 #include "flow/__init__.h"
 #include "viz/__init__.h"
 #include "chroma/__init__.h"
+#include "geometry/__init__.h"
 
 // the module entry point
 PYBIND11_MODULE(pyre, m)
@@ -41,6 +42,8 @@ PYBIND11_MODULE(pyre, m)
     pyre::py::viz::__init__(m);
     // chroma
     pyre::py::chroma::__init__(m);
+    // geometry
+    pyre::py::geometry::__init__(m);
 }
 
 
