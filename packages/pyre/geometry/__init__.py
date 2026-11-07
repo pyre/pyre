@@ -77,6 +77,64 @@ def triangulation(**kwds):
     return Triangulation(**kwds)
 
 
+# spaces
+def timeline(epoch=None):
+    """
+    Create the line of time with the given {epoch}, by default the start of 1970 in UTC
+    """
+    # get the factory
+    from .Timeline import Timeline
+
+    # make one and return it
+    return Timeline(epoch=epoch)
+
+
+# constructions
+def union(*shapes):
+    """
+    The union of the given {shapes}
+    """
+    # get the bindings
+    from .. import libpyre
+
+    # and ask them
+    return libpyre.geometry.union(shapes=list(shapes))
+
+
+def hull(a, b):
+    """
+    The smallest shape that holds both {a} and {b}
+    """
+    # get the bindings
+    from .. import libpyre
+
+    # and ask them
+    return libpyre.geometry.hull(a=a, b=b)
+
+
+# relations
+def intersects(a, b):
+    """
+    Check whether {a} and {b} share a point
+    """
+    # get the bindings
+    from .. import libpyre
+
+    # and ask them
+    return libpyre.geometry.intersects(a=a, b=b)
+
+
+def covers(a, b):
+    """
+    Check whether every point of {b} is a point of {a}
+    """
+    # get the bindings
+    from .. import libpyre
+
+    # and ask them
+    return libpyre.geometry.covers(a=a, b=b)
+
+
 # utilities
 def transfer(grid, fields, mesh):
     """
