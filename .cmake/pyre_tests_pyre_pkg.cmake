@@ -80,6 +80,13 @@ pyre_test_python_testcase(tests/pyre.pkg/grid/heap.py)
 
 
 #
+# pyre/geometry
+#
+pyre_test_python_testcase(tests/pyre.pkg/geometry/timeline_calendar.py)
+pyre_test_python_testcase(tests/pyre.pkg/geometry/timeline_supports.py)
+
+
+#
 # pyre/memory
 #
 pyre_test_python_testcase(tests/pyre.pkg/memory/sanity.py)
