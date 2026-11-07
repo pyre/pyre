@@ -85,6 +85,25 @@ pyre::geometry::Euclidean<dim>::opposite(const vector_type & v) -> vector_type
     return r;
 }
 
+// the order of the line
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Euclidean<dim>::coordinate(const rep_type & p) -> coordinate_type
+    requires(dim == 1)
+{
+    // a point of the line has a single coordinate
+    return p[0];
+}
+
+template <std::size_t dim>
+constexpr auto
+pyre::geometry::Euclidean<dim>::fromCoordinate(coordinate_type x) -> rep_type
+    requires(dim == 1)
+{
+    // the point is its coordinate
+    return rep_type { x };
+}
+
 // rendering
 template <std::size_t dim>
 auto

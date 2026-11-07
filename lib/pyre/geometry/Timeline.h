@@ -20,8 +20,10 @@ class pyre::geometry::Timeline {
 public:
     // me
     using self_type = Timeline;
+    // my coordinate: the seconds since my epoch
+    using coordinate_type = double;
     // my points
-    using rep_type = double;
+    using rep_type = coordinate_type;
     using point_type = Point<self_type>;
     // the vectors between my points
     using vector_type = std::chrono::duration<double>;
@@ -71,6 +73,13 @@ public:
     static constexpr auto translate(const rep_type & p, const vector_type & v) -> rep_type;
     // the opposite of {v}
     static constexpr auto opposite(const vector_type & v) -> vector_type;
+
+    // the order of the line
+public:
+    // the coordinate of an instant
+    static constexpr auto coordinate(const rep_type & p) -> coordinate_type;
+    // the instant at the given coordinate
+    static constexpr auto fromCoordinate(coordinate_type x) -> rep_type;
 
     // rendering
 public:

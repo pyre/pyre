@@ -1,0 +1,41 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "constructions.h"
+
+
+// the hull of two intervals
+template <pyre::geometry::line_c lineT>
+constexpr auto
+pyre::geometry::hull(const Interval<lineT> & a, const Interval<lineT> & b) -> Interval<lineT>
+{
+    // the empty interval adds nothing to the other one
+    if (a.empty()) {
+        return b;
+    }
+    // either way
+    if (b.empty()) {
+        return a;
+    }
+    // otherwise, the hull reaches from the lower of the lower ends
+    auto lower = lineT::coordinate(a.lower().data()) < lineT::coordinate(b.lower().data()) ?
+                     a.lower() :
+                     b.lower();
+    // to the higher of the upper ends
+    auto upper = lineT::coordinate(a.upper().data()) > lineT::coordinate(b.upper().data()) ?
+                     a.upper() :
+                     b.upper();
+    // all done
+    return Interval<lineT>(lower, upper);
+}
+
+
+// end of file

@@ -1,0 +1,134 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "relations.h"
+
+
+// the pairs that know how
+template <pyre::geometry::line_c lineT>
+constexpr auto
+pyre::geometry::relations::intersects(const Interval<lineT> & a, const Interval<lineT> & b) -> bool
+{
+    // an empty interval shares nothing
+    if (a.empty() or b.empty()) {
+        return false;
+    }
+    // otherwise, two intervals share a point when each starts before the other ends; their ends
+    // belong to them, so touching ends are a shared point
+    return lineT::coordinate(a.lower().data()) <= lineT::coordinate(b.upper().data())
+       and lineT::coordinate(b.lower().data()) <= lineT::coordinate(a.upper().data());
+}
+
+template <class shapeT, class otherT>
+constexpr auto
+pyre::geometry::relations::intersects(const Collection<shapeT> & a, const otherT & b) -> bool
+{
+    // a union shares a point with {b} when one of its members does
+    return std::any_of(a.begin(), a.end(), [&b](const shapeT & member) {
+        // whichever of the two knows how
+        return pyre::geometry::intersects(member, b);
+    });
+}
+
+
+// the relations
+template <class firstT, class secondT>
+    requires(
+        requires(const firstT & a, const secondT & b) {
+            pyre::geometry::relations::intersects(a, b);
+        }
+        or requires(
+            const firstT & a, const secondT & b) { pyre::geometry::relations::intersects(b, a); })
+constexpr auto
+pyre::geometry::intersects(const firstT & a, const secondT & b) -> bool
+{
+    // if the pair knows how in this order
+    if constexpr (requires { relations::intersects(a, b); }) {
+        // ask it
+        return relations::intersects(a, b);
+    }
+    // otherwise, it knows how in the other one
+    else {
+        // so ask it that way
+        return relations::intersects(b, a);
+    }
+}
+
+template <pyre::geometry::line_c lineT>
+constexpr auto
+pyre::geometry::covers(const Interval<lineT> & a, const Interval<lineT> & b) -> bool
+{
+    // every interval covers the empty one
+    if (b.empty()) {
+        return true;
+    }
+    // the empty interval covers no other
+    if (a.empty()) {
+        return false;
+    }
+    // otherwise, {a} covers {b} when {b} starts no earlier and ends no later
+    return lineT::coordinate(a.lower().data()) <= lineT::coordinate(b.lower().data())
+       and lineT::coordinate(b.upper().data()) <= lineT::coordinate(a.upper().data());
+}
+
+template <pyre::geometry::line_c lineT>
+constexpr auto
+pyre::geometry::covers(const Collection<Interval<lineT>> & a, const Interval<lineT> & b) -> bool
+{
+    // every union covers the empty interval
+    if (b.empty()) {
+        return true;
+    }
+    // the members that share a point with {b} are the ones that may cover it
+    auto pieces = std::vector<Interval<lineT>> {};
+    // so collect them
+    std::copy_if(
+        a.begin(), a.end(), std::back_inserter(pieces),
+        [&b](const Interval<lineT> & member) { return intersects(member, b); });
+    // and put them in the order of their lower ends
+    std::sort(
+        pieces.begin(), pieces.end(), [](const Interval<lineT> & p, const Interval<lineT> & q) {
+            return lineT::coordinate(p.lower().data()) < lineT::coordinate(q.lower().data());
+        });
+    // the pieces cover {b} up to its lower end before any of them is placed
+    auto reach = lineT::coordinate(b.lower().data());
+    // where they must reach to cover it
+    auto goal = lineT::coordinate(b.upper().data());
+    // go through the pieces in order
+    for (const auto & piece : pieces) {
+        // a piece that starts beyond the reach leaves a gap
+        if (lineT::coordinate(piece.lower().data()) > reach) {
+            // so {b} is not covered
+            return false;
+        }
+        // otherwise, the piece extends the reach to its upper end, if that is further
+        reach = std::max(reach, lineT::coordinate(piece.upper().data()));
+        // once the reach gets to the upper end of {b}
+        if (reach >= goal) {
+            // {b} is covered
+            return true;
+        }
+    }
+    // if the pieces run out first, {b} is not covered
+    return false;
+}
+
+template <class shapeT, class memberT>
+constexpr auto
+pyre::geometry::covers(const shapeT & a, const Collection<memberT> & b) -> bool
+{
+    // {a} covers the union when it covers every member
+    return std::all_of(
+        b.begin(), b.end(), [&a](const memberT & member) { return covers(a, member); });
+}
+
+
+// end of file

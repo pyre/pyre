@@ -1,0 +1,69 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Collection.h"
+// the hulls of the envelopes
+#include "constructions.h"
+
+
+// metamethods
+template <class shapeT>
+constexpr pyre::geometry::Collection<shapeT>::Collection(shapes_type shapes) :
+    _shapes { std::move(shapes) }
+{}
+
+template <class shapeT>
+constexpr pyre::geometry::Collection<shapeT>::Collection(std::initializer_list<shape_type> shapes) :
+    _shapes { shapes }
+{}
+
+// interface
+template <class shapeT>
+constexpr auto
+pyre::geometry::Collection<shapeT>::size() const -> size_type
+{
+    // easy enough
+    return _shapes.size();
+}
+
+template <class shapeT>
+constexpr auto
+pyre::geometry::Collection<shapeT>::begin() const
+{
+    // my first member
+    return _shapes.cbegin();
+}
+
+template <class shapeT>
+constexpr auto
+pyre::geometry::Collection<shapeT>::end() const
+{
+    // and the end of my members
+    return _shapes.cend();
+}
+
+template <class shapeT>
+constexpr auto
+pyre::geometry::Collection<shapeT>::envelope() const -> envelope_type
+{
+    // start with the envelope of nothing
+    auto envelope = envelope_type {};
+    // go through my members
+    for (const auto & shape : _shapes) {
+        // and grow the envelope to hold each one
+        envelope = hull(envelope, shape.envelope());
+    }
+    // all done
+    return envelope;
+}
+
+
+// end of file

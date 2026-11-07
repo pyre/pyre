@@ -42,6 +42,18 @@ namespace pyre::geometry {
                 { S::translate(rep, vector) } -> std::same_as<typename S::rep_type>;
             };
 
+    // a line is a space of one dimension whose points are ordered by a coordinate, which extends
+    // to the infinities so that the line has ends
+    template <class S>
+    concept line_c =
+        space_c<S> and (S::dimension() == 1)
+        and requires(const typename S::rep_type & rep, const typename S::coordinate_type & x) {
+                // the coordinate of a point
+                { S::coordinate(rep) } -> std::same_as<typename S::coordinate_type>;
+                // the point at a coordinate
+                { S::fromCoordinate(x) } -> std::same_as<typename S::rep_type>;
+            };
+
     // a chart maps the points of its space to coordinates and back
     template <class C>
     concept chart_c = space_c<typename C::space_type>
