@@ -153,8 +153,9 @@ def transfer(grid, fields, mesh):
         # compute the barycenter
         bary = tuple(sum(point[i] for point in vertices) / len(vertices) for i in range(dim))
 
-        # initialize the search bounds
+        # initialize the search bounds: from the first cell
         imin = [0] * dim
+        # to the last one
         imax = list(n - 1 for n in grid.shape)
 
         # as long as the two end points haven't collapsed
@@ -171,16 +172,22 @@ def transfer(grid, fields, mesh):
             for d in range(dim):
                 # if {bary} is smaller than that
                 if bary[d] < cmin[d]:
+                    # look below the midpoint
                     imax[d] = max(imin[d], index[d] - 1)
                 # if {bary} is greater than that
                 elif bary[d] > cmax[d]:
+                    # look above it
                     imin[d] = min(imax[d], index[d] + 1)
                 # if {bary} is within
                 elif cmin[d] <= bary[d] <= cmax[d]:
+                    # the cell is found, so collapse the lower bound onto it
                     imin[d] = index[d]
+                    # and the upper one
                     imax[d] = index[d]
+                # a barycenter that compares with nothing
                 else:
-                    assert False, "could not locate grid cell for tet {}".format(tetid)
+                    # can't be placed in any cell
+                    assert False, f"could not locate grid cell for tet {tetid}"
 
         # ok. we found the index; transfer the fields
         for property, field in fields.items():
@@ -211,8 +218,9 @@ def convexHull(points):
     """
     Compute the convex hull of the given {points}
     """
-    # set up the two corners
+    # set up the two corners: the lowest one
     p_min = []
+    # and the highest one
     p_max = []
     # zip all the points together, forming as many streams of coordinates as there are
     # dimensions
