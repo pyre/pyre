@@ -40,8 +40,11 @@ class Path(tuple):
     from .exceptions import PathError, SymbolicLinkLoopError
 
     # string constants
+    # the current directory
     _CWD = "."
+    # the separator of the levels of a path
     _SEP = "/"
+    # the home directory
     _HOME = "~"
 
     # path constants
@@ -273,6 +276,7 @@ class Path(tuple):
             if mine != hers:
                 # build the message
                 error = f"'{self}' does not start with '{other}'"
+                # and say where the two part ways
                 location = f"'{mine}' doesn't match '{hers}'"
                 # and complain
                 raise ValueError(f"{error}: {location}")
@@ -497,12 +501,19 @@ class Path(tuple):
 
     # physical path interface
     # forwarding to standard library functions
+    # make me the current directory
     chdir = _unaryDispatch(os.chdir)
+    # change my permissions
     chmod = _unaryDispatch(os.chmod)
+    # my status, without following a symbolic link
     lstat = _unaryDispatch(os.lstat)
+    # my status
     stat = _unaryDispatch(os.stat)
+    # open me as a file
     open = _unaryDispatch(io.open)
+    # remove me, as an empty directory
     rmdir = _unaryDispatch(os.rmdir)
+    # remove me, as a file
     unlink = _unaryDispatch(os.unlink)
 
     # local implementations of the physical path interface
@@ -768,6 +779,7 @@ class Path(tuple):
                 # save it and carry on
                 base = newpath
 
+        # hand off the resolved path
         return base
 
 
