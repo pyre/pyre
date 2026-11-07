@@ -18,6 +18,7 @@ tests.pyre.pkg.filesystem.zip.clean := sample.zip
 tests.pyre.pkg.filesystem.local_vanish.clean := local_vanish
 tests.pyre.pkg.schemata.ostreams.clean := output.cfg
 tests.pyre.pkg.primitives.path_resolution.clean := scratch
+tests.pyre.pkg.primitives.path_touch.clean := path_touch.txt
 tests.pyre.pkg.pyre.clean := __pycache__
 tests.pyre.pkg.viz.clean := __pycache__
 tests.pyre.pkg.h5.api.writer.clean := writer.h5
