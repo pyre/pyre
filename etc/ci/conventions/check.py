@@ -532,14 +532,20 @@ def uncommented(*, lines: list, trailing: set, body: list) -> list:
 def subject(*, statement: ast.stmt | None) -> str | None:
     """
     The name that {statement} declares, as in {t = pyre.properties.str()}, or annotates, as in
-    {t.doc = "..."}; {None} for any other statement
+    {t.doc = "..."} or {t.aliases |= {"a"}}; {None} for any other statement
     """
-    # only a simple assignment has a subject
-    if not isinstance(statement, ast.Assign) or len(statement.targets) != 1:
-        # so everything else has none
+    # an augmented assignment has a single target
+    if isinstance(statement, ast.AugAssign):
+        # which is the one to look at
+        target = statement.target
+    # so does a simple assignment that sets one name
+    elif isinstance(statement, ast.Assign) and len(statement.targets) == 1:
+        # get it
+        target = statement.targets[0]
+    # nothing else has a subject
+    else:
+        # so say so
         return None
-    # get its target
-    target = statement.targets[0]
     # a declaration names its subject
     if isinstance(target, ast.Name):
         # directly
@@ -557,8 +563,20 @@ def annotates(*, statement: ast.stmt, previous: ast.stmt | None) -> bool:
     Check whether {statement} sets an attribute of the subject of {previous}, on the line right
     after it, the way the metadata of a trait follows its declaration
     """
-    # the statement must set an attribute
-    if not isinstance(statement, ast.Assign) or not isinstance(statement.targets[0], ast.Attribute):
+    # the statement must set an attribute, or add to one
+    if isinstance(statement, ast.AugAssign):
+        # in which case its single target
+        target = statement.target
+    # a simple assignment
+    elif isinstance(statement, ast.Assign):
+        # sets its first one
+        target = statement.targets[0]
+    # and nothing else
+    else:
+        # is an annotation
+        return False
+    # the target must be an attribute
+    if not isinstance(target, ast.Attribute):
         # or it is not an annotation
         return False
     # of the subject of the statement right above it
