@@ -90,6 +90,16 @@ ${call extern.markers.required.warn, $(projects.extern.loaded)}
 # about anything induced-but-uninstalled (see {projects.extern.resolve})
 ${eval ${call projects.extern.resolve, $(projects)}}
 
+# the externals the assets ask for that mm supports but cannot find installed; computed only when
+# a report asks for it
+projects.extern.missing = ${sort \
+    ${foreach project,$(projects), \
+        ${foreach asset,$($(project).contents), \
+            ${filter-out $(extern.available),$($(asset).extern.supported)} \
+        } \
+    } \
+}
+
 # ${info --   project workflows}
 ${foreach project,$(projects), ${eval ${call project.boot.workflows,$(project)}}}
 
