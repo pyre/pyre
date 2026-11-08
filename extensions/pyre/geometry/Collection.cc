@@ -9,12 +9,15 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
+// the bindings of the relations
+#include "relations.h"
 
 
 // helpers
 namespace pyre::py::geometry {
-    // bind the finite unions of a kind of shape
-    template <class shapeT>
+    // bind the finite unions of a kind of shape, related to the shapes of that kind, to each
+    // other, and to the shapes of the kinds in {otherT}
+    template <class shapeT, class... otherT>
     inline void shapeCollection(py::module & m, classname_t name, docstring_t docstring)
     {
         // the union
@@ -67,87 +70,40 @@ namespace pyre::py::geometry {
             // the docstring
             "the smallest envelope that holds all my members");
 
-        // whether it shares a point with a shape of the kind of its members
-        cls.def(
-            // the name
-            "intersects",
-            // the implementation
-            [](const union_t & self, const shapeT & other) {
-                // ask the relation
-                return pyre::geometry::intersects(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether i share a point with {other}");
-        // or with another union
-        cls.def(
-            // the name
-            "intersects",
-            // the implementation
-            [](const union_t & self, const union_t & other) {
-                // ask the relation
-                return pyre::geometry::intersects(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether i share a point with {other}");
-        // whether it covers a shape of the kind of its members
-        cls.def(
-            // the name
-            "covers",
-            // the implementation
-            [](const union_t & self, const shapeT & other) {
-                // ask the relation
-                return pyre::geometry::covers(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether every point of {other} is one of mine");
-        // or another union
-        cls.def(
-            // the name
-            "covers",
-            // the implementation
-            [](const union_t & self, const union_t & other) {
-                // ask the relation
-                return pyre::geometry::covers(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether every point of {other} is one of mine");
+        // the relations with shapes of the kind of its members, with other unions, and with the
+        // other kinds of shapes it can be compared with
+        relateMethods<union_t, shapeT, union_t, otherT...>(cls);
 
         // two unions compare equal when they have the same members in the same order
         cls.def(py::self == py::self);
 
-        // a readable representation
-        cls.def(
-            // the name
-            "__repr__",
-            // the handler writes the members, joined by the union sign
-            [](const union_t & self) {
-                // the union of nothing
-                if (self.size() == 0) {
-                    // is the empty set
-                    return string_t("{}");
-                }
-                // make a buffer
-                auto buffer = std::ostringstream {};
-                // the separator goes between members, so there is none before the first one
-                auto separator = "";
-                // go through the members
-                for (const auto & shape : self) {
-                    // and write each one after the separator
-                    buffer << separator << shape;
-                    // and use the union sign from now on
-                    separator = " ∪ ";
-                }
-                // hand off the contents
-                return buffer.str();
-            });
+        // a readable representation, for the shapes that can write themselves
+        if constexpr (requires(std::ostream & stream, const shapeT & shape) { stream << shape; }) {
+            cls.def(
+                // the name
+                "__repr__",
+                // the handler writes the members, joined by the union sign
+                [](const union_t & self) {
+                    // the union of nothing
+                    if (self.size() == 0) {
+                        // is the empty set
+                        return string_t("{}");
+                    }
+                    // make a buffer
+                    auto buffer = std::ostringstream {};
+                    // the separator goes between members, so there is none before the first one
+                    auto separator = "";
+                    // go through the members
+                    for (const auto & shape : self) {
+                        // and write each one after the separator
+                        buffer << separator << shape;
+                        // and use the union sign from now on
+                        separator = " ∪ ";
+                    }
+                    // hand off the contents
+                    return buffer.str();
+                });
+        }
 
         // all done
         return;
@@ -162,6 +118,9 @@ pyre::py::geometry::collection(py::module & m)
     // the unions of intervals
     shapeCollection<interval_t>(
         m, "TimelineIntervals", "a finite union of intervals of the timeline");
+    // the unions of polygons on the sphere
+    shapeCollection<polygon_t, place_t, box_t, path_t>(
+        m, "SpherePolygons", "a finite union of polygons on the sphere");
 
     // all done
     return;

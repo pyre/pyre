@@ -199,9 +199,14 @@ function(pyre_pyreModule)
     extensions/pyre/chroma/rgb.cc
     # geometry
     extensions/pyre/geometry/__init__.cc
+    extensions/pyre/geometry/Box.cc
     extensions/pyre/geometry/Collection.cc
     extensions/pyre/geometry/Interval.cc
+    extensions/pyre/geometry/LonLat.cc
+    extensions/pyre/geometry/Path.cc
     extensions/pyre/geometry/Point.cc
+    extensions/pyre/geometry/Polygon.cc
+    extensions/pyre/geometry/Ring.cc
     extensions/pyre/geometry/Timeline.cc
     extensions/pyre/geometry/constructions.cc
     extensions/pyre/geometry/relations.cc

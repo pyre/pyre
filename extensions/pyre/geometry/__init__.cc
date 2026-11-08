@@ -24,13 +24,23 @@ pyre::py::geometry::__init__(py::module & m)
         // its docstring
         "wrappers over {pyre::geometry}: spaces, their points, and the shapes in them");
 
-    // bind the shapes first, since the spaces, the relations and the constructions traffic in
-    // them; the points come before the intervals, whose ends they are
+    // bind the shapes first, since the spaces, the charts, the relations and the constructions
+    // traffic in them: the points come first, since they are the ends and the vertices of the
+    // others
     point(geometry);
+    // then the shapes of the lines
     interval(geometry);
+    // the shapes of the sphere, the rings before the polygons they bound
+    box(geometry);
+    path(geometry);
+    ring(geometry);
+    polygon(geometry);
+    // and the unions of both
     collection(geometry);
     // the spaces
     timeline(geometry);
+    // the charts
+    lonlat(geometry);
     // the relations
     relations(geometry);
     // and the constructions

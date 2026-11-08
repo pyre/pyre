@@ -9,45 +9,8 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
-
-
-// helpers
-namespace pyre::py::geometry {
-    // bind the relations between a pair of kinds of shapes
-    template <class firstT, class secondT>
-    inline void relate(py::module & m)
-    {
-        // whether the two share a point
-        m.def(
-            // the name
-            "intersects",
-            // the implementation
-            [](const firstT & a, const secondT & b) {
-                // ask the relation
-                return pyre::geometry::intersects(a, b);
-            },
-            // the signature
-            "a"_a, "b"_a,
-            // the docstring
-            "check whether {a} and {b} share a point");
-        // whether the first covers the second
-        m.def(
-            // the name
-            "covers",
-            // the implementation
-            [](const firstT & a, const secondT & b) {
-                // ask the relation
-                return pyre::geometry::covers(a, b);
-            },
-            // the signature
-            "a"_a, "b"_a,
-            // the docstring
-            "check whether every point of {b} is a point of {a}");
-
-        // all done
-        return;
-    }
-} // namespace pyre::py::geometry
+// the bindings of the relations
+#include "relations.h"
 
 
 // bind the relations
@@ -61,6 +24,9 @@ pyre::py::geometry::relations(py::module & m)
     relate<intervals_t, interval_t>(m);
     // and between unions
     relate<intervals_t, intervals_t>(m);
+
+    // between the shapes of the sphere, in every order the library has
+    relateAll<place_t, box_t, path_t, polygon_t, polygons_t>(m);
 
     // all done
     return;
