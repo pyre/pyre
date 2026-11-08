@@ -263,6 +263,7 @@ pyre::geometry::covers(const Collection<Interval<lineT>> & a, const Interval<lin
 }
 
 template <class shapeT, class memberT>
+    requires pyre::geometry::covers_c<shapeT, memberT>
 constexpr auto
 pyre::geometry::covers(const shapeT & a, const Collection<memberT> & b) -> bool
 {

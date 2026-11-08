@@ -66,6 +66,12 @@ namespace pyre::geometry::relations {
 
 // the relations among shapes
 namespace pyre::geometry {
+    // the shapes of the kind {shapeT} can tell whether they cover a shape of the kind {otherT};
+    // the call is unqualified, so the overloads of {covers} declared after this concept are found
+    // where it is used
+    template <class shapeT, class otherT>
+    concept covers_c = requires(const shapeT & a, const otherT & b) { covers(a, b); };
+
     // whether {a} and {b} share a point, asked of whichever of the two knows how
     template <class firstT, class secondT>
         requires(
@@ -85,8 +91,10 @@ namespace pyre::geometry {
     // between a union of intervals and an interval, which its members may cover together
     template <line_c lineT>
     constexpr auto covers(const Collection<Interval<lineT>> & a, const Interval<lineT> & b) -> bool;
-    // between a shape and a union, which the shape covers when it covers every member
+    // between a shape and a union, which the shape covers when it covers every member, for the
+    // shapes that can cover a member
     template <class shapeT, class memberT>
+        requires covers_c<shapeT, memberT>
     constexpr auto covers(const shapeT & a, const Collection<memberT> & b) -> bool;
     // between a box and a point
     template <class chartT>
