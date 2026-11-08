@@ -400,7 +400,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     # details:
                     channel.line(f"dispatch keys: {set(table)}")
                     # and the choices of the validator
-                    channel.log(f"validator choices: {modeValidator.choices}")
+                    channel.line(f"validator choices: {modeValidator.choices}")
                     # outdent
                     channel.outdent()
                     # flush
@@ -422,7 +422,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                 # the keys of the table
                 channel.line(f"dispatch keys:     {set(self._pkgdbDispatch)}")
                 # and the choices of the validator
-                channel.log(f"validator choices: {pkgdbValidator.choices}")
+                channel.line(f"validator choices: {pkgdbValidator.choices}")
                 # outdent
                 channel.outdent()
                 # flush
@@ -444,7 +444,7 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                 # the keys of the table
                 channel.line(f"dispatch keys:     {set(self._syntaxDispatch)}")
                 # and the choices of the validator
-                channel.log(f"validator choices: {syntaxValidator.choices}")
+                channel.line(f"validator choices: {syntaxValidator.choices}")
                 # outdent
                 channel.outdent()
                 # flush
