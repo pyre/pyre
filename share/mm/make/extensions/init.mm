@@ -34,9 +34,10 @@ define extensions.init =
 
     # the list of external dependencies
     ${eval $(2).extern ?=}
-    # a build that makes stubs needs their generator; resolving the dependencies keeps it only
-    # when it is installed
-    ${if $(project.stubs),${eval $(2).extern += pybind11-stubgen},}
+    # a build that makes stubs needs their generator, and so does a request for the stubs by
+    # name, which is honored whenever the generator is installed; resolving the dependencies
+    # keeps it only when it is
+    ${if ${or $(project.stubs),${filter pybind11-stubgen,$(extern.available)}},${eval $(2).extern += pybind11-stubgen},}
     # initialize the list of requested project dependencies
     ${eval $(2).extern.requested ?= $($(2).extern)}
     # the list of external dependencies that we have support for

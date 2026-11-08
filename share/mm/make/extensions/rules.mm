@@ -48,8 +48,9 @@ ${if ${filter-out $($(1).module.main),$($(1).module.init)},\
 # if the module has capsules, make rules to export them
 ${if $($(1).capsule), ${call extension.workflows.capsule,$(1)},}
 
-# if the build makes stubs and their generator is installed, make rules to build them
-${if ${filter pybind11-stubgen,$($(1).extern)},${call extension.workflows.stubs,$(1)},}
+# the stubs can be made whenever their generator is installed; without it, asking for them gets
+# an explanation
+${if ${filter pybind11-stubgen,$($(1).extern)},${call extension.workflows.stubs,$(1)},${call extension.workflows.stubs.unavailable,$(1)}}
 
 # the main recipe
 $(1): $(1).prerequisites $(1).directories $(1).assets
@@ -105,7 +106,7 @@ ${strip
     ${if $($(1).lib.sources),$($(1).lib),}
     ${if $($(1).capsule),$(1).capsule}
     $(1).extension
-    ${if ${filter pybind11-stubgen,$($(1).extern)},$(1).stubs}
+    ${if $(project.stubs),${if ${filter pybind11-stubgen,$($(1).extern)},$(1).stubs}}
 }
 endef
 
@@ -230,6 +231,17 @@ $($(1).stubs.stamp): $($(1).module.so) | $($(1).pkg) $($(1).tmpdir)
     else \
         ${call log.action.attn,"pyi","$($(1).stubs.module): the generator failed; see $($(1).stubs.log)"}; \
     fi
+
+endef
+
+
+# build the rule that explains why the stubs of an extension module cannot be made
+#   usage: extension.workflows.stubs.unavailable {extension}
+define extension.workflows.stubs.unavailable =
+
+# the generator is not installed
+$(1).stubs:
+	@${call log.warning,"$(1): no stubs; the generator pybind11-stubgen is not installed"}
 
 endef
 
