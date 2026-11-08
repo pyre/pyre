@@ -120,6 +120,9 @@ projects.shutdown: $(projects)
 # target that runs all known tests
 tests: projects ${if ${value testsuites},$(testsuites)}
 
+# make the type stubs of the extension modules of every known project
+stubs: ${addsuffix .stubs,$(projects)}
+
 # clean everything
 clean: ${addsuffix .clean,$(projects) ${if ${value testsuites},$(testsuites)}}
 
@@ -131,7 +134,7 @@ tidy:
 	find $(project.home) -name \*~ -delete
 
 # protect the above
-.PHONY: projects tests clean
+.PHONY: projects tests stubs clean
 
 
 # end of file
