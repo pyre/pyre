@@ -68,6 +68,30 @@ pyre::py::geometry::point(py::module & m)
     // the points of the lines
     linePoint<timeline_t>(m, "TimelinePoint", "an instant, known by its seconds since the epoch");
 
+    // the points of the sphere, which are named by the charts
+    auto cls = py::class_<place_t>(
+        // the scope
+        m,
+        // the name of the class
+        "SpherePoint",
+        // its docstring
+        "a point of the sphere, the unit vector of its direction from the center");
+    // two points compare equal when they are the same point
+    cls.def(py::self == py::self);
+    // a readable representation
+    cls.def(
+        // the name
+        "__repr__",
+        // the handler lets the sphere write the point
+        [](const place_t & point) {
+            // make a buffer
+            auto buffer = std::ostringstream {};
+            // write the point
+            buffer << point;
+            // and hand off its contents
+            return buffer.str();
+        });
+
     // all done
     return;
 }

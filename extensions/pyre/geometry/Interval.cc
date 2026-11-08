@@ -9,6 +9,8 @@
 #include "external.h"
 // namespace setup
 #include "forward.h"
+// the bindings of the relations
+#include "relations.h"
 
 
 // helpers
@@ -116,58 +118,8 @@ namespace pyre::py::geometry {
             // the docstring
             "the smallest interval that holds me");
 
-        // whether it shares a point with another interval
-        cls.def(
-            // the name
-            "intersects",
-            // the implementation
-            [](const interval_t & self, const interval_t & other) {
-                // ask the relation
-                return pyre::geometry::intersects(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether i share a point with {other}");
-        // or with a union
-        cls.def(
-            // the name
-            "intersects",
-            // the implementation
-            [](const interval_t & self, const union_t & other) {
-                // ask the relation
-                return pyre::geometry::intersects(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether i share a point with {other}");
-        // whether it covers another interval
-        cls.def(
-            // the name
-            "covers",
-            // the implementation
-            [](const interval_t & self, const interval_t & other) {
-                // ask the relation
-                return pyre::geometry::covers(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether every point of {other} is one of mine");
-        // or a union
-        cls.def(
-            // the name
-            "covers",
-            // the implementation
-            [](const interval_t & self, const union_t & other) {
-                // ask the relation
-                return pyre::geometry::covers(self, other);
-            },
-            // the signature
-            "other"_a,
-            // the docstring
-            "check whether every point of {other} is one of mine");
+        // the relations with other intervals and with their unions
+        relateMethods<interval_t, interval_t, union_t>(cls);
 
         // two intervals compare equal when they hold the same points
         cls.def(py::self == py::self);
