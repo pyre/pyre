@@ -116,6 +116,9 @@ $($(1).tmpdir):
 	$(mkdirp) $($(1).tmpdir)
 	@${call log.action,"mkdir",$($(1).tmpdir)}
 
+# the type stubs of the project's extension modules
+$(1).stubs: ${addsuffix .stubs,${value $(1).extensions}}
+
 $(1).clean: ${addsuffix .clean,$($(1).contents)}
 	$(rm.force-recurse) $($(1).tmpdir) $($(1).clean)
 	@${call log.action,"rm",$($(1).tmpdir)}
