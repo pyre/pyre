@@ -55,6 +55,8 @@ pyre_test_python_cleanup(memory_ordered_test.dat tests/pyre.ext/memory/ordered.p
 pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_points.py)
 pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_intervals.py)
 pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_relations.py)
+pyre_test_python_testcase(tests/pyre.ext/geometry/sphere_shapes.py)
+pyre_test_python_testcase(tests/pyre.ext/geometry/sphere_relations.py)
 
 
 # end of file
