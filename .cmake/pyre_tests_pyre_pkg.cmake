@@ -84,6 +84,8 @@ pyre_test_python_testcase(tests/pyre.pkg/grid/heap.py)
 #
 pyre_test_python_testcase(tests/pyre.pkg/geometry/timeline_calendar.py)
 pyre_test_python_testcase(tests/pyre.pkg/geometry/timeline_supports.py)
+pyre_test_python_testcase(tests/pyre.pkg/geometry/lonlat_shapes.py)
+pyre_test_python_testcase(tests/pyre.pkg/geometry/lonlat_regions.py)
 
 
 #
