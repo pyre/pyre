@@ -89,6 +89,19 @@ def timeline(epoch=None):
     return Timeline(epoch=epoch)
 
 
+# charts
+def lonlat():
+    """
+    Create the longitude-latitude chart of the sphere, which names its points and builds the
+    shapes through them
+    """
+    # get the factory
+    from .LonLat import LonLat
+
+    # make one and return it
+    return LonLat()
+
+
 # constructions
 def union(*shapes):
     """
@@ -110,6 +123,20 @@ def hull(a, b):
 
     # and ask them
     return libpyre.geometry.hull(a=a, b=b)
+
+
+def orient(shape):
+    """
+    The ring or polygon {shape}, walked so that it bounds the smaller of its two regions; this is
+    the right reading of rings drawn or typed by people, which come in either direction, and the
+    wrong one for data whose convention is known, or for a region meant to be larger than a
+    hemisphere; see the section on regions on the sphere in doc/design/geometry.md
+    """
+    # get the bindings
+    from .. import libpyre
+
+    # and ask them
+    return libpyre.geometry.orient(shape=shape)
 
 
 # relations
