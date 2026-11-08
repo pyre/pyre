@@ -48,6 +48,9 @@ ${if ${filter-out $($(1).module.main),$($(1).module.init)},\
 # if the module has capsules, make rules to export them
 ${if $($(1).capsule), ${call extension.workflows.capsule,$(1)},}
 
+# if the build makes stubs and their generator is installed, make rules to build them
+${if ${filter pybind11-stubgen,$($(1).extern)},${call extension.workflows.stubs,$(1)},}
+
 # the main recipe
 $(1): $(1).prerequisites $(1).directories $(1).assets
 	@${call log.asset,"ext",$(1)}
@@ -64,17 +67,23 @@ $(1).assets: ${call extension.workflows.assets,$(1)}
 
 $(1).extension: $($(1).module.so)
 
+# the stubs of the module describe the one being replaced, so they go with it; a build that makes
+# stubs writes new ones, any other build leaves none
 $($(1).module.so): ${call extension.workflows.dependencies,$(1)}
 	@${call log.action,"module",${subst $($(1).home),,$($(1).module.init)}}
+	$(rm.force) $($(1).stubs.stamp)
+	${call extension.stubs.remove,$(1)}
 	${call languages.$($(1).module.language).ext,\
             $($(1).module.init), \
             $($(1).module.so), \
             $($(1).lib).$($(1).module.language) $($(1).lib) $($(1).wraps) $($(1).extern)}
 
-# clean up
+# clean up, including any stubs an earlier build installed
 $(1).clean:: $(1).lib.clean
 	@${call log.action,"rm",$($(1).module.so)}
 	$(rm.force) $($(1).module.so)
+	$(rm.force-recurse) $($(1).stubs.tmpdir) $($(1).stubs.log) $($(1).stubs.stamp)
+	${call extension.stubs.remove,$(1)}
 
 # typically, extensions have no headers to export; this target is needed when an extension is
 # used as a prerequisite
@@ -96,6 +105,7 @@ ${strip
     ${if $($(1).lib.sources),$($(1).lib),}
     ${if $($(1).capsule),$(1).capsule}
     $(1).extension
+    ${if ${filter pybind11-stubgen,$($(1).extern)},$(1).stubs}
 }
 endef
 
@@ -191,6 +201,47 @@ ${if $($(1).wraps),,\
 endef
 
 
+# build the rules that make the type stubs of an extension module
+#   usage: extension.workflows.stubs {extension}
+define extension.workflows.stubs =
+
+# convenience target
+$(1).stubs: $($(1).stubs.stamp)
+
+# the generator imports the module from the prefix, so it waits for the module and its package,
+# and it runs in the scratch area of the extension, where no source tree can answer the import.
+# the stubs installed earlier go first, and the ones it writes take their place; names it cannot
+# resolve leave holes in them, so their count is reported along with the log that lists them. a
+# generator that fails leaves no stubs and no stamp, so the next build tries again
+$($(1).stubs.stamp): $($(1).module.so) | $($(1).pkg) $($(1).tmpdir)
+	$(rm.force-recurse) $($(1).stubs.tmpdir) $$@
+	${call extension.stubs.remove,$(1)}
+	if cd $($(1).tmpdir) && PYTHONPATH=$(builder.dest.pyc)${if ${value PYTHONPATH},:${value PYTHONPATH},} \
+            $(pybind11-stubgen.driver) -o $($(1).stubs.tmpdir) $($(1).stubs.module) \
+                > $($(1).stubs.log) 2>&1; then \
+        $(cp.fr) $($(1).stubs.source). $($(1).stubs.destination); \
+        touch $$@; \
+        errors=`grep -c "\[  ERROR\]" $($(1).stubs.log)`; \
+        if [ $$$$errors -eq 0 ]; then \
+            ${call log.action,"pyi",$($(1).stubs.module)}; \
+        else \
+            ${call log.action.attn,"pyi","$($(1).stubs.module): $$$$errors unresolved; see $($(1).stubs.log)"}; \
+        fi; \
+    else \
+        ${call log.action.attn,"pyi","$($(1).stubs.module): the generator failed; see $($(1).stubs.log)"}; \
+    fi
+
+endef
+
+
+# remove the installed stubs of an extension module, in either of the forms the generator writes;
+# the {stem} directory is the extension's own, since a package by that name would hide the module
+#   usage: extension.stubs.remove {extension}
+define extension.stubs.remove =
+$(rm.force) $($(1).stubs.installed).pyi; if [ -d $($(1).stubs.installed) ]; then find $($(1).stubs.installed) -name "*.pyi" -delete; find $($(1).stubs.installed) -depth -type d -empty -delete; fi
+endef
+
+
 # make a recipe to log the metadata of a specific extension
 # usage: extension.workflows.info {extension}
 define extension.workflows.info =
@@ -208,6 +259,7 @@ $(1).info:
 	@${call log.var,main,$($(1).module.main)}
 	@${call log.var,init,$($(1).module.init)}
 	@${call log.var,support archive,$($(1).lib.archive)}
+	@${call log.var,stubs,${if ${filter pybind11-stubgen,$($(1).extern)},$($(1).stubs.installed),}}
 # all done
 endef
 
