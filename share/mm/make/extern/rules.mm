@@ -49,11 +49,13 @@ extern.%.verify:
 	    @${call log.warning,"$* is not an active external here; add it to the .extern of an asset to verify it"}}
 
 
-# verify every external the project actually loads, reported as a verified set and a broken set
+# verify every external the project actually loads, reported as a verified set and a broken set,
+# followed by the externals the project asks for but cannot find installed
 extern.verify:
 	@${call log.sec,"extern","marker verification"}
 	@${call log.var,"verified","$(extern.markers.ok)"}
 	@${call log.var,"broken","$(extern.markers.broken)"}
+	@${call log.var,"missing","$(projects.extern.missing)"}
 
 
 # package database management
