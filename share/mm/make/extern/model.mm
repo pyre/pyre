@@ -48,9 +48,10 @@ extern.available := \
 # include one package's configuration exactly once, then descend into its {.dependencies}. the
 # recursion follows {.dependencies} only after the package's own {init.mm} has been read, so an edge
 # computed at load time (e.g. a parallel {hdf5} electing {mpi}) is already defined when we reach it.
-# {markers.required} and its hint are opt-in, so they are defaulted to empty here — otherwise the
-# marker checks reference an undefined variable and trip -warn-undefined. these defaults cannot be
-# written as comments inside the {define} because comment text would leak into the expansion
+# {markers.required}, its hint, and {markers.modules} are opt-in, so they are defaulted to empty
+# here — otherwise the marker checks reference an undefined variable and trip -warn-undefined.
+# these defaults cannot be written as comments inside the {define} because comment text would leak
+# into the expansion
 #   usage: extern.load.one {package}
 define extern.load.one =
     ${if ${filter $(1),$(extern.loaded)},,
@@ -60,6 +61,7 @@ define extern.load.one =
         }
         ${eval $(1).markers.required ?=}
         ${eval $(1).markers.required.hint ?=}
+        ${eval $(1).markers.modules ?=}
         ${eval $(1).dependencies ?=}
         ${foreach dep, $($(1).dependencies),
             ${call extern.load.one,$(dep)}

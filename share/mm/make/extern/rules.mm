@@ -30,6 +30,8 @@ define extern.verify.report =
 	@${call log.var,"libpath","$($(1).libpath)"}
 	@${call log.var,"libraries","$($(1).libraries)"}
 	@${if ${call extern.markers.libraries.missing,$(1)},${call log.error,"unresolved libraries: ${call extern.markers.libraries.missing,$(1)}"},${call log.info,"libraries ok"}}
+	@${if $($(1).markers.modules),${call log.var,"module markers","$($(1).markers.modules)"},:}
+	@${if $($(1).markers.modules),${if ${call extern.markers.modules.missing,$(1)},${call log.error,"unresolved modules: ${call extern.markers.modules.missing,$(1)}"},${call log.info,"modules ok"}},:}
 	@${if ${call extern.markers.required.missing,$(1)},${call log.error,"unset required values: ${call extern.markers.required.missing,$(1)}"},:}
 	@${if $($(1).dependencies),${call log.var,"dependencies","$($(1).dependencies)"},:}
 	@${if ${call extern.deps.missing,$(1)},${call log.error,"unavailable dependencies: ${call extern.deps.missing,$(1)}"},${if $($(1).dependencies),${call log.info,"dependencies ok"},:}}

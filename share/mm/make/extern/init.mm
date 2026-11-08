@@ -209,12 +209,25 @@ extern.markers.required.missing = \
     }
 
 
+# the module markers of a package that the interpreter of the build cannot import; a non-empty
+# result is proof that a tool which runs in that interpreter is not installed there. the import
+# leaves the current directory off the module search path, so a source tree cannot answer it
+#  usage: extern.markers.modules.missing {package}
+extern.markers.modules.missing = \
+    ${strip \
+        ${foreach module, $($(1).markers.modules), \
+            ${if ${shell $($(compiler.python).driver) -P -c "import $(module)" >/dev/null 2>&1 && echo ok},,$(module)} \
+        } \
+    }
+
+
 # the complete set of unresolved markers for a package; empty when the package checks out
 #  usage: extern.markers.problems {package}
 extern.markers.problems = \
     ${strip \
         ${call extern.markers.headers.missing,$(1)} \
         ${call extern.markers.libraries.missing,$(1)} \
+        ${call extern.markers.modules.missing,$(1)} \
         ${call extern.markers.required.missing,$(1)} \
     }
 
