@@ -8,6 +8,9 @@
 # the list of all extensions encountered
 extensions ?=
 
+# whether the build makes the type stubs of the extension modules; the driver sets it
+project.stubs ?=
+
 # the extension constructor
 #   usage: extensions.init {project} {extension}
 define extensions.init =
@@ -31,6 +34,9 @@ define extensions.init =
 
     # the list of external dependencies
     ${eval $(2).extern ?=}
+    # a build that makes stubs needs their generator; resolving the dependencies keeps it only
+    # when it is installed
+    ${if $(project.stubs),${eval $(2).extern += pybind11-stubgen},}
     # initialize the list of requested project dependencies
     ${eval $(2).extern.requested ?= $($(2).extern)}
     # the list of external dependencies that we have support for
@@ -59,6 +65,22 @@ define extensions.init =
     ${eval $(2).module.language ?= $(ext${suffix $($(2).module.init)})}
     # the name of the shared object
     ${eval $(2).module.so ?= ${call extension.module.dll,$(2)}}
+
+    # the type stubs
+    # the dotted name of the module, which is how the generator asks for it
+    ${eval $(2).stubs.module ?= ${subst /,.,$($($(2).pkg).name)/$($($(2).pkg).ext)}$($(2).stem)}
+    # the scratch area where the generator writes them
+    ${eval $(2).stubs.tmpdir ?= $($(2).tmpdir)stubs/}
+    # the record of what the generator had to say
+    ${eval $(2).stubs.log ?= $($(2).tmpdir)stubs.log}
+    # the marker of a successful run
+    ${eval $(2).stubs.stamp ?= $($(2).tmpdir)stubs.stamp}
+    # where the generator puts them in its scratch area, mirroring the package layout
+    ${eval $(2).stubs.source ?= $($(2).stubs.tmpdir)$($($(2).pkg).name)/$($($(2).pkg).ext)}
+    # where they are installed: next to the shared object, as {stem.pyi} for a module without
+    # submodules, or as a {stem} directory with an {__init__.pyi} for one with them
+    ${eval $(2).stubs.destination ?= $($($(2).pkg).pycdir)$($($(2).pkg).ext)}
+    ${eval $(2).stubs.installed ?= $($(2).stubs.destination)$($(2).stem)}
 
     # extensions may share their capsules
     ${eval $(2).capsule ?= capsules.h}
