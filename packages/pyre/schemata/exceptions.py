@@ -32,19 +32,23 @@ class CastingError(SchemaError):
 
 class EnumError(SchemaError):
     """
-    Exception raised on failed attempts to convert an enum value to its actual type
+    Exception raised when a value is neither the name nor the value of a member of an enum
     """
 
-    # the complaint
-    description = "could not coerce {0.value!r} into an enum of type {0.enum!r}"
+    # the complaint, which names the members a string may name
+    description = "could not coerce {0.value!r} into one of {0.names}"
 
     # meta-methods
     def __init__(self, enum, value, error, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save the error info
+        # save the enum
         self.enum = enum
+        # the names of its members
+        self.names = ", ".join(repr(name) for name in enum.__members__)
+        # the value it refused
         self.value = value
+        # and the reason
         self.error = error
         # all done
         return
