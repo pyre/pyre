@@ -11,6 +11,7 @@
 // the accessors are pybind11 functions, so this layer depends on pybind11 by construction; it is
 // the python-support tier of the library, never included by the pure c++ surface
 #include <type_traits>
+#include <utility>
 #include <pybind11/pybind11.h>
 
 
