@@ -63,255 +63,239 @@ void
 pyre::journal::py::devices(py::module & m)
 {
     // the base device
-    py::class_<device_t, py::smart_holder, trampoline::Device>(m, "Device")
-        // constructor
-        .def(py::init<string_t>(), "name"_a)
-        // accessor
-        .def_property_readonly("name", &device_t::name, "the name of the device")
-        // the marker of devices implemented outside c++
-        .def_property_readonly(
-            // the name
-            "foreign",
-            // the implementation
-            &device_t::foreign,
-            // the docstring
-            "whether the device is implemented in python, rather than c++")
-        // the interface
-        .def("alert", &device_t::alert, "entry"_a)
-        .def("help", &device_t::help, "entry"_a)
-        .def("memo", &device_t::memo, "entry"_a)
-        // done
-        ;
+    auto device = py::class_<device_t, py::smart_holder, trampoline::Device>(m, "Device");
+    // constructor
+    device.def(py::init<string_t>(), "name"_a);
+    // accessor
+    device.def_property_readonly("name", &device_t::name, "the name of the device");
+    // the marker of devices implemented outside c++
+    device.def_property_readonly(
+        // the name
+        "foreign",
+        // the implementation
+        &device_t::foreign,
+        // the docstring
+        "whether the device is implemented in python, rather than c++");
+    // the interface
+    device.def("alert", &device_t::alert, "entry"_a);
+    device.def("help", &device_t::help, "entry"_a);
+    device.def("memo", &device_t::memo, "entry"_a);
 
     // the trash can
-    py::class_<trash_t, device_t, py::smart_holder>(m, "Trash")
-        // constructor
-        .def(py::init<>())
-        // done
-        ;
+    auto trash = py::class_<trash_t, device_t, py::smart_holder>(m, "Trash");
+    // constructor
+    trash.def(py::init<>());
 
     // the streams
-    py::class_<stream_t, py::smart_holder, device_t>(m, "Stream")
-        // constructor
-        .def(py::init<const stream_t::name_type &, stream_t::stream_type &>())
-        // done
-        ;
+    auto stream = py::class_<stream_t, py::smart_holder, device_t>(m, "Stream");
+    // constructor
+    stream.def(py::init<const stream_t::name_type &, stream_t::stream_type &>());
 
     // cout
-    py::class_<cout_t, py::smart_holder, stream_t>(m, "Console")
-        // constructor
-        .def(py::init<>())
-        // done
-        ;
+    auto console = py::class_<cout_t, py::smart_holder, stream_t>(m, "Console");
+    // constructor
+    console.def(py::init<>());
 
     // cerr
-    py::class_<cerr_t, py::smart_holder, stream_t>(m, "ErrorConsole")
-        // constructor
-        .def(py::init<>())
-        // done
-        ;
+    auto errorConsole = py::class_<cerr_t, py::smart_holder, stream_t>(m, "ErrorConsole");
+    // constructor
+    errorConsole.def(py::init<>());
 
     // files
-    py::class_<file_t, py::smart_holder, device_t>(m, "File")
-        // constructor
-        .def(
-            // the implementation; the {mode} is spelled as for {open}, and {a} appends
-            py::init([](const file_t::path_type & path, const std::string & mode) {
-                // start out by writing over whatever is there
-                auto flag = std::ios_base::out;
-                // if the caller asked to append
-                if (mode == "a") {
-                    // set the corresponding bit
-                    flag |= std::ios_base::app;
-                }
-                // build the device
-                return std::make_shared<file_t>(path, flag);
-            }),
-            // the signature
-            "path"_a, "mode"_a = "w",
-            // the docstring
-            "a device that writes every entry to the file at {path}, opened with {mode}")
-        // the path to my file
-        .def_property_readonly(
-            // the name
-            "path",
-            // the implementation
-            [](const file_t & self) -> file_t::path_type {
-                // easy enough
-                return self.path();
-            },
-            // the docstring
-            "the path to the file i write to")
-        // done
-        ;
+    auto file = py::class_<file_t, py::smart_holder, device_t>(m, "File");
+    // constructor
+    file.def(
+        // the implementation; the {mode} is spelled as for {open}, and {a} appends
+        py::init([](const file_t::path_type & path, const std::string & mode) {
+            // start out by writing over whatever is there
+            auto flag = std::ios_base::out;
+            // if the caller asked to append
+            if (mode == "a") {
+                // set the corresponding bit
+                flag |= std::ios_base::app;
+            }
+            // build the device
+            return std::make_shared<file_t>(path, flag);
+        }),
+        // the signature
+        "path"_a, "mode"_a = "w",
+        // the docstring
+        "a device that writes every entry to the file at {path}, opened with {mode}");
+    // the path to my file
+    file.def_property_readonly(
+        // the name
+        "path",
+        // the implementation
+        [](const file_t & self) -> file_t::path_type {
+            // easy enough
+            return self.path();
+        },
+        // the docstring
+        "the path to the file i write to");
 
     // splitters
-    py::class_<splitter_t, py::smart_holder, device_t>(m, "Splitter")
-        // constructor
-        .def(
-            // the implementation; the devices arrive as any iterable, as they do for the pure
-            // python splitter
-            py::init([](py::iterable outputs, const splitter_t::name_type & name) {
-                // the devices, as the splitter wants them
-                splitter_t::outputs_type devices;
-                // go through the iterable
-                for (auto output : outputs) {
-                    // and convert each entry
-                    devices.push_back(output.cast<device_t::pointer_type>());
-                }
-                // build the splitter
-                return std::make_shared<splitter_t>(devices, name);
-            }),
-            // the signature
-            "outputs"_a = py::tuple(), "name"_a = "splitter",
-            // the docstring
-            "a device that forwards every entry to each of {outputs}, and to the devices attached "
-            "to it later")
-        // attach a device
-        .def(
-            // the name
-            "attach",
-            // the implementation
-            [](splitter_t & self, device_t::pointer_type device) -> splitter_t & {
-                // add it
-                return self.attach(device);
-            },
-            // the signature
-            "device"_a,
-            // the docstring
-            "add {device} to the set i forward to")
-        // detach a device
-        .def(
-            // the name
-            "detach",
-            // the implementation
-            [](splitter_t & self, device_t::pointer_type device) -> splitter_t & {
-                // remove it
-                return self.detach(device);
-            },
-            // the signature
-            "device"_a,
-            // the docstring
-            "remove every attachment of {device} from the set i forward to")
-        // the attached devices
-        .def_property_readonly(
-            // the name
-            "outputs",
-            // the implementation
-            [](const splitter_t & self) -> const splitter_t::outputs_type & {
-                // easy enough
-                return self.outputs();
-            },
-            // the docstring
-            "the devices i forward to")
-        // done
-        ;
+    auto splitter = py::class_<splitter_t, py::smart_holder, device_t>(m, "Splitter");
+    // constructor
+    splitter.def(
+        // the implementation; the devices arrive as any iterable, as they do for the pure
+        // python splitter
+        py::init([](py::iterable outputs, const splitter_t::name_type & name) {
+            // the devices, as the splitter wants them
+            splitter_t::outputs_type devices;
+            // go through the iterable
+            for (auto output : outputs) {
+                // and convert each entry
+                devices.push_back(output.cast<device_t::pointer_type>());
+            }
+            // build the splitter
+            return std::make_shared<splitter_t>(devices, name);
+        }),
+        // the signature
+        "outputs"_a = py::tuple(), "name"_a = "splitter",
+        // the docstring
+        "a device that forwards every entry to each of {outputs}, and to the devices attached "
+        "to it later");
+    // attach a device
+    splitter.def(
+        // the name
+        "attach",
+        // the implementation
+        [](splitter_t & self, device_t::pointer_type device) -> splitter_t & {
+            // add it
+            return self.attach(device);
+        },
+        // the signature
+        "device"_a,
+        // the docstring
+        "add {device} to the set i forward to");
+    // detach a device
+    splitter.def(
+        // the name
+        "detach",
+        // the implementation
+        [](splitter_t & self, device_t::pointer_type device) -> splitter_t & {
+            // remove it
+            return self.detach(device);
+        },
+        // the signature
+        "device"_a,
+        // the docstring
+        "remove every attachment of {device} from the set i forward to");
+    // the attached devices
+    splitter.def_property_readonly(
+        // the name
+        "outputs",
+        // the implementation
+        [](const splitter_t & self) -> const splitter_t::outputs_type & {
+            // easy enough
+            return self.outputs();
+        },
+        // the docstring
+        "the devices i forward to");
 
     // tees
-    py::class_<tee_t, py::smart_holder, splitter_t>(m, "Tee")
-        // constructor
-        .def(
-            // the implementation; the paths arrive as any iterable of strings, since the
-            // vector of strings is bound as the opaque {Page} and a python list does not
-            // convert to it
-            py::init([](py::iterable paths, const tee_t::name_type & name) {
-                // the paths, as the tee wants them
-                tee_t::paths_type files;
-                // go through the iterable
-                for (auto path : paths) {
-                    // and convert each entry
-                    files.push_back(path.cast<tee_t::path_type>());
-                }
-                // build the tee
-                return std::make_shared<tee_t>(files, name);
-            }),
-            // the signature
-            "paths"_a = py::tuple(), "name"_a = "tee",
-            // the docstring
-            "a splitter that writes every entry to the console and to a file at each of {paths}")
-        // done
-        ;
+    auto tee = py::class_<tee_t, py::smart_holder, splitter_t>(m, "Tee");
+    // constructor
+    tee.def(
+        // the implementation; the paths arrive as any iterable of strings, since the
+        // vector of strings is bound as the opaque {Page} and a python list does not
+        // convert to it
+        py::init([](py::iterable paths, const tee_t::name_type & name) {
+            // the paths, as the tee wants them
+            tee_t::paths_type files;
+            // go through the iterable
+            for (auto path : paths) {
+                // and convert each entry
+                files.push_back(path.cast<tee_t::path_type>());
+            }
+            // build the tee
+            return std::make_shared<tee_t>(files, name);
+        }),
+        // the signature
+        "paths"_a = py::tuple(), "name"_a = "tee",
+        // the docstring
+        "a splitter that writes every entry to the console and to a file at each of {paths}");
 
     // couriers
-    py::class_<courier_t, py::smart_holder, device_t>(m, "Courier")
-        // constructor
-        .def(
-            // the implementation
-            py::init<
-                courier_t::descriptor_type, const courier_t::name_type &, device_t::pointer_type>(),
-            // the signature
-            "descriptor"_a, "name"_a = "courier", "mirror"_a = nullptr,
-            // the docstring
-            "a device that ships entries as records down {descriptor}, and to {mirror}")
+    auto courier = py::class_<courier_t, py::smart_holder, device_t>(m, "Courier");
+    // constructor
+    courier.def(
+        // the implementation
+        py::init<
+            courier_t::descriptor_type, const courier_t::name_type &, device_t::pointer_type>(),
+        // the signature
+        "descriptor"_a, "name"_a = "courier", "mirror"_a = nullptr,
+        // the docstring
+        "a device that ships entries as records down {descriptor}, and to {mirror}");
 
-        // the descriptor
-        .def_property_readonly(
-            "descriptor",
-            // the getter
-            &courier_t::descriptor,
-            // the docstring
-            "the descriptor the records are written to")
+    // the descriptor
+    courier.def_property_readonly(
+        "descriptor",
+        // the getter
+        &courier_t::descriptor,
+        // the docstring
+        "the descriptor the records are written to");
 
-        // the mirror
-        .def_property(
-            "mirror",
-            // the getter
-            [](const courier_t & self) -> courier_t::mirror_type {
-                // easy enough
-                return self.mirror();
-            },
-            // the setter
+    // the mirror
+    courier.def_property(
+        "mirror",
+        // the getter
+        [](const courier_t & self) -> courier_t::mirror_type {
+            // easy enough
+            return self.mirror();
+        },
+        // the setter
+        pyre::journal::py::setter(
+            courier,
             [](courier_t & self, device_t::pointer_type mirror) -> void {
                 // install the new mirror
                 self.mirror(mirror);
                 // all done
                 return;
-            },
-            // the docstring
-            "the device that also gets every entry; {None} stops the mirroring")
+            }),
+        // the docstring
+        "the device that also gets every entry; {None} stops the mirroring");
 
-        // the sequence number
-        .def_property_readonly(
-            "seq",
-            // the getter
-            &courier_t::seq,
-            // the docstring
-            "the sequence number of the last record stamped")
+    // the sequence number
+    courier.def_property_readonly(
+        "seq",
+        // the getter
+        &courier_t::seq,
+        // the docstring
+        "the sequence number of the last record stamped");
 
-        // the number of records delivered
-        .def_property_readonly(
-            "shipped",
-            // the getter
-            &courier_t::shipped,
-            // the docstring
-            "the number of records that made it out")
+    // the number of records delivered
+    courier.def_property_readonly(
+        "shipped",
+        // the getter
+        &courier_t::shipped,
+        // the docstring
+        "the number of records that made it out");
 
-        // the number of records lost
-        .def_property_readonly(
-            "dropped",
-            // the getter
-            &courier_t::dropped,
-            // the docstring
-            "the number of records lost since the last successful write")
+    // the number of records lost
+    courier.def_property_readonly(
+        "dropped",
+        // the getter
+        &courier_t::dropped,
+        // the docstring
+        "the number of records lost since the last successful write");
 
-        // the state of the far end
-        .def_property_readonly(
-            "dead",
-            // the getter
-            &courier_t::dead,
-            // the docstring
-            "whether the far end has gone away")
+    // the state of the far end
+    courier.def_property_readonly(
+        "dead",
+        // the getter
+        &courier_t::dead,
+        // the docstring
+        "whether the far end has gone away");
 
-        // release the descriptor
-        .def(
-            // the name
-            "close",
-            // the implementation
-            &courier_t::close,
-            // the docstring
-            "release the descriptor; nothing is delivered after this")
-        // done
-        ;
+    // release the descriptor
+    courier.def(
+        // the name
+        "close",
+        // the implementation
+        &courier_t::close,
+        // the docstring
+        "release the descriptor; nothing is delivered after this");
 
     // all done
     return;

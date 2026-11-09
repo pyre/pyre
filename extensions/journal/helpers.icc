@@ -66,4 +66,19 @@ pyre::journal::py::complaint(const char * type, const errorT & error) -> py::obj
 }
 
 
+// the setter of a property; the method is rebound to the class bound by {cls}, since it may be
+// declared by a base that python never sees; marking it as a method lets the name of its
+// parameter skip over {self}, and marking it as a setter discards whatever the method returns
+template <class classT, class methodT>
+auto
+pyre::journal::py::setter(const classT & cls, methodT method) -> py::cpp_function
+{
+    // the class bound by {cls}
+    using bound_t = typename classT::type;
+    // build the setter, and return it
+    return py::cpp_function(
+        py::method_adaptor<bound_t>(method), py::is_method(cls), py::is_setter(), "value"_a);
+}
+
+
 // end of file
