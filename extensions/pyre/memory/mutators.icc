@@ -12,29 +12,34 @@
 #include "mutators.h"
 
 
-// decorator that adds interface common to all writable strategies
-template <class T>
+// decorator that adds the write access common to all writable storage strategies
+template <class memT>
 auto
-pyre::py::memory::mutators(pymem_t<T> & cls) -> void
+pyre::py::memory::mutators(pymem_t<memT> & cls) -> void
 {
     // alias the storage strategy
-    using mem_t = T;
+    using mem_t = memT;
+    // the position of a cell, signed so that a negative one reaches the bounds check as such
+    using index_t = typename mem_t::difference_type;
     // the native scalar behind the cell, which is what python hands over; a byte ordered cell
     // swaps on the way in
     using native_t = pyre::memory::native_t<typename mem_t::value_type>;
 
+    // write access to a single cell
     cls.def(
         // the name
         "__setitem__",
         // the implementation
-        [](mem_t & self, typename mem_t::size_type index, native_t value) {
-            // set the {value} at {index}
+        [](mem_t & self, index_t index, native_t value) -> void {
+            // store {value} in the cell at {index}
             self.at(index) = value;
             // all done
             return;
         },
+        // the signature
+        "index"_a, "value"_a,
         // the docstring
-        "set the value of the cell at a given index");
+        "store {value} in the cell at {index}");
 
     // all done
     return;
