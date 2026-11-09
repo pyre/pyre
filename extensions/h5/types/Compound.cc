@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::compound(py::module & m)
+pyre::h5::py::types::compoundClass(py::module & m)
 {
-    // add the class
-    auto cls = py::class_<CompType, DataType>(
+    // register the class
+    py::class_<CompType, DataType>(
         // in scope
         m,
         // class name
         "compound",
         // docstring
         "an HDF5 compound datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the compound datatypes
+void
+pyre::h5::py::types::compound()
+{
+    // the class, registered by {compoundClass}
+    auto cls = py::class_<CompType, DataType>(py::type::of<CompType>());
 
     // constructors
     cls.def(

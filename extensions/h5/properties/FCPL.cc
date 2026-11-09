@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// file creation property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::fcpl(py::module & m)
+pyre::h5::py::properties::fcplClass(py::module & m)
 {
-    // add bindings for hdf5 file creation property lists
-    auto cls = py::class_<FCPL, PropList>(
+    // register the class of hdf5 file creation property lists
+    py::class_<FCPL, PropList>(
         // in scope
         m,
         // class name
         "fcpl",
         // docstring
         "a file creation property list");
+
+    // all done
+    return;
+}
+
+
+// file creation property lists
+void
+pyre::h5::py::properties::fcpl()
+{
+    // the class, registered by {fcplClass}
+    auto cls = py::class_<FCPL, PropList>(py::type::of<FCPL>());
 
     // static properties
     cls.def_property_readonly_static(

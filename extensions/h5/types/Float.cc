@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::float_(py::module & m)
+pyre::h5::py::types::floatClass(py::module & m)
 {
-    // add the class
-    auto cls = py::class_<FloatType, AtomType>(
+    // register the class
+    py::class_<FloatType, AtomType>(
         // in scope
         m,
         // class name
         "float",
         // docstring
         "an HDF5 float datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the floating point datatypes
+void
+pyre::h5::py::types::float_()
+{
+    // the class, registered by {floatClass}
+    auto cls = py::class_<FloatType, AtomType>(py::type::of<FloatType>());
 
     // constructors
     // from an existing type

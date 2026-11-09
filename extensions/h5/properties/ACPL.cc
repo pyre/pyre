@@ -11,19 +11,31 @@
 #include "forward.h"
 
 
-// attribute creation property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::acpl(py::module & m)
+pyre::h5::py::properties::acplClass(py::module & m)
 {
-    // add bindings for hdf5 attribute creation property lists; everything they govern is
+    // register the class of hdf5 attribute creation property lists; everything they govern is
     // inherited from {strcpl}
-    auto cls = py::class_<ACPL, STRCPL>(
+    py::class_<ACPL, STRCPL>(
         // in scope
         m,
         // class name
         "acpl",
         // docstring
         "an attribute creation property list");
+
+    // all done
+    return;
+}
+
+
+// attribute creation property lists
+void
+pyre::h5::py::properties::acpl()
+{
+    // the class, registered by {acplClass}
+    auto cls = py::class_<ACPL, STRCPL>(py::type::of<ACPL>());
 
     // static properties
     cls.def_property_readonly_static(

@@ -13,7 +13,9 @@
 
 
 namespace pyre::h5::py::types {
-    // the module initializer
+    // make the module and register its classes
+    void classes(py::module &);
+    // the module initializer, which binds the interfaces of the registered classes
     void __init__(py::module &);
 } // namespace pyre::h5::py::types
 

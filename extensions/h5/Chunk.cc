@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// one chunk of a chunked dataset, as it exists in the file
+// register the class, so that every signature can name it
 void
-pyre::h5::py::chunk(py::module & m)
+pyre::h5::py::chunkClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<Chunk>(
+    // register the class of the record
+    py::class_<Chunk>(
         // in scope
         m,
         // class name
         "Chunk",
         // docstring
         "one chunk of a chunked dataset, as it exists in the file");
+
+    // all done
+    return;
+}
+
+
+// one chunk of a chunked dataset, as it exists in the file
+void
+pyre::h5::py::chunk()
+{
+    // the class, registered by {chunkClass}
+    auto cls = py::class_<Chunk>(py::type::of<Chunk>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

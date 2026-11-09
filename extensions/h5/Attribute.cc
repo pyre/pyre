@@ -122,18 +122,30 @@ namespace pyre::h5::py {
 } // namespace pyre::h5::py
 
 
-// attributes
+// register the class, so that every signature can name it
 void
-pyre::h5::py::attribute(py::module & m)
+pyre::h5::py::attributeClass(py::module & m)
 {
-    // add bindings for hdf5 attributes
-    auto cls = py::class_<Attribute>(
+    // register the class of hdf5 attributes
+    py::class_<Attribute>(
         // in scope
         m,
         // class name
         "Attribute",
         // docstring
         "an HDF5 attribute");
+
+    // all done
+    return;
+}
+
+
+// attributes
+void
+pyre::h5::py::attribute()
+{
+    // the class, registered by {attributeClass}
+    auto cls = py::class_<Attribute>(py::type::of<Attribute>());
 
     // retrieve my name
     cls.def_property_readonly(

@@ -9,16 +9,16 @@
 #include "mosaics.h"
 
 
-// build the module-local flavors of the type-erased classes
-// {Grid} and {Mosaic} are also registered by the {pyre} extension; each module keeps its own
-// python flavor so that no registered type ever has to cross an extension boundary, where
+// register the module-local flavors of the type-erased classes, so that every signature can name
+// them; {Grid} and {Mosaic} are also registered by the {pyre} extension; each module keeps its
+// own python flavor so that no registered type ever has to cross an extension boundary, where
 // type identity is at the mercy of the dynamic loader; values travel between the two worlds
 // through the buffer protocol, which is module-blind by construction
 auto
-pyre::h5::py::mosaics(py::module & m) -> void
+pyre::h5::py::mosaicClasses(py::module & m) -> void
 {
     // the type-erased grid: the panes of a mosaic travel as these
-    auto grid = py::class_<anygrid_t>(
+    py::class_<anygrid_t>(
         // in the module
         m,
         // named
@@ -29,6 +29,29 @@ pyre::h5::py::mosaics(py::module & m) -> void
         py::module_local(),
         // the docstring
         "a dense grid over one page of a mosaic");
+    // the type-erased mosaic, wired to a dataset by the {mosaic} factories
+    py::class_<anymosaic_t>(
+        // in the module
+        m,
+        // named
+        "Mosaic",
+        // visible only within this module
+        py::module_local(),
+        // the docstring
+        "an out-of-core view of a chunked dataset: chunks materialize as they are filled, "
+        "and travel as zero-copy panes");
+
+    // all done
+    return;
+}
+
+
+// bind the module-local flavors of the type-erased classes
+auto
+pyre::h5::py::mosaics() -> void
+{
+    // the type-erased grid, registered by {mosaicClasses}
+    auto grid = py::class_<anygrid_t>(py::type::of<anygrid_t>());
 
     // wire the buffer protocol to the grid's own description
     grid.def_buffer([](anygrid_t & self) -> py::buffer_info { return self.view(); });
@@ -100,17 +123,8 @@ pyre::h5::py::mosaics(py::module & m) -> void
         // the docstring
         "write {value} into the cell at a full integer {index}");
 
-    // the type-erased mosaic, wired to a dataset by the {mosaic} factories
-    auto mos = py::class_<anymosaic_t>(
-        // in the module
-        m,
-        // named
-        "Mosaic",
-        // visible only within this module
-        py::module_local(),
-        // the docstring
-        "an out-of-core view of a chunked dataset: chunks materialize as they are filled, "
-        "and travel as zero-copy panes");
+    // the type-erased mosaic, registered by {mosaicClasses}
+    auto mos = py::class_<anymosaic_t>(py::type::of<anymosaic_t>());
 
     // the extent along each axis
     mos.def_property_readonly(

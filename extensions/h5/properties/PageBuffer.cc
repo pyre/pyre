@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// the buffer a paged file gathers its pages in
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::pageBuffer(py::module & m)
+pyre::h5::py::properties::pageBufferClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<PageBuffer>(
+    // register the class of the record
+    py::class_<PageBuffer>(
         // in scope
         m,
         // class name
         "PageBuffer",
         // docstring
         "the buffer a paged file gathers its pages in");
+
+    // all done
+    return;
+}
+
+
+// the buffer a paged file gathers its pages in
+void
+pyre::h5::py::properties::pageBuffer()
+{
+    // the class, registered by {pageBufferClass}
+    auto cls = py::class_<PageBuffer>(py::type::of<PageBuffer>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

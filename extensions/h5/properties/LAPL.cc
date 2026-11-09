@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// link access property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::lapl(py::module & m)
+pyre::h5::py::properties::laplClass(py::module & m)
 {
-    // add bindings for link access property lists
-    auto cls = py::class_<LAPL, PropList>(
+    // register the class of link access property lists
+    py::class_<LAPL, PropList>(
         // in scope
         m,
         // class name
         "lapl",
         // docstring
         "a link access property list");
+
+    // all done
+    return;
+}
+
+
+// link access property lists
+void
+pyre::h5::py::properties::lapl()
+{
+    // the class, registered by {laplClass}
+    auto cls = py::class_<LAPL, PropList>(py::type::of<LAPL>());
 
     // static properties
     cls.def_property_readonly_static(

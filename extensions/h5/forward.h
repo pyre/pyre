@@ -16,18 +16,32 @@ namespace pyre::h5::py {
     // wrappers for the C++ HDF5 api
     // support
     void enums(py::module &);
-    // attributes
-    void attribute(py::module &);
-    // datasets
+
+    // register the classes of the attributes
+    void attributeClass(py::module &);
+    // of the datasets
+    void dataspaceClass(py::module &);
+    void chunkClass(py::module &);
+    void datasetClass(py::module &);
+    // of the structural entities
+    void groupClass(py::module &);
+    void pageBufferStatsClass(py::module &);
+    void fileClass(py::module &);
+    // and the module-local flavors of the type-erased grid and mosaic
+    void mosaicClasses(py::module &);
+
+    // bind the attributes
+    void attribute();
+    // the datasets
     void dataspace(py::module &);
-    void chunk(py::module &);
-    void dataset(py::module &);
-    // structural
-    void group(py::module &);
-    void pageBufferStats(py::module &);
-    void file(py::module &);
+    void chunk();
+    void dataset();
+    // the structural entities
+    void group();
+    void pageBufferStats();
+    void file();
     // the module-local flavors of the type-erased grid and mosaic
-    void mosaics(py::module &);
+    void mosaics();
 } // namespace pyre::h5::py
 
 

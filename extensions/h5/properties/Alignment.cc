@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// where the objects in a file start
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::alignment(py::module & m)
+pyre::h5::py::properties::alignmentClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<Alignment>(
+    // register the class of the record
+    py::class_<Alignment>(
         // in scope
         m,
         // class name
         "Alignment",
         // docstring
         "where the objects in a file start");
+
+    // all done
+    return;
+}
+
+
+// where the objects in a file start
+void
+pyre::h5::py::properties::alignment()
+{
+    // the class, registered by {alignmentClass}
+    auto cls = py::class_<Alignment>(py::type::of<Alignment>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

@@ -27,22 +27,34 @@ PYBIND11_MODULE(h5, m)
     // enums
     pyre::h5::py::enums(m);
 
-    // subpackages
-    pyre::h5::py::properties::__init__(m);
-    pyre::h5::py::types::__init__(m);
+    // register every class before binding any interface, since the signatures name the
+    // classes they traffic in, across the subpackages: the property lists and the datatypes
+    pyre::h5::py::properties::classes(m);
+    pyre::h5::py::types::classes(m);
+    // the objects, the group before the file that derives from it
+    pyre::h5::py::dataspaceClass(m);
+    pyre::h5::py::attributeClass(m);
+    pyre::h5::py::chunkClass(m);
+    pyre::h5::py::datasetClass(m);
+    pyre::h5::py::groupClass(m);
+    pyre::h5::py::pageBufferStatsClass(m);
+    pyre::h5::py::fileClass(m);
+    // and the module-local flavors of the type-erased grid and mosaic
+    pyre::h5::py::mosaicClasses(m);
 
-    // object bindings
+    // now bind their interfaces: the subpackages
+    pyre::h5::py::properties::__init__();
+    pyre::h5::py::types::__init__(m);
+    // the objects
     pyre::h5::py::dataspace(m);
-    pyre::h5::py::attribute(m);
-    // the chunk record, before the dataset that hands it out
-    pyre::h5::py::chunk(m);
-    pyre::h5::py::dataset(m);
-    pyre::h5::py::group(m);
-    // the page buffer tally, before the file that hands it out
-    pyre::h5::py::pageBufferStats(m);
-    pyre::h5::py::file(m);
+    pyre::h5::py::attribute();
+    pyre::h5::py::chunk();
+    pyre::h5::py::dataset();
+    pyre::h5::py::group();
+    pyre::h5::py::pageBufferStats();
+    pyre::h5::py::file();
     // the module-local flavors of the type-erased grid and mosaic
-    pyre::h5::py::mosaics(m);
+    pyre::h5::py::mosaics();
 
     // all done
     return;

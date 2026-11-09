@@ -11,19 +11,31 @@
 #include "forward.h"
 
 
-// group creation property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::gcpl(py::module & m)
+pyre::h5::py::properties::gcplClass(py::module & m)
 {
-    // add bindings for hdf5 group creation property lists; they inherit the settings that
+    // register the class of hdf5 group creation property lists; they inherit the settings that
     // govern anything one creates from {ocpl}
-    auto cls = py::class_<GCPL, OCPL>(
+    py::class_<GCPL, OCPL>(
         // in scope
         m,
         // class name
         "gcpl",
         // docstring
         "a group creation property list");
+
+    // all done
+    return;
+}
+
+
+// group creation property lists
+void
+pyre::h5::py::properties::gcpl()
+{
+    // the class, registered by {gcplClass}
+    auto cls = py::class_<GCPL, OCPL>(py::type::of<GCPL>());
 
     // static properties
     cls.def_property_readonly_static(

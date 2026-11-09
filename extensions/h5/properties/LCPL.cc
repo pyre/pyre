@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// link creation property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::lcpl(py::module & m)
+pyre::h5::py::properties::lcplClass(py::module & m)
 {
-    // add bindings for link creation property lists
-    auto cls = py::class_<LCPL, STRCPL>(
+    // register the class of link creation property lists
+    py::class_<LCPL, STRCPL>(
         // in scope
         m,
         // class name
         "lcpl",
         // docstring
         "a link creation property list");
+
+    // all done
+    return;
+}
+
+
+// link creation property lists
+void
+pyre::h5::py::properties::lcpl()
+{
+    // the class, registered by {lcplClass}
+    auto cls = py::class_<LCPL, STRCPL>(py::type::of<LCPL>());
 
     // static properties
     cls.def_property_readonly_static(

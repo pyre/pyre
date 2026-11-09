@@ -11,9 +11,27 @@
 #include "forward.h"
 
 
+// register the class, so that every signature can name it
+void
+pyre::h5::py::groupClass(py::module & m)
+{
+    // register the class of hdf5 groups
+    py::class_<Group>(
+        // in scope
+        m,
+        // class name
+        "Group",
+        // docstring
+        "an HDF5 group");
+
+    // all done
+    return;
+}
+
+
 // objects
 void
-pyre::h5::py::group(py::module & m)
+pyre::h5::py::group()
 {
     // helpers
     auto getByName = [](const Group & self, const string_t & name) -> py::object {
@@ -57,14 +75,8 @@ pyre::h5::py::group(py::module & m)
         return getByName(self, name);
     };
 
-    // add bindings for hdf5 groups
-    auto cls = py::class_<Group>(
-        // in scope
-        m,
-        // class name
-        "Group",
-        // docstring
-        "an HDF5 group");
+    // the class, registered by {groupClass}
+    auto cls = py::class_<Group>(py::type::of<Group>());
 
     // properties
     cls.def_property_readonly(

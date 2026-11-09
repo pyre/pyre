@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// the caches a file reaches its data through
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::cache(py::module & m)
+pyre::h5::py::properties::cacheClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<Cache>(
+    // register the class of the record
+    py::class_<Cache>(
         // in scope
         m,
         // class name
         "Cache",
         // docstring
         "the caches a file reaches its data through");
+
+    // all done
+    return;
+}
+
+
+// the caches a file reaches its data through
+void
+pyre::h5::py::properties::cache()
+{
+    // the class, registered by {cacheClass}
+    auto cls = py::class_<Cache>(py::type::of<Cache>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

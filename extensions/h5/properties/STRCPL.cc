@@ -11,19 +11,31 @@
 #include "forward.h"
 
 
-// string creation property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::strcpl(py::module & m)
+pyre::h5::py::properties::strcplClass(py::module & m)
 {
-    // add bindings for the properties shared by everything that lays down a name; there is
+    // register the class of the properties shared by everything that lays down a name; there is
     // no constructor, since these settings are always part of a concrete list
-    auto cls = py::class_<STRCPL, PropList>(
+    py::class_<STRCPL, PropList>(
         // in scope
         m,
         // class name
         "strcpl",
         // docstring
         "the properties shared by everything that lays down a name");
+
+    // all done
+    return;
+}
+
+
+// string creation property lists
+void
+pyre::h5::py::properties::strcpl()
+{
+    // the class, registered by {strcplClass}
+    auto cls = py::class_<STRCPL, PropList>(py::type::of<STRCPL>());
 
     // interface
     // the character set the names are recorded in

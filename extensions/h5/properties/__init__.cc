@@ -15,9 +15,10 @@
 #include "forward.h"
 
 
-// property lists
+// make the namespace of the property lists, and register their classes in it, so that every
+// signature can name them
 void
-pyre::h5::py::properties::__init__(py::module & m)
+pyre::h5::py::properties::classes(py::module & m)
 {
     // make a new namespace to hold the property list classes
     auto properties = m.def_submodule(
@@ -26,40 +27,79 @@ pyre::h5::py::properties::__init__(py::module & m)
         // its docstring
         "HDF5 property lists");
 
-    // add the class definitions
-    // the values the lists trade in; register them first, so a list that mentions one
-    // in a signature finds it already known
-    chunkCache(properties);
-    alignment(properties);
-    cache(properties);
-    pageBuffer(properties);
-    versionBounds(properties);
-    filespaceStrategy(properties);
-    sizes(properties);
-    phaseChange(properties);
-    linkEstimate(properties);
-    filter(properties);
+    // the values the lists trade in
+    chunkCacheClass(properties);
+    alignmentClass(properties);
+    cacheClass(properties);
+    pageBufferClass(properties);
+    versionBoundsClass(properties);
+    filespaceStrategyClass(properties);
+    sizesClass(properties);
+    phaseChangeClass(properties);
+    linkEstimateClass(properties);
+    filterClass(properties);
     // the generic base
-    pl(properties);
-    // the properties shared by everything one creates; register it before the concrete
-    // creation lists, so their base class is known by the time they are declared
-    ocpl(properties);
+    plClass(properties);
+    // the properties shared by everything one creates, before the concrete creation lists that
+    // derive from it
+    ocplClass(properties);
     // and by everything that lays down a name
-    strcpl(properties);
+    strcplClass(properties);
     // dataset access, creation, and transfer
-    dapl(properties);
-    dcpl(properties);
-    dxpl(properties);
+    daplClass(properties);
+    dcplClass(properties);
+    dxplClass(properties);
     // file access and creation
-    fapl(properties);
-    fcpl(properties);
+    faplClass(properties);
+    fcplClass(properties);
     // group creation
-    gcpl(properties);
+    gcplClass(properties);
     // link access and creation
-    lapl(properties);
-    lcpl(properties);
+    laplClass(properties);
+    lcplClass(properties);
     // attribute creation
-    acpl(properties);
+    acplClass(properties);
+
+    // all done
+    return;
+}
+
+
+// property lists
+void
+pyre::h5::py::properties::__init__()
+{
+    // the values the lists trade in
+    chunkCache();
+    alignment();
+    cache();
+    pageBuffer();
+    versionBounds();
+    filespaceStrategy();
+    sizes();
+    phaseChange();
+    linkEstimate();
+    filter();
+    // the generic base
+    pl();
+    // the properties shared by everything one creates
+    ocpl();
+    // and by everything that lays down a name
+    strcpl();
+    // dataset access, creation, and transfer
+    dapl();
+    dcpl();
+    dxpl();
+    // file access and creation
+    fapl();
+    fcpl();
+    // group creation
+    gcpl();
+    // link access and creation
+    lapl();
+    lcpl();
+    // attribute creation
+    acpl();
 
     // all done
     return;

@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// dataset access property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::dapl(py::module & m)
+pyre::h5::py::properties::daplClass(py::module & m)
 {
-    // add bindings for hdf5 dataset access property lists
-    auto cls = py::class_<DAPL, PropList>(
+    // register the class of hdf5 dataset access property lists
+    py::class_<DAPL, PropList>(
         // in scope
         m,
         // class name
         "dapl",
         // docstring
         "a dataset access property list");
+
+    // all done
+    return;
+}
+
+
+// dataset access property lists
+void
+pyre::h5::py::properties::dapl()
+{
+    // the class, registered by {daplClass}
+    auto cls = py::class_<DAPL, PropList>(py::type::of<DAPL>());
 
     // static properties
     cls.def_property_readonly_static(

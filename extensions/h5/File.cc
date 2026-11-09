@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::file(py::module & m)
+pyre::h5::py::fileClass(py::module & m)
 {
-    // add bindings for hdf5 file objects
-    auto cls = py::class_<File, Group>(
+    // register the class of hdf5 file objects
+    py::class_<File, Group>(
         // in scope
         m,
         // class name
         "File",
         // docstring
         "an HDF5 file");
+
+    // all done
+    return;
+}
+
+
+// file objects
+void
+pyre::h5::py::file()
+{
+    // the class, registered by {fileClass}
+    auto cls = py::class_<File, Group>(py::type::of<File>());
 
     // constructor
     cls.def(

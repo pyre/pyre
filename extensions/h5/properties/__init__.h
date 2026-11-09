@@ -13,8 +13,10 @@
 
 
 namespace pyre::h5::py::properties {
-    // the module initializer
-    void __init__(py::module &);
+    // make the module and register its classes
+    void classes(py::module &);
+    // the module initializer, which binds the interfaces of the registered classes
+    void __init__();
 } // namespace pyre::h5::py::properties
 
 

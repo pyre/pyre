@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::str(py::module & m)
+pyre::h5::py::types::strClass(py::module & m)
 {
-    // add the class
-    auto cls = py::class_<StrType, AtomType>(
+    // register the class
+    py::class_<StrType, AtomType>(
         // in scope
         m,
         // class name
         "str",
         // docstring
         "an HDF5 string datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the string datatypes
+void
+pyre::h5::py::types::str()
+{
+    // the class, registered by {strClass}
+    auto cls = py::class_<StrType, AtomType>(py::type::of<StrType>());
 
     // constructors
     // from an existing type

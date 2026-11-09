@@ -15,12 +15,13 @@
 #include "forward.h"
 
 
-// file objects
+// register the class of the predefined datatypes, so that every signature can name it; they have
+// no interface beyond what they inherit
 void
-pyre::h5::py::types::predefined(py::module & m)
+pyre::h5::py::types::predefinedClass(py::module & m)
 {
-    // add the class
-    auto predType = py::class_<PredType, AtomType>(
+    // register the class
+    py::class_<PredType, AtomType>(
         // in scope
         m,
         // class name

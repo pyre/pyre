@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// one stage of the pipeline a dataset's cells pass through
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::filter(py::module & m)
+pyre::h5::py::properties::filterClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<Filter>(
+    // register the class of the record
+    py::class_<Filter>(
         // in scope
         m,
         // class name
         "Filter",
         // docstring
         "one stage of the pipeline a dataset's cells pass through");
+
+    // all done
+    return;
+}
+
+
+// one stage of the pipeline a dataset's cells pass through
+void
+pyre::h5::py::properties::filter()
+{
+    // the class, registered by {filterClass}
+    auto cls = py::class_<Filter>(py::type::of<Filter>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

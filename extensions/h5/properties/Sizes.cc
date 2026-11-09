@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// the widths hdf5 records positions and lengths in
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::sizes(py::module & m)
+pyre::h5::py::properties::sizesClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<Sizes>(
+    // register the class of the record
+    py::class_<Sizes>(
         // in scope
         m,
         // class name
         "Sizes",
         // docstring
         "the widths hdf5 records positions and lengths in");
+
+    // all done
+    return;
+}
+
+
+// the widths hdf5 records positions and lengths in
+void
+pyre::h5::py::properties::sizes()
+{
+    // the class, registered by {sizesClass}
+    auto cls = py::class_<Sizes>(py::type::of<Sizes>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

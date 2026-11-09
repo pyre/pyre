@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::pl(py::module & m)
+pyre::h5::py::properties::plClass(py::module & m)
 {
-    // add bindings for hdf5 property lists
-    auto cls = py::class_<PropList>(
+    // register the class of hdf5 property lists
+    py::class_<PropList>(
         // in scope
         m,
         // class name
         "list",
         // docstring
         "a basic property list");
+
+    // all done
+    return;
+}
+
+
+// property lists
+void
+pyre::h5::py::properties::pl()
+{
+    // the class, registered by {plClass}
+    auto cls = py::class_<PropList>(py::type::of<PropList>());
 
     // constructor
     cls.def(
