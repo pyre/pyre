@@ -86,10 +86,9 @@ pyre::journal::py::devices(py::module & m)
     // constructor
     trash.def(py::init<>());
 
-    // the streams
-    auto stream = py::class_<stream_t, py::smart_holder, device_t>(m, "Stream");
-    // constructor
-    stream.def(py::init<const stream_t::name_type &, stream_t::stream_type &>());
+    // the streams; python has no c++ stream to give them, so they are made only through their
+    // subclasses
+    py::class_<stream_t, py::smart_holder, device_t>(m, "Stream");
 
     // cout
     auto console = py::class_<cout_t, py::smart_holder, stream_t>(m, "Console");
