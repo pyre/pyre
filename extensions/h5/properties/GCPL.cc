@@ -66,7 +66,7 @@ pyre::h5::py::properties::gcpl()
         // the getter
         py::overload_cast<>(&GCPL::linkPhaseChange, py::const_),
         // the setter
-        py::overload_cast<const PhaseChange &>(&GCPL::linkPhaseChange),
+        pyre::py::setter(cls, py::overload_cast<const PhaseChange &>(&GCPL::linkPhaseChange)),
         // the docstring
         "the thresholds at which link storage switches representation, as "
         "{(max compact, min dense)}");
@@ -78,7 +78,7 @@ pyre::h5::py::properties::gcpl()
         // the getter
         py::overload_cast<>(&GCPL::linkCreationOrder, py::const_),
         // the setter
-        py::overload_cast<CreationOrder>(&GCPL::linkCreationOrder),
+        pyre::py::setter(cls, py::overload_cast<CreationOrder>(&GCPL::linkCreationOrder)),
         // the docstring
         "whether the order in which links were created is tracked and indexed");
 
@@ -89,7 +89,7 @@ pyre::h5::py::properties::gcpl()
         // the getter
         py::overload_cast<>(&GCPL::estimatedLinkInfo, py::const_),
         // the setter
-        py::overload_cast<const LinkEstimate &>(&GCPL::estimatedLinkInfo),
+        pyre::py::setter(cls, py::overload_cast<const LinkEstimate &>(&GCPL::estimatedLinkInfo)),
         // the docstring
         "the expected number of links and their average name length, as "
         "{(links, name length)}");

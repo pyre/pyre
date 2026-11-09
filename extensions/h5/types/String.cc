@@ -79,7 +79,7 @@ pyre::h5::py::types::str()
         // the getter
         &StrType::charset,
         // the setter
-        &StrType::setCset,
+        pyre::py::setter(cls, &StrType::setCset),
         // the docstring
         "get/set the string character set");
 
@@ -89,7 +89,7 @@ pyre::h5::py::types::str()
         // the getter
         &StrType::strpad,
         // the setter
-        &StrType::setStrpad,
+        pyre::py::setter(cls, &StrType::setStrpad),
         // the docstring
         "get/set the string padding method");
 

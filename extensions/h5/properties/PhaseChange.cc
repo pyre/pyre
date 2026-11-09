@@ -46,20 +46,24 @@ pyre::h5::py::properties::phaseChange()
         "describe the thresholds at which storage switches representation");
 
     // the count above which storage becomes indexed
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "maxCompact",
-        // the field
-        &PhaseChange::maxCompact,
+        // the getter
+        pyre::py::getter(cls, &PhaseChange::maxCompact),
+        // the setter
+        pyre::py::setter(cls, &PhaseChange::maxCompact),
         // the docstring
         "the count above which storage becomes indexed");
 
     // the count below which it goes back to being inline
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "minDense",
-        // the field
-        &PhaseChange::minDense,
+        // the getter
+        pyre::py::getter(cls, &PhaseChange::minDense),
+        // the setter
+        pyre::py::setter(cls, &PhaseChange::minDense),
         // the docstring
         "the count below which it goes back to being inline");
 

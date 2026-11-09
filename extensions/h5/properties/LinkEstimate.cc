@@ -46,20 +46,24 @@ pyre::h5::py::properties::linkEstimate()
         "describe what a group expects to hold, so its object header is sized for it");
 
     // how many members the group expects
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "links",
-        // the field
-        &LinkEstimate::links,
+        // the getter
+        pyre::py::getter(cls, &LinkEstimate::links),
+        // the setter
+        pyre::py::setter(cls, &LinkEstimate::links),
         // the docstring
         "how many members the group expects");
 
     // how long their names run, on average
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "nameLength",
-        // the field
-        &LinkEstimate::nameLength,
+        // the getter
+        pyre::py::getter(cls, &LinkEstimate::nameLength),
+        // the setter
+        pyre::py::setter(cls, &LinkEstimate::nameLength),
         // the docstring
         "how long their names run, on average");
 

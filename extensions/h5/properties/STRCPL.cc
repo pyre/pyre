@@ -45,7 +45,7 @@ pyre::h5::py::properties::strcpl()
         // the getter
         py::overload_cast<>(&STRCPL::charEncoding, py::const_),
         // the setter
-        py::overload_cast<H5T_cset_t>(&STRCPL::charEncoding),
+        pyre::py::setter(cls, py::overload_cast<H5T_cset_t>(&STRCPL::charEncoding)),
         // the docstring
         "the character set the names i create are recorded in");
 

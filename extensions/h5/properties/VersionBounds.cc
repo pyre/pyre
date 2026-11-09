@@ -46,20 +46,24 @@ pyre::h5::py::properties::versionBounds()
         "describe the file format versions hdf5 may use");
 
     // the oldest format i may write
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "low",
-        // the field
-        &VersionBounds::low,
+        // the getter
+        pyre::py::getter(cls, &VersionBounds::low),
+        // the setter
+        pyre::py::setter(cls, &VersionBounds::low),
         // the docstring
         "the oldest format i may write");
 
     // the newest format i may write
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "high",
-        // the field
-        &VersionBounds::high,
+        // the getter
+        pyre::py::getter(cls, &VersionBounds::high),
+        // the setter
+        pyre::py::setter(cls, &VersionBounds::high),
         // the docstring
         "the newest format i may write");
 

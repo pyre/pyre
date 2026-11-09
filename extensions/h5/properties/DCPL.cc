@@ -65,7 +65,7 @@ pyre::h5::py::properties::dcpl()
         // the getter
         py::overload_cast<>(&DCPL::allocTime, py::const_),
         // the setter
-        py::overload_cast<H5D_alloc_time_t>(&DCPL::allocTime),
+        pyre::py::setter(cls, py::overload_cast<H5D_alloc_time_t>(&DCPL::allocTime)),
         // the docstring
         "when storage is allocated for the dataset");
 
@@ -76,7 +76,7 @@ pyre::h5::py::properties::dcpl()
         // the getter
         py::overload_cast<>(&DCPL::chunk, py::const_),
         // the setter
-        py::overload_cast<const shape_t &>(&DCPL::chunk),
+        pyre::py::setter(cls, py::overload_cast<const shape_t &>(&DCPL::chunk)),
         // the docstring
         "the shape of my chunks; empty when my layout is not chunked");
 
@@ -99,31 +99,33 @@ pyre::h5::py::properties::dcpl()
         // there is nothing here to read
         nullptr,
         // the setter, which reads the type off the value it is handed
-        [](DCPL & self, const py::object & value) -> void {
-            // integers travel as 64-bit
-            if (py::isinstance<py::int_>(value)) {
-                // deposit it
-                self.fillValue(value.cast<std::int64_t>());
-                // all done
-                return;
-            }
-            // reals as doubles
-            if (py::isinstance<py::float_>(value)) {
-                // deposit it
-                self.fillValue(value.cast<double>());
-                // all done
-                return;
-            }
-            // and complex values as pairs of doubles
-            if (PyComplex_Check(value.ptr())) {
-                // deposit it
-                self.fillValue(value.cast<std::complex<double>>());
-                // all done
-                return;
-            }
-            // anything else is a caller mistake
-            throw py::type_error("unsupported fill value type");
-        },
+        pyre::py::setter(
+            cls,
+            [](DCPL & self, const py::object & value) -> void {
+                // integers travel as 64-bit
+                if (py::isinstance<py::int_>(value)) {
+                    // deposit it
+                    self.fillValue(value.cast<std::int64_t>());
+                    // all done
+                    return;
+                }
+                // reals as doubles
+                if (py::isinstance<py::float_>(value)) {
+                    // deposit it
+                    self.fillValue(value.cast<double>());
+                    // all done
+                    return;
+                }
+                // and complex values as pairs of doubles
+                if (PyComplex_Check(value.ptr())) {
+                    // deposit it
+                    self.fillValue(value.cast<std::complex<double>>());
+                    // all done
+                    return;
+                }
+                // anything else is a caller mistake
+                throw py::type_error("unsupported fill value type");
+            }),
         // the docstring
         "the value that stands in for cells nobody writes; hdf5 converts it to the "
         "dataset's own type when the dataset is created");
@@ -135,7 +137,7 @@ pyre::h5::py::properties::dcpl()
         // the getter
         py::overload_cast<>(&DCPL::fillTime, py::const_),
         // the setter
-        py::overload_cast<H5D_fill_time_t>(&DCPL::fillTime),
+        pyre::py::setter(cls, py::overload_cast<H5D_fill_time_t>(&DCPL::fillTime)),
         // the docstring
         "when the fill value is written to storage");
     // set the fill value writing time
@@ -148,7 +150,7 @@ pyre::h5::py::properties::dcpl()
         // the getter
         py::overload_cast<>(&DCPL::layout, py::const_),
         // the setter
-        py::overload_cast<H5D_layout_t>(&DCPL::layout),
+        pyre::py::setter(cls, py::overload_cast<H5D_layout_t>(&DCPL::layout)),
         // the docstring
         "how my cells are laid out in storage");
 

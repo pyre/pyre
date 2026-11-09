@@ -46,20 +46,24 @@ pyre::h5::py::properties::sizes()
         "describe the widths hdf5 records positions and lengths in");
 
     // how many bytes a position in the file takes
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "offsets",
-        // the field
-        &Sizes::offsets,
+        // the getter
+        pyre::py::getter(cls, &Sizes::offsets),
+        // the setter
+        pyre::py::setter(cls, &Sizes::offsets),
         // the docstring
         "how many bytes a position in the file takes");
 
     // how many bytes a length takes
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "lengths",
-        // the field
-        &Sizes::lengths,
+        // the getter
+        pyre::py::getter(cls, &Sizes::lengths),
+        // the setter
+        pyre::py::setter(cls, &Sizes::lengths),
         // the docstring
         "how many bytes a length takes");
 

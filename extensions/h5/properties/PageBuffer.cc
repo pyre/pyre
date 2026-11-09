@@ -46,29 +46,35 @@ pyre::h5::py::properties::pageBuffer()
         "describe the buffer a paged file gathers its pages in");
 
     // how much memory the buffer may hold
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "bytes",
-        // the field
-        &PageBuffer::bytes,
+        // the getter
+        pyre::py::getter(cls, &PageBuffer::bytes),
+        // the setter
+        pyre::py::setter(cls, &PageBuffer::bytes),
         // the docstring
         "how much memory the buffer may hold");
 
     // the smallest share reserved for metadata pages
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "metadata",
-        // the field
-        &PageBuffer::metadata,
+        // the getter
+        pyre::py::getter(cls, &PageBuffer::metadata),
+        // the setter
+        pyre::py::setter(cls, &PageBuffer::metadata),
         // the docstring
         "the smallest share reserved for metadata pages");
 
     // the smallest share reserved for raw data pages
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "raw",
-        // the field
-        &PageBuffer::raw,
+        // the getter
+        pyre::py::getter(cls, &PageBuffer::raw),
+        // the setter
+        pyre::py::setter(cls, &PageBuffer::raw),
         // the docstring
         "the smallest share reserved for raw data pages");
 

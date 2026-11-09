@@ -70,7 +70,7 @@ pyre::h5::py::types::int_()
         // the getter
         &IntType::sign,
         // the setter
-        &IntType::setSign,
+        pyre::py::setter(cls, &IntType::setSign),
         // the docstring
         "get/set the sign type");
 

@@ -65,7 +65,7 @@ pyre::h5::py::properties::lcpl()
         // the getter
         py::overload_cast<>(&LCPL::intermediateGroupCreation, py::const_),
         // the setter
-        py::overload_cast<bool>(&LCPL::intermediateGroupCreation),
+        pyre::py::setter(cls, py::overload_cast<bool>(&LCPL::intermediateGroupCreation)),
         // the docstring
         "whether the groups along a path i am given are created when they are missing");
 

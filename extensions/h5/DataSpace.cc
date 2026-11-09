@@ -137,7 +137,7 @@ pyre::h5::py::dataspace(py::module & m)
         // the reader
         &DataSpace::shape,
         // the writer
-        &DataSpace::reshape,
+        pyre::py::setter(cls, &DataSpace::reshape),
         // the docstring
         "get and set my shape");
 

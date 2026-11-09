@@ -46,38 +46,46 @@ pyre::h5::py::properties::cache()
         "describe the caches a file reaches its data through");
 
     // how many entries the metadata cache holds
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "metadataElements",
-        // the field
-        &Cache::metadataElements,
+        // the getter
+        pyre::py::getter(cls, &Cache::metadataElements),
+        // the setter
+        pyre::py::setter(cls, &Cache::metadataElements),
         // the docstring
         "how many entries the metadata cache holds");
 
     // the number of slots in the hash table that indexes cached chunks
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "slots",
-        // the field
-        &Cache::slots,
+        // the getter
+        pyre::py::getter(cls, &Cache::slots),
+        // the setter
+        pyre::py::setter(cls, &Cache::slots),
         // the docstring
         "the number of slots in the hash table that indexes cached chunks");
 
     // how much memory the chunk cache may hold
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "bytes",
-        // the field
-        &Cache::bytes,
+        // the getter
+        pyre::py::getter(cls, &Cache::bytes),
+        // the setter
+        pyre::py::setter(cls, &Cache::bytes),
         // the docstring
         "how much memory the chunk cache may hold");
 
     // how strongly to favor evicting a fully used chunk
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "preemption",
-        // the field
-        &Cache::preemption,
+        // the getter
+        pyre::py::getter(cls, &Cache::preemption),
+        // the setter
+        pyre::py::setter(cls, &Cache::preemption),
         // the docstring
         "how strongly to favor evicting a fully used chunk");
 

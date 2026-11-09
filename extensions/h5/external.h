@@ -28,6 +28,8 @@
 #include <pybind11/operators.h>
 // pyre is built against pybind11 3.0 or later
 static_assert(PYBIND11_VERSION_MAJOR >= 3, "pyre requires pybind11 3.0 or later");
+// the accessors of properties, which name the parameters of their setters
+#include <pyre/py/properties/accessors.h>
 // the hdf5 c api; the bindings no longer depend on the hdf5 c++ layer
 #include <hdf5.h>
 

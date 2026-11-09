@@ -65,7 +65,7 @@ pyre::h5::py::properties::dapl()
         // the getter
         py::overload_cast<>(&DAPL::chunkCache, py::const_),
         // the setter
-        py::overload_cast<const ChunkCache &>(&DAPL::chunkCache),
+        pyre::py::setter(cls, py::overload_cast<const ChunkCache &>(&DAPL::chunkCache)),
         // the docstring
         "the cache my datasets are read and written through");
 

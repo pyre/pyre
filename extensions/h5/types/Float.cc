@@ -70,7 +70,7 @@ pyre::h5::py::types::float_()
         // the getter
         &FloatType::bias,
         // the setter
-        &FloatType::setBias,
+        pyre::py::setter(cls, &FloatType::setBias),
         // the docstring
         "get/set the exponent bias");
 
@@ -80,7 +80,7 @@ pyre::h5::py::types::float_()
         // the getter
         &FloatType::normalization,
         // the setter
-        &FloatType::setNorm,
+        pyre::py::setter(cls, &FloatType::setNorm),
         // the docstring
         "get/set the mantissa normalization strategy");
 
@@ -90,7 +90,7 @@ pyre::h5::py::types::float_()
         // the getter
         &FloatType::inpad,
         // the setter
-        &FloatType::setInpad,
+        pyre::py::setter(cls, &FloatType::setInpad),
         // the docstring
         "get/set the internal padding for unused bits");
 
@@ -100,15 +100,17 @@ pyre::h5::py::types::float_()
         // the getter
         &FloatType::fields,
         // the setter
-        [](FloatType & self,
-           std::tuple<std::size_t, std::size_t, std::size_t, std::size_t, std::size_t> fields) {
-            // unpack
-            auto [spos, epos, esize, mpos, msize] = fields;
-            // and set
-            self.setFields(spos, epos, esize, mpos, msize);
-            // all done
-            return;
-        },
+        pyre::py::setter(
+            cls,
+            [](FloatType & self,
+               std::tuple<std::size_t, std::size_t, std::size_t, std::size_t, std::size_t> fields) {
+                // unpack
+                auto [spos, epos, esize, mpos, msize] = fields;
+                // and set
+                self.setFields(spos, epos, esize, mpos, msize);
+                // all done
+                return;
+            }),
         // the docstring
         "get/set the bit layout (sign, exponent, mantissa)");
 
