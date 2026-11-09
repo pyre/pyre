@@ -89,8 +89,9 @@ def test():
     fs = pyre.filesystem.s3(
         session=Session(), root=pyre.primitives.uri.parse("s3://bucket/products")
     )
-    # list it
+    # attempt to
     try:
+        # list it
         fs.discover(levels=1)
         # which can't succeed
         assert False, "the listing went through with expired credentials"
