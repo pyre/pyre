@@ -779,9 +779,9 @@ pyre::h5::py::dataset()
             return;
         },
         // the signature
-        "value",
+        "value"_a,
         // the docstring
-        "read an enum");
+        "save {value} as an enum");
 
 
     // close the dataset
