@@ -14,11 +14,11 @@
 #include "__init__.h"
 
 
-// decorator that adds interface common to all storage strategies
+// decorator that adds the read access common to all storage strategies
 namespace pyre::py::memory {
-    // read-only interface
-    template <class T>
-    auto accessors(pymem_t<T> &) -> void;
+    // read access
+    template <class memT>
+    auto accessors(pymem_t<memT> &) -> void;
 } // namespace pyre::py::memory
 
 

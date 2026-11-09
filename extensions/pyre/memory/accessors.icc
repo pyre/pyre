@@ -12,20 +12,22 @@
 #include "accessors.h"
 
 
-// decorator that adds interface common to all storage strategies
-template <class T>
+// decorator that adds the read access common to all storage strategies
+template <class memT>
 auto
-pyre::py::memory::accessors(pymem_t<T> & cls) -> void
+pyre::py::memory::accessors(pymem_t<memT> & cls) -> void
 {
     // alias the storage strategy
-    using mem_t = T;
-    // and views derived from it
+    using mem_t = memT;
+    // the position of a cell, signed so that a negative one reaches the bounds check as such
+    using index_t = typename mem_t::difference_type;
+    // views derived from the storage
     using view_t = pyre::memory::View<typename mem_t::value_type, mem_t::readonly()>;
     // the native scalar behind the cell, which is what python sees; a byte ordered cell swaps on
     // the way through, so python never meets the wrapper
     using native_t = pyre::memory::native_t<typename mem_t::value_type>;
 
-    // metamethods
+    // the size
     cls.def(
         // the name
         "__len__",
@@ -34,6 +36,7 @@ pyre::py::memory::accessors(pymem_t<T> & cls) -> void
         // the docstring
         "the number of data cells");
 
+    // iteration over the cells
     cls.def(
         // the name
         "__iter__",
@@ -45,46 +48,48 @@ pyre::py::memory::accessors(pymem_t<T> & cls) -> void
                 decltype(self.end()), native_t>(self.begin(), self.end());
         },
         // keep the storage around while its iterator is in use
-        py::keep_alive<0, 1>());
+        py::keep_alive<0, 1>(),
+        // the docstring
+        "visit my cells in order");
 
-
+    // read access to a single cell
     cls.def(
         // the name
         "__getitem__",
         // the implementation
-        // &mem_t::at,
-        [](const mem_t & self, int idx) -> native_t {
-            // get the value, as a native scalar
-            native_t value = self.at(idx);
-            // and return it
-            return value;
+        [](const mem_t & self, index_t index) -> native_t {
+            // lift the cell at {index} to its native value, and return it
+            return self.at(index);
         },
+        // the signature
+        "index"_a,
         // the docstring
-        "get the value of the cell at a given index");
+        "the value of the cell at {index}");
 
-
+    // and to a range of cells
     cls.def(
         // the name
         "__getitem__",
         // the implementation
         [](const mem_t & self, py::slice slice) -> view_t {
-            // storage for the slice info
-            std::size_t start = 0, stop = 0, step = 0, span = 0;
-            // unpack
+            // resolve {slice} against my extent
+            auto start = std::size_t(0);
+            auto stop = std::size_t(0);
+            auto step = std::size_t(0);
+            auto span = std::size_t(0);
             auto status = slice.compute(self.cells(), &start, &stop, &step, &span);
-            // if something went wrong
+            // if that fails
             if (!status) {
                 // bail; pybind11 has already registered the correct exception
                 throw py::error_already_set();
             }
-            // get the pointer to the data
-            auto data = self.data();
-            // build a view and return it
-            return view_t(data + start, span, step);
+            // build a view over the selected cells, and return it
+            return view_t(self.data() + start, span, step);
         },
+        // the signature
+        "slice"_a,
         // the docstring
-        "get a slice from the buffer");
-
+        "a view over the cells selected by {slice}");
 
     // all done
     return;

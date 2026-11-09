@@ -14,11 +14,12 @@
 #include "__init__.h"
 
 
-// decorator that adds interface common to all storage strategies
+// decorator that adds the write access common to all writable storage strategies
 namespace pyre::py::memory {
-    template <class T>
-    auto mutators(pymem_t<T> &) -> void;
-}
+    // write access
+    template <class memT>
+    auto mutators(pymem_t<memT> &) -> void;
+} // namespace pyre::py::memory
 
 
 // implementations
