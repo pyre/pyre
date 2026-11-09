@@ -11,19 +11,40 @@
 #include "forward.h"
 
 
-// the descriptions of the slots and the settings of factories, which python reads but does not
-// make
+// register the classes of the descriptions of the slots and the settings of factories, so that
+// every signature can name them
 void
-pyre::py::flow::descriptions(py::module & m)
+pyre::py::flow::descriptionClasses(py::module & m)
 {
     // the description of a slot
-    auto slot = py::class_<slot_t>(
+    py::class_<slot_t>(
         // the scope
         m,
         // the name of the class
         "Slot",
         // the docstring
         "the description of a slot of a factory");
+    // the description of a setting
+    py::class_<setting_t>(
+        // the scope
+        m,
+        // the name of the class
+        "Setting",
+        // the docstring
+        "the description of a setting of a factory");
+
+    // all done
+    return;
+}
+
+
+// the descriptions of the slots and the settings of factories, which python reads but does not
+// make
+void
+pyre::py::flow::descriptions()
+{
+    // the description of a slot, registered by {descriptionClasses}
+    auto slot = py::class_<slot_t>(py::type::of<slot_t>());
     // its name
     slot.def_property_readonly(
         // the name
@@ -67,14 +88,8 @@ pyre::py::flow::descriptions(py::module & m)
         // the docstring
         "check whether {product} is one of the products i take");
 
-    // the description of a setting
-    auto setting = py::class_<setting_t>(
-        // the scope
-        m,
-        // the name of the class
-        "Setting",
-        // the docstring
-        "the description of a setting of a factory");
+    // the description of a setting, registered by {descriptionClasses}
+    auto setting = py::class_<setting_t>(py::type::of<setting_t>());
     // its name
     setting.def_property_readonly(
         // the name

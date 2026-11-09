@@ -13,24 +13,47 @@
 
 // helpers
 namespace pyre::py::flow {
-    // bind the variables that hold a value of type {cellT}, and register them with the catalog
+    // apply {step} to each type of value there are variables of
+    template <class stepT>
+    inline void variableCells(stepT step)
+    {
+        // the scalars the factories in the catalog take
+        step.template operator()<pyre::memory::float64_t>();
+        // all done
+        return;
+    }
+
+    // register the class of the variables that hold a value of type {cellT}, so that every
+    // signature can name it
     template <typename cellT>
-    inline void bindVariable(py::module & m)
+    inline void variableClass(py::module & m)
     {
         // the variable
         using variable_type = var_t<cellT>;
-        // register it with the catalog
-        registry().registerProduct<variable_type>();
-        // its readable name, which must outlive the binding of the class
+        // its readable name, which must outlive the registration of the class
         auto name = variable_type::className();
-        // bind it, under its readable name
-        auto cls = py::classh<variable_type, product_t>(
+        // register it, under its readable name
+        py::classh<variable_type, product_t>(
             // the scope
             m,
             // the name of the class
             name.c_str(),
             // the docstring
             "a scalar");
+        // all done
+        return;
+    }
+
+    // bind the variables that hold a value of type {cellT}, and register them with the catalog
+    template <typename cellT>
+    inline void bindVariable()
+    {
+        // the variable
+        using variable_type = var_t<cellT>;
+        // register it with the catalog
+        registry().registerProduct<variable_type>();
+        // its class, registered by {variableClass}
+        auto cls = py::classh<variable_type, product_t>(py::type::of<variable_type>());
         // the spelling of its type, which is its key in the catalog
         cls.def_property_readonly_static(
             // the name
@@ -56,12 +79,33 @@ namespace pyre::py::flow {
 } // namespace pyre::py::flow
 
 
+// register the classes of the variables, so that every signature can name them
+void
+pyre::py::flow::variableClasses(py::module & m)
+{
+    // one type of value at a time
+    variableCells([&m]<typename cellT>() {
+        // register the class of its variables
+        variableClass<cellT>(m);
+        // all done
+        return;
+    });
+    // all done
+    return;
+}
+
+
 // the variables
 void
-pyre::py::flow::variables(py::module & m)
+pyre::py::flow::variables()
 {
-    // the scalars the factories in the catalog take
-    bindVariable<pyre::memory::float64_t>(m);
+    // one type of value at a time
+    variableCells([]<typename cellT>() {
+        // bind its variables
+        bindVariable<cellT>();
+        // all done
+        return;
+    });
     // all done
     return;
 }

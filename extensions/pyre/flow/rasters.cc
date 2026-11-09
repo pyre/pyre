@@ -13,24 +13,61 @@
 
 // helpers
 namespace pyre::py::flow {
-    // bind the rasters over cells of type {cellT}, and register them with the catalog
+    // apply {step} to each kind of cell there are rasters of
+    template <class stepT>
+    inline void rasterCells(stepT step)
+    {
+        // signed integers
+        step.template operator()<pyre::memory::int8_t>();
+        step.template operator()<pyre::memory::int16_t>();
+        step.template operator()<pyre::memory::int32_t>();
+        step.template operator()<pyre::memory::int64_t>();
+        // unsigned integers
+        step.template operator()<pyre::memory::uint8_t>();
+        step.template operator()<pyre::memory::uint16_t>();
+        step.template operator()<pyre::memory::uint32_t>();
+        step.template operator()<pyre::memory::uint64_t>();
+        // floating point
+        step.template operator()<pyre::memory::float32_t>();
+        step.template operator()<pyre::memory::float64_t>();
+        // complex
+        step.template operator()<pyre::memory::complex64_t>();
+        step.template operator()<pyre::memory::complex128_t>();
+        // all done
+        return;
+    }
+
+    // register the class of the rasters over cells of type {cellT}, so that every signature can
+    // name it
     template <typename cellT>
-    inline void bindRaster(py::module & m)
+    inline void rasterClass(py::module & m)
     {
         // the raster
         using raster_type = raster_t<cellT>;
-        // register it with the catalog, which describes it but cannot make one
-        registry().registerProduct<raster_type>();
-        // its readable name, which must outlive the binding of the class
+        // its readable name, which must outlive the registration of the class
         auto name = raster_type::className();
-        // bind it
-        auto cls = py::classh<raster_type, product_t>(
+        // register it, under its readable name
+        py::classh<raster_type, product_t>(
             // the scope
             m,
             // the name of the class
             name.c_str(),
             // the docstring
             "a tile over cells that live in a python buffer");
+        // all done
+        return;
+    }
+
+    // bind the rasters over cells of type {cellT}, and register them with the catalog
+    template <typename cellT>
+    inline void bindRaster()
+    {
+        // the raster
+        using raster_type = raster_t<cellT>;
+        // register it with the catalog, which describes it but cannot make one
+        registry().registerProduct<raster_type>();
+        // its class, registered by {rasterClass}
+        auto cls = py::classh<raster_type, product_t>(py::type::of<raster_type>());
         // the spelling of its type, which is its key in the catalog
         cls.def_property_readonly_static(
             // the name
@@ -97,26 +134,33 @@ namespace pyre::py::flow {
 } // namespace pyre::py::flow
 
 
+// register the classes of the rasters, so that every signature can name them
+void
+pyre::py::flow::rasterClasses(py::module & m)
+{
+    // one kind of cell at a time
+    rasterCells([&m]<typename cellT>() {
+        // register the class of its rasters
+        rasterClass<cellT>(m);
+        // all done
+        return;
+    });
+    // all done
+    return;
+}
+
+
 // the rasters
 void
 pyre::py::flow::rasters(py::module & m)
 {
-    // signed integers
-    bindRaster<pyre::memory::int8_t>(m);
-    bindRaster<pyre::memory::int16_t>(m);
-    bindRaster<pyre::memory::int32_t>(m);
-    bindRaster<pyre::memory::int64_t>(m);
-    // unsigned integers
-    bindRaster<pyre::memory::uint8_t>(m);
-    bindRaster<pyre::memory::uint16_t>(m);
-    bindRaster<pyre::memory::uint32_t>(m);
-    bindRaster<pyre::memory::uint64_t>(m);
-    // floating point
-    bindRaster<pyre::memory::float32_t>(m);
-    bindRaster<pyre::memory::float64_t>(m);
-    // complex
-    bindRaster<pyre::memory::complex64_t>(m);
-    bindRaster<pyre::memory::complex128_t>(m);
+    // one kind of cell at a time
+    rasterCells([]<typename cellT>() {
+        // bind its rasters
+        bindRaster<cellT>();
+        // all done
+        return;
+    });
 
     // make a raster over the cells of a python buffer
     m.def(

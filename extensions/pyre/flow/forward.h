@@ -14,16 +14,27 @@ namespace pyre::py::flow {
     // that binds nodes registers its kinds with
     auto registry() -> catalog_t &;
 
+    // register the classes of the protocols of nodes, products, and factories
+    void nodeClasses(py::module &);
+    // of the descriptions of the slots and the settings of factories
+    void descriptionClasses(py::module &);
+    // of the catalog and its entries
+    void catalogClasses(py::module &);
+    // and of the tiles, the variables, and the rasters over python buffers
+    void tileClasses(py::module &);
+    void variableClasses(py::module &);
+    void rasterClasses(py::module &);
+
     // the protocols of nodes, products, and factories
-    void nodes(py::module &);
+    void nodes();
     // the descriptions of the slots and the settings of factories
-    void descriptions(py::module &);
+    void descriptions();
     // the catalog and its entries
     void catalog(py::module &);
     // the tiles, the variables, the rasters over python buffers, and the factories of
     // {pyre::flow}, which go in the catalog as well
-    void tiles(py::module &);
-    void variables(py::module &);
+    void tiles();
+    void variables();
     void rasters(py::module &);
     void factories(py::module &);
 } // namespace pyre::py::flow
