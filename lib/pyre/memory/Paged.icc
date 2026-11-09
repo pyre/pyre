@@ -210,7 +210,7 @@ pyre::memory::Paged<T, isConst>::validate(cell_count_type page) const -> void
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << pyre::journal::at()
+        channel << pyre::journal::here()
                 << "validating a page that is not resident:" << pyre::journal::newline << "  page "
                 << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
@@ -236,7 +236,7 @@ pyre::memory::Paged<T, isConst>::taint(cell_count_type page) const -> void
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << pyre::journal::at()
+        channel << pyre::journal::here()
                 << "tainting a page that is not resident:" << pyre::journal::newline << "  page "
                 << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
@@ -262,7 +262,7 @@ pyre::memory::Paged<T, isConst>::flush(cell_count_type page) const -> void
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << pyre::journal::at()
+        channel << pyre::journal::here()
                 << "flushing a page that is not resident:" << pyre::journal::newline << "  page "
                 << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
@@ -288,7 +288,7 @@ pyre::memory::Paged<T, isConst>::release(cell_count_type page) const -> void
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << pyre::journal::at()
+        channel << pyre::journal::here()
                 << "releasing a page that is not resident:" << pyre::journal::newline << "  page "
                 << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
@@ -300,7 +300,7 @@ pyre::memory::Paged<T, isConst>::release(cell_count_type page) const -> void
         // so letting go without a flush is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << pyre::journal::at()
+        channel << pyre::journal::here()
                 << "releasing a page with unsaved content:" << pyre::journal::newline << "  page "
                 << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
@@ -347,7 +347,7 @@ pyre::memory::Paged<T, isConst>::page(cell_count_type page) const -> pointer
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << pyre::journal::at() << "asking for the address of a page that is not resident:"
+        channel << pyre::journal::here() << "asking for the address of a page that is not resident:"
                 << pyre::journal::newline << "  page " << page << " of " << uri()
                 << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
@@ -382,7 +382,7 @@ pyre::memory::Paged<T, isConst>::handle(cell_count_type page) const -> handle_ty
         // so this is a bug in the caller
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // complain
-        channel << pyre::journal::at()
+        channel << pyre::journal::here()
                 << "asking for the handle of a page that is not resident:" << pyre::journal::newline
                 << "  page " << page << " of " << uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal;
@@ -406,7 +406,7 @@ pyre::memory::Paged<T, isConst>::at(difference_type pos) const -> reference
         // make a channel
         auto channel = pyre::journal::firewall_t("pyre.memory.bounds");
         // and complain
-        channel << pyre::journal::at() << "out of bounds access:" << pyre::journal::newline
+        channel << pyre::journal::here() << "out of bounds access:" << pyre::journal::newline
                 << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
                 << "  in pyre::memory::paged_t::at" << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
@@ -444,7 +444,7 @@ pyre::memory::Paged<T, isConst>::_verify(cell_count_type page) const -> cell_cou
         // make a channel
         auto channel = pyre::journal::firewall_t("pyre.memory.paged");
         // and complain
-        channel << pyre::journal::at() << "no such page:" << pyre::journal::newline << "  page "
+        channel << pyre::journal::here() << "no such page:" << pyre::journal::newline << "  page "
                 << page << " must be less than " << pages() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         // clamp to the last page in the table
