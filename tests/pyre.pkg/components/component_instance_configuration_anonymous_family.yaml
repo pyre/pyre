@@ -1,0 +1,17 @@
+# -*- yaml -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# every filter of the family
+pyre.tests.anonymous.family.filter:
+  begin: family
+
+# and the one named coast
+pyre.tests.anonymous.family.filter#coast:
+  end: coast
+
+
+# end of file
