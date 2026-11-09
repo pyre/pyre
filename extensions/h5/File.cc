@@ -69,7 +69,7 @@ pyre::h5::py::file()
             // so complain
             channel
                 // where
-                << pyre::journal::at()
+                << pyre::journal::here()
                 // say why
                 << "invalid mode '" << mode << "'"
                 << pyre::journal::newline

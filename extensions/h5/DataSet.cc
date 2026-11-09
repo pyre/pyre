@@ -37,7 +37,7 @@ namespace pyre::h5::py {
             // complain
             channel
                 // where
-                << pyre::journal::at()
+                << pyre::journal::here()
                 // what
                 << "the stride does not match the shape of the tile"
                 << pyre::journal::newline
@@ -80,7 +80,7 @@ namespace pyre::h5::py {
             // complain
             channel
                 // where
-                << pyre::journal::at()
+                << pyre::journal::here()
                 // what
                 << "the destination is too small for the tile"
                 << pyre::journal::newline
@@ -408,7 +408,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain an integer"
                     // flush
@@ -441,7 +441,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain an integer"
                     // flush
@@ -475,7 +475,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain a floating point number"
                     // flush
@@ -508,7 +508,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain a floating point number"
                     // flush
@@ -541,7 +541,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain a string"
                     // flush
@@ -570,7 +570,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain a string"
                     // flush
@@ -604,7 +604,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "not a dataset with null terminated strings"
                     // flush
@@ -624,7 +624,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "not a list "
                     // flush
@@ -672,7 +672,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "not a dataset with null terminated strings"
                     // flush
@@ -690,7 +690,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "not a list "
                     // flush
@@ -732,7 +732,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain an enumeration"
                     // flush
@@ -765,7 +765,7 @@ pyre::h5::py::dataset()
                 // complain
                 channel
                     // where
-                    << pyre::journal::at()
+                    << pyre::journal::here()
                     // what
                     << "the dataset does not contain an enumeration"
                     // flush
