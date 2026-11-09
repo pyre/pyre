@@ -72,9 +72,9 @@ pyre::h5::py::enums(py::module & m)
 #endif
         .value("latest", H5F_LIBVER_LATEST);
 
-    // whether creation order is remembered; these are flags, so they combine
-    py::enum_<CreationOrder>(
-        m, "CreationOrder", py::arithmetic(), "whether creation order is remembered")
+    // whether creation order is remembered; the three legal states are named, and the invalid
+    // combination of the underlying flags has no name
+    py::enum_<CreationOrder>(m, "CreationOrder", "whether creation order is remembered")
         .value("none", CreationOrder::none)
         .value("tracked", CreationOrder::tracked)
         .value("indexed", CreationOrder::indexed);
