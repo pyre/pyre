@@ -1,0 +1,66 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "accessors.h"
+
+
+// the setter of a property made from a method; marking it as a method of the class bound by
+// {cls} lets the name of its parameter skip over {self}
+template <class classT, class methodT>
+auto
+pyre::py::setter(const classT & cls, methodT method) -> py::cpp_function
+{
+    // build the setter, and return it
+    return py::cpp_function(method, py::is_method(cls), py::arg("value"));
+}
+
+
+// the getter of a property made from a data member; the property binds it with the policy that
+// keeps the instance alive while python holds a reference to the field
+template <class classT, class ownerT, class fieldT>
+    requires(!std::is_function_v<fieldT>)
+auto
+pyre::py::getter(const classT & cls, fieldT ownerT::* field) -> py::cpp_function
+{
+    // build the getter, and return it
+    return py::cpp_function(
+        // read my field
+        [field](const ownerT & self) -> const fieldT & {
+            // and hand it over
+            return self.*field;
+        },
+        // as a method of the class bound by {cls}
+        py::is_method(cls));
+}
+
+
+// the setter of a property made from a data member
+template <class classT, class ownerT, class fieldT>
+    requires(!std::is_function_v<fieldT>)
+auto
+pyre::py::setter(const classT & cls, fieldT ownerT::* field) -> py::cpp_function
+{
+    // build the setter, and return it
+    return py::cpp_function(
+        // write my field
+        [field](ownerT & self, const fieldT & value) -> void {
+            // store {value}
+            self.*field = value;
+            // all done
+            return;
+        },
+        // as a method of the class bound by {cls}
+        py::is_method(cls),
+        // with its parameter named
+        py::arg("value"));
+}
+
+
+// end of file
