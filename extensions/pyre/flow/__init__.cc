@@ -23,16 +23,30 @@ pyre::py::flow::__init__(py::module & m)
         "flow",
         // its docstring
         "wrappers over {pyre::flow} entities");
-    // the protocols
-    nodes(flow);
+    // register every class before binding any interface, since the signatures name the
+    // classes they traffic in: the protocols
+    nodeClasses(flow);
     // the descriptions of slots and settings
-    descriptions(flow);
+    descriptionClasses(flow);
+    // the catalog
+    catalogClasses(flow);
+    // the tiles
+    tileClasses(flow);
+    // the variables
+    variableClasses(flow);
+    // and the rasters
+    rasterClasses(flow);
+
+    // now bind their interfaces: the protocols
+    nodes();
+    // the descriptions of slots and settings
+    descriptions();
     // the catalog
     catalog(flow);
     // the tiles
-    tiles(flow);
+    tiles();
     // the variables
-    variables(flow);
+    variables();
     // the rasters
     rasters(flow);
     // and the factories

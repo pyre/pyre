@@ -11,20 +11,48 @@
 #include "forward.h"
 
 
-// the protocols of nodes, products, and factories; python holds every node through a smart
-// holder, so a node python made through the catalog stays one object however often it crosses
-// the boundary
+// register the classes of the protocols of nodes, products, and factories, so that every
+// signature can name them; python holds every node through a smart holder, so a node python made
+// through the catalog stays one object however often it crosses the boundary
 void
-pyre::py::flow::nodes(py::module & m)
+pyre::py::flow::nodeClasses(py::module & m)
 {
     // the base of all nodes
-    auto node = py::classh<node_t>(
+    py::classh<node_t>(
         // the scope
         m,
         // the name of the class
         "Node",
         // the docstring
         "the base of the nodes of a flow graph");
+    // products
+    py::classh<product_t, node_t>(
+        // the scope
+        m,
+        // the name of the class
+        "Product",
+        // the docstring
+        "the base of the products of a flow graph");
+    // factories
+    py::classh<factory_t, node_t>(
+        // the scope
+        m,
+        // the name of the class
+        "Factory",
+        // the docstring
+        "the base of the factories of a flow graph");
+
+    // all done
+    return;
+}
+
+
+// the protocols of nodes, products, and factories
+void
+pyre::py::flow::nodes()
+{
+    // the base of all nodes, registered by {nodeClasses}
+    auto node = py::classh<node_t>(py::type::of<node_t>());
     // its name
     node.def_property_readonly(
         // the name
@@ -42,14 +70,8 @@ pyre::py::flow::nodes(py::module & m)
         // the docstring
         "mark what depends on me as stale");
 
-    // products
-    auto product = py::classh<product_t, node_t>(
-        // the scope
-        m,
-        // the name of the class
-        "Product",
-        // the docstring
-        "the base of the products of a flow graph");
+    // products, registered by {nodeClasses}
+    auto product = py::classh<product_t, node_t>(py::type::of<product_t>());
     // whether i must be rebuilt before i am read
     product.def_property_readonly(
         // the name
@@ -72,14 +94,8 @@ pyre::py::flow::nodes(py::module & m)
         // the docstring
         "ask my writers to refresh me");
 
-    // factories
-    auto factory = py::classh<factory_t, node_t>(
-        // the scope
-        m,
-        // the name of the class
-        "Factory",
-        // the docstring
-        "the base of the factories of a flow graph");
+    // factories, registered by {nodeClasses}
+    auto factory = py::classh<factory_t, node_t>(py::type::of<factory_t>());
     // the family of the component the factory stands for
     factory.def_property(
         // the name

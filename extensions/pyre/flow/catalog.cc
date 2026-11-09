@@ -23,6 +23,40 @@ pyre::py::flow::registry() -> catalog_t &
 }
 
 
+// register the classes of the catalog and its entries, so that every signature can name them
+void
+pyre::py::flow::catalogClasses(py::module & m)
+{
+    // what the catalog knows about a kind of product
+    py::class_<product_entry_t>(
+        // the scope
+        m,
+        // the name of the class
+        "ProductEntry",
+        // the docstring
+        "what the catalog knows about a kind of product");
+    // what the catalog knows about a kind of factory
+    py::class_<factory_entry_t>(
+        // the scope
+        m,
+        // the name of the class
+        "FactoryEntry",
+        // the docstring
+        "what the catalog knows about a kind of factory");
+    // the catalog
+    py::class_<catalog_t>(
+        // the scope
+        m,
+        // the name of the class
+        "Catalog",
+        // the docstring
+        "the catalog of the kinds of nodes that were compiled in");
+
+    // all done
+    return;
+}
+
+
 // the catalog and its entries
 void
 pyre::py::flow::catalog(py::module & m)
@@ -30,14 +64,8 @@ pyre::py::flow::catalog(py::module & m)
     // the shape of the products the catalog makes
     using shape_t = catalog_t::shape_type;
 
-    // what the catalog knows about a kind of product
-    auto productEntry = py::class_<product_entry_t>(
-        // the scope
-        m,
-        // the name of the class
-        "ProductEntry",
-        // the docstring
-        "what the catalog knows about a kind of product");
+    // what the catalog knows about a kind of product, registered by {catalogClasses}
+    auto productEntry = py::class_<product_entry_t>(py::type::of<product_entry_t>());
     // the declaration of its type
     productEntry.def_property_readonly(
         // the name
@@ -74,14 +102,8 @@ pyre::py::flow::catalog(py::module & m)
         "the declaration of the type of the cells of my products; empty for products that are "
         "not grids of cells");
 
-    // what the catalog knows about a kind of factory
-    auto factoryEntry = py::class_<factory_entry_t>(
-        // the scope
-        m,
-        // the name of the class
-        "FactoryEntry",
-        // the docstring
-        "what the catalog knows about a kind of factory");
+    // what the catalog knows about a kind of factory, registered by {catalogClasses}
+    auto factoryEntry = py::class_<factory_entry_t>(py::type::of<factory_entry_t>());
     // the declaration of its type
     factoryEntry.def_property_readonly(
         // the name
@@ -115,14 +137,8 @@ pyre::py::flow::catalog(py::module & m)
         // the docstring
         "the descriptions of the settings of my factories");
 
-    // the catalog
-    auto cls = py::class_<catalog_t>(
-        // the scope
-        m,
-        // the name of the class
-        "Catalog",
-        // the docstring
-        "the catalog of the kinds of nodes that were compiled in");
+    // the catalog, registered by {catalogClasses}
+    auto cls = py::class_<catalog_t>(py::type::of<catalog_t>());
     // the kinds of products
     cls.def_property_readonly(
         // the name
