@@ -219,11 +219,14 @@ pyre::journal::py::devices(py::module & m)
     auto courier = py::class_<courier_t, py::smart_holder, device_t>(m, "Courier");
     // constructor
     courier.def(
-        // the implementation
-        py::init<
-            courier_t::descriptor_type, const courier_t::name_type &, device_t::pointer_type>(),
+        // the implementation; the {mirror} is optional
+        py::init([](courier_t::descriptor_type descriptor, const courier_t::name_type & name,
+                    std::optional<device_t::pointer_type> mirror) {
+            // build the device
+            return std::make_shared<courier_t>(descriptor, name, mirror.value_or(nullptr));
+        }),
         // the signature
-        "descriptor"_a, "name"_a = "courier", "mirror"_a = nullptr,
+        "descriptor"_a, "name"_a = "courier", "mirror"_a = py::none(),
         // the docstring
         "a device that ships entries as records down {descriptor}, and to {mirror}");
 
