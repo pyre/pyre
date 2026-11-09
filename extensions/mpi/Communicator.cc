@@ -235,18 +235,30 @@ namespace pyre::mpi::py {
 } // namespace pyre::mpi::py
 
 
-// add the bindings for the communicator
+// register the class of the communicators, so that every signature can name it
 void
-pyre::mpi::py::communicator(py::module & m)
+pyre::mpi::py::communicatorClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<Communicator>(
+    py::class_<Communicator>(
         // in scope
         m,
         // the name
         "Communicator",
         // the docstring
         "a group of processes, together with the context that isolates their messages");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the communicator
+void
+pyre::mpi::py::communicator()
+{
+    // the class, registered by {communicatorClass}
+    auto cls = py::class_<Communicator>(py::type::of<Communicator>());
 
     // the structure
     cls.def_property_readonly(

@@ -27,17 +27,28 @@ PYBIND11_MODULE(libmpi, m)
     // the enumerations, next, since the default arguments below name their values
     pyre::mpi::py::enums(m);
 
-    // what mpi reports about a transfer, finished or not
-    pyre::mpi::py::status(m);
-    pyre::mpi::py::request(m);
+    // register every class before binding any interface, since the signatures name the
+    // classes they traffic in, and the communicator hands back groups, cartesian communicators
+    // and conduits: what mpi reports about a transfer, finished or not
+    pyre::mpi::py::statusClass(m);
+    pyre::mpi::py::requestClass(m);
+    // the structural entities, the base communicator before the cartesian one that derives
+    // from it
+    pyre::mpi::py::groupClass(m);
+    pyre::mpi::py::communicatorClass(m);
+    pyre::mpi::py::cartesianClass(m);
+    // and the python level conduit
+    pyre::mpi::py::portClass(m);
 
-    // the structural entities; the communicator hands back groups, cartesian communicators and
-    // conduits, so they must all be registered before anybody calls one of its methods, though
-    // not before it is itself bound
-    pyre::mpi::py::group(m);
-    pyre::mpi::py::communicator(m);
-    pyre::mpi::py::cartesian(m);
-    pyre::mpi::py::port(m);
+    // now bind their interfaces: what mpi reports about a transfer
+    pyre::mpi::py::status();
+    pyre::mpi::py::request(m);
+    // the structural entities
+    pyre::mpi::py::group();
+    pyre::mpi::py::communicator();
+    pyre::mpi::py::cartesian();
+    // and the conduit
+    pyre::mpi::py::port();
 
     // the module api, last, since its {world} hands back a communicator
     pyre::mpi::py::api(m);

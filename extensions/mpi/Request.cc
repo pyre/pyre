@@ -35,18 +35,31 @@ namespace pyre::mpi::py {
 } // namespace pyre::mpi::py
 
 
-// add the bindings for the receipt of a transfer that is still in flight
+// register the class of the transfer receipts, so that every signature can name it
 void
-pyre::mpi::py::request(py::module & m)
+pyre::mpi::py::requestClass(py::module & m)
 {
-    // the class; a receipt cannot be built from python, since only a transfer makes one
-    auto cls = py::class_<Request>(
+    // the class
+    py::class_<Request>(
         // in scope
         m,
         // the name
         "Request",
         // the docstring
         "the receipt of a message transfer that is still in flight");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the receipt of a transfer that is still in flight
+void
+pyre::mpi::py::request(py::module & m)
+{
+    // the class, registered by {requestClass}; a receipt cannot be built from python, since
+    // only a transfer makes one
+    auto cls = py::class_<Request>(py::type::of<Request>());
 
     // whether the transfer is still pending
     cls.def_property_readonly(

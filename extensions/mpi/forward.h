@@ -21,17 +21,27 @@ namespace pyre::mpi::py {
     // the exception hierarchy, translated into python
     void exceptions(py::module & m);
 
+    // register the classes of what mpi reports about a transfer, finished or not
+    void statusClass(py::module & m);
+    void requestClass(py::module & m);
+    // of the structural entities
+    void groupClass(py::module & m);
+    void communicatorClass(py::module & m);
+    void cartesianClass(py::module & m);
+    // and of the python level conduit
+    void portClass(py::module & m);
+
     // what mpi reports about a transfer, finished or not
-    void status(py::module & m);
+    void status();
     void request(py::module & m);
 
     // the structural entities
-    void group(py::module & m);
-    void communicator(py::module & m);
-    void cartesian(py::module & m);
+    void group();
+    void communicator();
+    void cartesian();
 
     // the python level conduit
-    void port(py::module & m);
+    void port();
 } // namespace pyre::mpi::py
 
 

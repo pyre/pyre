@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// add the bindings for what mpi reports about a completed transfer
+// register the class of the transfer reports, so that every signature can name it
 void
-pyre::mpi::py::status(py::module & m)
+pyre::mpi::py::statusClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<Status>(
+    py::class_<Status>(
         // in scope
         m,
         // the name
         "Status",
         // the docstring
         "what mpi reports about a message transfer that has completed");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for what mpi reports about a completed transfer
+void
+pyre::mpi::py::status()
+{
+    // the class, registered by {statusClass}
+    auto cls = py::class_<Status>(py::type::of<Status>());
 
     // who sent the message
     cls.def_property_readonly(

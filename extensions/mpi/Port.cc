@@ -13,21 +13,33 @@
 #include "utilities.h"
 
 
-// add the bindings for the conduit
-//
-// what python adds to the conduit is the ability to move an arbitrary object, by flattening it
-// into the raw payload the c++ layer already knows how to ship
+// register the class of the ports, so that every signature can name it
 void
-pyre::mpi::py::port(py::module & m)
+pyre::mpi::py::portClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<Port>(
+    py::class_<Port>(
         // in scope
         m,
         // the name
         "Port",
         // the docstring
         "a conduit between this process and one fixed peer");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the conduit
+//
+// what python adds to the conduit is the ability to move an arbitrary object, by flattening it
+// into the raw payload the c++ layer already knows how to ship
+void
+pyre::mpi::py::port()
+{
+    // the class, registered by {portClass}
+    auto cls = py::class_<Port>(py::type::of<Port>());
 
     // the constructor, for anybody who would rather build one directly than ask a communicator
     cls.def(

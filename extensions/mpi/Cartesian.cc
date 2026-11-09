@@ -11,19 +11,31 @@
 #include "forward.h"
 
 
-// add the bindings for the cartesian communicator
+// register the class of the cartesian communicators, so that every signature can name it
 void
-pyre::mpi::py::cartesian(py::module & m)
+pyre::mpi::py::cartesianClass(py::module & m)
 {
     // the class, which derives from the plain communicator so that everything the base binds
     // is available here too
-    auto cls = py::class_<Cartesian, Communicator>(
+    py::class_<Cartesian, Communicator>(
         // in scope
         m,
         // the name
         "Cartesian",
         // the docstring
         "a communicator whose processes are arranged on a grid");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the cartesian communicator
+void
+pyre::mpi::py::cartesian()
+{
+    // the class, registered by {cartesianClass}
+    auto cls = py::class_<Cartesian, Communicator>(py::type::of<Cartesian>());
 
     // the shape of the grid
     cls.def_property_readonly(
