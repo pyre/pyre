@@ -186,6 +186,9 @@ pyre_test_python_testcase(tests/pyre.pkg/filesystem/earthaccess_refresh.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_client.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_client_session.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_client_fork.py)
+pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_expired_listing.py)
+pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_refused_listing.py)
+pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_expired_check.py)
 
 # the {local_make} test modifies its local directory; so there are race conditions when running
 # the test suite in parallel with all the test that explore the current directory; run it after
