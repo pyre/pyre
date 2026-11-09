@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// the chunk cache description
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::chunkCache(py::module & m)
+pyre::h5::py::properties::chunkCacheClass(py::module & m)
 {
-    // add bindings for the chunk cache description
-    auto cls = py::class_<ChunkCache>(
+    // register the class of the chunk cache description
+    py::class_<ChunkCache>(
         // in scope
         m,
         // class name
         "ChunkCache",
         // docstring
         "the cache a dataset is read and written through");
+
+    // all done
+    return;
+}
+
+
+// the chunk cache description
+void
+pyre::h5::py::properties::chunkCache()
+{
+    // the class, registered by {chunkCacheClass}
+    auto cls = py::class_<ChunkCache>(py::type::of<ChunkCache>());
 
     // constructor; every field must be named, so a call site says what its numbers mean
     cls.def(

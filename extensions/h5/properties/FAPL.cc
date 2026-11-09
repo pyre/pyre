@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// file access property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::fapl(py::module & m)
+pyre::h5::py::properties::faplClass(py::module & m)
 {
-    // add bindings for hdf5 file access property lists
-    auto cls = py::class_<FAPL, PropList>(
+    // register the class of hdf5 file access property lists
+    py::class_<FAPL, PropList>(
         // in scope
         m,
         // class name
         "fapl",
         // docstring
         "a file access property list");
+
+    // all done
+    return;
+}
+
+
+// file access property lists
+void
+pyre::h5::py::properties::fapl()
+{
+    // the class, registered by {faplClass}
+    auto cls = py::class_<FAPL, PropList>(py::type::of<FAPL>());
 
     // static properties
     cls.def_property_readonly_static(

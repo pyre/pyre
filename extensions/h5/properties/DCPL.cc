@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// dataset creation property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::dcpl(py::module & m)
+pyre::h5::py::properties::dcplClass(py::module & m)
 {
-    // add bindings for hdf5 dataset creation property lists
-    auto cls = py::class_<DCPL, OCPL>(
+    // register the class of hdf5 dataset creation property lists
+    py::class_<DCPL, OCPL>(
         // in scope
         m,
         // class name
         "dcpl",
         // docstring
         "a dataset creation property list");
+
+    // all done
+    return;
+}
+
+
+// dataset creation property lists
+void
+pyre::h5::py::properties::dcpl()
+{
+    // the class, registered by {dcplClass}
+    auto cls = py::class_<DCPL, OCPL>(py::type::of<DCPL>());
 
     // static properties
     cls.def_property_readonly_static(

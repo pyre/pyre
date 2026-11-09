@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// the thresholds at which storage switches representation
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::phaseChange(py::module & m)
+pyre::h5::py::properties::phaseChangeClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<PhaseChange>(
+    // register the class of the record
+    py::class_<PhaseChange>(
         // in scope
         m,
         // class name
         "PhaseChange",
         // docstring
         "the thresholds at which storage switches representation");
+
+    // all done
+    return;
+}
+
+
+// the thresholds at which storage switches representation
+void
+pyre::h5::py::properties::phaseChange()
+{
+    // the class, registered by {phaseChangeClass}
+    auto cls = py::class_<PhaseChange>(py::type::of<PhaseChange>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

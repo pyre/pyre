@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::datatype(py::module & m)
+pyre::h5::py::types::datatypeClass(py::module & m)
 {
-    // add bindings for the base hdf5 datatype
-    auto cls = py::class_<DataType>(
+    // register the class of the base hdf5 datatype
+    py::class_<DataType>(
         // in scope
         m,
         // class name
         "datatype",
         // docstring
         "the base HDF5 datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the base of all datatypes
+void
+pyre::h5::py::types::datatype()
+{
+    // the class, registered by {datatypeClass}
+    auto cls = py::class_<DataType>(py::type::of<DataType>());
 
     // constructor
     // from an existing type

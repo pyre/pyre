@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::array(py::module & m)
+pyre::h5::py::types::arrayClass(py::module & m)
 {
-    // add the class
-    auto arrayType = py::class_<ArrayType, DataType>(
+    // register the class
+    py::class_<ArrayType, DataType>(
         // in scope
         m,
         // class name
         "array",
         // docstring
         "an HDF5 array datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the array datatypes
+void
+pyre::h5::py::types::array()
+{
+    // the class, registered by {arrayClass}
+    auto arrayType = py::class_<ArrayType, DataType>(py::type::of<ArrayType>());
 
     // constructor
     arrayType.def(

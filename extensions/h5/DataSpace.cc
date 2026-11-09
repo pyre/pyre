@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// dataspaces
+// register the class, so that every signature can name it
 void
-pyre::h5::py::dataspace(py::module & m)
+pyre::h5::py::dataspaceClass(py::module & m)
 {
-    // add bindings for hdf5 dataspaces
-    auto cls = py::class_<DataSpace>(
+    // register the class of hdf5 dataspaces
+    py::class_<DataSpace>(
         // in scope
         m,
         // class name
         "DataSpace",
         // docstring
         "an HDF5 dataspace");
+
+    // all done
+    return;
+}
+
+
+// dataspaces
+void
+pyre::h5::py::dataspace(py::module & m)
+{
+    // the class, registered by {dataspaceClass}
+    auto cls = py::class_<DataSpace>(py::type::of<DataSpace>());
 
     // constructors
     // of a given class, "scalar" by default

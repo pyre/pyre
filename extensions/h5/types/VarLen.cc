@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::varlen(py::module & m)
+pyre::h5::py::types::varlenClass(py::module & m)
 {
-    // add the class
-    auto varlenType = py::class_<VarLenType, DataType>(
+    // register the class
+    py::class_<VarLenType, DataType>(
         // in scope
         m,
         // class name
         "varlen",
         // docstring
         "an HDF5 variable length datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the variable length datatypes
+void
+pyre::h5::py::types::varlen()
+{
+    // the class, registered by {varlenClass}
+    auto varlenType = py::class_<VarLenType, DataType>(py::type::of<VarLenType>());
 
     // all done
     return;

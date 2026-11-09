@@ -11,19 +11,31 @@
 #include "forward.h"
 
 
-// object creation property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::ocpl(py::module & m)
+pyre::h5::py::properties::ocplClass(py::module & m)
 {
-    // add bindings for the properties shared by every object creation property list; there is
+    // register the class of the properties shared by every object creation property list; there is
     // no constructor, since these settings are always part of a concrete list
-    auto cls = py::class_<OCPL, PropList>(
+    py::class_<OCPL, PropList>(
         // in scope
         m,
         // class name
         "ocpl",
         // docstring
         "the properties shared by every object creation property list");
+
+    // all done
+    return;
+}
+
+
+// object creation property lists
+void
+pyre::h5::py::properties::ocpl()
+{
+    // the class, registered by {ocplClass}
+    auto cls = py::class_<OCPL, PropList>(py::type::of<OCPL>());
 
     // interface
     // whether the objects being created record their modification times

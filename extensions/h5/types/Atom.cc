@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::atom(py::module & m)
+pyre::h5::py::types::atomClass(py::module & m)
 {
-    // add the class
-    auto cls = py::class_<AtomType, DataType>(
+    // register the class
+    py::class_<AtomType, DataType>(
         // in scope
         m,
         // class name
         "atom",
         // docstring
         "an HDF5 atom datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the atomic datatypes
+void
+pyre::h5::py::types::atom()
+{
+    // the class, registered by {atomClass}
+    auto cls = py::class_<AtomType, DataType>(py::type::of<AtomType>());
 
     // properties
     cls.def_property(

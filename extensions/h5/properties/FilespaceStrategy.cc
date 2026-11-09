@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// how a file manages the space its deleted objects leave behind
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::filespaceStrategy(py::module & m)
+pyre::h5::py::properties::filespaceStrategyClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<FilespaceStrategy>(
+    // register the class of the record
+    py::class_<FilespaceStrategy>(
         // in scope
         m,
         // class name
         "FilespaceStrategy",
         // docstring
         "how a file manages the space its deleted objects leave behind");
+
+    // all done
+    return;
+}
+
+
+// how a file manages the space its deleted objects leave behind
+void
+pyre::h5::py::properties::filespaceStrategy()
+{
+    // the class, registered by {filespaceStrategyClass}
+    auto cls = py::class_<FilespaceStrategy>(py::type::of<FilespaceStrategy>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

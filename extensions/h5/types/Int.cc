@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::int_(py::module & m)
+pyre::h5::py::types::intClass(py::module & m)
 {
-    // add the class
-    auto cls = py::class_<IntType, AtomType>(
+    // register the class
+    py::class_<IntType, AtomType>(
         // in scope
         m,
         // class name
         "int",
         // docstring
         "an HDF5 int datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the integer datatypes
+void
+pyre::h5::py::types::int_()
+{
+    // the class, registered by {intClass}
+    auto cls = py::class_<IntType, AtomType>(py::type::of<IntType>());
 
     // constructors
     // from an existing type

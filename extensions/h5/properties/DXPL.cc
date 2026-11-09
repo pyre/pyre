@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// dataset memory transfer property lists
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::dxpl(py::module & m)
+pyre::h5::py::properties::dxplClass(py::module & m)
 {
-    // add bindings for hdf5 dataset memory transfer property lists
-    auto cls = py::class_<DXPL, PropList>(
+    // register the class of hdf5 dataset memory transfer property lists
+    py::class_<DXPL, PropList>(
         // in scope
         m,
         // class name
         "dxpl",
         // docstring
         "a dataset memory transfer property list");
+
+    // all done
+    return;
+}
+
+
+// dataset memory transfer property lists
+void
+pyre::h5::py::properties::dxpl()
+{
+    // the class, registered by {dxplClass}
+    auto cls = py::class_<DXPL, PropList>(py::type::of<DXPL>());
 
     // static properties
     cls.def_property_readonly_static(

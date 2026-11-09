@@ -139,18 +139,30 @@ namespace pyre::h5::py {
 } // namespace pyre::h5::py
 
 
-// datasets
+// register the class, so that every signature can name it
 void
-pyre::h5::py::dataset(py::module & m)
+pyre::h5::py::datasetClass(py::module & m)
 {
-    // add bindings for hdf5 datasets
-    auto cls = py::class_<DataSet>(
+    // register the class of hdf5 datasets
+    py::class_<DataSet>(
         // in scope
         m,
         // class name
         "DataSet",
         // docstring
         "an HDF5 dataset");
+
+    // all done
+    return;
+}
+
+
+// datasets
+void
+pyre::h5::py::dataset()
+{
+    // the class, registered by {datasetClass}
+    auto cls = py::class_<DataSet>(py::type::of<DataSet>());
 
     // properties
     // my h5 handle

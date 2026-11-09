@@ -15,18 +15,30 @@
 #include "forward.h"
 
 
-// file objects
+// register the class, so that every signature can name it
 void
-pyre::h5::py::types::enum_(py::module & m)
+pyre::h5::py::types::enumClass(py::module & m)
 {
-    // add the class
-    auto enumType = py::class_<EnumType, DataType>(
+    // register the class
+    py::class_<EnumType, DataType>(
         // in scope
         m,
         // class name
         "enum",
         // docstring
         "an HDF5 enum datatype");
+
+    // all done
+    return;
+}
+
+
+// bind the enumerated datatypes
+void
+pyre::h5::py::types::enum_()
+{
+    // the class, registered by {enumClass}
+    auto enumType = py::class_<EnumType, DataType>(py::type::of<EnumType>());
 
     // constructors
     enumType.def(py::init<>());

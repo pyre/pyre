@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// the file format versions hdf5 may use
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::versionBounds(py::module & m)
+pyre::h5::py::properties::versionBoundsClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<VersionBounds>(
+    // register the class of the record
+    py::class_<VersionBounds>(
         // in scope
         m,
         // class name
         "VersionBounds",
         // docstring
         "the file format versions hdf5 may use");
+
+    // all done
+    return;
+}
+
+
+// the file format versions hdf5 may use
+void
+pyre::h5::py::properties::versionBounds()
+{
+    // the class, registered by {versionBoundsClass}
+    auto cls = py::class_<VersionBounds>(py::type::of<VersionBounds>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

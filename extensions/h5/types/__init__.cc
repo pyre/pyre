@@ -15,9 +15,10 @@
 #include "forward.h"
 
 
-// file objects
+// make the namespace of the datatypes, and register their classes in it, so that every signature
+// can name them
 void
-pyre::h5::py::types::__init__(py::module & m)
+pyre::h5::py::types::classes(py::module & m)
 {
     // make a new namespace to hold datatype descriptions
     auto types = m.def_submodule(
@@ -26,31 +27,58 @@ pyre::h5::py::types::__init__(py::module & m)
         // its docstring
         "HDF5 datatypes");
 
-    // add the class definitions
-    // the base data types
-    datatype(types);
+    // the base datatype, before the ones that derive from it
+    datatypeClass(types);
     // array datatypes
-    array(types);
-    // atom datatype
-    atom(types);
-    float_(types);
-    int_(types);
-    predefined(types);
-    str(types);
+    arrayClass(types);
+    // the atomic datatypes, before the ones that derive from them
+    atomClass(types);
+    floatClass(types);
+    intClass(types);
+    predefinedClass(types);
+    strClass(types);
     // compound datatypes
-    compound(types);
+    compoundClass(types);
     // enum types
-    enum_(types);
+    enumClass(types);
+    // and variable length types
+    varlenClass(types);
+
+    // all done
+    return;
+}
+
+
+// the datatypes
+void
+pyre::h5::py::types::__init__(py::module & m)
+{
+    // the namespace, made by {classes}
+    auto types = m.attr("types").cast<py::module>();
+
+    // the base datatype
+    datatype();
+    // array datatypes
+    array();
+    // the atomic datatypes
+    atom();
+    float_();
+    int_();
+    str();
+    // compound datatypes
+    compound();
+    // enum types
+    enum_();
     // variable length types
-    varlen(types);
+    varlen();
 
-    // predefined datatypes
+    // the predefined datatypes: the native ones
     native(types);
-
+    // the standard ones, and those of either byte order
     std(types);
     big(types);
     little(types);
-
+    // and the ones specific to a platform or a standard
     alpha(types);
     ieee(types);
     intel(types);

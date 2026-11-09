@@ -11,18 +11,30 @@
 #include "forward.h"
 
 
-// what a group expects to hold, so its object header is sized for it
+// register the class, so that every signature can name it
 void
-pyre::h5::py::properties::linkEstimate(py::module & m)
+pyre::h5::py::properties::linkEstimateClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<LinkEstimate>(
+    // register the class of the record
+    py::class_<LinkEstimate>(
         // in scope
         m,
         // class name
         "LinkEstimate",
         // docstring
         "what a group expects to hold, so its object header is sized for it");
+
+    // all done
+    return;
+}
+
+
+// what a group expects to hold, so its object header is sized for it
+void
+pyre::h5::py::properties::linkEstimate()
+{
+    // the class, registered by {linkEstimateClass}
+    auto cls = py::class_<LinkEstimate>(py::type::of<LinkEstimate>());
 
     // constructor; every field is named, so a call site says what its values mean
     cls.def(

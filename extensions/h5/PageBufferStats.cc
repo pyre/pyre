@@ -11,12 +11,12 @@
 #include "forward.h"
 
 
-// what the page buffer of a file has seen
+// register the class, so that every signature can name it
 void
-pyre::h5::py::pageBufferStats(py::module & m)
+pyre::h5::py::pageBufferStatsClass(py::module & m)
 {
-    // add bindings for the record
-    auto cls = py::class_<PageBufferStats>(
+    // register the class of the record
+    py::class_<PageBufferStats>(
         // in scope
         m,
         // class name
@@ -24,6 +24,18 @@ pyre::h5::py::pageBufferStats(py::module & m)
         // docstring
         "what the page buffer of a file has seen; every count is a pair, metadata first and "
         "raw data second");
+
+    // all done
+    return;
+}
+
+
+// what the page buffer of a file has seen
+void
+pyre::h5::py::pageBufferStats()
+{
+    // the class, registered by {pageBufferStatsClass}
+    auto cls = py::class_<PageBufferStats>(py::type::of<PageBufferStats>());
 
     // the requests the buffer was asked to serve
     cls.def_readonly(
