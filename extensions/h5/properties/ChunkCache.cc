@@ -47,29 +47,35 @@ pyre::h5::py::properties::chunkCache()
         "given {preemption} policy");
 
     // the size of the index
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "slots",
-        // the field
-        &ChunkCache::slots,
+        // the getter
+        pyre::py::getter(cls, &ChunkCache::slots),
+        // the setter
+        pyre::py::setter(cls, &ChunkCache::slots),
         // the docstring
         "the number of slots in the hash table that indexes my cached chunks");
 
     // the memory budget
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "bytes",
-        // the field
-        &ChunkCache::bytes,
+        // the getter
+        pyre::py::getter(cls, &ChunkCache::bytes),
+        // the setter
+        pyre::py::setter(cls, &ChunkCache::bytes),
         // the docstring
         "how much memory i may hold");
 
     // the eviction policy
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "preemption",
-        // the field
-        &ChunkCache::preemption,
+        // the getter
+        pyre::py::getter(cls, &ChunkCache::preemption),
+        // the setter
+        pyre::py::setter(cls, &ChunkCache::preemption),
         // the docstring
         "how strongly to favor evicting a chunk that has been fully read or written");
 

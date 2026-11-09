@@ -65,7 +65,7 @@ pyre::h5::py::properties::fcpl()
         // the getter
         py::overload_cast<>(&FCPL::pageSize, py::const_),
         // the setter
-        py::overload_cast<hsize_t>(&FCPL::pageSize),
+        pyre::py::setter(cls, py::overload_cast<hsize_t>(&FCPL::pageSize)),
         // the docstring
         "the size of the pages my file space is carved into");
 
@@ -76,7 +76,8 @@ pyre::h5::py::properties::fcpl()
         // the getter
         py::overload_cast<>(&FCPL::filespaceStrategy, py::const_),
         // the setter
-        py::overload_cast<const FilespaceStrategy &>(&FCPL::filespaceStrategy),
+        pyre::py::setter(
+            cls, py::overload_cast<const FilespaceStrategy &>(&FCPL::filespaceStrategy)),
         // the docstring
         "how free space is managed, as {(strategy, persist, threshold)}");
 
@@ -87,7 +88,7 @@ pyre::h5::py::properties::fcpl()
         // the getter
         py::overload_cast<>(&FCPL::userblock, py::const_),
         // the setter
-        py::overload_cast<hsize_t>(&FCPL::userblock),
+        pyre::py::setter(cls, py::overload_cast<hsize_t>(&FCPL::userblock)),
         // the docstring
         "the size of the byte range at the front of my file that hdf5 leaves alone");
 
@@ -98,7 +99,7 @@ pyre::h5::py::properties::fcpl()
         // the getter
         py::overload_cast<>(&FCPL::sizes, py::const_),
         // the setter
-        py::overload_cast<const Sizes &>(&FCPL::sizes),
+        pyre::py::setter(cls, py::overload_cast<const Sizes &>(&FCPL::sizes)),
         // the docstring
         "the widths used to record positions and lengths, as {(offset, length)} bytes");
 

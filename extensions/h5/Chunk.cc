@@ -46,38 +46,46 @@ pyre::h5::py::chunk()
         "describe a chunk that exists in the file");
 
     // where my first cell sits in the dataset's index space
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "origin",
-        // the field
-        &Chunk::origin,
+        // the getter
+        pyre::py::getter(cls, &Chunk::origin),
+        // the setter
+        pyre::py::setter(cls, &Chunk::origin),
         // the docstring
         "where my first cell sits in the dataset's index space");
 
     // which stages of the filter pipeline were skipped when i was written
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "filterMask",
-        // the field
-        &Chunk::filterMask,
+        // the getter
+        pyre::py::getter(cls, &Chunk::filterMask),
+        // the setter
+        pyre::py::setter(cls, &Chunk::filterMask),
         // the docstring
         "which stages of the filter pipeline were skipped when i was written");
 
     // where i live in the file
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "address",
-        // the field
-        &Chunk::address,
+        // the getter
+        pyre::py::getter(cls, &Chunk::address),
+        // the setter
+        pyre::py::setter(cls, &Chunk::address),
         // the docstring
         "where i live in the file");
 
     // how much room i take up there, after the pipeline had its way with me
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "bytes",
-        // the field
-        &Chunk::bytes,
+        // the getter
+        pyre::py::getter(cls, &Chunk::bytes),
+        // the setter
+        pyre::py::setter(cls, &Chunk::bytes),
         // the docstring
         "my size on disk, after the filter pipeline had its way with me");
 

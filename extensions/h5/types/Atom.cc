@@ -47,7 +47,7 @@ pyre::h5::py::types::atom()
         // the getter
         &AtomType::order,
         // the setter
-        &AtomType::setOrder,
+        pyre::py::setter(cls, &AtomType::setOrder),
         // the docstring
         "get/set the byte order");
 
@@ -57,7 +57,7 @@ pyre::h5::py::types::atom()
         // the getter
         &AtomType::offset,
         // the setter
-        &AtomType::setOffset,
+        pyre::py::setter(cls, &AtomType::setOffset),
         // the docstring
         "get/set the bit offset of the first significant bit");
 
@@ -67,14 +67,16 @@ pyre::h5::py::types::atom()
         // the getter
         &AtomType::pad,
         // the setter
-        [](AtomType & self, std::pair<H5T_pad_t, H5T_pad_t> pad) {
-            // unpack
-            auto [lsb, msb] = pad;
-            // and set
-            self.setPad(lsb, msb);
-            // all done
-            return;
-        },
+        pyre::py::setter(
+            cls,
+            [](AtomType & self, std::pair<H5T_pad_t, H5T_pad_t> pad) {
+                // unpack
+                auto [lsb, msb] = pad;
+                // and set
+                self.setPad(lsb, msb);
+                // all done
+                return;
+            }),
         // the docstring
         "get/set the padding strategy for (lsb, msb)");
 
@@ -84,7 +86,7 @@ pyre::h5::py::types::atom()
         // the getter
         &AtomType::precision,
         // the setter
-        &AtomType::setPrecision,
+        pyre::py::setter(cls, &AtomType::setPrecision),
         // the docstring
         "get/set the precision");
 
@@ -94,7 +96,7 @@ pyre::h5::py::types::atom()
         // the getter
         &AtomType::bytes,
         // the setter
-        &AtomType::setBytes,
+        pyre::py::setter(cls, &AtomType::setBytes),
         // the docstring
         "get/set the overall size");
 

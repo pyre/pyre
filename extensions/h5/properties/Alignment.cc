@@ -46,20 +46,24 @@ pyre::h5::py::properties::alignment()
         "describe where the objects in a file start");
 
     // the size an object must reach before it is placed deliberately
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "threshold",
-        // the field
-        &Alignment::threshold,
+        // the getter
+        pyre::py::getter(cls, &Alignment::threshold),
+        // the setter
+        pyre::py::setter(cls, &Alignment::threshold),
         // the docstring
         "the size an object must reach before it is placed deliberately");
 
     // the multiple such an object starts on
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "boundary",
-        // the field
-        &Alignment::boundary,
+        // the getter
+        pyre::py::getter(cls, &Alignment::boundary),
+        // the setter
+        pyre::py::setter(cls, &Alignment::boundary),
         // the docstring
         "the multiple such an object starts on");
 

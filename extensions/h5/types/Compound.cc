@@ -86,7 +86,7 @@ pyre::h5::py::types::compound()
         // the getter
         &CompType::bytes,
         // the setter
-        &CompType::setBytes,
+        pyre::py::setter(cls, &CompType::setBytes),
         // the docstring
         "get/set the overall size");
 

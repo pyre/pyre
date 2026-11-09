@@ -46,38 +46,46 @@ pyre::h5::py::properties::filter()
         "describe one stage of the pipeline a dataset's cells pass through");
 
     // which filter this is
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "id",
-        // the field
-        &Filter::id,
+        // the getter
+        pyre::py::getter(cls, &Filter::id),
+        // the setter
+        pyre::py::setter(cls, &Filter::id),
         // the docstring
         "which filter this is");
 
     // what the library calls it
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "name",
-        // the field
-        &Filter::name,
+        // the getter
+        pyre::py::getter(cls, &Filter::name),
+        // the setter
+        pyre::py::setter(cls, &Filter::name),
         // the docstring
         "what the library calls it");
 
     // how the library treats a failure of this stage
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "flags",
-        // the field
-        &Filter::flags,
+        // the getter
+        pyre::py::getter(cls, &Filter::flags),
+        // the setter
+        pyre::py::setter(cls, &Filter::flags),
         // the docstring
         "how the library treats a failure of this stage");
 
     // whether the filter can encode, decode, or both
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "configuration",
-        // the field
-        &Filter::configuration,
+        // the getter
+        pyre::py::getter(cls, &Filter::configuration),
+        // the setter
+        pyre::py::setter(cls, &Filter::configuration),
         // the docstring
         "whether the filter can encode, decode, or both");
 

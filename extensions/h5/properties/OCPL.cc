@@ -45,7 +45,7 @@ pyre::h5::py::properties::ocpl()
         // the getter
         py::overload_cast<>(&OCPL::timeTracking, py::const_),
         // the setter
-        py::overload_cast<bool>(&OCPL::timeTracking),
+        pyre::py::setter(cls, py::overload_cast<bool>(&OCPL::timeTracking)),
         // the docstring
         "whether the objects i create record their modification times");
 
@@ -56,7 +56,7 @@ pyre::h5::py::properties::ocpl()
         // the getter
         py::overload_cast<>(&OCPL::attributePhaseChange, py::const_),
         // the setter
-        py::overload_cast<const PhaseChange &>(&OCPL::attributePhaseChange),
+        pyre::py::setter(cls, py::overload_cast<const PhaseChange &>(&OCPL::attributePhaseChange)),
         // the docstring
         "the thresholds at which attribute storage switches representation, as "
         "{(max compact, min dense)}");
@@ -68,7 +68,7 @@ pyre::h5::py::properties::ocpl()
         // the getter
         py::overload_cast<>(&OCPL::attributeCreationOrder, py::const_),
         // the setter
-        py::overload_cast<CreationOrder>(&OCPL::attributeCreationOrder),
+        pyre::py::setter(cls, py::overload_cast<CreationOrder>(&OCPL::attributeCreationOrder)),
         // the docstring
         "whether the order in which attributes were created is tracked and indexed");
 

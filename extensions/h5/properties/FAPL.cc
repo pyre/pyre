@@ -65,7 +65,7 @@ pyre::h5::py::properties::fapl()
         // the getter
         py::overload_cast<>(&FAPL::metadataBlockSize, py::const_),
         // the setter
-        py::overload_cast<hsize_t>(&FAPL::metadataBlockSize),
+        pyre::py::setter(cls, py::overload_cast<hsize_t>(&FAPL::metadataBlockSize)),
         // the docstring
         "the size of the blocks my metadata is allocated in");
 
@@ -76,7 +76,7 @@ pyre::h5::py::properties::fapl()
         // the getter
         py::overload_cast<>(&FAPL::pageBufferSize, py::const_),
         // the setter
-        py::overload_cast<const PageBuffer &>(&FAPL::pageBufferSize),
+        pyre::py::setter(cls, py::overload_cast<const PageBuffer &>(&FAPL::pageBufferSize)),
         // the docstring
         "my page buffer, as {(bytes, metadata percent, raw data percent)}");
 
@@ -87,7 +87,7 @@ pyre::h5::py::properties::fapl()
         // the getter
         py::overload_cast<>(&FAPL::alignment, py::const_),
         // the setter
-        py::overload_cast<const Alignment &>(&FAPL::alignment),
+        pyre::py::setter(cls, py::overload_cast<const Alignment &>(&FAPL::alignment)),
         // the docstring
         "where objects start in my file, as {(threshold, alignment)} bytes");
 
@@ -98,7 +98,7 @@ pyre::h5::py::properties::fapl()
         // the getter
         py::overload_cast<>(&FAPL::sieveBufferSize, py::const_),
         // the setter
-        py::overload_cast<std::size_t>(&FAPL::sieveBufferSize),
+        pyre::py::setter(cls, py::overload_cast<std::size_t>(&FAPL::sieveBufferSize)),
         // the docstring
         "the size of the buffer that gathers small writes to contiguous datasets");
 
@@ -109,7 +109,7 @@ pyre::h5::py::properties::fapl()
         // the getter
         py::overload_cast<>(&FAPL::closeDegree, py::const_),
         // the setter
-        py::overload_cast<H5F_close_degree_t>(&FAPL::closeDegree),
+        pyre::py::setter(cls, py::overload_cast<H5F_close_degree_t>(&FAPL::closeDegree)),
         // the docstring
         "what becomes of my file when its handle closes with objects still open");
 
@@ -120,7 +120,7 @@ pyre::h5::py::properties::fapl()
         // the getter
         py::overload_cast<>(&FAPL::cache, py::const_),
         // the setter
-        py::overload_cast<const Cache &>(&FAPL::cache),
+        pyre::py::setter(cls, py::overload_cast<const Cache &>(&FAPL::cache)),
         // the docstring
         "my default caches, as {(metadata elements, chunk slots, chunk bytes, preemption)}");
 
@@ -131,7 +131,7 @@ pyre::h5::py::properties::fapl()
         // the getter
         py::overload_cast<>(&FAPL::libverBounds, py::const_),
         // the setter
-        py::overload_cast<const VersionBounds &>(&FAPL::libverBounds),
+        pyre::py::setter(cls, py::overload_cast<const VersionBounds &>(&FAPL::libverBounds)),
         // the docstring
         "the file format versions i may use, as {(low, high)}; asking for a recent one "
         "buys newer features and narrows who can read the result");

@@ -46,29 +46,35 @@ pyre::h5::py::properties::filespaceStrategy()
         "describe how a file manages the space its deleted objects leave behind");
 
     // how free space is tracked
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "strategy",
-        // the field
-        &FilespaceStrategy::strategy,
+        // the getter
+        pyre::py::getter(cls, &FilespaceStrategy::strategy),
+        // the setter
+        pyre::py::setter(cls, &FilespaceStrategy::strategy),
         // the docstring
         "how free space is tracked");
 
     // whether the free space survives closing the file
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "persist",
-        // the field
-        &FilespaceStrategy::persist,
+        // the getter
+        pyre::py::getter(cls, &FilespaceStrategy::persist),
+        // the setter
+        pyre::py::setter(cls, &FilespaceStrategy::persist),
         // the docstring
         "whether the free space survives closing the file");
 
     // the smallest block worth tracking
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "threshold",
-        // the field
-        &FilespaceStrategy::threshold,
+        // the getter
+        pyre::py::getter(cls, &FilespaceStrategy::threshold),
+        // the setter
+        pyre::py::setter(cls, &FilespaceStrategy::threshold),
         // the docstring
         "the smallest block worth tracking");
 
