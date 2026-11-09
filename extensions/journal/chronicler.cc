@@ -27,9 +27,11 @@ pyre::journal::py::chronicler(py::module & m)
             return chronicler_t::decor();
         },
         // the setter
-        [](py::object, chronicler_t::detail_type decor) -> chronicler_t::detail_type {
-            // set the new value and return the old
-            return chronicler_t::decor(decor);
+        [](py::object, chronicler_t::detail_type decor) -> void {
+            // set the new value
+            chronicler_t::decor(decor);
+            // all done
+            return;
         },
         // the docstring
         "access the message decoration level");
@@ -43,9 +45,11 @@ pyre::journal::py::chronicler(py::module & m)
             return chronicler_t::detail();
         },
         // the setter
-        [](py::object, chronicler_t::detail_type detail) -> chronicler_t::detail_type {
-            // set the new value and return the old
-            return chronicler_t::detail(detail);
+        [](py::object, chronicler_t::detail_type detail) -> void {
+            // set the new value
+            chronicler_t::detail(detail);
+            // all done
+            return;
         },
         // the docstring
         "access the maximum detail level");

@@ -63,14 +63,14 @@ public:
 
     // decoration level filter
     static inline auto decor() -> detail_type;
-    static inline auto decor(detail_type) -> detail_type;
+    static inline auto decor(detail_type) -> void;
     // detail level filter
     static inline auto detail() -> detail_type;
-    static inline auto detail(detail_type) -> detail_type;
+    static inline auto detail(detail_type) -> void;
 
     // print margin control
     static inline auto margin() -> margin_type;
-    static inline auto margin(margin_type) -> margin_type;
+    static inline auto margin(margin_type) -> void;
 
     // metadata
     static inline auto notes() -> notes_type &;
