@@ -15,24 +15,36 @@
 
 // helpers
 namespace pyre::py::geometry {
-    // bind the finite unions of a kind of shape, related to the shapes of that kind, to each
-    // other, and to the shapes of the kinds in {otherT}
-    template <class shapeT, class... otherT>
-    inline void shapeCollection(py::module & m, classname_t name, docstring_t docstring)
+    // register the class of the finite unions of a kind of shape, so that every signature can
+    // name it
+    template <class shapeT>
+    inline void shapeCollectionClass(py::module & m, classname_t name, docstring_t docstring)
     {
-        // the union
-        using union_t = pyre::geometry::collection_t<shapeT>;
-        // and its members
-        using shapes_t = typename union_t::shapes_type;
-
-        // wrap the union
-        auto cls = py::class_<union_t>(
+        // register the union
+        py::class_<pyre::geometry::collection_t<shapeT>>(
             // the scope
             m,
             // the name of the class
             name,
             // its docstring
             docstring);
+
+        // all done
+        return;
+    }
+
+    // bind the finite unions of a kind of shape, related to the shapes of that kind, to each
+    // other, and to the shapes of the kinds in {otherT}
+    template <class shapeT, class... otherT>
+    inline void shapeCollection()
+    {
+        // the union
+        using union_t = pyre::geometry::collection_t<shapeT>;
+        // and its members
+        using shapes_t = typename union_t::shapes_type;
+
+        // the class of the union, registered by {shapeCollectionClass}
+        auto cls = py::class_<union_t>(py::type::of<union_t>());
 
         // the union of the given shapes
         cls.def(
@@ -111,16 +123,30 @@ namespace pyre::py::geometry {
 } // namespace pyre::py::geometry
 
 
-// bind the unions
+// register the classes of the unions, so that every signature can name them
 void
-pyre::py::geometry::collection(py::module & m)
+pyre::py::geometry::collectionClasses(py::module & m)
 {
     // the unions of intervals
-    shapeCollection<interval_t>(
+    shapeCollectionClass<interval_t>(
         m, "TimelineIntervals", "a finite union of intervals of the timeline");
     // the unions of polygons on the sphere
-    shapeCollection<polygon_t, place_t, box_t, path_t>(
+    shapeCollectionClass<polygon_t>(
         m, "SpherePolygons", "a finite union of polygons on the sphere");
+
+    // all done
+    return;
+}
+
+
+// bind the unions
+void
+pyre::py::geometry::collection()
+{
+    // the unions of intervals
+    shapeCollection<interval_t>();
+    // the unions of polygons on the sphere
+    shapeCollection<polygon_t, place_t, box_t, path_t>();
 
     // all done
     return;

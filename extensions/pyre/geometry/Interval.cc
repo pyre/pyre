@@ -15,9 +15,26 @@
 
 // helpers
 namespace pyre::py::geometry {
+    // register the class of the closed intervals of a line, so that every signature can name it
+    template <class lineT>
+    inline void lineIntervalClass(py::module & m, classname_t name, docstring_t docstring)
+    {
+        // register the interval
+        py::class_<pyre::geometry::interval_t<lineT>>(
+            // the scope
+            m,
+            // the name of the class
+            name,
+            // its docstring
+            docstring);
+
+        // all done
+        return;
+    }
+
     // bind the closed intervals of a line
     template <class lineT>
-    inline void lineInterval(py::module & m, classname_t name, docstring_t docstring)
+    inline void lineInterval()
     {
         // the ends
         using point_t = pyre::geometry::point_t<lineT>;
@@ -26,14 +43,8 @@ namespace pyre::py::geometry {
         // and the unions of intervals
         using union_t = pyre::geometry::collection_t<interval_t>;
 
-        // wrap the interval
-        auto cls = py::class_<interval_t>(
-            // the scope
-            m,
-            // the name of the class
-            name,
-            // its docstring
-            docstring);
+        // the class of the interval, registered by {lineIntervalClass}
+        auto cls = py::class_<interval_t>(py::type::of<interval_t>());
 
         // the empty interval
         cls.def(
@@ -144,12 +155,24 @@ namespace pyre::py::geometry {
 } // namespace pyre::py::geometry
 
 
-// bind the intervals
+// register the classes of the intervals, so that every signature can name them
 void
-pyre::py::geometry::interval(py::module & m)
+pyre::py::geometry::intervalClasses(py::module & m)
 {
     // the intervals of the lines
-    lineInterval<timeline_t>(m, "TimelineInterval", "a closed interval of the timeline");
+    lineIntervalClass<timeline_t>(m, "TimelineInterval", "a closed interval of the timeline");
+
+    // all done
+    return;
+}
+
+
+// bind the intervals
+void
+pyre::py::geometry::interval()
+{
+    // the intervals of the lines
+    lineInterval<timeline_t>();
 
     // all done
     return;

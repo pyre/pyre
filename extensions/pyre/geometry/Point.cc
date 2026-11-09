@@ -13,21 +13,32 @@
 
 // helpers
 namespace pyre::py::geometry {
-    // bind the points of a line, which are known by their coordinates along it
+    // register the class of the points of a line, so that every signature can name it
     template <class lineT>
-    inline void linePoint(py::module & m, classname_t name, docstring_t docstring)
+    inline void linePointClass(py::module & m, classname_t name, docstring_t docstring)
     {
-        // the point
-        using point_t = pyre::geometry::point_t<lineT>;
-
-        // wrap it
-        auto cls = py::class_<point_t>(
+        // register the point
+        py::class_<pyre::geometry::point_t<lineT>>(
             // the scope
             m,
             // the name of the class
             name,
             // its docstring
             docstring);
+
+        // all done
+        return;
+    }
+
+    // bind the points of a line, which are known by their coordinates along it
+    template <class lineT>
+    inline void linePoint()
+    {
+        // the point
+        using point_t = pyre::geometry::point_t<lineT>;
+
+        // the class of the point, registered by {linePointClass}
+        auto cls = py::class_<point_t>(py::type::of<point_t>());
 
         // the coordinate of the point
         cls.def_property_readonly(
@@ -61,21 +72,36 @@ namespace pyre::py::geometry {
 } // namespace pyre::py::geometry
 
 
-// bind the points
+// register the classes of the points, so that every signature can name them
 void
-pyre::py::geometry::point(py::module & m)
+pyre::py::geometry::pointClasses(py::module & m)
 {
     // the points of the lines
-    linePoint<timeline_t>(m, "TimelinePoint", "an instant, known by its seconds since the epoch");
-
+    linePointClass<timeline_t>(
+        m, "TimelinePoint", "an instant, known by its seconds since the epoch");
     // the points of the sphere, which are named by the charts
-    auto cls = py::class_<place_t>(
+    py::class_<place_t>(
         // the scope
         m,
         // the name of the class
         "SpherePoint",
         // its docstring
         "a point of the sphere, the unit vector of its direction from the center");
+
+    // all done
+    return;
+}
+
+
+// bind the points
+void
+pyre::py::geometry::point()
+{
+    // the points of the lines
+    linePoint<timeline_t>();
+
+    // the class of the points of the sphere, registered by {pointClasses}
+    auto cls = py::class_<place_t>(py::type::of<place_t>());
     // two points compare equal when they are the same point
     cls.def(py::self == py::self);
     // a readable representation

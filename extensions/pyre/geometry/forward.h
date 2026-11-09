@@ -33,24 +33,43 @@ namespace pyre::py::geometry {
     // the unions of polygons
     using polygons_t = pyre::geometry::collection_t<polygon_t>;
 
+    // register the classes of the points
+    void pointClasses(py::module &);
+    // of the intervals
+    void intervalClasses(py::module &);
+    // of the boxes
+    void boxClass(py::module &);
+    // of the paths
+    void pathClass(py::module &);
+    // of the rings
+    void ringClass(py::module &);
+    // of the polygons
+    void polygonClass(py::module &);
+    // of the unions
+    void collectionClasses(py::module &);
+    // of the spaces
+    void timelineClass(py::module &);
+    // and of the charts
+    void lonlatClass(py::module &);
+
     // bind the points
-    void point(py::module &);
+    void point();
     // bind the intervals
-    void interval(py::module &);
+    void interval();
     // bind the boxes
-    void box(py::module &);
+    void box();
     // bind the paths
-    void path(py::module &);
+    void path();
     // bind the rings
-    void ring(py::module &);
+    void ring();
     // bind the polygons
-    void polygon(py::module &);
+    void polygon();
     // bind the unions
-    void collection(py::module &);
+    void collection();
     // bind the spaces
-    void timeline(py::module &);
+    void timeline();
     // bind the charts
-    void lonlat(py::module &);
+    void lonlat();
     // bind the relations among shapes
     void relations(py::module &);
     // bind the shapes built out of other shapes

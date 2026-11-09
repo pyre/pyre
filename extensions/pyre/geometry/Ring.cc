@@ -11,20 +11,32 @@
 #include "forward.h"
 
 
-// bind the rings on the sphere; a ring bounds the region to its left, as one walks it from vertex
-// to vertex seen from outside the sphere, so a ring walked the wrong way describes the complement
-// of what was meant; see {pyre::geometry::Ring} and doc/design/geometry.md for why
+// register the class of the rings, so that every signature can name it
 void
-pyre::py::geometry::ring(py::module & m)
+pyre::py::geometry::ringClass(py::module & m)
 {
-    // wrap the ring
-    auto cls = py::class_<ring_t>(
+    // register the ring
+    py::class_<ring_t>(
         // the scope
         m,
         // the name of the class
         "SphereRing",
         // its docstring
         "a closed sequence of points of the sphere, and the region to its left");
+
+    // all done
+    return;
+}
+
+
+// bind the rings on the sphere; a ring bounds the region to its left, as one walks it from vertex
+// to vertex seen from outside the sphere, so a ring walked the wrong way describes the complement
+// of what was meant; see {pyre::geometry::Ring} and doc/design/geometry.md for why
+void
+pyre::py::geometry::ring()
+{
+    // the class of the ring, registered by {ringClass}
+    auto cls = py::class_<ring_t>(py::type::of<ring_t>());
 
     // the ring through a sequence of points
     cls.def(

@@ -24,23 +24,38 @@ pyre::py::geometry::__init__(py::module & m)
         // its docstring
         "wrappers over {pyre::geometry}: spaces, their points, and the shapes in them");
 
-    // bind the shapes first, since the spaces, the charts, the relations and the constructions
-    // traffic in them: the points come first, since they are the ends and the vertices of the
-    // others
-    point(geometry);
-    // then the shapes of the lines
-    interval(geometry);
-    // the shapes of the sphere, the rings before the polygons they bound
-    box(geometry);
-    path(geometry);
-    ring(geometry);
-    polygon(geometry);
-    // and the unions of both
-    collection(geometry);
+    // register every class before binding any interface, since the signatures name the
+    // classes they traffic in, and the shapes refer to each other: the points
+    pointClasses(geometry);
+    // the shapes of the lines
+    intervalClasses(geometry);
+    // the shapes of the sphere
+    boxClass(geometry);
+    pathClass(geometry);
+    ringClass(geometry);
+    polygonClass(geometry);
+    // the unions of both
+    collectionClasses(geometry);
     // the spaces
-    timeline(geometry);
+    timelineClass(geometry);
+    // and the charts
+    lonlatClass(geometry);
+
+    // now bind their interfaces: the points
+    point();
+    // the shapes of the lines
+    interval();
+    // the shapes of the sphere
+    box();
+    path();
+    ring();
+    polygon();
+    // the unions of both
+    collection();
+    // the spaces
+    timeline();
     // the charts
-    lonlat(geometry);
+    lonlat();
     // the relations
     relations(geometry);
     // and the constructions

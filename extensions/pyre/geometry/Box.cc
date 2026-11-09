@@ -13,18 +13,30 @@
 #include "relations.h"
 
 
-// bind the boxes of the longitude-latitude chart of the sphere
+// register the class of the boxes, so that every signature can name it
 void
-pyre::py::geometry::box(py::module & m)
+pyre::py::geometry::boxClass(py::module & m)
 {
-    // wrap the box
-    auto cls = py::class_<box_t>(
+    // register the box
+    py::class_<box_t>(
         // the scope
         m,
         // the name of the class
         "SphereBox",
         // its docstring
         "the points of the sphere between two meridians and two parallels");
+
+    // all done
+    return;
+}
+
+
+// bind the boxes of the longitude-latitude chart of the sphere
+void
+pyre::py::geometry::box()
+{
+    // the class of the box, registered by {boxClass}
+    auto cls = py::class_<box_t>(py::type::of<box_t>());
 
     // the empty box
     cls.def(

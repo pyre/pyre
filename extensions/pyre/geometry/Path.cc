@@ -13,18 +13,30 @@
 #include "relations.h"
 
 
-// bind the paths on the sphere
+// register the class of the paths, so that every signature can name it
 void
-pyre::py::geometry::path(py::module & m)
+pyre::py::geometry::pathClass(py::module & m)
 {
-    // wrap the path
-    auto cls = py::class_<path_t>(
+    // register the path
+    py::class_<path_t>(
         // the scope
         m,
         // the name of the class
         "SpherePath",
         // its docstring
         "a sequence of points of the sphere joined by edges");
+
+    // all done
+    return;
+}
+
+
+// bind the paths on the sphere
+void
+pyre::py::geometry::path()
+{
+    // the class of the path, registered by {pathClass}
+    auto cls = py::class_<path_t>(py::type::of<path_t>());
 
     // the path through a sequence of points
     cls.def(

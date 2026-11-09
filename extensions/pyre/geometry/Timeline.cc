@@ -11,10 +11,28 @@
 #include "forward.h"
 
 
+// register the class of the timeline, so that every signature can name it
+void
+pyre::py::geometry::timelineClass(py::module & m)
+{
+    // register the timeline
+    py::class_<timeline_t>(
+        // the scope
+        m,
+        // the name of the class
+        "Timeline",
+        // its docstring
+        "the affine line of time, whose instants are known by their seconds since its epoch");
+
+    // all done
+    return;
+}
+
+
 // bind the timeline; its points are known by their coordinates, the seconds since its epoch,
 // and the calendar that names them belongs to the python layer
 void
-pyre::py::geometry::timeline(py::module & m)
+pyre::py::geometry::timeline()
 {
     // the coordinate of the timeline
     using coordinate_t = timeline_t::coordinate_type;
@@ -23,14 +41,8 @@ pyre::py::geometry::timeline(py::module & m)
     // the durations
     using duration_t = timeline_t::vector_type;
 
-    // wrap the timeline
-    auto cls = py::class_<timeline_t>(
-        // the scope
-        m,
-        // the name of the class
-        "Timeline",
-        // its docstring
-        "the affine line of time, whose instants are known by their seconds since its epoch");
+    // the class of the timeline, registered by {timelineClass}
+    auto cls = py::class_<timeline_t>(py::type::of<timeline_t>());
 
     // build a timeline
     cls.def(
