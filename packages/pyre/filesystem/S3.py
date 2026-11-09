@@ -38,8 +38,9 @@ class S3(Filesystem):
         """
         # the location of my root
         root = self.info(node=self).uri
-        # ask for one byte of it
+        # attempt to
         try:
+            # ask for one byte of it
             self.client.get_object(
                 Bucket=root.authority, Key="/".join(root.address[1:]) or "/", Range="bytes=0-0"
             )
@@ -101,8 +102,9 @@ class S3(Filesystem):
                 # and truncate key names to the next occurrence of the {delimiter}
                 "Delimiter": delimiter,
             }
-            # go through the pages
+            # attempt to
             try:
+                # go through the pages
                 for page in paginator.paginate(**opts):
                     # process the page contents
                     self._processPage(
