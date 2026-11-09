@@ -23,7 +23,32 @@ class S3(Filesystem):
     """
 
     # exceptions
-    from .exceptions import DirectoryListingError
+    from .exceptions import DirectoryListingError, ExpiredCredentialsError
+
+    # public data
+    # the codes S3 uses to report that the credentials of a request have expired
+    expirations = ("ExpiredToken",)
+
+    # interface
+    def expired(self):
+        """
+        Check whether the credentials of my session have expired, with the cheapest request that
+        must be signed: one byte of the key at my root; S3 checks the credentials before it looks
+        for the key, so the key need not exist
+        """
+        # the location of my root
+        root = self.info(node=self).uri
+        # ask for one byte of it
+        try:
+            self.client.get_object(
+                Bucket=root.authority, Key="/".join(root.address[1:]) or "/", Range="bytes=0-0"
+            )
+        # if the request was refused
+        except self.client.exceptions.ClientError as error:
+            # the credentials have expired when S3 says so
+            return self._expired(error=error)
+        # otherwise, they were accepted
+        return False
 
     # fill {root} with the content
     def discover(self, root=None, levels=0, **kwds):
@@ -77,16 +102,25 @@ class S3(Filesystem):
                 "Delimiter": delimiter,
             }
             # go through the pages
-            for page in paginator.paginate(**opts):
-                # process the page contents
-                self._processPage(
-                    folder=folder,
-                    here=here,
-                    level=level,
-                    dead=dead,
-                    page=page,
-                    todo=todo,
-                )
+            try:
+                for page in paginator.paginate(**opts):
+                    # process the page contents
+                    self._processPage(
+                        folder=folder,
+                        here=here,
+                        level=level,
+                        dead=dead,
+                        page=page,
+                        todo=todo,
+                    )
+            # if the listing was refused
+            except self.client.exceptions.ClientError as error:
+                # because the credentials of my session have expired
+                if self._expired(error=error):
+                    # say so, naming the folder whose listing was interrupted
+                    raise self.ExpiredCredentialsError(uri=here) from error
+                # anything else goes through as it is
+                raise
             # now, go through the nodes that are still in the dead pile
             for name in dead:
                 # ask {folder} for the node that corresponds to the name
@@ -153,6 +187,13 @@ class S3(Filesystem):
         return self._client
 
     # implementation details
+    def _expired(self, error):
+        """
+        Check whether {error}, a refusal by S3, says that the credentials have expired
+        """
+        # S3 says so by its code
+        return error.response.get("Error", {}).get("Code") in self.expirations
+
     def _processPage(self, folder, here, level, dead, page, todo):
         """
         Process one page of bucket contents

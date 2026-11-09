@@ -39,6 +39,15 @@ class DirectoryListingError(GenericError):
     description = "error while accessing '{0.uri}': {0.error}"
 
 
+class ExpiredCredentialsError(GenericError):
+    """
+    Exception raised when the credentials that grant access to a remote filesystem have expired
+    """
+
+    # public data
+    description = "while accessing '{0.uri}': the credentials have expired"
+
+
 class MountPointError(GenericError):
     """
     Exception generated when the root of a filesystem is invalid
