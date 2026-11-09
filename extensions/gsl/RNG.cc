@@ -50,18 +50,30 @@ namespace gsl::py {
 } // namespace gsl::py
 
 
-// add the bindings for the gsl random number generator
+// register the class of the gsl random number generator, so that every signature can name it
 void
-gsl::py::rng(py::module & m)
+gsl::py::rngClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<gsl_rng, rng_ptr>(
+    py::class_<gsl_rng, rng_ptr>(
         // in scope
         m,
         // the name
         "RNG",
         // the docstring
         "a pseudo-random number generator from gsl");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the gsl random number generator
+void
+gsl::py::rng(py::module & m)
+{
+    // the class, registered by {rngClass}
+    auto cls = py::class_<gsl_rng, rng_ptr>(py::type::of<gsl_rng>());
 
     // build a generator that runs the named {algorithm}
     cls.def(

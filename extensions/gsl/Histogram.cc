@@ -30,12 +30,12 @@ namespace gsl::py {
 } // namespace gsl::py
 
 
-// add the bindings for the gsl histogram
+// register the class of the gsl histogram, so that every signature can name it
 void
-gsl::py::histogram(py::module & m)
+gsl::py::histogramClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<gsl_histogram, histogram_ptr>(
+    py::class_<gsl_histogram, histogram_ptr>(
         // in scope
         m,
         // the name
@@ -44,6 +44,18 @@ gsl::py::histogram(py::module & m)
         py::buffer_protocol(),
         // the docstring
         "a histogram of {bins} bins over a range of the reals, from gsl");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the gsl histogram
+void
+gsl::py::histogram()
+{
+    // the class, registered by {histogramClass}
+    auto cls = py::class_<gsl_histogram, histogram_ptr>(py::type::of<gsl_histogram>());
 
     // allocate a histogram of {bins} bins, with its counts zeroed
     cls.def(

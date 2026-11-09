@@ -46,18 +46,30 @@ namespace gsl::py {
 } // namespace gsl::py
 
 
-// add the bindings for the gsl permutation
+// register the class of the gsl permutation, so that every signature can name it
 void
-gsl::py::permutation(py::module & m)
+gsl::py::permutationClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<gsl_permutation, permutation_ptr>(
+    py::class_<gsl_permutation, permutation_ptr>(
         // in scope
         m,
         // the name
         "Permutation",
         // the docstring
         "a permutation of the integers [0, n), from gsl");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the gsl permutation
+void
+gsl::py::permutation()
+{
+    // the class, registered by {permutationClass}
+    auto cls = py::class_<gsl_permutation, permutation_ptr>(py::type::of<gsl_permutation>());
 
     // allocate a permutation of {shape} elements, initialized to the identity
     cls.def(
