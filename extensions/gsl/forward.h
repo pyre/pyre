@@ -19,12 +19,19 @@ namespace gsl::py {
     // the blas and eigen flag enumerations
     void enums(py::module & m);
 
-    // the data types gsl allocates and releases
-    void vector(py::module & m);
-    void matrix(py::module & m);
+    // register the classes of the data types gsl allocates and releases
+    void vectorClass(py::module & m);
+    void matrixClass(py::module & m);
+    void rngClass(py::module & m);
+    void permutationClass(py::module & m);
+    void histogramClass(py::module & m);
+
+    // and bind their interfaces
+    void vector();
+    void matrix();
     void rng(py::module & m);
-    void permutation(py::module & m);
-    void histogram(py::module & m);
+    void permutation();
+    void histogram();
 
     // the free-function modules
     void stats(py::module & m);

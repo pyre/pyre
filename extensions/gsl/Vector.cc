@@ -72,12 +72,12 @@ namespace gsl::py {
 } // namespace gsl::py
 
 
-// add the bindings for the gsl vector
+// register the class of the gsl vector, so that every signature can name it
 void
-gsl::py::vector(py::module & m)
+gsl::py::vectorClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<gsl_vector, vector_ptr>(
+    py::class_<gsl_vector, vector_ptr>(
         // in scope
         m,
         // the name
@@ -86,6 +86,18 @@ gsl::py::vector(py::module & m)
         py::buffer_protocol(),
         // the docstring
         "a vector of doubles, allocated and released by gsl");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the gsl vector
+void
+gsl::py::vector()
+{
+    // the class, registered by {vectorClass}
+    auto cls = py::class_<gsl_vector, vector_ptr>(py::type::of<gsl_vector>());
 
     // allocate a vector of the given {shape}
     cls.def(

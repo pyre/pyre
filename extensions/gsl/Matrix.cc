@@ -69,12 +69,12 @@ namespace gsl::py {
 } // namespace gsl::py
 
 
-// add the bindings for the gsl matrix
+// register the class of the gsl matrix, so that every signature can name it
 void
-gsl::py::matrix(py::module & m)
+gsl::py::matrixClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<gsl_matrix, matrix_ptr>(
+    py::class_<gsl_matrix, matrix_ptr>(
         // in scope
         m,
         // the name
@@ -83,6 +83,18 @@ gsl::py::matrix(py::module & m)
         py::buffer_protocol(),
         // the docstring
         "a matrix of doubles, allocated and released by gsl");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the gsl matrix
+void
+gsl::py::matrix()
+{
+    // the class, registered by {matrixClass}
+    auto cls = py::class_<gsl_matrix, matrix_ptr>(py::type::of<gsl_matrix>());
 
     // allocate a matrix of the given {shape}
     cls.def(

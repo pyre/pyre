@@ -48,12 +48,21 @@ PYBIND11_MODULE(libgsl, m)
     // the blas and eigen flag enumerations, before anybody that takes them by default
     gsl::py::enums(m);
 
-    // the data types gsl allocates and releases
-    gsl::py::vector(m);
-    gsl::py::matrix(m);
+    // register the classes of the data types gsl allocates and releases before binding any
+    // interface, since the signatures name the classes they traffic in: a vector shuffles itself
+    // with a generator and sorts its index into a permutation
+    gsl::py::vectorClass(m);
+    gsl::py::matrixClass(m);
+    gsl::py::rngClass(m);
+    gsl::py::permutationClass(m);
+    gsl::py::histogramClass(m);
+
+    // now bind their interfaces
+    gsl::py::vector();
+    gsl::py::matrix();
     gsl::py::rng(m);
-    gsl::py::permutation(m);
-    gsl::py::histogram(m);
+    gsl::py::permutation();
+    gsl::py::histogram();
 
     // the free-function modules
     gsl::py::stats(m);
