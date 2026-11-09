@@ -807,7 +807,7 @@ pyre::h5::py::dataset()
         // the signature; an empty stride asks for every cell of a solid block, and the
         // default transfer list leaves the cells alone on their way across
         "data"_a, "memtype"_a, "origin"_a, "shape"_a, "stride"_a = shape_t(),
-        "dxpl"_a = DXPL::theDefault(),
+        py::arg_v("dxpl", DXPL::theDefault(), "pyre.extensions.h5.properties.dxpl.default"),
         // the docstring
         "fill {data} with the tile @{origin}+{shape}, taking every {stride}-th cell and "
         "transferring it under {dxpl}");
@@ -819,7 +819,7 @@ pyre::h5::py::dataset()
         // the signature; an empty stride lays down every cell of a solid block, and the
         // default transfer list leaves the cells alone on their way across
         "data"_a, "memtype"_a, "origin"_a, "shape"_a, "stride"_a = shape_t(),
-        "dxpl"_a = DXPL::theDefault(),
+        py::arg_v("dxpl", DXPL::theDefault(), "pyre.extensions.h5.properties.dxpl.default"),
         // the docstring
         "write {data} to the tile @{origin}+{shape}, at every {stride}-th cell, transferring "
         "it under {dxpl}");

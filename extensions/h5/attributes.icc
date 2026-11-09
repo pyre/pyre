@@ -46,7 +46,8 @@ pyre::h5::py::attributes(py::class_<objectT> & cls)
             return self.createAttribute(name, type, space, acpl);
         },
         // the signature
-        "name"_a, "type"_a, "space"_a, "acpl"_a = ACPL::theDefault(),
+        "name"_a, "type"_a, "space"_a,
+        py::arg_v("acpl", ACPL::theDefault(), "pyre.extensions.h5.properties.acpl.default"),
         // the docstring
         "create an attribute given its {name}, {type}, {space}, and property list {acpl}");
 
