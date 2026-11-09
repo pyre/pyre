@@ -11,14 +11,19 @@
 #include "accessors.h"
 
 
-// the setter of a property made from a method; marking it as a method of the class bound by
-// {cls} lets the name of its parameter skip over {self}
+// the setter of a property made from a method; the method is rebound to the class bound by {cls},
+// since it may be declared by a base that python never sees; marking it as a method lets the
+// name of its parameter skip over {self}, and marking it as a setter discards whatever the method
+// returns
 template <class classT, class methodT>
 auto
 pyre::py::setter(const classT & cls, methodT method) -> py::cpp_function
 {
+    // the class bound by {cls}
+    using bound_t = typename classT::type;
     // build the setter, and return it
-    return py::cpp_function(method, py::is_method(cls), py::arg("value"));
+    return py::cpp_function(
+        py::method_adaptor<bound_t>(method), py::is_method(cls), py::is_setter(), py::arg("value"));
 }
 
 
@@ -29,10 +34,12 @@ template <class classT, class ownerT, class fieldT>
 auto
 pyre::py::getter(const classT & cls, fieldT ownerT::* field) -> py::cpp_function
 {
+    // the class bound by {cls}, which may inherit the field from a base python never sees
+    using bound_t = typename classT::type;
     // build the getter, and return it
     return py::cpp_function(
         // read my field
-        [field](const ownerT & self) -> const fieldT & {
+        [field](const bound_t & self) -> const fieldT & {
             // and hand it over
             return self.*field;
         },
@@ -47,10 +54,12 @@ template <class classT, class ownerT, class fieldT>
 auto
 pyre::py::setter(const classT & cls, fieldT ownerT::* field) -> py::cpp_function
 {
+    // the class bound by {cls}, which may inherit the field from a base python never sees
+    using bound_t = typename classT::type;
     // build the setter, and return it
     return py::cpp_function(
         // write my field
-        [field](ownerT & self, const fieldT & value) -> void {
+        [field](bound_t & self, const fieldT & value) -> void {
             // store {value}
             self.*field = value;
             // all done
@@ -58,6 +67,8 @@ pyre::py::setter(const classT & cls, fieldT ownerT::* field) -> py::cpp_function
         },
         // as a method of the class bound by {cls}
         py::is_method(cls),
+        // and as a setter
+        py::is_setter(),
         // with its parameter named
         py::arg("value"));
 }
