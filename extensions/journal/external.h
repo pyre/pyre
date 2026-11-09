@@ -7,6 +7,8 @@
 // code guard
 #pragma once
 
+// STL
+#include <optional>
 // get the journal
 #include <pyre/journal.h>
 
