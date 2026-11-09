@@ -22,12 +22,12 @@ pyre::journal::Chronicler::decor() -> detail_type
 
 
 auto
-pyre::journal::Chronicler::decor(detail_type decor) -> detail_type
+pyre::journal::Chronicler::decor(detail_type decor) -> void
 {
-    // swap
-    std::swap(decor, _decor);
-    // and return the old value
-    return decor;
+    // install the new value
+    _decor = decor;
+    // all done
+    return;
 }
 
 
@@ -40,12 +40,12 @@ pyre::journal::Chronicler::detail() -> detail_type
 
 
 auto
-pyre::journal::Chronicler::detail(detail_type detail) -> detail_type
+pyre::journal::Chronicler::detail(detail_type detail) -> void
 {
-    // swap
-    std::swap(detail, _detail);
-    // and return the old value
-    return detail;
+    // install the new value
+    _detail = detail;
+    // all done
+    return;
 }
 
 
@@ -58,12 +58,12 @@ pyre::journal::Chronicler::margin() -> margin_type
 
 
 auto
-pyre::journal::Chronicler::margin(margin_type margin) -> margin_type
+pyre::journal::Chronicler::margin(margin_type margin) -> void
 {
-    // swap
-    std::swap(margin, _margin);
-    // and return the old value
-    return margin;
+    // install the new value
+    _margin = margin;
+    // all done
+    return;
 }
 
 
