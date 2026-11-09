@@ -5,13 +5,12 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import os
+import time
+
 # support
 import pyre
-import journal
-
-# external
-import time
-from botocore.exceptions import BotoCoreError, ClientError
 
 # superclass
 from .Filesystem import Filesystem
@@ -40,8 +39,8 @@ class S3(Filesystem):
 
         # set the search delimiter
         delimiter = "/"
-        # make an S3 client and ask it for a  paginator
-        paginator = self.session.client("s3").get_paginator("list_objects_v2")
+        # ask my client for a paginator
+        paginator = self.client.get_paginator("list_objects_v2")
         # prime the workload; we'll add subdirectories here as we discover them
         todo = [(root, 0)]
         # start walking the bucket contents
@@ -107,10 +106,51 @@ class S3(Filesystem):
         metadata = self.metadata(uri=root)
         # and chain up
         super().__init__(metadata=metadata, **kwds)
-        # save the s3 connection
+        # save the session that grants access to the bucket
         self.session = session
         # all done
         return
+
+    # properties
+    @property
+    def session(self):
+        """
+        The session that grants access to my bucket
+        """
+        # easy enough
+        return self._session
+
+    @session.setter
+    def session(self, session):
+        """
+        Grant access to my bucket through {session}, e.g. one with renewed credentials
+        """
+        # save it
+        self._session = session
+        # the client of the old one doesn't speak for it
+        self._client = None
+        # nor does the process that made it
+        self._owner = None
+        # all done
+        return
+
+    @property
+    def client(self):
+        """
+        The S3 client that lists my bucket, made from my session on first use and kept, so
+        its connections serve every listing; a process forked after it was made gets one of
+        its own, since connections cannot be shared across a fork
+        """
+        # the process asking
+        pid = os.getpid()
+        # if it has no client of its own yet
+        if self._client is None or self._owner != pid:
+            # make one
+            self._client = self._session.client("s3")
+            # and remember whose it is
+            self._owner = pid
+        # hand it off
+        return self._client
 
     # implementation details
     def _processPage(self, folder, here, level, dead, page, todo):
