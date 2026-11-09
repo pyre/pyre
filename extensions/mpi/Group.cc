@@ -30,18 +30,30 @@ namespace pyre::mpi::py {
 } // namespace pyre::mpi::py
 
 
-// add the bindings for the process group
+// register the class of the process groups, so that every signature can name it
 void
-pyre::mpi::py::group(py::module & m)
+pyre::mpi::py::groupClass(py::module & m)
 {
     // the class
-    auto cls = py::class_<Group>(
+    py::class_<Group>(
         // in scope
         m,
         // the name
         "Group",
         // the docstring
         "a set of processes, ordered so that each one has a rank within the set");
+
+    // all done
+    return;
+}
+
+
+// add the bindings for the process group
+void
+pyre::mpi::py::group()
+{
+    // the class, registered by {groupClass}
+    auto cls = py::class_<Group>(py::type::of<Group>());
 
     // the structure
     cls.def_property_readonly(
