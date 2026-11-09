@@ -18,10 +18,15 @@ namespace pyre::journal::py {
     template <class errorT>
     inline auto complaint(const char * type, const errorT & error) -> py::object;
 
-    // the setter of a property of the class bound by {cls}, with its parameter named {value};
-    // the journal sits below libpyre, so it keeps its own copy of this helper
-    template <class classT, class methodT>
-    inline auto setter(const classT & cls, methodT method) -> py::cpp_function;
+    // the setters of the properties of the class bound by {cls}, with their parameter named
+    // {value}; the journal sits below libpyre, so it keeps its own copy of these helpers
+    // made from a method
+    template <class classT, class returnT, class ownerT, class argT, bool except>
+    inline auto setter(const classT & cls, returnT (ownerT::*method)(argT) noexcept(except))
+        -> py::cpp_function;
+    // made from a callable that takes an instance of the class bound by {cls} and the new value
+    template <class classT, class callableT>
+    inline auto setter(const classT & cls, callableT callable) -> py::cpp_function;
 } // namespace pyre::journal::py
 
 
