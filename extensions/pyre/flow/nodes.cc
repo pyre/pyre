@@ -103,12 +103,14 @@ pyre::py::flow::nodes()
         // the getter
         [](const factory_t & self) -> string_t { return self.family(); },
         // the setter
-        [](factory_t & self, const string_t & family) -> void {
-            // record it
-            self.family(family);
-            // all done
-            return;
-        },
+        pyre::py::setter(
+            factory,
+            [](factory_t & self, const string_t & family) -> void {
+                // record it
+                self.family(family);
+                // all done
+                return;
+            }),
         // the docstring
         "the family of the component i stand for, which names the debug channel my work is "
         "reported on");

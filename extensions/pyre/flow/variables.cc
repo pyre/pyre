@@ -69,7 +69,8 @@ namespace pyre::py::flow {
             // the getter refreshes the value if it is stale
             [](variable_type & self) -> cellT { return self.value(); },
             // the setter marks whatever is computed from the value as stale
-            [](variable_type & self, cellT value) -> void { self.value(value); },
+            pyre::py::setter(
+                cls, [](variable_type & self, cellT value) -> void { self.value(value); }),
             // the docstring
             "my value, refreshed if it is stale; setting it marks whatever is computed from it as "
             "stale");
