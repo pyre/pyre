@@ -13,18 +13,30 @@
 #include "relations.h"
 
 
-// bind the polygons on the sphere: the regions bound by all of their rings
+// register the class of the polygons, so that every signature can name it
 void
-pyre::py::geometry::polygon(py::module & m)
+pyre::py::geometry::polygonClass(py::module & m)
 {
-    // wrap the polygon
-    auto cls = py::class_<polygon_t>(
+    // register the polygon
+    py::class_<polygon_t>(
         // the scope
         m,
         // the name of the class
         "SpherePolygon",
         // its docstring
         "the points of the sphere in the regions bound by all of its rings");
+
+    // all done
+    return;
+}
+
+
+// bind the polygons on the sphere: the regions bound by all of their rings
+void
+pyre::py::geometry::polygon()
+{
+    // the class of the polygon, registered by {polygonClass}
+    auto cls = py::class_<polygon_t>(py::type::of<polygon_t>());
 
     // the polygon bound by a sequence of rings
     cls.def(

@@ -11,19 +11,31 @@
 #include "forward.h"
 
 
-// bind the longitude-latitude chart of the sphere, which names its points by their longitude
-// and latitude, in degrees, longitude first
+// register the class of the longitude-latitude chart, so that every signature can name it
 void
-pyre::py::geometry::lonlat(py::module & m)
+pyre::py::geometry::lonlatClass(py::module & m)
 {
-    // wrap the chart
-    auto cls = py::class_<lonlat_t>(
+    // register the chart
+    py::class_<lonlat_t>(
         // the scope
         m,
         // the name of the class
         "SphereLonLat",
         // its docstring
         "the longitude-latitude chart of the sphere, in degrees");
+
+    // all done
+    return;
+}
+
+
+// bind the longitude-latitude chart of the sphere, which names its points by their longitude
+// and latitude, in degrees, longitude first
+void
+pyre::py::geometry::lonlat()
+{
+    // the class of the chart, registered by {lonlatClass}
+    auto cls = py::class_<lonlat_t>(py::type::of<lonlat_t>());
 
     // build the chart
     cls.def(
