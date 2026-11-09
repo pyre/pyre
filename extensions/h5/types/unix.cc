@@ -15,18 +15,18 @@
 #include "forward.h"
 
 
-// encapsulations of the UNIX floating datatypes
+// encapsulations of the UNIX {time_t} representations
 void
 pyre::h5::py::types::unix(py::module & m)
 {
-    // make a new namespace to hold native datatype descriptions
+    // make a new namespace to hold the {unix} specific representations
     auto unix = m.def_submodule(
         // the name of the module
         "unix",
         // its docstring
-        "the UNIX floating point types");
+        "the standard unix {time_t} representations");
 
-    // UNIX floating point
+    // 32 and 64 bit times, in either byte order
     unix.attr("d32be") = PredType(H5T_UNIX_D32BE);
     unix.attr("d32le") = PredType(H5T_UNIX_D32LE);
     unix.attr("d64be") = PredType(H5T_UNIX_D64BE);
