@@ -9,6 +9,7 @@
 
 
 // STL
+#include <optional>
 #include <string>
 #include <vector>
 // support

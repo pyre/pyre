@@ -526,17 +526,18 @@ gsl::py::vector()
         // the name
         "mean",
         // the implementation
-        [](const gsl_vector & self, const gsl_vector * weights) -> double {
+        [](const gsl_vector & self, std::optional<const gsl_vector *> weights) -> double {
             // an unweighted mean when nobody supplied weights
             if (!weights) {
                 return gsl_stats_mean(self.data, self.stride, self.size);
             }
             // otherwise, the weighted mean
+            const auto * weighting = *weights;
             return gsl_stats_wmean(
-                weights->data, weights->stride, self.data, self.stride, self.size);
+                weighting->data, weighting->stride, self.data, self.stride, self.size);
         },
         // the signature
-        "weights"_a = nullptr,
+        "weights"_a = py::none(),
         // the docstring
         "the mean of my cells, optionally weighted by {weights}");
 

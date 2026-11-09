@@ -477,7 +477,7 @@ gsl::py::matrix()
         // the name
         "transpose",
         // the implementation
-        [](py::object self, gsl_matrix * destination) -> py::object {
+        [](py::object self, std::optional<gsl_matrix *> destination) -> py::object {
             // in place, when nobody supplied a destination
             if (!destination) {
                 gsl_matrix_transpose(&self.cast<gsl_matrix &>());
@@ -485,12 +485,12 @@ gsl::py::matrix()
                 return self;
             }
             // otherwise, gsl writes my transpose into the destination
-            gsl_matrix_transpose_memcpy(destination, &self.cast<gsl_matrix &>());
+            gsl_matrix_transpose_memcpy(*destination, &self.cast<gsl_matrix &>());
             // and that is the answer
-            return py::cast(destination);
+            return py::cast(*destination);
         },
         // the signature
-        "destination"_a = nullptr,
+        "destination"_a = py::none(),
         // the docstring
         "transpose me in place, or into {destination} when one is given");
 

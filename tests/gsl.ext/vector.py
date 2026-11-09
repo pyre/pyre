@@ -87,6 +87,8 @@ def test():
 
     # statistics; the mean of 0..4 is 2, the sample variance is 2.5
     assert v.mean() == 2.0
+    # weighted by the cells themselves, the mean of 0..4 is 30/10
+    assert abs(v.mean(weights=v) - 3.0) < 1e-12
     assert abs(v.variance() - 2.5) < 1e-12
 
     # the buffer protocol hands numpy a zero-copy view

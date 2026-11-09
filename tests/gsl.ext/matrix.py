@@ -101,9 +101,16 @@ def test():
         for j in range(3):
             src.set((i, j), float(i * 3 + j))
     dst = libgsl.Matrix(shape=(3, 2))
-    src.transpose(dst)
+    # the answer is the destination itself
+    assert src.transpose(dst) is dst
     # every cell, so a row/column swap in the transpose is caught
     assert all(dst.get((j, i)) == src.get((i, j)) for i in range(2) for j in range(3))
+
+    # transpose a square matrix in place, which hands me back
+    square = libgsl.Matrix(shape=(2, 2)).fill(0.0)
+    square.set((0, 1), 1.0)
+    assert square.transpose() is square
+    assert square.get((1, 0)) == 1.0 and square.get((0, 1)) == 0.0
 
     # the symmetric eigenproblem, filling caller-supplied storage in the requested order; a non
     # diagonal matrix is used so the off diagonal actually feeds the solver
