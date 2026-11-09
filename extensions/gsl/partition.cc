@@ -27,6 +27,10 @@ namespace gsl::py {
 void
 gsl::py::partition(py::module & m)
 {
+    // every call takes a communicator, whose python class belongs to the mpi extension; load it,
+    // so that the class is known before any signature names it
+    py::module::import("mpi.libmpi");
+
     // vector operations
     // broadcast a vector from {source} to every process in the communicator
     //
