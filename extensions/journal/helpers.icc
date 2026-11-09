@@ -66,18 +66,46 @@ pyre::journal::py::complaint(const char * type, const errorT & error) -> py::obj
 }
 
 
-// the setter of a property; the method is rebound to the class bound by {cls}, since it may be
-// declared by a base that python never sees; marking it as a method lets the name of its
-// parameter skip over {self}, and marking it as a setter discards whatever the method returns
-template <class classT, class methodT>
+// the setter of a property made from a method; the method may be declared by a base that python
+// never sees, so it is invoked on an instance of the class bound by {cls}, and whatever it returns
+// is discarded, so that python sees a setter that returns nothing
+template <class classT, class returnT, class ownerT, class argT, bool except>
 auto
-pyre::journal::py::setter(const classT & cls, methodT method) -> py::cpp_function
+pyre::journal::py::setter(const classT & cls, returnT (ownerT::*method)(argT) noexcept(except))
+    -> py::cpp_function
 {
     // the class bound by {cls}
     using bound_t = typename classT::type;
     // build the setter, and return it
     return py::cpp_function(
-        py::method_adaptor<bound_t>(method), py::is_method(cls), py::is_setter(), "value"_a);
+        // invoke the method
+        [method](bound_t & self, argT value) -> void {
+            // on {value}
+            (self.*method)(value);
+            // all done
+            return;
+        },
+        // as a method of the class bound by {cls}, which lets the name of its parameter skip over
+        // {self}
+        py::is_method(cls),
+        // with its parameter named
+        "value"_a);
+}
+
+
+// the setter of a property made from a callable
+template <class classT, class callableT>
+auto
+pyre::journal::py::setter(const classT & cls, callableT callable) -> py::cpp_function
+{
+    // build the setter, and return it
+    return py::cpp_function(
+        // the callable
+        std::move(callable),
+        // as a method of the class bound by {cls}
+        py::is_method(cls),
+        // with its parameter named
+        "value"_a);
 }
 
 
