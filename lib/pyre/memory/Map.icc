@@ -189,15 +189,14 @@ auto
 pyre::memory::Map<T, isConst>::at(difference_type pos) const -> reference
 {
     // if the request reaches outside the block, in either direction
-    // a negative position is now visible as such, rather than wrapping to an enormous one
     if (pos < 0 || pos >= cells()) {
         // make a channel
-        pyre::journal::firewall_t channel("pyre.memory.bounds");
+        auto channel = pyre::journal::firewall_t("pyre.memory.bounds");
         // complain
-        channel << pyre::journal::at() << "out of bounds access:" << pyre::journal::newline
+        channel << pyre::journal::here() << "out of bounds access:" << pyre::journal::newline
                 << "  index " << pos << " must be less than " << cells() << pyre::journal::newline
-                << "  in pyre::memory::Map::operator[]" << pyre::journal::newline
-                << "  with a map over " << _map->uri() << pyre::journal::endl;
+                << "  in pyre::memory::map_t::at" << pyre::journal::newline << "  with a map over "
+                << _map->uri() << pyre::journal::endl;
         // unreachable, unless the user has marked this error as non-fatal
         // clamp {pos} to the last element in the block
         pos = cells() - 1;
