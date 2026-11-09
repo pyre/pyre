@@ -46,8 +46,9 @@ def test():
     fs = pyre.filesystem.s3(session=old, root=pyre.primitives.uri.parse("s3://bucket/products"))
     # get its client
     client = fs.client
-    # hand it a new session, e.g. one with renewed credentials
+    # make a new session, e.g. one with renewed credentials
     new = Session()
+    # and hand it to the filesystem
     fs.session = new
     # the filesystem now speaks through it
     assert fs.session is new
