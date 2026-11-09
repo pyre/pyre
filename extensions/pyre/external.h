@@ -21,6 +21,8 @@
 #include <pybind11/stl_bind.h>
 // pyre is built against pybind11 3.0 or later
 static_assert(PYBIND11_VERSION_MAJOR >= 3, "pyre requires pybind11 3.0 or later");
+// the accessors of properties, which name the parameters of their setters
+#include <pyre/py/properties/accessors.h>
 
 
 // type aliases
