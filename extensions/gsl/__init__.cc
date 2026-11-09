@@ -25,7 +25,7 @@ namespace {
         // and complain
         channel
             // where
-            << pyre::journal::at()
+            << pyre::journal::here()
             // the reason
             << "gsl error: "
             << reason
