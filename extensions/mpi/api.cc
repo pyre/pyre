@@ -25,7 +25,7 @@ pyre::mpi::py::api(py::module & m)
             return pyre::mpi::initialize(required);
         },
         // the signature
-        "required"_a = Thread::single,
+        py::arg_v("required", Thread::single, "mpi.libmpi.Thread.single"),
         // the docstring
         "bring mpi up, asking for the given level of thread support, and report what was granted");
 
