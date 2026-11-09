@@ -37,27 +37,33 @@ pyre::py::chroma::color(py::module & m)
         "make a color from its three channels");
 
     // expose the red channel
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "red",
-        // the member
-        &rgb_t::red,
+        // the getter
+        pyre::py::getter(cls, &rgb_t::red),
+        // the setter
+        pyre::py::setter(cls, &rgb_t::red),
         // the docstring
         "the red channel");
     // expose the green channel
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "green",
-        // the member
-        &rgb_t::green,
+        // the getter
+        pyre::py::getter(cls, &rgb_t::green),
+        // the setter
+        pyre::py::setter(cls, &rgb_t::green),
         // the docstring
         "the green channel");
     // expose the blue channel
-    cls.def_readwrite(
+    cls.def_property(
         // the name
         "blue",
-        // the member
-        &rgb_t::blue,
+        // the getter
+        pyre::py::getter(cls, &rgb_t::blue),
+        // the setter
+        pyre::py::setter(cls, &rgb_t::blue),
         // the docstring
         "the blue channel");
 
