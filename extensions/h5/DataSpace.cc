@@ -42,9 +42,9 @@ pyre::h5::py::dataspace(py::module & m)
         // the implementation
         py::init<DataSpace::class_type>(),
         // the signature
-        "type"_a = H5S_SCALAR,
-        // the something
-        "make a dataspace of the given type");
+        py::arg_v("type", H5S_SCALAR, "pyre.extensions.h5.DataSpaceType.scalar"),
+        // the docstring
+        "make a dataspace of the given {type}");
 
     // simple, with the given shape
     cls.def(

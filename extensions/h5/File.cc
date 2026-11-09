@@ -85,7 +85,9 @@ pyre::h5::py::file()
             return File();
         }),
         // the signature
-        "uri"_a, "mode"_a = "r", "fcpl"_a = FCPL::theDefault(), "fapl"_a = FAPL::theDefault(),
+        "uri"_a, "mode"_a = "r",
+        py::arg_v("fcpl", FCPL::theDefault(), "pyre.extensions.h5.properties.fcpl.default"),
+        py::arg_v("fapl", FAPL::theDefault(), "pyre.extensions.h5.properties.fapl.default"),
         // the docstring
         "open an HDF5 file given its {uri} and a custom access property list");
 

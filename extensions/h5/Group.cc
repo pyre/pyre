@@ -164,7 +164,8 @@ pyre::h5::py::group()
             return self.openDataSet(path, dapl);
         },
         // the signature
-        "path"_a, "dapl"_a = DAPL::theDefault(),
+        "path"_a,
+        py::arg_v("dapl", DAPL::theDefault(), "pyre.extensions.h5.properties.dapl.default"),
         // the docstring
         "open a dataset given its {path}, with the access property list {dapl}");
 
@@ -213,7 +214,9 @@ pyre::h5::py::group()
             return self.createGroup(path, lcpl, gcpl);
         },
         // the signature
-        "path"_a, "lcpl"_a = LCPL::theDefault(), "gcpl"_a = GCPL::theDefault(),
+        "path"_a,
+        py::arg_v("lcpl", LCPL::theDefault(), "pyre.extensions.h5.properties.lcpl.default"),
+        py::arg_v("gcpl", GCPL::theDefault(), "pyre.extensions.h5.properties.gcpl.default"),
         // the docstring
         "create a new group at the given {path}, with property lists {lcpl} and {gcpl}");
 
@@ -228,8 +231,10 @@ pyre::h5::py::group()
             return self.createDataSet(path, type, space, lcpl, dcpl, dapl);
         },
         // the signature
-        "path"_a, "type"_a, "space"_a, "lcpl"_a = LCPL::theDefault(), "dcpl"_a = DCPL::theDefault(),
-        "dapl"_a = DAPL::theDefault(),
+        "path"_a, "type"_a, "space"_a,
+        py::arg_v("lcpl", LCPL::theDefault(), "pyre.extensions.h5.properties.lcpl.default"),
+        py::arg_v("dcpl", DCPL::theDefault(), "pyre.extensions.h5.properties.dcpl.default"),
+        py::arg_v("dapl", DAPL::theDefault(), "pyre.extensions.h5.properties.dapl.default"),
         // the docstring
         "create a new dataset at the given {name} given its {type} and data {space}, with "
         "property lists {lcpl}, {dcpl}, and {dapl}");
