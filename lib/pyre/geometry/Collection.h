@@ -10,6 +10,7 @@
 
 // my dependencies
 #include "forward.h"
+#include "hashing.h"
 
 
 // a finite union of shapes of the same kind; its members may overlap, touch, or lie apart, so a
@@ -27,6 +28,8 @@ public:
     using envelope_type = typename shape_type::envelope_type;
     // indices
     using size_type = size_t;
+    // my hash
+    using hash_type = hash_t;
 
     // metamethods
 public:
@@ -57,6 +60,11 @@ public:
     // the smallest envelope that holds all my members, for the members whose envelopes have
     // a hull
     constexpr auto envelope() const -> envelope_type;
+
+    // hashing
+public:
+    // my hash, shared by the collections that compare equal
+    auto hash() const -> hash_type;
 
     // implementation details - data
 private:

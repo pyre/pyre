@@ -64,5 +64,15 @@ pyre::geometry::Sphere::inject(std::ostream & stream, const rep_type & p) -> voi
     return;
 }
 
+// hashing
+inline auto
+pyre::geometry::Sphere::hash(const rep_type & p) -> hash_type
+{
+    // the hash of a coordinate
+    auto coordinate = std::hash<double> {};
+    // fold the components of the unit vector, in order
+    return hashCombine(hashCombine(coordinate(p[0]), coordinate(p[1])), coordinate(p[2]));
+}
+
 
 // end of file

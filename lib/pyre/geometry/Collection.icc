@@ -65,5 +65,21 @@ pyre::geometry::Collection<shapeT>::envelope() const -> envelope_type
     return envelope;
 }
 
+// hashing
+template <class shapeT>
+auto
+pyre::geometry::Collection<shapeT>::hash() const -> hash_type
+{
+    // start with nothing
+    auto result = hash_type { 0 };
+    // go through my members
+    for (const auto & shape : _shapes) {
+        // and fold each one in, in order
+        result = hashCombine(result, shape.hash());
+    }
+    // all done
+    return result;
+}
+
 
 // end of file

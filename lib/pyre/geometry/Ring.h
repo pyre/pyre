@@ -10,6 +10,7 @@
 
 // my dependencies
 #include "forward.h"
+#include "hashing.h"
 #include "Point.h"
 #include "spherical.h"
 #include "Box.h"
@@ -53,6 +54,8 @@ public:
     using arcs_type = std::vector<vector_type>;
     // the smallest shape of the chart that holds the region i bound
     using envelope_type = Box<chart_type>;
+    // my hash
+    using hash_type = hash_t;
 
     // metamethods
 public:
@@ -88,6 +91,11 @@ public:
     auto reversed() const -> self_type;
     // the smallest box that holds the region i bound
     auto envelope() const -> envelope_type;
+
+    // hashing
+public:
+    // my hash, shared by the rings that compare equal
+    auto hash() const -> hash_type;
 
     // implementation details
 private:

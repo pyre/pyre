@@ -40,6 +40,14 @@ pyre::geometry::Point<spaceT>::data() const -> const rep_type &
 }
 
 template <class spaceT>
+auto
+pyre::geometry::Point<spaceT>::hash() const -> hash_type
+{
+    // the space knows how its points are hashed
+    return space_type::hash(_rep);
+}
+
+template <class spaceT>
 constexpr auto
 pyre::geometry::Point<spaceT>::operator[](size_type item) const
     requires requires(const rep_type & rep) { rep[0]; }

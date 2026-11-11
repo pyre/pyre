@@ -10,6 +10,7 @@
 
 // my dependencies
 #include "forward.h"
+#include "hashing.h"
 #include "Point.h"
 
 
@@ -28,6 +29,8 @@ public:
     using point_type = Point<self_type>;
     // indices
     using size_type = size_t;
+    // the hashes of my points
+    using hash_type = hash_t;
 
     // metamethods
 public:
@@ -60,6 +63,11 @@ public:
 public:
     // write a point as its comma separated coordinates
     static auto inject(std::ostream & stream, const rep_type & p) -> void;
+
+    // hashing
+public:
+    // the hash of a point, shared by the points that compare equal
+    static auto hash(const rep_type & p) -> hash_type;
 
     // implementation details - data
 private:

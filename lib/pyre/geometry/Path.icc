@@ -83,5 +83,21 @@ pyre::geometry::Path<chartT>::envelope() const -> envelope_type
     return envelope_type::around(_arcs);
 }
 
+// hashing
+template <class chartT>
+auto
+pyre::geometry::Path<chartT>::hash() const -> hash_type
+{
+    // start with nothing
+    auto result = hash_type { 0 };
+    // go through my vertices
+    for (const auto & vertex : _vertices) {
+        // and fold each one in, in order
+        result = hashCombine(result, vertex.hash());
+    }
+    // and fold in the kind of my edges
+    return hashCombine(result, std::hash<bool> {}(_geodesic));
+}
+
 
 // end of file

@@ -8,10 +8,11 @@
 #pragma once
 
 
-// the forward declarations, operator declarations, type aliases and concepts
+// the forward declarations, operator declarations, type aliases, concepts and hashing
 #include "forward.h"
 #include "api.h"
 #include "concepts.h"
+#include "hashing.h"
 
 
 // the object model

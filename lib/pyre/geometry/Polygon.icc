@@ -48,5 +48,21 @@ pyre::geometry::Polygon<chartT>::envelope() const -> envelope_type
     return _rings.front().envelope();
 }
 
+// hashing
+template <class chartT>
+auto
+pyre::geometry::Polygon<chartT>::hash() const -> hash_type
+{
+    // start with nothing
+    auto result = hash_type { 0 };
+    // go through my rings
+    for (const auto & ring : _rings) {
+        // and fold each one in, in order
+        result = hashCombine(result, ring.hash());
+    }
+    // all done
+    return result;
+}
+
 
 // end of file

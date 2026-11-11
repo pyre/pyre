@@ -17,6 +17,8 @@ namespace pyre::geometry {
     // local type aliases
     using size_t = std::size_t;
     using string_t = std::string;
+    // the hashes of values, which equal values share
+    using hash_t = std::size_t;
 
     // spaces
     // the euclidean space of a given dimension
