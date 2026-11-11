@@ -57,6 +57,8 @@ pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_intervals.py)
 pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_relations.py)
 pyre_test_python_testcase(tests/pyre.ext/geometry/sphere_shapes.py)
 pyre_test_python_testcase(tests/pyre.ext/geometry/sphere_relations.py)
+pyre_test_python_testcase(tests/pyre.ext/geometry/timeline_hash.py)
+pyre_test_python_testcase(tests/pyre.ext/geometry/sphere_hash.py)
 
 
 # end of file

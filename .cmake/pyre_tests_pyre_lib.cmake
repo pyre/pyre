@@ -43,6 +43,13 @@ pyre_test_driver(tests/pyre.lib/geometry/ring_envelope.cc)
 pyre_test_driver(tests/pyre.lib/geometry/ring_edges.cc)
 pyre_test_driver(tests/pyre.lib/geometry/polygon_intersects.cc)
 pyre_test_driver(tests/pyre.lib/geometry/path_intersects.cc)
+pyre_test_driver(tests/pyre.lib/geometry/point_hash.cc)
+pyre_test_driver(tests/pyre.lib/geometry/interval_hash.cc)
+pyre_test_driver(tests/pyre.lib/geometry/collection_hash.cc)
+pyre_test_driver(tests/pyre.lib/geometry/box_hash.cc)
+pyre_test_driver(tests/pyre.lib/geometry/path_hash.cc)
+pyre_test_driver(tests/pyre.lib/geometry/ring_hash.cc)
+pyre_test_driver(tests/pyre.lib/geometry/polygon_hash.cc)
 
 
 # grid
