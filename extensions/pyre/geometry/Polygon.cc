@@ -81,6 +81,14 @@ pyre::py::geometry::polygon()
 
     // two polygons compare equal when they have the same rings
     cls.def(py::self == py::self);
+    // and equal polygons hash alike, so they can be members of sets and keys of dicts
+    cls.def(
+        // the name
+        "__hash__",
+        // the implementation
+        &polygon_t::hash,
+        // the docstring
+        "my hash, shared by the polygons that compare equal");
 
     // all done
     return;

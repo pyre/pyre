@@ -89,6 +89,14 @@ pyre::py::geometry::path()
 
     // two paths compare equal when they have the same vertices and the same kind of edges
     cls.def(py::self == py::self);
+    // and equal paths hash alike, so they can be members of sets and keys of dicts
+    cls.def(
+        // the name
+        "__hash__",
+        // the implementation
+        &path_t::hash,
+        // the docstring
+        "my hash, shared by the paths that compare equal");
 
     // all done
     return;

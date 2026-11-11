@@ -151,6 +151,14 @@ pyre::py::geometry::box()
 
     // two boxes compare equal when they have the same edges
     cls.def(py::self == py::self);
+    // and equal boxes hash alike, so they can be members of sets and keys of dicts
+    cls.def(
+        // the name
+        "__hash__",
+        // the implementation
+        &box_t::hash,
+        // the docstring
+        "my hash, shared by the boxes that compare equal");
 
     // a readable representation
     cls.def(

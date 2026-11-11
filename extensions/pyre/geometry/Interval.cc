@@ -134,6 +134,14 @@ namespace pyre::py::geometry {
 
         // two intervals compare equal when they hold the same points
         cls.def(py::self == py::self);
+        // and equal intervals hash alike, so they can be members of sets and keys of dicts
+        cls.def(
+            // the name
+            "__hash__",
+            // the implementation
+            &interval_t::hash,
+            // the docstring
+            "my hash, shared by the intervals that compare equal");
 
         // a readable representation
         cls.def(

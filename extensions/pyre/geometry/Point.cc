@@ -51,6 +51,14 @@ namespace pyre::py::geometry {
 
         // two points compare equal when they are the same point
         cls.def(py::self == py::self);
+        // and equal points hash alike, so they can be members of sets and keys of dicts
+        cls.def(
+            // the name
+            "__hash__",
+            // the implementation
+            &point_t::hash,
+            // the docstring
+            "my hash, shared by the points that compare equal");
 
         // a readable representation
         cls.def(
@@ -104,6 +112,14 @@ pyre::py::geometry::point()
     auto cls = py::class_<place_t>(py::type::of<place_t>());
     // two points compare equal when they are the same point
     cls.def(py::self == py::self);
+    // and equal points hash alike, so they can be members of sets and keys of dicts
+    cls.def(
+        // the name
+        "__hash__",
+        // the implementation
+        &place_t::hash,
+        // the docstring
+        "my hash, shared by the points that compare equal");
     // a readable representation
     cls.def(
         // the name
