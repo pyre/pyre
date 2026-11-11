@@ -88,6 +88,14 @@ namespace pyre::py::geometry {
 
         // two unions compare equal when they have the same members in the same order
         cls.def(py::self == py::self);
+        // and equal unions hash alike, so they can be members of sets and keys of dicts
+        cls.def(
+            // the name
+            "__hash__",
+            // the implementation
+            &union_t::hash,
+            // the docstring
+            "my hash, shared by the unions that compare equal");
 
         // a readable representation, for the shapes that can write themselves
         if constexpr (requires(std::ostream & stream, const shapeT & shape) { stream << shape; }) {

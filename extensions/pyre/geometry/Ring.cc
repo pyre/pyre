@@ -114,6 +114,14 @@ pyre::py::geometry::ring()
     // two rings compare equal when they have the same vertices, in the same order, and the same
     // kind of edges
     cls.def(py::self == py::self);
+    // and equal rings hash alike, so they can be members of sets and keys of dicts
+    cls.def(
+        // the name
+        "__hash__",
+        // the implementation
+        &ring_t::hash,
+        // the docstring
+        "my hash, shared by the rings that compare equal");
 
     // all done
     return;
