@@ -98,5 +98,23 @@ pyre::geometry::Lattice<dim>::inject(std::ostream & stream, const rep_type & p) 
     return;
 }
 
+// hashing
+template <std::size_t dim>
+auto
+pyre::geometry::Lattice<dim>::hash(const rep_type & p) -> hash_type
+{
+    // the hash of a coordinate
+    auto coordinate = std::hash<coordinate_type> {};
+    // start with nothing
+    auto result = hash_type { 0 };
+    // go through the coordinates
+    for (auto axis = size_type { 0 }; axis < dim; ++axis) {
+        // and fold each one in, in order
+        result = hashCombine(result, coordinate(p[axis]));
+    }
+    // all done
+    return result;
+}
+
 
 // end of file

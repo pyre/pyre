@@ -151,6 +151,22 @@ pyre::geometry::Ring<chartT>::envelope() const -> envelope_type
     return envelope_type(-180, south ? -90 : box.south(), 180, north ? 90 : box.north());
 }
 
+// hashing
+template <class chartT>
+auto
+pyre::geometry::Ring<chartT>::hash() const -> hash_type
+{
+    // start with nothing
+    auto result = hash_type { 0 };
+    // go through my vertices
+    for (const auto & vertex : _vertices) {
+        // and fold each one in, in order
+        result = hashCombine(result, vertex.hash());
+    }
+    // and fold in the kind of my edges
+    return hashCombine(result, std::hash<bool> {}(_geodesic));
+}
+
 // implementation details
 template <class chartT>
 auto

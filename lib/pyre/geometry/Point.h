@@ -27,6 +27,8 @@ public:
     using rep_type = typename space_type::rep_type;
     // indices
     using size_type = size_t;
+    // my hash
+    using hash_type = hash_t;
 
     // metamethods
 public:
@@ -54,6 +56,8 @@ public:
     static constexpr auto dimension() -> size_type;
     // access to my storage
     constexpr auto data() const -> const rep_type &;
+    // my hash, shared by the points that compare equal
+    auto hash() const -> hash_type;
 
     // indexed access, for the spaces whose points are arrays
     constexpr auto operator[](size_type item) const

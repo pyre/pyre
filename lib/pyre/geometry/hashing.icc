@@ -1,0 +1,25 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "hashing.h"
+
+
+// fold the hash of one more part into the hash of the parts before it
+inline auto
+pyre::geometry::hashCombine(hash_t seed, hash_t part) -> hash_t
+{
+    // spread the bits of the part with the fractional part of the golden ratio, and mix in
+    // shifted copies of the seed, so that both the parts and their order shape the result
+    return seed ^ (part + 0x9e3779b97f4a7c15 + (seed << 6) + (seed >> 2));
+}
+
+
+// end of file

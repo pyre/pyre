@@ -10,6 +10,7 @@
 
 // my dependencies
 #include "forward.h"
+#include "hashing.h"
 #include "Point.h"
 #include "Ring.h"
 #include "Box.h"
@@ -37,6 +38,8 @@ public:
     using rings_type = std::vector<ring_type>;
     // the smallest shape of the chart that holds me
     using envelope_type = Box<chart_type>;
+    // my hash
+    using hash_type = hash_t;
 
     // metamethods
 public:
@@ -61,6 +64,11 @@ public:
     auto contains(const point_type & p) const -> bool;
     // the smallest box that holds me
     auto envelope() const -> envelope_type;
+
+    // hashing
+public:
+    // my hash, shared by the polygons that compare equal
+    auto hash() const -> hash_type;
 
     // implementation details - data
 private:

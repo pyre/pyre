@@ -234,6 +234,18 @@ pyre::geometry::Box<chartT>::polygon() const -> polygon_type
     return polygon_type({ ring(points) });
 }
 
+// hashing
+template <class chartT>
+auto
+pyre::geometry::Box<chartT>::hash() const -> hash_type
+{
+    // the hash of an edge
+    auto edge = std::hash<double> {};
+    // fold my edges, in order
+    return hashCombine(
+        hashCombine(hashCombine(edge(_west), edge(_south)), edge(_east)), edge(_north));
+}
+
 // implementation details
 template <class chartT>
 auto

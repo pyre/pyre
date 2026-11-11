@@ -60,5 +60,14 @@ pyre::geometry::Product<firstT, secondT>::inject(std::ostream & stream, const re
     return;
 }
 
+// hashing
+template <class firstT, class secondT>
+auto
+pyre::geometry::Product<firstT, secondT>::hash(const rep_type & p) -> hash_type
+{
+    // hash each part the way its factor hashes it, and fold the two together, in order
+    return hashCombine(first_type::hash(p.first.data()), second_type::hash(p.second.data()));
+}
+
 
 // end of file

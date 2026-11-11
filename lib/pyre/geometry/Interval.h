@@ -10,6 +10,7 @@
 
 // my dependencies
 #include "forward.h"
+#include "hashing.h"
 #include "concepts.h"
 #include "Point.h"
 
@@ -34,6 +35,8 @@ public:
     using coordinate_type = typename line_type::coordinate_type;
     // the smallest interval that holds me is me
     using envelope_type = self_type;
+    // my hash
+    using hash_type = hash_t;
 
     // metamethods
 public:
@@ -76,6 +79,11 @@ public:
     constexpr auto contains(const point_type & p) const -> bool;
     // the smallest interval that holds me
     constexpr auto envelope() const -> envelope_type;
+
+    // hashing
+public:
+    // my hash, shared by the intervals that compare equal
+    auto hash() const -> hash_type;
 
     // implementation details
 private:

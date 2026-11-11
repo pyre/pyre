@@ -15,6 +15,7 @@
 #include <chrono>
 #include <cmath>
 #include <concepts>
+#include <functional>
 #include <initializer_list>
 #include <limits>
 #include <numbers>

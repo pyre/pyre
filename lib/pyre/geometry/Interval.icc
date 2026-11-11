@@ -118,6 +118,15 @@ pyre::geometry::Interval<lineT>::envelope() const -> envelope_type
     return *this;
 }
 
+// hashing
+template <class lineT>
+auto
+pyre::geometry::Interval<lineT>::hash() const -> hash_type
+{
+    // fold my ends, in order
+    return hashCombine(_lower.hash(), _upper.hash());
+}
+
 // implementation details
 template <class lineT>
 constexpr auto

@@ -10,6 +10,7 @@
 
 // my dependencies
 #include "forward.h"
+#include "hashing.h"
 #include "Point.h"
 #include "spherical.h"
 
@@ -38,6 +39,8 @@ public:
     using polygon_type = Polygon<chart_type>;
     // the points of the space around the sphere
     using vector_type = spherical::vector_t;
+    // my hash
+    using hash_type = hash_t;
 
     // constants
 public:
@@ -94,6 +97,11 @@ public:
     // the polygon with my points, for the relations with shapes that are not boxes; the box must
     // not be empty, since no polygon holds nothing
     auto polygon() const -> polygon_type;
+
+    // hashing
+public:
+    // my hash, shared by the boxes that compare equal
+    auto hash() const -> hash_type;
 
     // implementation details
 private:

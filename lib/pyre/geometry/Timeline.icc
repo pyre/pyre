@@ -102,5 +102,13 @@ pyre::geometry::Timeline::inject(std::ostream & stream, const rep_type & p) -> v
     return;
 }
 
+// hashing
+inline auto
+pyre::geometry::Timeline::hash(const rep_type & p) -> hash_type
+{
+    // the hash of the seconds since the epoch
+    return std::hash<rep_type> {}(p);
+}
+
 
 // end of file
