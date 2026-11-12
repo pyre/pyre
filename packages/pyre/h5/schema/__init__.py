@@ -23,18 +23,18 @@ from .Viewer import Viewer as viewer
 
 # the typed descriptors
 # scalars
-bool = dataset.bool
-complex = dataset.complex
-enum = dataset.enum
-float = dataset.float
-int = dataset.int
-iq = dataset.iq
-str = dataset.str
-timestamp = dataset.timestamp
+bool = dataset.bool  # booleans
+complex = dataset.complex  # complex numbers
+enum = dataset.enum  # enumerations
+float = dataset.float  # floats
+int = dataset.int  # integers
+iq = dataset.iq  # radar samples, a pair of integer counts
+str = dataset.str  # strings
+timestamp = dataset.timestamp  # timestamps
 # containers
-array = dataset.array
-list = dataset.list
-tuple = dataset.tuple
+array = dataset.array  # arrays of cells
+list = dataset.list  # lists
+tuple = dataset.tuple  # tuples
 # derived
 from ..typed.Strings import Strings as strings
 

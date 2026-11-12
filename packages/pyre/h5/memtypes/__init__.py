@@ -52,15 +52,15 @@ from .IQUInt32 import iqUInt32
 from .IQUInt64 import iqUInt64
 
 # aliases
-r32 = float
-r64 = double
-c64 = complexFloat
-c128 = complexDouble
+r32 = float  # the 32-bit float
+r64 = double  # the 64-bit float
+c64 = complexFloat  # the complex number of 32-bit floats
+c128 = complexDouble  # the complex number of 64-bit floats
 
-float32 = float
-float64 = double
-complex64 = complexFloat
-complex128 = complexDouble
+float32 = float  # numpy's name for the 32-bit float
+float64 = double  # numpy's name for the 64-bit float
+complex64 = complexFloat  # numpy's name for the complex number of 32-bit floats
+complex128 = complexDouble  # numpy's name for the complex number of 64-bit floats
 
 
 # end of file

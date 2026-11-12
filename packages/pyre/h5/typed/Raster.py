@@ -176,6 +176,7 @@ class Raster:
             channel = journal.error("pyre.h5.typed")
             # complain
             channel.line(f"no grid support for the '{self.memtype.tag}' cell type")
+            # say where
             channel.line(f"while building a mosaic over '{self._dataset._pyre_location}'")
             # flush
             channel.log()

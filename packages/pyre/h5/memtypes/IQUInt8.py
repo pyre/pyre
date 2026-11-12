@@ -19,9 +19,9 @@ class IQUInt8(IQ):
     """
 
     # constants
-    ctype = "pyre::memory::iq_t<std::uint8_t>"
-    htype = disktypes.iqUInt8
-    count = disktypes.uint8
+    ctype = "pyre::memory::iq_t<std::uint8_t>"  # my spelling in c++
+    htype = disktypes.iqUInt8  # my hdf5 type, for the samples pyre writes
+    count = disktypes.uint8  # the hdf5 type of each count
 
 
 # the singleton

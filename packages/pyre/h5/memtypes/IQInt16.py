@@ -19,9 +19,9 @@ class IQInt16(IQ):
     """
 
     # constants
-    ctype = "pyre::memory::iq_t<std::int16_t>"
-    htype = disktypes.iqInt16
-    count = disktypes.int16
+    ctype = "pyre::memory::iq_t<std::int16_t>"  # my spelling in c++
+    htype = disktypes.iqInt16  # my hdf5 type, for the samples pyre writes
+    count = disktypes.int16  # the hdf5 type of each count
 
 
 # the singleton

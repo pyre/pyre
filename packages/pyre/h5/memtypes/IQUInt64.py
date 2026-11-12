@@ -19,9 +19,9 @@ class IQUInt64(IQ):
     """
 
     # constants
-    ctype = "pyre::memory::iq_t<std::uint64_t>"
-    htype = disktypes.iqUInt64
-    count = disktypes.uint64
+    ctype = "pyre::memory::iq_t<std::uint64_t>"  # my spelling in c++
+    htype = disktypes.iqUInt64  # my hdf5 type, for the samples pyre writes
+    count = disktypes.uint64  # the hdf5 type of each count
 
 
 # the singleton
