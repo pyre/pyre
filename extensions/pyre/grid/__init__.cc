@@ -29,12 +29,11 @@ namespace pyre::py::grid {
     // its shape carries one signed extent per axis
     using shape_t = packing_t::shape_type;
 
-    // choose a native cell type from its pyre memory cell name and hand it to a callable that
-    // is templated on that type; this keeps the twelve-way dispatch in one place, and the
-    // return type is deduced so both grid and mosaic factories can ride it; {requested} is the
-    // name the caller actually used, for the complaint
+    // choose an integer cell type from its pyre memory cell name and hand it to a callable that
+    // is templated on that type; the integers are both cells of their own and the counts of radar
+    // samples; {requested} is the name the caller actually used, for the complaint
     template <class F>
-    auto dispatchBase(const string_t & cell, const string_t & requested, F && f)
+    auto dispatchInteger(const string_t & cell, const string_t & requested, F && f)
     {
         // signed integers
         if (cell == "int8")
@@ -54,6 +53,20 @@ namespace pyre::py::grid {
             return f.template operator()<pyre::memory::uint32_t>();
         if (cell == "uint64")
             return f.template operator()<pyre::memory::uint64_t>();
+
+        // anything else is a caller mistake; refuse it the way the other factories refuse bad
+        // arguments, with a python exception and no journal entry, since a fatal error channel
+        // would preempt the exception
+        throw py::value_error("unsupported grid cell type '" + requested + "'");
+    }
+
+    // choose a native cell type from its pyre memory cell name and hand it to a callable that
+    // is templated on that type; this keeps the dispatch in one place, and the return type is
+    // deduced so both grid and mosaic factories can ride it; {requested} is the name the caller
+    // actually used, for the complaint
+    template <class F>
+    auto dispatchBase(const string_t & cell, const string_t & requested, F && f)
+    {
         // floating point
         if (cell == "float32")
             return f.template operator()<pyre::memory::float32_t>();
@@ -64,11 +77,40 @@ namespace pyre::py::grid {
             return f.template operator()<pyre::memory::complex64_t>();
         if (cell == "complex128")
             return f.template operator()<pyre::memory::complex128_t>();
+        // everything else is an integer, or a mistake that the integers refuse
+        return dispatchInteger(cell, requested, std::forward<F>(f));
+    }
 
-        // anything else is a caller mistake; refuse it the way the other factories refuse bad
-        // arguments, with a python exception and no journal entry, since a fatal error channel
-        // would preempt the exception
-        throw py::value_error("unsupported grid cell type '" + requested + "'");
+    // choose a radar sample from the name of its counts, honoring a trailing byte order marker,
+    // which applies to each count on its own: {uint16be} names samples of two big endian
+    // unsigned shorts; {requested} is the name the caller actually used, for the complaint
+    template <class F>
+    auto dispatchSample(const string_t & counts, const string_t & requested, F && f)
+    {
+        // the marker is the last two characters, if there is room for a count name before them
+        if (counts.size() > 2) {
+            // split the name
+            auto base = counts.substr(0, counts.size() - 2);
+            auto marker = counts.substr(counts.size() - 2);
+            // big endian
+            if (marker == "be") {
+                // a sample of big endian counts
+                return dispatchInteger(base, requested, [&]<class T>() {
+                    return f.template operator()<pyre::memory::iq_t<pyre::memory::big_t<T>>>();
+                });
+            }
+            // little endian
+            if (marker == "le") {
+                // a sample of little endian counts
+                return dispatchInteger(base, requested, [&]<class T>() {
+                    return f.template operator()<pyre::memory::iq_t<pyre::memory::little_t<T>>>();
+                });
+            }
+        }
+        // no marker: a sample of native counts
+        return dispatchInteger(counts, requested, [&]<class T>() {
+            return f.template operator()<pyre::memory::iq_t<T>>();
+        });
     }
 
     // choose a cell type from its name, honoring a trailing byte order marker: {float64be} is a
@@ -78,6 +120,12 @@ namespace pyre::py::grid {
     template <class F>
     auto dispatchCell(const string_t & cell, F && f)
     {
+        // radar samples are named {iq} followed by the name of their counts: {iquint16},
+        // {iqint16be}
+        if (cell.starts_with("iq")) {
+            // so their counts choose the sample
+            return dispatchSample(cell.substr(2), cell, std::forward<F>(f));
+        }
         // the marker is the last two characters, if there is room for a base name before them
         if (cell.size() > 2) {
             // split the name
