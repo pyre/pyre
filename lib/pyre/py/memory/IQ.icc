@@ -1,0 +1,60 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+// my declarations
+#include "IQ.h"
+
+
+// fill my value from a python {source}
+template <typename T>
+auto
+pybind11::detail::type_caster<pyre::memory::IQ<T>>::load(handle source, bool convert) -> bool
+{
+    // a sample comes out of a sequence; strings are sequences too, but never samples
+    if (!source || !isinstance<sequence>(source) || isinstance<str>(source)) {
+        // so anything else is not mine to convert
+        return false;
+    }
+    // look at the items
+    auto items = reinterpret_borrow<sequence>(source);
+    // a sample has exactly two counts
+    if (items.size() != 2) {
+        // so a sequence of any other length is not one
+        return false;
+    }
+    // convert each of them
+    make_caster<count_type> i;
+    make_caster<count_type> q;
+    // if either one is not a count
+    if (!i.load(items[0], convert) || !q.load(items[1], convert)) {
+        // the sequence is not a sample
+        return false;
+    }
+    // assemble the sample in the host's order, and store it in my own
+    value = sample_type { pyre::memory::IQ<count_type> { cast_op<count_type>(i),
+                                                         cast_op<count_type>(q) } };
+    // all done
+    return true;
+}
+
+
+// build the python face of a {sample}
+template <typename T>
+auto
+pybind11::detail::type_caster<pyre::memory::IQ<T>>::cast(
+    const sample_type & sample, return_value_policy, handle) -> handle
+{
+    // read the counts in the host's order
+    auto native = pyre::memory::IQ<count_type> { sample };
+    // and hand them over as a pair
+    return make_tuple(native.i, native.q).release();
+}
+
+
+// end of file
