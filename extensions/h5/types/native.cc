@@ -98,14 +98,16 @@ pyre::h5::py::types::native(py::module & m)
     // build a compound type to represent complex types
     native.attr("complexFloat") = pyre::h5::datatype<std::complex<float>>();
     native.attr("complexDouble") = pyre::h5::datatype<std::complex<double>>();
-    native.attr("complexUInt8") = pyre::h5::datatype<std::complex<std::uint8_t>>();
-    native.attr("complexUInt16") = pyre::h5::datatype<std::complex<std::uint16_t>>();
-    native.attr("complexUInt32") = pyre::h5::datatype<std::complex<std::uint32_t>>();
-    native.attr("complexUInt64") = pyre::h5::datatype<std::complex<std::uint64_t>>();
-    native.attr("complexInt8") = pyre::h5::datatype<std::complex<std::int8_t>>();
-    native.attr("complexInt16") = pyre::h5::datatype<std::complex<std::int16_t>>();
-    native.attr("complexInt32") = pyre::h5::datatype<std::complex<std::int32_t>>();
-    native.attr("complexInt64") = pyre::h5::datatype<std::complex<std::int64_t>>();
+
+    // radar samples: a pair of counts of each integer type
+    native.attr("iqUInt8") = pyre::h5::datatype<pyre::memory::iq_t<std::uint8_t>>();
+    native.attr("iqUInt16") = pyre::h5::datatype<pyre::memory::iq_t<std::uint16_t>>();
+    native.attr("iqUInt32") = pyre::h5::datatype<pyre::memory::iq_t<std::uint32_t>>();
+    native.attr("iqUInt64") = pyre::h5::datatype<pyre::memory::iq_t<std::uint64_t>>();
+    native.attr("iqInt8") = pyre::h5::datatype<pyre::memory::iq_t<std::int8_t>>();
+    native.attr("iqInt16") = pyre::h5::datatype<pyre::memory::iq_t<std::int16_t>>();
+    native.attr("iqInt32") = pyre::h5::datatype<pyre::memory::iq_t<std::int32_t>>();
+    native.attr("iqInt64") = pyre::h5::datatype<pyre::memory::iq_t<std::int64_t>>();
 
     // all done
     return;
