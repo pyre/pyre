@@ -42,10 +42,11 @@ public:
     constexpr IQ() = default;
     // a sample out of its two counts
     constexpr IQ(value_type i, value_type q);
-    // the same sample out of counts in another byte order
+    // the same sample out of counts in another byte order; implicit, the way a byte ordered
+    // count accepts its native value, so a sample in the host's order stores into any cell
     template <typename U>
         requires std::same_as<native_t<U>, native_t<T>>
-    explicit constexpr IQ(const IQ<U> & other);
+    constexpr IQ(const IQ<U> & other);
 
     // special members
     constexpr IQ(const IQ &) = default;
