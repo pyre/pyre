@@ -149,7 +149,9 @@ class Raster:
             # bail; the {memtype} has already complained
             return None
         # populate the grid with my content
-        self.dataset.read(data=data, memtype=memtype.htype, origin=origin, shape=shape)
+        self.dataset.read(
+            data=data, memtype=memtype.aligned(self.dataset), origin=origin, shape=shape
+        )
         # and hand it off
         return data
 
