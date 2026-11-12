@@ -26,7 +26,9 @@
 // count on its own: {IQ<foreign_t<std::uint16_t>>}
 template <typename T>
 class pyre::memory::IQ {
-    // the counts must travel byte by byte, or the pair cannot lay over stored samples
+    // the counts are integers
+    static_assert(std::integral<native_t<T>>, "the counts of a sample are integers");
+    // and must travel byte by byte, or the pair cannot lay over stored samples
     static_assert(std::is_trivially_copyable_v<T>, "the counts of a sample must be trivial");
 
     // types
