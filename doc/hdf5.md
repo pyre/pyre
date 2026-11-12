@@ -349,8 +349,9 @@ firewall aborted.
 - **No query → infer.** `_pyre_inferObject` dispatches on the on-disk object
   type. For a group it recurses over `h5id.members()`; for a dataset it reads
   the cell type and dataspace to synthesize a typed `schema.dataset` (scalars,
-  rank-1 strings, and N-d arrays are distinguished). Compound types currently
-  recognize only `std::complex<float>` / `std::complex<int>`.
+  rank-1 strings, and N-d arrays are distinguished). Of the compound types, a
+  pair of reals is recognized as a complex number and a pair of integers of the
+  same sign as a radar sample, `schema.iq`, whose cells are `iq_t`; no others.
 - **Query → constrained.** `_pyre_queryObject` walks only the members named in
   the query's alias map; missing members are silently skipped. For each
   dataset, `_pyre_consolidateSchema` reconciles the **expected** (query) and
