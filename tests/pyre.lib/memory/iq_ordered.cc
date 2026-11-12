@@ -47,6 +47,10 @@ main(int argc, char * argv[])
     assert((native_t { foreign } == sample));
     // as does converting the sample itself into the other order and back
     assert((native_t { foreign_t { sample } } == sample));
+    // a sample in the host's order stores into a cell in the other order
+    foreign_t cell;
+    cell = sample;
+    assert((native_t { cell } == sample));
 
     // in memory, each count has its own bytes reversed, and the counts stay where they were
     auto expected = std::bit_cast<bytes_t>(sample);
