@@ -30,6 +30,8 @@
 static_assert(PYBIND11_VERSION_MAJOR >= 3, "pyre requires pybind11 3.0 or later");
 // the accessors of properties, which name the parameters of their setters
 #include <pyre/py/properties/accessors.h>
+// radar samples cross into python as the pair of their counts
+#include <pyre/py/memory/IQ.h>
 // the hdf5 c api; the bindings no longer depend on the hdf5 c++ layer
 #include <hdf5.h>
 
@@ -40,6 +42,9 @@ namespace pyre::h5::py {
     namespace py = pybind11;
     // get the special {pybind11} literals
     using namespace py::literals;
+
+    // a python object
+    using object_t = py::object;
 
     // for decorating pybind11 classes
     // class names
