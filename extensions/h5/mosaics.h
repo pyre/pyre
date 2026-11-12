@@ -24,8 +24,15 @@ namespace pyre::h5::py {
     using anygrid_t = pyre::py::grid::AnyGrid;
     using anymosaic_t = pyre::py::grid::AnyMosaic;
 
+    // choose an integer cell type from its pyre memory cell name and hand it to a callable that
+    // is templated on that type; the integers are both cells of their own and the counts of
+    // radar samples; {requested} is the name the caller actually used, for the complaint
+    template <class F>
+    inline auto dispatchInteger(const string_t & cell, const string_t & requested, F && f);
+
     // choose a cell type from its pyre memory cell name and hand it to a callable that is
-    // templated on that type; this keeps the twelve-way dispatch in one place
+    // templated on that type; this keeps the dispatch in one place; radar samples are named
+    // {iq} followed by the name of their counts
     template <class F>
     inline auto dispatchCell(const string_t & cell, F && f);
 
