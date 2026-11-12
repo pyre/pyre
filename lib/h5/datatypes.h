@@ -47,6 +47,21 @@ namespace pyre::h5 {
         // and report it as my base type
         return complex;
     }
+
+    // build a compound {(i, q)} type out of two counts of the given native integer type: the
+    // layout pyre gives the radar samples it writes
+    inline auto pairDatatype(hid_t native) -> datatype_t
+    {
+        // grab a fresh copy of the native count type
+        auto count = nativeDatatype(native);
+        // allocate a compound type wide enough for the two counts
+        auto pair = comptype_t(2 * count.bytes());
+        // insert the in-phase and quadrature counts
+        pair.insert("i", 0, count);
+        pair.insert("q", count.bytes(), count);
+        // and report it as my base type
+        return pair;
+    }
 } // namespace pyre::h5
 
 
@@ -138,60 +153,61 @@ pyre::h5::datatype<std::complex<double>>() -> datatype_t
     return complexDatatype(H5T_NATIVE_DOUBLE);
 }
 
+// radar samples: a pair of counts of each integer type
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::uint8_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::uint8_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_UINT8);
+    return pairDatatype(H5T_NATIVE_UINT8);
 }
 
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::uint16_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::uint16_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_UINT16);
+    return pairDatatype(H5T_NATIVE_UINT16);
 }
 
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::uint32_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::uint32_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_UINT32);
+    return pairDatatype(H5T_NATIVE_UINT32);
 }
 
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::uint64_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::uint64_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_UINT64);
+    return pairDatatype(H5T_NATIVE_UINT64);
 }
 
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::int8_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::int8_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_INT8);
+    return pairDatatype(H5T_NATIVE_INT8);
 }
 
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::int16_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::int16_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_INT16);
+    return pairDatatype(H5T_NATIVE_INT16);
 }
 
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::int32_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::int32_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_INT32);
+    return pairDatatype(H5T_NATIVE_INT32);
 }
 
 template <>
 inline auto
-pyre::h5::datatype<std::complex<std::int64_t>>() -> datatype_t
+pyre::h5::datatype<pyre::memory::iq_t<std::int64_t>>() -> datatype_t
 {
-    return complexDatatype(H5T_NATIVE_INT64);
+    return pairDatatype(H5T_NATIVE_INT64);
 }
 
 

@@ -77,22 +77,23 @@ namespace pyre::h5 {
     inline auto datatype<std::complex<float>>() -> datatype_t;
     template <>
     inline auto datatype<std::complex<double>>() -> datatype_t;
+    // radar samples
     template <>
-    inline auto datatype<std::complex<std::uint8_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::uint8_t>>() -> datatype_t;
     template <>
-    inline auto datatype<std::complex<std::uint16_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::uint16_t>>() -> datatype_t;
     template <>
-    inline auto datatype<std::complex<std::uint32_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::uint32_t>>() -> datatype_t;
     template <>
-    inline auto datatype<std::complex<std::uint64_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::uint64_t>>() -> datatype_t;
     template <>
-    inline auto datatype<std::complex<std::int8_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::int8_t>>() -> datatype_t;
     template <>
-    inline auto datatype<std::complex<std::int16_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::int16_t>>() -> datatype_t;
     template <>
-    inline auto datatype<std::complex<std::int32_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::int32_t>>() -> datatype_t;
     template <>
-    inline auto datatype<std::complex<std::int64_t>>() -> datatype_t;
+    inline auto datatype<pyre::memory::iq_t<std::int64_t>>() -> datatype_t;
 
 } // namespace pyre::h5
 
