@@ -17,6 +17,9 @@ from .. import memtypes
 # superclass
 from .Descriptor import Descriptor
 
+# the mixin of the radar samples, which have no schema of their own among the schemata
+from ..typed.IQ import IQ
+
 
 # the base class for all leaves
 @pyre.schemata.typed
@@ -130,6 +133,14 @@ class Dataset(Descriptor):
         # otherwise, invoke the handler
         return handler(dataset=self, **kwds)
 
+    # the kind of cell i hold, which tells apart compounds that the disk types do not
+    def _pyre_kind(self):
+        """
+        The kind of cell i hold: my own typed class
+        """
+        # easy
+        return type(self)
+
     # decoration
     def _pyre_marker(self):
         """
@@ -137,6 +148,12 @@ class Dataset(Descriptor):
         """
         # easy
         return self.type
+
+
+# radar samples have no schema of their own among the schemata, so their typed dataset is
+# assembled here the way the decorator assembles the others: their mixin, the dataset, and the
+# schema of a tuple, which converts their values the way a tuple of integers is converted
+Dataset.iq = type("iq", (IQ, Dataset, pyre.schemata.tuple), {"__doc__": "A 'Dataset' of type 'iq'"})
 
 
 # end of file

@@ -157,9 +157,14 @@ class Inspector:
         Compare the {expected} and {actual} specifications of a dataset and build a specification
         that is guaranteed to work
         """
-        # check the disk types for compatibility
-        if expected.disktype.cell != actual.disktype.cell:
-            # f they don't match, we have a problem
+        # the disk types are compatible when they are of the same class and, for compounds, when
+        # they hold the same kind of cell: a pair of integers is a radar sample, never a complex
+        # number
+        if expected.disktype.cell != actual.disktype.cell or (
+            actual.disktype.cell == libh5.DataSetType.compound
+            and expected._pyre_kind() is not actual._pyre_kind()
+        ):
+            # if they don't match, we have a problem
             problem = exceptions.TypeMismatchError(path=path, expected=expected, actual=actual)
             # make a channel
             channel = journal.warning("pyre.h5.api.inspector")
@@ -347,9 +352,10 @@ class Inspector:
         """
         Build a descriptor for a compound object
 
-        Currently, only complex numbers are supported
+        Currently, a pair of reals is a complex number and a pair of integers is a radar sample;
+        nothing else is supported
         """
-        # check for std::complex<float>
+        # a pair of reals is a complex number
         if h5type.members == 2 and (
             h5type.type(0).cell == h5type.type(1).cell == libh5.DataSetType.float
         ):
@@ -362,18 +368,22 @@ class Inspector:
             # and return it
             return complex
 
-        # check for std::complex<int>
-        if h5type.members == 2 and (
-            h5type.type(0).cell == h5type.type(1).cell == libh5.DataSetType.int
+        # a pair of integers that agree on their sign is a radar sample
+        if (
+            h5type.members == 2
+            and h5type.type(0).cell == h5type.type(1).cell == libh5.DataSetType.int
+            and h5type.type(0).sign == h5type.type(1).sign
         ):
-            # get the largest bit width of the component types
+            # the sign of the counts
+            sign = "U" if h5type.type(0).sign == libh5.Sign.unsigned else ""
+            # and the widest of their bit widths
             bits = max(h5type.type(n).precision for n in range(2))
-            # get the in-memory type; don't let it go above 64
-            memtype = getattr(memtypes, f"complexInt{min(bits, 64)}")
+            # get the in-memory type
+            memtype = getattr(memtypes, f"iq{sign}Int{bits}")
             # build the descriptor
-            complex = schema.complex(name=name, memtype=memtype, disktype=h5type)
+            iq = schema.iq(name=name, memtype=memtype, disktype=h5type)
             # and return it
-            return complex
+            return iq
 
         # nothing else is supported, for now; build a problem description
         problem = exceptions.UnsupportedCompoundTypeError(dataset=name, h5type=h5type)

@@ -12,6 +12,7 @@ from .Complex import Complex as complex
 from .Enum import Enum as enum
 from .Float import Float as float
 from .Integer import Integer as int
+from .IQ import IQ as iq
 from .String import String as str
 from .Timestamp import Timestamp as timestamp
 
