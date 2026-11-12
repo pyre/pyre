@@ -104,6 +104,11 @@ namespace pyre::memory {
     template <typename T>
     concept complex_c = requires { typename T::value_type; }
                      && std::same_as<T, std::complex<typename T::value_type>>;
+
+    // recognize radar samples, whose two counts each carry their own byte order
+    template <typename T>
+    concept iq_c =
+        requires { typename T::value_type; } && std::same_as<T, IQ<typename T::value_type>>;
 } // namespace pyre::memory
 
 
