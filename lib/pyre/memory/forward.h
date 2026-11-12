@@ -22,6 +22,10 @@ namespace pyre::memory {
     template <typename T, std::endian order>
     class Ordered;
 
+    // a radar sample: a pair of counts, in-phase and quadrature
+    template <typename T>
+    class IQ;
+
     // block on the stack
     template <int D, typename T, bool isConst>
     class Stack;
@@ -65,6 +69,10 @@ namespace pyre::memory {
     // also against a native value
     template <typename T, std::endian order>
     constexpr auto operator==(const Ordered<T, order> &, const T &) -> bool;
+
+    // samples compare count by count
+    template <typename T>
+    constexpr auto operator==(const IQ<T> &, const IQ<T> &) -> bool;
 } // namespace pyre::memory
 
 
