@@ -371,11 +371,21 @@ pyre::h5::py::dataset()
                 // and lift it
                 return value ? py::cast(*value) : py::none();
             }
-            // a compound of two reals is how a complex number reaches the file
+            // compounds are told apart by what their members are
             if (type == H5T_COMPOUND) {
-                // ask for it in those terms
+                // look at my cells as stored
+                auto stored = CompType(H5Dget_type(self.id()));
+                // a pair of integers is a radar sample
+                if (stored.members() == 2 && stored.memberClass(0) == H5T_INTEGER
+                    && stored.memberClass(1) == H5T_INTEGER) {
+                    // ask for it in those terms
+                    auto value = self.fillValue<pyre::memory::iq_t<std::int64_t>>();
+                    // and lift it, as the pair of its counts
+                    return value ? py::cast(*value) : py::none();
+                }
+                // a pair of reals is how a complex number reaches the file
                 auto value = self.fillValue<std::complex<double>>();
-                // and lift it
+                // so lift it as one
                 return value ? py::cast(*value) : py::none();
             }
             // anything else has no python spelling yet
@@ -392,6 +402,18 @@ pyre::h5::py::dataset()
         &DataSet::offset,
         // the docstring
         "get the on-disk offset of the dataset");
+
+    // the memory type that lines a pair of counts up with my cells
+    cls.def(
+        // the name
+        "pair",
+        // the implementation
+        &DataSet::pair,
+        // the signature
+        "count"_a,
+        // the docstring
+        "a pair of {count} values laid out like my cells, its members named after my own two "
+        "members in order");
 
     // attempt to get the dataset contents as an int
     cls.def(
@@ -425,6 +447,49 @@ pyre::h5::py::dataset()
         },
         // the docstring
         "extract my contents as an integer");
+
+    // attempt to get the dataset contents as a radar sample
+    cls.def(
+        // the name
+        "iq",
+        // the implementation
+        [](const DataSet & self) -> object_t {
+            // the cell, in counts wide enough for any of the integer types
+            using cell_t = pyre::memory::iq_t<std::int64_t>;
+            // i am read whole into a single cell, so i must hold exactly one
+            if (self.dataspace().cells() != 1) {
+                // if not, make a channel
+                auto channel = pyre::journal::error_t("pyre.h5.dataset.iq");
+                // complain
+                channel
+                    // where
+                    << pyre::journal::here()
+                    // what
+                    << "the dataset '" << self.name()
+                    << "' holds more than one sample"
+                    // flush
+                    << pyre::journal::endl;
+                // and bail
+                return py::none();
+            }
+            // the memory type, with its counts lined up with my members; it is empty, after a
+            // complaint, when my cells are not pairs
+            auto memtype = self.memtype<cell_t>();
+            // in which case
+            if (!memtype.valid()) {
+                // there is nothing to read
+                return py::none();
+            }
+            // make some room
+            cell_t result;
+            // read the data
+            self.read(memtype.id(), &result);
+            // and hand it over as the pair of its counts
+            return py::cast(result);
+        },
+        // the docstring
+        "extract my contents as a radar sample, the pair of its counts, or {None} when i do not "
+        "hold exactly one pair");
 
     // attempt to save the dataset contents as an int
     cls.def(
