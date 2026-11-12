@@ -11,7 +11,7 @@
 // choose a cell type from its pyre memory cell name
 template <class F>
 inline auto
-pyre::h5::py::dispatchCell(const string_t & cell, F && f)
+pyre::h5::py::dispatchInteger(const string_t & cell, const string_t & requested, F && f)
 {
     // signed integers
     if (cell == "int8")
@@ -31,6 +31,23 @@ pyre::h5::py::dispatchCell(const string_t & cell, F && f)
         return f.template operator()<pyre::memory::uint32_t>();
     if (cell == "uint64")
         return f.template operator()<pyre::memory::uint64_t>();
+
+    // anything else is a caller mistake
+    throw ::pybind11::value_error("unsupported mosaic cell type '" + requested + "'");
+}
+
+
+template <class F>
+inline auto
+pyre::h5::py::dispatchCell(const string_t & cell, F && f)
+{
+    // radar samples are named {iq} followed by the name of their counts
+    if (cell.starts_with("iq")) {
+        // so their counts choose the sample
+        return dispatchInteger(cell.substr(2), cell, [&]<class T>() {
+            return f.template operator()<pyre::memory::iq_t<T>>();
+        });
+    }
     // floating point
     if (cell == "float32")
         return f.template operator()<pyre::memory::float32_t>();
@@ -41,9 +58,8 @@ pyre::h5::py::dispatchCell(const string_t & cell, F && f)
         return f.template operator()<pyre::memory::complex64_t>();
     if (cell == "complex128")
         return f.template operator()<pyre::memory::complex128_t>();
-
-    // anything else is a caller mistake
-    throw ::pybind11::value_error("unsupported mosaic cell type '" + cell + "'");
+    // everything else is an integer, or a mistake that the integers refuse
+    return dispatchInteger(cell, cell, std::forward<F>(f));
 }
 
 
