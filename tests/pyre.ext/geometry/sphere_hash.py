@@ -22,8 +22,9 @@ def test():
     # the chart
     chart = geometry.SphereLonLat()
 
-    # two points made the same way
+    # a point
     point = chart.point(longitude=10, latitude=20)
+    # and another one made the same way
     again = chart.point(longitude=10, latitude=20)
     # hash alike
     assert hash(point) == hash(again)

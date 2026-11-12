@@ -22,8 +22,9 @@ def test():
     # a timeline
     timeline = geometry.Timeline()
 
-    # two instants made the same way
+    # an instant
     hour = timeline.point(coordinate=3600)
+    # and another one made the same way
     again = timeline.point(coordinate=3600)
     # hash alike
     assert hash(hour) == hash(again)
@@ -32,8 +33,9 @@ def test():
     # and either one finds what was filed under the other
     assert {hour: "hour"}[again] == "hour"
 
-    # two intervals made the same way
+    # an interval
     interval = timeline.interval(lower=10, upper=20)
+    # and another one made the same way
     copy = timeline.interval(lower=10, upper=20)
     # hash alike
     assert hash(interval) == hash(copy)
@@ -44,8 +46,9 @@ def test():
     # so the two hash alike
     assert hash(backwards) == hash(geometry.TimelineInterval())
 
-    # two unions made the same way
+    # a union of intervals
     pieces = geometry.TimelineIntervals(shapes=[interval, timeline.interval(lower=30, upper=40)])
+    # and another one made the same way
     others = geometry.TimelineIntervals(shapes=[copy, timeline.interval(lower=30, upper=40)])
     # hash alike
     assert hash(pieces) == hash(others)
