@@ -24,10 +24,10 @@ from .. import schema
 from .Object import Object
 
 # type aliases
-H5Group = libh5.Group
-H5DataSet = libh5.DataSet
-H5DataType = libh5.types.datatype
-H5ObjectType = libh5.ObjectType
+H5Group = libh5.Group  # groups
+H5DataSet = libh5.DataSet  # datasets
+H5DataType = libh5.types.datatype  # the types of their cells
+H5ObjectType = libh5.ObjectType  # the kinds of object a file holds
 
 
 # libh5 bridge mixin
@@ -422,8 +422,9 @@ class Inspector:
         """
         Build an {int} descriptor
         """
-        # build the tags
+        # the tag of the sign
         sign = "u" if h5type.sign == libh5.Sign.unsigned else ""
+        # and the bit width
         bits = h5type.precision
         # assemble the factory name
         factory = f"{sign}int{bits}"

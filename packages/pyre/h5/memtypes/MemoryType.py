@@ -20,8 +20,8 @@ class MemoryType:
     """
 
     # constants
-    ctype: str = "void"
-    htype: disktypes.type = None
+    ctype: str = "void"  # my spelling in c++
+    htype: disktypes.type = None  # my hdf5 type
 
     # the cell types the grid factory understands, keyed by memtype tag
     _cells = {
