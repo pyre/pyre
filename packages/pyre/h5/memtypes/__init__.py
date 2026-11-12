@@ -41,15 +41,15 @@ from .Double import double
 from .ComplexFloat import complexFloat
 from .ComplexDouble import complexDouble
 
-# built out of integer types
-from .ComplexInt8 import complexInt8
-from .ComplexInt16 import complexInt16
-from .ComplexInt32 import complexInt32
-from .ComplexInt64 import complexInt64
-from .ComplexUInt8 import complexUInt8
-from .ComplexUInt16 import complexUInt16
-from .ComplexUInt32 import complexUInt32
-from .ComplexUInt64 import complexUInt64
+# radar samples: a pair of counts of each integer type
+from .IQInt8 import iqInt8
+from .IQInt16 import iqInt16
+from .IQInt32 import iqInt32
+from .IQInt64 import iqInt64
+from .IQUInt8 import iqUInt8
+from .IQUInt16 import iqUInt16
+from .IQUInt32 import iqUInt32
+from .IQUInt64 import iqUInt64
 
 # aliases
 r32 = float

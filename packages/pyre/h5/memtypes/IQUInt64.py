@@ -1,0 +1,31 @@
+# -*- python -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# support
+from .. import disktypes
+
+# superclass
+from .IQ import IQ
+
+
+# a radar sample made out of two uint64 counts
+class IQUInt64(IQ):
+    """
+    The type specification of radar samples with {uint64_t} counts
+    """
+
+    # constants
+    ctype = "pyre::memory::iq_t<std::uint64_t>"
+    htype = disktypes.iqUInt64
+    count = disktypes.uint64
+
+
+# the singleton
+iqUInt64 = IQUInt64()
+
+
+# end of file

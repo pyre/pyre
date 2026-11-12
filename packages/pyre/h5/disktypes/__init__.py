@@ -62,19 +62,19 @@ r32 = float
 r64 = double
 
 # complex numbers
-complexInt8 = native.complexInt8
-complexInt16 = native.complexInt16
-complexInt32 = native.complexInt32
-complexInt64 = native.complexInt64
-
-complexUInt8 = native.complexUInt8
-complexUInt16 = native.complexUInt16
-complexUInt32 = native.complexUInt32
-complexUInt64 = native.complexUInt64
-
 complexHalf = native.complexHalf
 complexFloat = native.complexFloat
 complexDouble = native.complexDouble
+
+# radar samples: a pair of counts of each integer type
+iqInt8 = native.iqInt8
+iqInt16 = native.iqInt16
+iqInt32 = native.iqInt32
+iqInt64 = native.iqInt64
+iqUInt8 = native.iqUInt8
+iqUInt16 = native.iqUInt16
+iqUInt32 = native.iqUInt32
+iqUInt64 = native.iqUInt64
 
 # sized aliases
 c32 = complexHalf

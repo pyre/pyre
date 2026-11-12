@@ -50,6 +50,15 @@ class MemoryType:
         # complex
         "ComplexFloat": "complex64",
         "ComplexDouble": "complex128",
+        # radar samples, named after their counts
+        "IQInt8": "iqint8",
+        "IQInt16": "iqint16",
+        "IQInt32": "iqint32",
+        "IQInt64": "iqint64",
+        "IQUInt8": "iquint8",
+        "IQUInt16": "iquint16",
+        "IQUInt32": "iquint32",
+        "IQUInt64": "iquint64",
     }
 
     # data
@@ -83,6 +92,13 @@ class MemoryType:
         """
         # look it up
         return self._cells.get(self.tag)
+
+    def aligned(self, dataset):
+        """
+        My hdf5 type, lined up with the cells of {dataset}
+        """
+        # most cells are described the same way whatever the dataset
+        return self.htype
 
     def grid(self, shape):
         """
