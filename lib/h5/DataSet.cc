@@ -11,6 +11,7 @@
 #include "diagnostics.h"
 // the wrappers i hand back
 #include "types/Datatype.h"
+#include "types/Compound.h"
 #include "Chunk.h"
 #include "DataSpace.h"
 #include "properties/DAPL.h"
@@ -110,6 +111,41 @@ pyre::h5::DataSet::datatype() const -> types::Datatype
     }
     // hand off the datatype, empty if the library refused
     return types::Datatype(static_cast<id_type>(hid));
+}
+
+
+// a pair of {count} values laid out like my cells
+auto
+pyre::h5::DataSet::pair(const types::Datatype & count) const -> datatype_t
+{
+    // my cells, as stored, seen as a compound; {H5Dget_type} hands back a fresh handle the
+    // wrapper adopts
+    auto stored = types::Compound(H5Dget_type(id()));
+    // if they are not pairs
+    if (!stored.valid() || stored.cell() != H5T_COMPOUND || stored.members() != 2) {
+        // make a channel
+        auto channel = pyre::journal::error_t("pyre.h5.dataset.pair");
+        // complain
+        channel
+            // where
+            << pyre::journal::here()
+            // what
+            << "the cells of '" << name()
+            << "' are not pairs of numbers"
+            // flush
+            << pyre::journal::endl;
+        // and hand back an empty type, so a transfer that uses it is refused by the library
+        // rather than land the counts in the wrong places
+        return datatype_t(H5I_INVALID_HID);
+    }
+    // make a compound wide enough for two counts
+    auto pair = comptype_t(2 * count.bytes());
+    // the first count, under the name of my first member
+    pair.insert(stored.memberName(0), 0, count);
+    // the second count, under the name of my second member
+    pair.insert(stored.memberName(1), count.bytes(), count);
+    // and hand it off
+    return pair;
 }
 
 

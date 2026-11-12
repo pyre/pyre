@@ -17,6 +17,24 @@
 #include "datatypes.h"
 
 
+// the memory type for my cells read or written as {cellT}
+template <typename cellT>
+auto
+pyre::h5::DataSet::memtype() const -> datatype_t
+{
+    // radar samples
+    if constexpr (pyre::memory::iq_c<cellT>) {
+        // line their counts up with my own members
+        return pair(pyre::h5::datatype<typename cellT::value_type>());
+    }
+    // everything else is described the same way whatever the dataset
+    else {
+        // so deduce it
+        return pyre::h5::datatype<cellT>();
+    }
+}
+
+
 // an out-of-core mosaic assembled over my own chunking
 template <class cellT>
 auto
@@ -90,7 +108,7 @@ pyre::h5::DataSet::fill(const mosaic_t<cellT> & mosaic, const tiling_t::index_ty
     // materialize it; this is the only allocation the fill performs
     auto page = mosaic.storage().reside(ordinal);
     // move the cells: the chunk flows from the file straight into its page
-    read(pyre::h5::datatype<cellT>().id(), page, memspace->id(), filespace.id());
+    read(memtype<cellT>().id(), page, memspace->id(), filespace.id());
     // and record that the page now holds meaningful content
     mosaic.storage().validate(ordinal);
     // all done
@@ -155,7 +173,7 @@ pyre::h5::DataSet::flush(const mosaic_t<cellT> & mosaic, const tiling_t::index_t
     // get the page
     auto page = mosaic.storage().page(ordinal);
     // move the cells: the page flows straight back into its chunk of the file
-    write(pyre::h5::datatype<cellT>().id(), page, memspace->id(), filespace.id());
+    write(memtype<cellT>().id(), page, memspace->id(), filespace.id());
     // and record that the page matches me again
     mosaic.storage().flush(ordinal);
     // all done
@@ -205,7 +223,7 @@ pyre::h5::DataSet::fillValue() const -> std::optional<valueT>
         return {};
     }
     // the description of what the caller expects
-    auto expected = pyre::h5::datatype<valueT>();
+    auto expected = memtype<valueT>();
     // hdf5 converts between compatible numbers, so the mismatch worth refusing is one of
     // kind: asking for a number when i hold a compound, or the other way around
     if (expected.cell() != cell()) {
