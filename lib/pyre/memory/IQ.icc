@@ -1,0 +1,43 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "IQ.h"
+
+
+// metamethods
+// a sample out of its two counts
+template <typename T>
+constexpr pyre::memory::IQ<T>::IQ(value_type i, value_type q) : i { i }, q { q }
+{}
+
+// the same sample out of counts in another byte order
+template <typename T>
+template <typename U>
+    requires std::same_as<pyre::memory::native_t<U>, pyre::memory::native_t<T>>
+constexpr pyre::memory::IQ<T>::IQ(const IQ<U> & other) :
+    // each count goes through its native value
+    i { static_cast<native_t<T>>(other.i) },
+    q { static_cast<native_t<T>>(other.q) }
+{}
+
+
+// operators
+// two samples are the same when both their counts are
+template <typename T>
+constexpr auto
+pyre::memory::operator==(const IQ<T> & left, const IQ<T> & right) -> bool
+{
+    // compare the counts
+    return left.i == right.i && left.q == right.q;
+}
+
+
+// end of file

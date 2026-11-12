@@ -207,5 +207,22 @@ struct pyre::memory::CellName<pyre::memory::Ordered<T, order>> {
     }
 };
 
+// samples carry the name of their counts, tagged as samples
+template <typename T>
+struct pyre::memory::CellName<pyre::memory::IQ<T>> {
+    // the name
+    inline static auto name() -> string_t
+    {
+        // the counts' name, marked as a sample
+        return "IQ" + CellName<T>::name();
+    }
+    // c++ decl string
+    inline static auto decl() -> string_t
+    {
+        // spelled through the api alias
+        return "pyre::memory::iq_t<" + CellName<T>::decl() + ">";
+    }
+};
+
 
 // end of file

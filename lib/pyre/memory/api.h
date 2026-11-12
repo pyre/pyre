@@ -47,6 +47,10 @@ namespace pyre::memory {
     // writer put it, e.g. past a header whose length is not a multiple of the cell size
     template <typename T>
     using unaligned_t = typename Unaligned<T>::type;
+    // a radar sample: the in-phase and quadrature counts; ordered counts give a sample stored in
+    // another byte order, e.g. {iq_t<foreign_t<std::uint16_t>>}
+    template <typename T>
+    using iq_t = IQ<T>;
 
     // block on the stack
     template <int D, typename T>
