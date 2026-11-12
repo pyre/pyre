@@ -66,7 +66,11 @@ namespace pyre::memory {
         // floating point
         float32_t, float64_t,
         // complex
-        complex64_t, complex128_t>;
+        complex64_t, complex128_t,
+        // radar samples, over signed counts
+        iq_t<int8_t>, iq_t<int16_t>, iq_t<int32_t>, iq_t<int64_t>,
+        // and over unsigned ones
+        iq_t<uint8_t>, iq_t<uint16_t>, iq_t<uint32_t>, iq_t<uint64_t>>;
 
     // the pile of cell types
     using cells_t = typename celltypes_t<basetypes_t>::type;
@@ -90,7 +94,11 @@ namespace pyre::memory {
         // floating point
         foreign_t<float32_t>, foreign_t<float64_t>,
         // complex
-        foreign_t<complex64_t>, foreign_t<complex128_t>>;
+        foreign_t<complex64_t>, foreign_t<complex128_t>,
+        // radar samples whose counts are wide enough to have a byte order, each count swapped
+        // on its own
+        iq_t<foreign_t<int16_t>>, iq_t<foreign_t<int32_t>>, iq_t<foreign_t<int64_t>>,
+        iq_t<foreign_t<uint16_t>>, iq_t<foreign_t<uint32_t>>, iq_t<foreign_t<uint64_t>>>;
     // the pile of foreign order cell types
     using foreigncells_t = typename celltypes_t<foreigntypes_t>::type;
     // base buffers over the foreign order scalars
