@@ -30,9 +30,11 @@ def heap():
         g[1] = (5, 6)
         # read back; the counts come through the swap
         assert g[0] == sample
+        # in both cells
         assert g[1] == (5, 6)
-        # with an explicit order, the bytes of each count sit in that order, the counts in place
+        # with an explicit order
         if expected is not None:
+            # the bytes of each count sit in that order, the counts in place
             assert bytes(g)[:4] == expected
     # all done
     return
@@ -55,6 +57,7 @@ def map():
     uri = "grid_iq_test.dat"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # remove it
         os.remove(uri)
 
     # three samples of big endian signed counts
@@ -93,16 +96,19 @@ def numpy():
 
     # make a grid of samples
     g = grid.heap(shape=[2, 2], cell="iqint16")
-    # fill it
+    # fill it, row by row
     for i in range(2):
+        # and column by column
         for j in range(2):
+            # with a sample that records the position of its cell
             g[i, j] = (i, -j)
     # view it through numpy, without copying
     a = numpy.asarray(g)
     # numpy sees the fields of the sample
     assert a.dtype.names == ("i", "q")
-    # and the counts
+    # and the in-phase counts
     assert int(a["i"][1, 0]) == 1
+    # and the quadrature ones
     assert int(a["q"][0, 1]) == -1
     # write through numpy
     a["q"][1, 1] = 7
@@ -139,10 +145,13 @@ def bad():
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # grids on the heap
     heap()
+    # grids over a data product
     map()
+    # grids through numpy
     numpy()
+    # and names that are not samples
     bad()
 
 

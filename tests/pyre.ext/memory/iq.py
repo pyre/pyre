@@ -119,11 +119,13 @@ def refusals():
     heap = heaps.HeapIQUInt16(cells=1)
     # go through things that are not samples
     for value in ["ab", (1, 2, 3), (1,), (1, "x"), (70000, 1), (-1, 1), 5]:
-        # try to store
+        # try
         try:
+            # to store it
             heap[0] = value
         # which must fail
         except TypeError:
+            # and move on to the next one
             continue
         # if it did not, complain
         raise AssertionError(f"{value!r} was taken for a sample")
@@ -134,10 +136,13 @@ def refusals():
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # the classes
     presence()
+    # heaps of samples in the host's order
     heaps()
+    # heaps of samples in the other order
     foreignHeaps()
+    # and values that are not samples
     refusals()
 
 
