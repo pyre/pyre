@@ -14,6 +14,8 @@
 #include <pyre/memory.h>
 // the buffer protocol description of a cell type, byte order marker and all
 #include <pyre/py/memory/format.h>
+// radar samples cross into python as the pair of their counts
+#include <pyre/py/memory/IQ.h>
 
 
 // end of file
