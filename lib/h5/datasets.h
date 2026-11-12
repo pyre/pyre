@@ -31,8 +31,8 @@ pyre::h5::read(
     // and the strides, which lets us implement zoom directly
     const typename gridT::index_type & stride) -> gridT
 {
-    // deduce the memory layout description
-    const datatype_t & memtype = datatype<typename gridT::value_type>();
+    // the memory layout description, lined up with the dataset
+    const datatype_t & memtype = dataset.memtype<typename gridT::value_type>();
     // and delegate
     return read(dataset, memtype, origin, shape, stride);
 }

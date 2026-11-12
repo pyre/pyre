@@ -47,6 +47,14 @@ public:
     auto cell() const -> class_type;
     // my datatype, as a fresh owned wrapper
     auto datatype() const -> types::Datatype;
+    // the memory type for my cells read or written as {cellT}: the one {datatype<cellT>()}
+    // deduces, except for radar samples, whose counts line up with my own members by position
+    template <typename cellT>
+    auto memtype() const -> datatype_t;
+    // a pair of {count} values laid out like my cells, its members named after my own two
+    // members in order, so a pair lines up with mine whatever the file calls them; empty, after
+    // a complaint, when my cells are not pairs
+    auto pair(const types::Datatype & count) const -> datatype_t;
     // my dataspace, as a fresh owned wrapper
     auto dataspace() const -> DataSpace;
     // my extent as a runtime-rank canonical layout, in the {pyre::grid} vocabulary
