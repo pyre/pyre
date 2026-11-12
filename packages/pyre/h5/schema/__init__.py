@@ -28,6 +28,7 @@ complex = dataset.complex
 enum = dataset.enum
 float = dataset.float
 int = dataset.int
+iq = dataset.iq
 str = dataset.str
 timestamp = dataset.timestamp
 # containers

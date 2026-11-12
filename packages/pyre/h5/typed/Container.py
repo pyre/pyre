@@ -24,5 +24,13 @@ class Container:
         # all done
         return
 
+    # interface
+    def _pyre_kind(self):
+        """
+        The kind of cell i hold: the kind my {schema} holds
+        """
+        # ask my schema
+        return self.schema._pyre_kind()
+
 
 # end of file
