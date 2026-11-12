@@ -18,17 +18,25 @@ pyre::py::memory::format() -> string_t
 {
     // the value type, in its writable spelling
     using value_t = std::remove_const_t<cellT>;
-    // and the native scalar behind it
-    using native_t = pyre::memory::native_t<value_t>;
-    // the code for the scalar itself
-    auto code = py::format_descriptor<native_t>::format();
-    // if the cell is a byte ordered wrapper
-    if constexpr (!std::is_same_v<value_t, native_t>) {
-        // lead with the marker for its order, so consumers that understand the protocol swap
-        return (value_t::endianness() == std::endian::big ? ">" : "<") + code;
+    // a radar sample is a record of its two counts, named after its fields
+    if constexpr (pyre::memory::iq_c<value_t>) {
+        // each count is described the way a cell is, with its own byte order marker
+        auto count = format<typename value_t::value_type>();
+        // assemble the record
+        return "T{" + count + ":i:" + count + ":q:}";
+    } else {
+        // the native scalar behind the cell
+        using native_t = pyre::memory::native_t<value_t>;
+        // the code for the scalar itself
+        auto code = py::format_descriptor<native_t>::format();
+        // if the cell is a byte ordered wrapper
+        if constexpr (!std::is_same_v<value_t, native_t>) {
+            // lead with the marker for its order, so consumers that understand the protocol swap
+            return (value_t::endianness() == std::endian::big ? ">" : "<") + code;
+        }
+        // otherwise, a native cell needs no marker
+        return code;
     }
-    // otherwise, a native cell needs no marker
-    return code;
 }
 
 
