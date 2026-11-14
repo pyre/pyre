@@ -32,6 +32,10 @@ pyre_test_driver(tests/h5.lib/dataset_pairs.cc)
 pyre_test_driver(tests/h5.lib/dataset_members_read.cc)
 pyre_test_driver(tests/h5.lib/dataset_members_write.cc)
 pyre_test_driver(tests/h5.lib/dataset_members_subset.cc)
+# complex numbers whose parts the file names its own way, read by position
+pyre_test_driver(tests/h5.lib/dataset_complex_members.cc)
+# a strided tile read through the memory type deduced from the cells of the grid
+pyre_test_driver(tests/h5.lib/dataset_read_deduced.cc)
 
 # the drivers leave their scratch products behind so they can be inspected; the harness
 # sweeps them, each after the driver that makes it
@@ -43,6 +47,8 @@ pyre_test_driver_cleanup(dataset_pairs.h5 tests/h5.lib/dataset_pairs.cc)
 pyre_test_driver_cleanup(dataset_members_read.h5 tests/h5.lib/dataset_members_read.cc)
 pyre_test_driver_cleanup(dataset_members_write.h5 tests/h5.lib/dataset_members_write.cc)
 pyre_test_driver_cleanup(dataset_members_subset.h5 tests/h5.lib/dataset_members_subset.cc)
+pyre_test_driver_cleanup(dataset_complex_members.h5 tests/h5.lib/dataset_complex_members.cc)
+pyre_test_driver_cleanup(dataset_read_deduced.h5 tests/h5.lib/dataset_read_deduced.cc)
 
 
 # end of file
