@@ -114,15 +114,23 @@ pyre::h5::DataSet::datatype() const -> types::Datatype
 }
 
 
+// whether i store my cells as a compound of two members
+auto
+pyre::h5::DataSet::pairs() const -> bool
+{
+    // my cells, as stored; {H5Dget_type} hands back a fresh handle the wrapper adopts
+    auto stored = types::Compound(H5Dget_type(id()));
+    // they are pairs when they are a compound of two members
+    return stored.valid() && stored.cell() == H5T_COMPOUND && stored.members() == 2;
+}
+
+
 // a pair of {count} values laid out like my cells
 auto
 pyre::h5::DataSet::pair(const types::Datatype & count) const -> datatype_t
 {
-    // my cells, as stored, seen as a compound; {H5Dget_type} hands back a fresh handle the
-    // wrapper adopts
-    auto stored = types::Compound(H5Dget_type(id()));
-    // if they are not pairs
-    if (!stored.valid() || stored.cell() != H5T_COMPOUND || stored.members() != 2) {
+    // if my cells are not pairs
+    if (!pairs()) {
         // make a channel
         auto channel = pyre::journal::error_t("pyre.h5.dataset.pair");
         // complain
@@ -138,6 +146,9 @@ pyre::h5::DataSet::pair(const types::Datatype & count) const -> datatype_t
         // rather than land the counts in the wrong places
         return datatype_t(H5I_INVALID_HID);
     }
+    // my cells, as stored, seen as a compound; {H5Dget_type} hands back a fresh handle the
+    // wrapper adopts
+    auto stored = types::Compound(H5Dget_type(id()));
     // make a compound wide enough for two counts
     auto pair = comptype_t(2 * count.bytes());
     // the first count, under the name of my first member
