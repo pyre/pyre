@@ -48,9 +48,12 @@ public:
     // my datatype, as a fresh owned wrapper
     auto datatype() const -> types::Datatype;
     // the memory type for my cells read or written as {cellT}: the one {datatype<cellT>()}
-    // deduces, except for radar samples, whose counts line up with my own members by position
+    // deduces, except for radar samples, and for complex numbers i store as a compound of two
+    // members, whose parts line up with my own members by position
     template <typename cellT>
     auto memtype() const -> datatype_t;
+    // whether i store my cells as a compound of two members
+    auto pairs() const -> bool;
     // a pair of {count} values laid out like my cells, its members named after my own two
     // members in order, so a pair lines up with mine whatever the file calls them; empty, after
     // a complaint, when my cells are not pairs
