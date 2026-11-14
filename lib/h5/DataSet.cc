@@ -114,15 +114,23 @@ pyre::h5::DataSet::datatype() const -> types::Datatype
 }
 
 
+// whether i store my cells as a compound of two members
+auto
+pyre::h5::DataSet::pairs() const -> bool
+{
+    // my cells, as stored; {H5Dget_type} hands back a fresh handle the wrapper adopts
+    auto stored = types::Compound(H5Dget_type(id()));
+    // they are pairs when they are a compound of two members
+    return stored.valid() && stored.cell() == H5T_COMPOUND && stored.members() == 2;
+}
+
+
 // a pair of {count} values laid out like my cells
 auto
 pyre::h5::DataSet::pair(const types::Datatype & count) const -> datatype_t
 {
-    // my cells, as stored, seen as a compound; {H5Dget_type} hands back a fresh handle the
-    // wrapper adopts
-    auto stored = types::Compound(H5Dget_type(id()));
-    // if they are not pairs
-    if (!stored.valid() || stored.cell() != H5T_COMPOUND || stored.members() != 2) {
+    // if my cells are not pairs
+    if (!pairs()) {
         // make a channel
         auto channel = pyre::journal::error_t("pyre.h5.dataset.pair");
         // complain
@@ -138,6 +146,9 @@ pyre::h5::DataSet::pair(const types::Datatype & count) const -> datatype_t
         // rather than land the counts in the wrong places
         return datatype_t(H5I_INVALID_HID);
     }
+    // my cells, as stored, seen as a compound; {H5Dget_type} hands back a fresh handle the
+    // wrapper adopts
+    auto stored = types::Compound(H5Dget_type(id()));
     // make a compound wide enough for two counts
     auto pair = comptype_t(2 * count.bytes());
     // the first count, under the name of my first member
@@ -190,7 +201,7 @@ pyre::h5::DataSet::_tileSpaces(
         // anything else is an application error; make a channel
         auto channel = pyre::journal::error_t("pyre.h5.dataset");
         // complain
-        channel << pyre::journal::at() << "moving a mosaic of rank " << layout.rank()
+        channel << pyre::journal::here() << "moving a mosaic of rank " << layout.rank()
                 << " through '" << name() << "', a dataset of rank " << extent.size()
                 << pyre::journal::endl;
         // and bail
@@ -215,7 +226,7 @@ pyre::h5::DataSet::_tileSpaces(
             // so this is an application error; make a channel
             auto channel = pyre::journal::error_t("pyre.h5.dataset");
             // complain
-            channel << pyre::journal::at() << "moving a tile that lies outside the extent of '"
+            channel << pyre::journal::here() << "moving a tile that lies outside the extent of '"
                     << name() << "'" << pyre::journal::endl;
             // and bail
             return std::nullopt;
@@ -390,7 +401,7 @@ pyre::h5::DataSet::chunk(hsize_t index) const -> std::optional<Chunk>
         // make a channel
         auto channel = pyre::journal::error_t("pyre.h5");
         // complain
-        channel << pyre::journal::at() << "while looking up chunk " << index << " of '" << name()
+        channel << pyre::journal::here() << "while looking up chunk " << index << " of '" << name()
                 << "'" << pyre::journal::newline << "only " << *total << " chunks have been written"
                 << pyre::journal::endl;
         // and decline to answer
@@ -437,7 +448,7 @@ pyre::h5::DataSet::_corner(const index_t & origin) const -> std::optional<index_
         // make a channel
         auto channel = pyre::journal::error_t("pyre.h5");
         // complain
-        channel << pyre::journal::at() << "while looking for the chunk of '" << name()
+        channel << pyre::journal::here() << "while looking for the chunk of '" << name()
                 << "' at a given cell" << pyre::journal::newline << "the cell has " << origin.size()
                 << " coordinates, but the dataset has rank " << box.size() << pyre::journal::endl;
         // and decline to answer
@@ -456,7 +467,7 @@ pyre::h5::DataSet::_corner(const index_t & origin) const -> std::optional<index_
             // make a channel
             auto channel = pyre::journal::error_t("pyre.h5");
             // complain
-            channel << pyre::journal::at() << "while looking for the chunk of '" << name()
+            channel << pyre::journal::here() << "while looking for the chunk of '" << name()
                     << "' at a given cell" << pyre::journal::newline << "coordinate " << axis
                     << " is " << origin[axis] << ", which is outside my extent of " << box[axis]
                     << pyre::journal::endl;
@@ -688,11 +699,15 @@ auto
 pyre::h5::DataSet::read(
     id_type memtype, void * buffer, id_type memspace, id_type filespace, id_type dxpl) const -> void
 {
+    // a memory type that names a member i do not have would leave that member unwritten
+    if (!_conforms(memtype, "reading the selected region of")) {
+        // so leave the buffer alone
+        return;
+    }
     // hand it to the library, along with whatever the caller wants done to the cells in
     // flight; {dxpl} is the only place a data transform or a transfer buffer can be named
     if (H5Dread(id(), memtype, memspace, filespace, dxpl, buffer) < 0) {
-        // and complain if it refused
-        // the library's reasons, before asking it for my name disturbs them
+        // if it refused, get the library's reasons, before asking it for my name disturbs them
         auto reason = explanation();
         // and complain
         complain("pyre.h5.dataset", "reading the selected region of '" + name() + "'", reason);
@@ -708,11 +723,15 @@ pyre::h5::DataSet::write(
     id_type memtype, const void * buffer, id_type memspace, id_type filespace, id_type dxpl) const
     -> void
 {
+    // a memory type that names a member i do not have would have its values dropped
+    if (!_conforms(memtype, "writing the selected region of")) {
+        // so leave my cells alone
+        return;
+    }
     // hand it to the library, along with whatever the caller wants done to the cells in
     // flight; {dxpl} is the only place a data transform or a transfer buffer can be named
     if (H5Dwrite(id(), memtype, memspace, filespace, dxpl, buffer) < 0) {
-        // and complain if it refused
-        // the library's reasons, before asking it for my name disturbs them
+        // if it refused, get the library's reasons, before asking it for my name disturbs them
         auto reason = explanation();
         // and complain
         complain("pyre.h5.dataset", "writing the selected region of '" + name() + "'", reason);
@@ -957,7 +976,7 @@ pyre::h5::DataSet::_trim(string_t & value, H5T_str_t pad) const -> void
             auto channel = pyre::journal::firewall_t("pyre.h5.dataset");
             channel
                 // where
-                << pyre::journal::at()
+                << pyre::journal::here()
                 // what
                 << "unknown string padding method "
                 << pad
@@ -968,6 +987,70 @@ pyre::h5::DataSet::_trim(string_t & value, H5T_str_t pad) const -> void
     }
     // all done
     return;
+}
+
+
+// whether a transfer through {memtype} reaches every member of my cells it names
+auto
+pyre::h5::DataSet::_conforms(id_type memtype, const string_t & activity) const -> bool
+{
+    // only a compound names members; the library matches anything else on its own
+    if (H5Tget_class(memtype) != H5T_COMPOUND) {
+        // so there is nothing to check
+        return true;
+    }
+    // my cells, as stored; {H5Dget_type} hands back a fresh handle the wrapper adopts
+    auto stored = types::Compound(H5Dget_type(id()));
+    // cells that are not compounds cannot be reached through one at all
+    if (!stored.valid() || stored.cell() != H5T_COMPOUND) {
+        // and the library refuses the transfer and says so
+        return true;
+    }
+    // collect the names of my members
+    auto names = std::vector<string_t>();
+    for (auto index = 0; index < stored.members(); ++index) {
+        // one at a time
+        names.push_back(stored.memberName(static_cast<unsigned int>(index)));
+    }
+    // the caller's type is borrowed, so take a reference of my own for the wrapper to adopt
+    H5Iinc_ref(memtype);
+    // and look at it as a compound
+    auto requested = types::Compound(memtype);
+    // go through the members it names
+    for (auto index = 0; index < requested.members(); ++index) {
+        // get the name
+        auto member = requested.memberName(static_cast<unsigned int>(index));
+        // if i have a member by that name
+        if (std::find(names.begin(), names.end(), member) != names.end()) {
+            // the library will reach it
+            continue;
+        }
+        // otherwise, the library would skip it and report success; make a channel
+        auto channel = pyre::journal::firewall_t("pyre.h5.dataset");
+        // and complain
+        channel
+            // where
+            << pyre::journal::here()
+            // what
+            << "while " << activity << " '" << name() << "':"
+            << pyre::journal::newline
+            // why
+            << "the memory type names the member '" << member << "', which my cells do not have"
+            << pyre::journal::newline
+            // the members i do have
+            << "my members:" << pyre::journal::newline << pyre::journal::indent;
+        // one per line
+        for (const auto & present : names) {
+            // by name
+            channel << "'" << present << "'" << pyre::journal::newline;
+        }
+        // flush
+        channel << pyre::journal::outdent << pyre::journal::endl;
+        // and refuse the transfer
+        return false;
+    }
+    // every member it names is one of mine
+    return true;
 }
 
 

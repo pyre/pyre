@@ -23,6 +23,11 @@ tests.h5.lib.dataset_mosaic_read.clean := dataset_mosaic_read.h5
 tests.h5.lib.dataset_mosaic_write.clean := dataset_mosaic_write.h5
 tests.h5.lib.dataset_strided.clean := dataset_strided.h5
 tests.h5.lib.dataset_pairs.clean := dataset_pairs.h5
+tests.h5.lib.dataset_members_read.clean := dataset_members_read.h5
+tests.h5.lib.dataset_members_write.clean := dataset_members_write.h5
+tests.h5.lib.dataset_members_subset.clean := dataset_members_subset.h5
+tests.h5.lib.dataset_complex_members.clean := dataset_complex_members.h5
+tests.h5.lib.dataset_read_deduced.clean := dataset_read_deduced.h5
 
 
 # end of file

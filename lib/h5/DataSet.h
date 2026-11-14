@@ -48,9 +48,12 @@ public:
     // my datatype, as a fresh owned wrapper
     auto datatype() const -> types::Datatype;
     // the memory type for my cells read or written as {cellT}: the one {datatype<cellT>()}
-    // deduces, except for radar samples, whose counts line up with my own members by position
+    // deduces, except for radar samples, and for complex numbers i store as a compound of two
+    // members, whose parts line up with my own members by position
     template <typename cellT>
     auto memtype() const -> datatype_t;
+    // whether i store my cells as a compound of two members
+    auto pairs() const -> bool;
     // a pair of {count} values laid out like my cells, its members named after my own two
     // members in order, so a pair lines up with mine whatever the file calls them; empty, after
     // a complaint, when my cells are not pairs
@@ -167,6 +170,11 @@ public:
 private:
     // trim the persisted padding from {value} according to the string padding strategy {pad}
     auto _trim(string_t & value, H5T_str_t pad) const -> void;
+    // whether a transfer through {memtype} reaches every member of my cells it names: the
+    // library matches the members of compounds by name, and quietly skips a member of
+    // {memtype} that i do not have, so a compound that names one is refused on a firewall;
+    // {activity} says what was being attempted
+    auto _conforms(id_type memtype, const string_t & activity) const -> bool;
     // the corner of the chunk that holds the cell at {origin}: check that the cell is one i
     // actually have, and round it down to the anchor of its chunk. the chunk table snaps a
     // cell to its chunk on its own, but the direct read and write refuse anything that is

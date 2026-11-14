@@ -27,6 +27,16 @@ pyre::h5::DataSet::memtype() const -> datatype_t
         // line their counts up with my own members
         return pair(pyre::h5::datatype<typename cellT::value_type>());
     }
+    // complex numbers
+    else if constexpr (pyre::memory::complex_c<cellT>) {
+        // stored as a compound of two members, whatever the file calls them
+        if (pairs()) {
+            // line their parts up with my own members
+            return pair(pyre::h5::datatype<typename cellT::value_type>());
+        }
+        // stored any other way, they are converted by the library, or refused by it
+        return pyre::h5::datatype<cellT>();
+    }
     // everything else is described the same way whatever the dataset
     else {
         // so deduce it

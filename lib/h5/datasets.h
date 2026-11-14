@@ -34,7 +34,7 @@ pyre::h5::read(
     // the memory layout description, lined up with the dataset
     const datatype_t & memtype = dataset.memtype<typename gridT::value_type>();
     // and delegate
-    return read(dataset, memtype, origin, shape, stride);
+    return read<gridT>(dataset, memtype, origin, shape, stride);
 }
 
 
