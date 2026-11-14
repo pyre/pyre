@@ -25,6 +25,13 @@ pyre_test_driver(tests/h5.lib/dataset_strided.cc)
 # the out-of-core mosaic, in each direction
 pyre_test_driver(tests/h5.lib/dataset_mosaic_write.cc)
 pyre_test_driver(tests/h5.lib/dataset_mosaic_read.cc)
+# radar samples, their counts lined up with the members of the file by position
+pyre_test_driver(tests/h5.lib/dataset_pairs.cc)
+# a transfer through a compound that names a member the dataset lacks is refused, in each
+# direction, while one that names some of its members reads just those
+pyre_test_driver(tests/h5.lib/dataset_members_read.cc)
+pyre_test_driver(tests/h5.lib/dataset_members_write.cc)
+pyre_test_driver(tests/h5.lib/dataset_members_subset.cc)
 
 # the drivers leave their scratch products behind so they can be inspected; the harness
 # sweeps them, each after the driver that makes it
@@ -32,6 +39,10 @@ pyre_test_driver_cleanup(dataset_tiling.h5 tests/h5.lib/dataset_tiling.cc)
 pyre_test_driver_cleanup(dataset_strided.h5 tests/h5.lib/dataset_strided.cc)
 pyre_test_driver_cleanup(dataset_mosaic_write.h5 tests/h5.lib/dataset_mosaic_write.cc)
 pyre_test_driver_cleanup(dataset_mosaic_read.h5 tests/h5.lib/dataset_mosaic_read.cc)
+pyre_test_driver_cleanup(dataset_pairs.h5 tests/h5.lib/dataset_pairs.cc)
+pyre_test_driver_cleanup(dataset_members_read.h5 tests/h5.lib/dataset_members_read.cc)
+pyre_test_driver_cleanup(dataset_members_write.h5 tests/h5.lib/dataset_members_write.cc)
+pyre_test_driver_cleanup(dataset_members_subset.h5 tests/h5.lib/dataset_members_subset.cc)
 
 
 # end of file
