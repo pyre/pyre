@@ -167,6 +167,11 @@ public:
 private:
     // trim the persisted padding from {value} according to the string padding strategy {pad}
     auto _trim(string_t & value, H5T_str_t pad) const -> void;
+    // whether a transfer through {memtype} reaches every member of my cells it names: the
+    // library matches the members of compounds by name, and quietly skips a member of
+    // {memtype} that i do not have, so a compound that names one is refused on a firewall;
+    // {activity} says what was being attempted
+    auto _conforms(id_type memtype, const string_t & activity) const -> bool;
     // the corner of the chunk that holds the cell at {origin}: check that the cell is one i
     // actually have, and round it down to the anchor of its chunk. the chunk table snaps a
     // cell to its chunk on its own, but the direct read and write refuse anything that is
