@@ -403,6 +403,15 @@ pyre::h5::py::dataset()
         // the docstring
         "get the on-disk offset of the dataset");
 
+    // whether my cells are pairs
+    cls.def_property_readonly(
+        // the name
+        "pairs",
+        // the implementation
+        &DataSet::pairs,
+        // the docstring
+        "whether i store my cells as a compound of two members");
+
     // the memory type that lines a pair of counts up with my cells
     cls.def(
         // the name
