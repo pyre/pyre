@@ -9,18 +9,19 @@
 from .. import disktypes
 
 # superclass
-from .MemoryType import MemoryType
+from .Complex import Complex
 
 
 # a single precision complex number
-class ComplexFloat(MemoryType):
+class ComplexFloat(Complex):
     """
     The type specification for single precision complex numbers
     """
 
     # constants
-    ctype = "std::complex<float>"
-    htype = disktypes.complexFloat
+    ctype = "std::complex<float>"  # my spelling in c++
+    htype = disktypes.complexFloat  # my hdf5 type, for the values pyre writes
+    part = disktypes.float  # the hdf5 type of each part
 
 
 # the singleton
