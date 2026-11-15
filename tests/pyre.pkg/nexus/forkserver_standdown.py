@@ -137,6 +137,7 @@ class StandDown(pyre.application, family="tests.pyre.nexus.forkserver.standdown"
         staff.assign(task=Echo(), callback=record)
         # and let every member check in, finish the work, and get parked
         staff.dispatcher.alarm(interval=2 * second, call=expire)
+        # by turning the event loop
         staff.dispatcher.watch()
         # the task was delivered
         assert outcomes == [("echo", None)], outcomes
@@ -147,7 +148,9 @@ class StandDown(pyre.application, family="tests.pyre.nexus.forkserver.standdown"
 
         # stand down, and time it
         start = time.monotonic()
+        # send everybody home
         staff.standDown()
+        # and see how long that took
         elapsed = time.monotonic() - start
         # nobody waited for the members
         assert elapsed < 0.1, f"standing down {members} members took {elapsed:.3f} s"
@@ -159,9 +162,11 @@ class StandDown(pyre.application, family="tests.pyre.nexus.forkserver.standdown"
         staff.dispatcher.watch()
         # every member went home
         assert len(staff.departures) == members, staff.departures
+        # and their processes are gone
         assert all(gone(pid) for pid in pids)
         # promptly
         last = max(staff.departures.values()) - start
+        # within the allowance
         assert last < allowance, f"the last of {members} members left after {last:.3f} s"
 
         # send the staff home for good
