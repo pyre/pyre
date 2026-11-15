@@ -17,7 +17,8 @@ from Sequence import Sequence
 class RecruiterLifecycle(pyre.application):
     """
     Draw the life of a team whose members are recruited through the staffing agency, from the
-    start of the agency to the shutdown of the application, as a page with one sequence diagram
+    start of the agency to the shutdown of the application, with the states of each party and
+    the transitions between them, as a page with one sequence diagram
     """
 
     # user configurable state
@@ -31,9 +32,11 @@ class RecruiterLifecycle(pyre.application):
         Build the page and write it out
         """
         # make the diagram
-        diagram = Sequence(cols=self.cols, dx=150)
+        diagram = Sequence(cols=self.cols, dx=128)
         # relate the heads: a staff owns its recruiter
         diagram.relate(src="Staff", dst="Forkserver", kind="owns")
+        # and the recruiter owns the departures on its ledger
+        diagram.relate(src="Forkserver", dst="Departure", kind="owns")
         # go through the scenarios, in the order they happen
         for index, scenario in enumerate(self.scenarios):
             # set each one apart from the one before
@@ -55,57 +58,45 @@ class RecruiterLifecycle(pyre.application):
         The staffing agency is started, early by the application or by the first recruitment
         """
         # the application asks for the agency
-        diagram.trigger(label="start the agency", col="application", sub="at activation, or lazily")
+        diagram.trigger(label="Forkserver.start", col="application", sub="at activation, or lazily")
         # through the one liaison of the process
+        diagram.call(src="application", dst="Liaison", label="Liaison.instance().start")
+        # which has nothing running
         diagram.note(
-            col="application",
+            col="Liaison",
             lines=[
-                "the [Liaison] is a component with a fixed name, so every recruiter",
-                "gets the same one (T11)",
+                "the component named [pyre.nexus.liaison]: every recruiter gets the same one",
+                "liaison: [idle] → [spawning]",
             ],
         )
-        # which spawns the agency
-        diagram.call(src="application", dst="Liaison", label="start", kind="good")
+        # so it spawns the agency
+        diagram.call(src="Liaison", dst="StaffingAgency", label="spawn")
         # from the command line of the application
-        diagram.note(
-            col="Liaison",
-            lines=[
-                "opens the control channel, a [SocketPair]",
-                "spawns the application's command line, script made absolute,",
-                "in the shell [pyre.shells.forkserver], handing it the far end",
-            ],
-        )
-        # the command line is captured before the working directory can change
-        diagram.note(
-            col="Liaison",
-            lines=["when the command line is captured, and whether all of it is needed (open)"],
-            kind="open",
-        )
-        # the new process builds the agency
-        diagram.call(src="Liaison", dst="StaffingAgency", label="spawn", kind="good")
-        # which serves on an event loop of its own
         diagram.note(
             col="StaffingAgency",
             lines=[
-                "the shell builds the agency and runs its dispatcher (T4)",
-                "requests: [whenReadReady] on the control channel",
-                "exits: [whenSignal(SIGCHLD)], through [pyre.ipc.Signals]",
+                "[StaffingAgency.command] + --shell=forkserver, control and journal ends",
+                "the shell builds the agency, which serves on its own dispatcher:",
+                "requests by [whenReadReady], exits by [whenSignal(SIGCHLD)]",
+                "agency: [serving]",
             ],
         )
         # and introduces itself
-        diagram.call(src="StaffingAgency", dst="Liaison", label="[Greeting]", kind="good")
+        diagram.call(src="StaffingAgency", dst="Liaison", label="[Greeting]")
         # the liaison checks it
         diagram.note(
             col="Liaison",
             lines=[
-                "the interpreter, the installation of pyre, the script",
-                "a mismatch breaches a firewall",
+                "[greeted]: interpreter, pyre, script must match; a firewall if not",
+                "liaison: [spawning] → [running]",
             ],
         )
-        # and listens for the agency's reports on the team's event loop
-        diagram.call(src="Liaison", dst="dispatcher", label="whenReadReady", kind="good")
-        # which watches the control channel from now on
-        diagram.note(col="dispatcher", lines=["the control channel, and the agency's journal"])
+        # and is heard on the team's event loop
+        diagram.call(src="Liaison", dst="dispatcher", label="whenReadReady")
+        # what it listens to
+        diagram.note(
+            col="dispatcher", lines=["[report] on the control channel, [overhear] on the journal"]
+        )
         # back to the application
         diagram.unwind("dispatcher", "Liaison", "application")
         # all done
@@ -116,79 +107,82 @@ class RecruiterLifecycle(pyre.application):
         A staff with work and vacancies recruits a member
         """
         # work arrives
-        diagram.trigger(label="assign(task)", col="Staff", sub="vacancies: recruit")
+        diagram.trigger(label="Staff.assign", col="Staff", sub="vacancies: recruit")
         # the staff asks its recruiter
         diagram.call(src="Staff", dst="Forkserver", label="deploy")
-        # which opens the channels the member will use
-        diagram.note(
-            col="Forkserver",
-            lines=[
-                "opens the crew channel, and the journal channel if wanted",
-                "as [Fork.deploy] does",
-            ],
-        )
-        # and asks the agency for a member
-        diagram.call(src="Forkserver", dst="Liaison", label="recruit", kind="good")
-        # with a request
-        diagram.call(
-            src="Liaison", dst="StaffingAgency", label="[Recruit] + descriptors", kind="good"
-        )
-        # what the request carries
+        # which opens the channels
+        diagram.note(col="Forkserver", lines=["opens the crew channel and the journal channel"])
+        # and asks the liaison for a member
+        diagram.call(src="Forkserver", dst="Liaison", label="recruit")
+        # which sends the request
+        diagram.call(src="Liaison", dst="StaffingAgency", label="[Recruit] + descriptors")
+        # what it carries
         diagram.note(
             col="StaffingAgency",
-            lines=[
-                "the crew class, pickled, with the file its module came from",
-                "the member's channel ends follow as a trailer",
-            ],
+            lines=["the crew class, pickled, with the file of its module; the member's ends"],
         )
         # the agency forks
-        diagram.call(src="StaffingAgency", dst="member", label="fork", kind="good")
+        diagram.call(src="StaffingAgency", dst="member", label="enlist: fork")
         # the member makes itself
         diagram.note(
             col="member",
             lines=[
-                "starts without the signal relay",
-                "loads the crew class, refuses if it came from another file",
-                "routes its journal, registers, runs",
+                "member: [forked]",
+                "[Crew.route]: its journal goes to the team first",
+                "[Recruit.load]: a class from another file breaches a firewall, and it leaves",
+                "builds itself, [register]s, [work]s",
+                "member: [forked] → [working]",
             ],
         )
         # the agency answers with the pid
-        diagram.call(src="StaffingAgency", dst="Liaison", label="[Recruited] pid", kind="good")
-        # back to the recruiter and the staff
-        diagram.unwind("Liaison", "Forkserver", "Staff")
-        # the team side of the member joins the team
-        diagram.note(
-            col="Staff",
-            lines=["closes its copies of the member's ends", "the member's proxy joins the team"],
-        )
-        # the member checks in over the crew channel
-        diagram.call(src="member", dst="Staff", label="register")
-        # and is put to work
-        diagram.note(col="Staff", lines=["activate, then schedule"])
+        diagram.call(src="StaffingAgency", dst="Liaison", label="[Recruited] pid")
+        # back to the recruiter
+        diagram.ret(src="Liaison", dst="Forkserver")
+        # which makes the team side of the member
+        diagram.call(src="Forkserver", dst="Crew", label="team.crew + join")
+        # its first state
+        diagram.note(col="Crew", lines=["crew: [registered]"])
+        # back to the staff
+        diagram.unwind("Crew", "Forkserver", "Staff")
+        # the staff files it
+        diagram.note(col="Staff", lines=["on the roster [registered]"])
         # all done
         return
 
-    def work(self, diagram: Sequence) -> None:
+    def checkin(self, diagram: Sequence) -> None:
         """
-        A member carries out tasks; the agency is not on the data path
+        The member checks in and takes tasks; the agency is not on the data path
         """
-        # a task is scheduled
-        diagram.trigger(label="schedule", col="Staff", sub="the crew channel")
-        # the task goes to the member
-        diagram.call(src="Staff", dst="member", label="task")
-        # which carries it out
-        diagram.note(col="member", lines=["executes it"])
+        # the member checks in
+        diagram.trigger(label="checkin", col="member", sub="the crew channel")
+        # its status
+        diagram.call(src="member", dst="Crew", label="[crewcodes.healthy]")
+        # the team side tells the staff
+        diagram.call(src="Crew", dst="Staff", label="activate")
+        # which moves it
+        diagram.note(col="Staff", lines=["crew: [registered] → [active]", "then [schedule]"])
+        # back
+        diagram.ret(src="Staff", dst="Crew")
+        # a task goes out
+        diagram.call(src="Crew", dst="member", label="execute: the task")
+        # the member does it
+        diagram.note(col="member", lines=["[perform]s it, then [report]s"])
         # and reports
-        diagram.call(src="member", dst="Staff", label="report")
-        # the staff collects
+        diagram.call(src="member", dst="Crew", label="(crewstatus, taskstatus, result)")
+        # the team side settles the task and the member
+        diagram.note(
+            col="Crew",
+            lines=["[assess]: collect, requeue, or abandon; a healthy member is [schedule]d again"],
+        )
+        # with nothing to do, the staff parks it
+        diagram.call(src="Crew", dst="Staff", label="submit, nothing to do")
+        # how
         diagram.note(
             col="Staff",
-            lines=[
-                "collect, requeue, or abandon",
-                "the member is parked, or given the next task",
-                "tasks, reports, descriptors and journal entries never pass through the agency",
-            ],
+            lines=["crew: [active] → [idle], with a [vigil] on its channel"],
         )
+        # back
+        diagram.ret(src="Staff", dst="Crew")
         # all done
         return
 
@@ -197,18 +191,22 @@ class RecruiterLifecycle(pyre.application):
         A journal control reaches the members, and the ones recruited from now on
         """
         # a control is applied
-        diagram.trigger(label="instruct(control)", col="Staff", sub="a channel switched on")
+        diagram.trigger(label="Staff.instruct", col="Staff", sub="a channel switched on")
         # the members already deployed are told directly
-        diagram.call(src="Staff", dst="member", label="instruct")
+        diagram.call(src="Staff", dst="Crew", label="instruct")
+        # over the journal channel
+        diagram.call(src="Crew", dst="member", label="the encoded control")
+        # back
+        diagram.unwind("member", "Crew", "Staff")
         # and so is the recruiter
         diagram.call(src="Staff", dst="Forkserver", label="instruct")
-        # which passes it on to the agency
-        diagram.call(src="Forkserver", dst="Liaison", label="instruct", kind="good")
-        # in a message
-        diagram.call(src="Liaison", dst="StaffingAgency", label="[Instruct]", kind="good")
-        # the agency applies it
+        # which passes it on
+        diagram.call(src="Forkserver", dst="Liaison", label="instruct")
+        # to the agency
+        diagram.call(src="Liaison", dst="StaffingAgency", label="[Instruct]")
+        # which applies it
         diagram.note(
-            col="StaffingAgency", lines=["applies it, so members forked from now on start with it"]
+            col="StaffingAgency", lines=["applies it: members forked from now on start with it"]
         )
         # back to the staff
         diagram.unwind("StaffingAgency", "Liaison", "Forkserver", "Staff")
@@ -217,27 +215,63 @@ class RecruiterLifecycle(pyre.application):
 
     def standDown(self, diagram: Sequence) -> None:
         """
-        A staff stands down: its members are dismissed and nobody waits for them
+        A staff stands down: its parked members are dismissed, and nobody waits for them
         """
         # a staff with nothing to do
-        diagram.trigger(label="standDown", col="Staff", sub="e.g. qed retires its builders")
-        # for each parked member
-        diagram.note(col="Staff", lines=["for each parked member: off the rosters"])
-        # the member is told
-        diagram.call(src="Staff", dst="member", label="dismissed")
-        # what that means to the member
-        diagram.note(col="member", lines=["no more tasks: retire, flush, and leave"])
-        # the recruiter is told
-        diagram.call(src="Staff", dst="Forkserver", label="dismiss(team, crew)", kind="good")
-        # which arms the grace period and returns
-        diagram.call(src="Forkserver", dst="dispatcher", label="alarm(grace)", kind="good")
-        # back to the staff, at once
-        diagram.unwind("dispatcher", "Forkserver", "Staff")
-        # nothing waits
+        diagram.trigger(label="Staff.standDown", col="Staff", sub="e.g. qed retires its builders")
+        # it rests
         diagram.note(
             col="Staff",
-            lines=["returns at once: no waiting on the event loop (T3)"],
-            kind="good",
+            lines=["staff: [serving] → [resting]", "for each [idle] member: [_release]"],
+        )
+        # the member is told
+        diagram.call(src="Staff", dst="Crew", label="dismissed")
+        # with the end of tasks marker
+        diagram.call(src="Crew", dst="member", label="None")
+        # what the member does
+        diagram.note(
+            col="member",
+            lines=[
+                "no more tasks: [leave]: [retire], flush, [os._exit]",
+                "member: [working] → [exited]",
+            ],
+        )
+        # back
+        diagram.ret(src="Crew", dst="Staff")
+        # the team side is off the rosters
+        diagram.note(col="Staff", lines=["crew: [idle] → [dismissed]"])
+        # the recruiter is told
+        diagram.call(src="Staff", dst="Forkserver", label="dismiss(team, crew)")
+        # which puts it on the ledger
+        diagram.call(src="Forkserver", dst="Departure", label="depart")
+        # its state
+        diagram.note(
+            col="Departure",
+            lines=[
+                "deadline: now + grace; reminders: [SIGTERM], [SIGKILL]",
+                "departure: [leaving]",
+            ],
+        )
+        # back
+        diagram.ret(src="Departure", dst="Forkserver")
+        # the recruiter collects anybody already gone, then watches
+        diagram.note(
+            col="Forkserver",
+            lines=[
+                "[collect]: a member already gone is collected now",
+                "[watch]: [listen] (the liaison's exits) and one [alarm] per event loop",
+                "recruiter: [quiet] → [watching]",
+            ],
+        )
+        # it subscribes once
+        diagram.call(src="Forkserver", dst="Liaison", label="subscribe(exited)")
+        # and arms the alarm once
+        diagram.call(src="Forkserver", dst="dispatcher", label="alarm(grace, remind)")
+        # back to the staff at once
+        diagram.unwind("dispatcher", "Forkserver", "Staff")
+        # nobody waits
+        diagram.note(
+            col="Staff", lines=["returns at once: no waiting on the event loop"], kind="good"
         )
         # all done
         return
@@ -247,33 +281,46 @@ class RecruiterLifecycle(pyre.application):
         A member leaves, and its exit reaches the recruiter and the team as events
         """
         # the agency hears the exit
-        diagram.trigger(label="SIGCHLD", col="StaffingAgency", sub="through the signal relay")
+        diagram.trigger(label="SIGCHLD", col="StaffingAgency", sub="through pyre.ipc.Signals")
         # it reaps every child that left
-        diagram.note(col="StaffingAgency", lines=["[waitpid] without waiting, until none is left"])
-        # and reports each one
-        diagram.call(
-            src="StaffingAgency", dst="dispatcher", label="[Exited] pid, status", kind="good"
-        )
-        # which wakes the liaison
-        diagram.call(src="dispatcher", dst="Liaison", label="read ready", kind="good")
-        # which tells the recruiter
-        diagram.call(src="Liaison", dst="Forkserver", label="exited", kind="good")
-        # the recruiter closes the books
         diagram.note(
-            col="Forkserver", lines=["cancels the alarms it armed for the member, and forgets it"]
+            col="StaffingAgency", lines=["[harvest]: [waitpid(-1, WNOHANG)] until none is left"]
         )
+        # and reports each one
+        diagram.call(src="StaffingAgency", dst="dispatcher", label="[Exited] pid, status")
+        # which wakes the liaison
+        diagram.call(src="dispatcher", dst="Liaison", label="report")
+        # which files it and tells its subscribers
+        diagram.note(col="Liaison", lines=["[hear] → [exited]: the report goes on its pile"])
+        # the recruiter
+        diagram.call(src="Liaison", dst="Forkserver", label="exited")
+        # collects
+        diagram.note(col="Forkserver", lines=["[collect]: [reap] each pid on the ledger"])
+        # by asking the liaison
+        diagram.call(src="Forkserver", dst="Liaison", label="collect(pid)")
+        # back
+        diagram.ret(src="Liaison", dst="Forkserver")
+        # takes it off the ledger
+        diagram.call(src="Forkserver", dst="Departure", label="pop")
+        # its last state
+        diagram.note(col="Departure", lines=["departure: [leaving] → [collected]"])
+        # back
+        diagram.ret(src="Departure", dst="Forkserver")
         # and tells the team
-        diagram.call(src="Forkserver", dst="Staff", label="departed(crew, status)", kind="good")
-        # a hook the team may override
-        diagram.note(col="Staff", lines=["a hook that does nothing by default (T10)"])
+        diagram.call(src="Forkserver", dst="Staff", label="departed(crew, status)")
+        # what the team does
+        diagram.note(
+            col="Staff", lines=["crew: [dismissed] → [gone]; a hook that does nothing by default"]
+        )
         # back along the chain
         diagram.unwind("Staff", "Forkserver", "Liaison", "dispatcher")
-        # under Fork, the same ending
+        # the recruiter may go quiet
         diagram.note(
             col="dispatcher",
             lines=[
-                "under [Fork], the member is the team's child: [whenSignal(SIGCHLD)]",
-                "here, then the recruiter reaps it without waiting",
+                "an empty ledger: [exited] returns false, the subscription ends",
+                "recruiter: [watching] → [quiet]",
+                "under [Fork], the same through [whenSignal(SIGCHLD)] and [waitpid(pid, WNOHANG)]",
             ],
         )
         # all done
@@ -284,23 +331,33 @@ class RecruiterLifecycle(pyre.application):
         A dismissed member that does not leave within the grace period is made to
         """
         # the alarm fires
-        diagram.trigger(label="grace expired", col="dispatcher", sub="the alarm of dismiss")
-        # the recruiter insists
-        diagram.call(src="dispatcher", dst="Forkserver", label="alarm", kind="good")
+        diagram.trigger(label="alarm", col="dispatcher", sub="the next deadline")
+        # the recruiter's handler
+        diagram.call(src="dispatcher", dst="Forkserver", label="remind")
+        # collects first
+        diagram.note(col="Forkserver", lines=["[collect] whoever left"])
+        # then reminds the late
+        diagram.call(src="Forkserver", dst="Departure", label="remind")
         # politely first
-        diagram.call(src="Forkserver", dst="member", label="SIGTERM", kind="good")
-        # and gives it another period
-        diagram.call(src="Forkserver", dst="dispatcher", label="alarm(grace)", kind="good")
-        # then for good
+        diagram.call(src="Departure", dst="member", label="SIGTERM")
+        # the departure's state
         diagram.note(
-            col="Forkserver",
+            col="Departure",
             lines=[
-                "at the next alarm: [SIGKILL]",
-                "the exit arrives as in the scenario above, and cancels what is armed",
+                "departure: [leaving] → [reminded]",
+                "at the next deadline, [SIGKILL]: departure: [reminded] → [killed]",
+                "then only its exit is left to collect",
             ],
         )
+        # back
+        diagram.ret(src="Departure", dst="Forkserver")
+        # the alarm comes back at the next deadline
+        diagram.note(
+            col="Forkserver",
+            lines=["returns the time to the next deadline, or [None] once the ledger is empty"],
+        )
         # back to the loop
-        diagram.unwind("dispatcher", "Forkserver", "dispatcher")
+        diagram.ret(src="Forkserver", dst="dispatcher")
         # all done
         return
 
@@ -309,29 +366,28 @@ class RecruiterLifecycle(pyre.application):
         A member dies without being dismissed
         """
         # the team hears it first
-        diagram.trigger(label="end of the crew channel", col="Staff", sub="a member died")
+        diagram.trigger(
+            label="end of the crew channel", col="Crew", sub="a vigil, or an assessment"
+        )
+        # the team side tells the staff
+        diagram.call(src="Crew", dst="Staff", label="bury")
         # what the team does
         diagram.note(
             col="Staff",
-            lines=[
-                "off the rosters, its channel closed",
-                "no [waitpid]: the member may not be the team's child",
-            ],
+            lines=["crew: [idle] or [active] → [buried]", "off the rosters, its channel closed"],
         )
         # it hands the member to its recruiter
-        diagram.call(src="Staff", dst="Forkserver", label="bury(team, crew)", kind="good")
-        # which knows whose child it is
-        diagram.note(
-            col="Forkserver",
-            lines=[
-                "the agency's [Exited] report closes it, as above (T8, T12)",
-                "under [Fork], [SIGCHLD] and a reap without waiting",
-            ],
-        )
-        # back to the team
-        diagram.ret(src="Forkserver", dst="Staff")
-        # which may replace it
-        diagram.note(col="Staff", lines=["a standing staff recruits a replacement"])
+        diagram.call(src="Staff", dst="Forkserver", label="bury(team, crew)")
+        # which treats it as a departure
+        diagram.call(src="Forkserver", dst="Departure", label="depart")
+        # same as a dismissal
+        diagram.note(col="Departure", lines=["departure: [leaving]; its exit arrives as above"])
+        # back
+        diagram.unwind("Departure", "Forkserver", "Staff")
+        # the staff may replace it
+        diagram.note(col="Staff", lines=["a [serving] staff recruits a replacement"])
+        # back
+        diagram.ret(src="Staff", dst="Crew")
         # all done
         return
 
@@ -340,24 +396,30 @@ class RecruiterLifecycle(pyre.application):
         The agency dies; the members already running are unaffected
         """
         # the liaison hears it
-        diagram.trigger(label="end of the control channel", col="Liaison", sub="the agency died")
-        # what happens to whom
+        diagram.trigger(label="end of the control channel", col="dispatcher", sub="the agency died")
+        # through its handler
+        diagram.call(src="dispatcher", dst="Liaison", label="report")
+        # which stops listening
         diagram.note(
             col="Liaison",
             lines=[
-                "the members never talk to the agency, so they keep working",
-                "its children are reparented to [init], which reaps them",
+                "[EndOfStream]: the handler returns false",
+                "liaison: [running] → [lost]; the members keep working, reparented to [init]",
             ],
         )
-        # a new agency, the way the first one started
-        diagram.call(src="Liaison", dst="StaffingAgency", label="spawn", kind="good")
-        # with the same greeting and checks
-        diagram.note(col="StaffingAgency", lines=["as at the start"])
-        # back to the liaison
-        diagram.ret(src="StaffingAgency", dst="Liaison")
-        # what happens when it cannot be started
+        # back
+        diagram.ret(src="Liaison", dst="dispatcher")
+        # the next start spawns a new one
         diagram.note(
-            col="Liaison",
+            col="dispatcher",
+            lines=[
+                "the next [start]: every listening loop [forget]s the old channels,",
+                "they are closed, and a new agency is spawned, as at the start",
+            ],
+        )
+        # what is open
+        diagram.note(
+            col="dispatcher",
             lines=["an agency that cannot be started: refuse to recruit, or fork in place (open)"],
             kind="open",
         )
@@ -369,41 +431,51 @@ class RecruiterLifecycle(pyre.application):
         The application ends: every member goes home, then the agency
         """
         # the staffs are disbanded
-        diagram.trigger(label="disband", col="Staff", sub="at exit")
-        # every member is dismissed
-        diagram.call(src="Staff", dst="Forkserver", label="dismiss(team, crew)", kind="good")
-        # back at once
-        diagram.ret(src="Forkserver", dst="Staff")
-        # and the team turns the loop until they are gone
-        diagram.call(src="Staff", dst="dispatcher", label="watch, until all departed", kind="good")
-        # nothing else runs now
+        diagram.trigger(label="Staff.disband", col="Staff", sub="at exit")
+        # for good
         diagram.note(
-            col="dispatcher",
+            col="Staff",
             lines=[
-                "nothing else runs at exit, so waiting is fine here,",
-                "and it happens on the loop, as exits and alarms arrive",
+                "staff: [disbanded]",
+                "the [idle] and [registered] are told to leave, the [active] get [SIGKILL]",
             ],
         )
-        # back to the staff
-        diagram.ret(src="dispatcher", dst="Staff")
+        # every member is handed over
+        diagram.call(src="Staff", dst="Forkserver", label="dismiss(team, crew)")
+        # back at once
+        diagram.ret(src="Forkserver", dst="Staff")
+        # then the staff waits for all of them at once
+        diagram.call(src="Staff", dst="Forkserver", label="settle")
+        # on a loop of its own
+        diagram.note(
+            col="Forkserver",
+            lines=[
+                "a fresh loop like the team's, which may be the caller or not running",
+                "[watch] on it; [collect] stops it once the ledger is empty",
+                "recruiter: [watching] → [settling] → [quiet]",
+            ],
+        )
+        # back
+        diagram.ret(src="Forkserver", dst="Staff")
         # the staff is done
         diagram.end(col="Staff")
         # then the agency goes home
         diagram.gap(h=18)
         # when the application lets go of it
-        diagram.trigger(label="stop the agency", col="application", sub="at exit")
+        diagram.trigger(label="Forkserver.stop", col="application", sub="at exit")
         # through its liaison
-        diagram.call(src="application", dst="Liaison", label="stop", kind="good")
+        diagram.call(src="application", dst="Liaison", label="stop")
         # closing the control channel is how it is told
-        diagram.call(
-            src="Liaison", dst="StaffingAgency", label="end of the control channel", kind="good"
-        )
+        diagram.call(src="Liaison", dst="StaffingAgency", label="end of the control channel")
         # the agency's loop ends
         diagram.note(
-            col="StaffingAgency", lines=["its dispatcher reads the end, the loop ends, it exits"]
+            col="StaffingAgency",
+            lines=["[request] reads the end, stops its loop", "agency: [serving] → [gone]"],
         )
         # back to the application
         diagram.unwind("StaffingAgency", "Liaison", "application")
+        # the liaison's last state
+        diagram.note(col="application", lines=["liaison: [running] → [idle]"])
         # all done
         return
 
@@ -411,7 +483,9 @@ class RecruiterLifecycle(pyre.application):
     cols = [
         "application",
         "Staff",
+        "Crew",
         "Forkserver",
+        "Departure",
         "Liaison",
         "dispatcher",
         "StaffingAgency",
@@ -422,7 +496,7 @@ class RecruiterLifecycle(pyre.application):
     scenarios = [
         start,
         recruit,
-        work,
+        checkin,
         instruct,
         standDown,
         exit,
@@ -436,14 +510,14 @@ class RecruiterLifecycle(pyre.application):
     title = "recruiter lifecycle"
     label = (
         "Sequence of calls in the life of a team whose members are recruited through the"
-        " staffing agency: starting the agency, recruiting a member, work, a journal control,"
-        " standing down, a member exiting, a grace period running out, a member dying, the"
-        " agency dying, and shutdown."
+        " staffing agency, with the states of each party: starting the agency, recruiting a"
+        " member, its check-in and work, a journal control, standing down, a member exiting, a"
+        " grace period running out, a member dying, the agency dying, and shutdown."
     )
-    intro = """<p>The life of a <code>pyre.nexus</code> team whose members come from the staffing agency, as settled for branch <code>teardown</code> on 2026-11-15 and written up in <code>doc/design/forkserver.md</code>. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Generated by <code>etc/introspection/recruiter-lifecycle.py</code>.</p>
-<p class="muted">Lifelines: <b>application</b> is the process that runs the teams; <b>Staff</b> is the team, which owns its recruiter, <b>Forkserver</b>; <b>Liaison</b> is the agency's handle in the team's process; <b>dispatcher</b> is the team's event loop; <b>StaffingAgency</b> runs in a process of its own, spawned from the application's command line; <b>member</b> is a crew member, forked by the agency. Messages in brackets travel on the control channel. T-numbers are topics on the <a href="https://claude.ai/artifact/J1J6jqStmMkBmEqef2BnEd" target="_blank" rel="noopener">tracker</a>.</p>
+    intro = """<p>The life of a <code>pyre.nexus</code> team whose members come from the staffing agency, as built on branch <code>teardown</code>, with the state of every party and each transition, written <span style="color:var(--data)">state → state</span> where it happens. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Generated by <code>etc/introspection/recruiter-lifecycle.py</code>; the states are tabulated in <code>doc/design/forkserver.md</code>.</p>
+<p class="muted">Lifelines: <b>application</b> is the process that runs the teams; <b>Staff</b> is the team, which owns its recruiter, <b>Forkserver</b>; <b>Crew</b> is the team side of a member; <b>Departure</b> is a member on the recruiter's ledger of departures; <b>Liaison</b> is the agency's handle in the team's process; <b>dispatcher</b> is the team's event loop; <b>StaffingAgency</b> runs in a process of its own, spawned from the application's command line; <b>member</b> is a crew member's process, forked by the agency. Messages in brackets travel on the control channel.</p>
 """
-    key = """<div class="key"><span class="g"><b>green</b>: what the design changes</span><span class="o"><b>amber</b>: open question</span><span class="t"><b>dashed</b>: what starts a scenario</span><span class="d"><b>blue</b>: data</span><span>× return</span></div>"""
+    key = """<div class="key"><span class="d"><b>blue</b>: states, and data</span><span class="g"><b>green</b>: nobody waits</span><span class="o"><b>amber</b>: open question</span><span class="t"><b>dashed</b>: what starts a scenario</span><span>× return</span></div>"""
 
 
 # main
