@@ -111,14 +111,20 @@ def test():
     deaf = stubborn(ignore=True)
     # and a child that has already left
     early = os.fork()
+    # which, on its side of the fork
     if early == 0:
+        # leaves at once
         os._exit(0)
+    # give it time to do so
     time.sleep(0.1)
 
     # dismiss all three, and time it, from the moment of the dismissal
     start = team.start = time.monotonic()
+    # go through the children
     for pid in (polite, deaf, early):
+        # each one by its pid, which is all the recruiter needs to know about a member
         recruiter.dismiss(team=team, crew=types.SimpleNamespace(pid=pid))
+    # how long that took
     elapsed = time.monotonic() - start
     # nobody waited for anybody
     assert elapsed < 0.1, elapsed
@@ -143,6 +149,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

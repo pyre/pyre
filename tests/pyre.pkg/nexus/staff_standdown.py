@@ -111,9 +111,11 @@ def test():
 
     # give the staff some work, and let the members finish it and get parked
     staff.assign(task=Echo(), callback=record)
+    # by turning the event loop for a while
     run(seconds=1)
     # the task was delivered and both members are parked
     assert outcomes == [("echo", None)]
+    # and both members are parked
     assert len(staff.idle) == 2
     # note who they are
     pids = [crew.pid for crew in staff.idle]
@@ -122,9 +124,11 @@ def test():
     staff.standDown()
     # the parked members were sent home
     assert not staff.idle
+    # and off the rosters
     assert not list(staff.crews())
-    # once the loop turns, their processes are gone
+    # let the event loop see them leave
     run(seconds=1)
+    # and their processes are gone
     assert all(gone(pid) for pid in pids)
     # and nobody was recruited in their place
     assert not list(staff.crews())
@@ -139,7 +143,9 @@ def test():
     staff.standDown()
     # the one that is on a task finishes it, and then everybody goes home
     run(seconds=1.5)
+    # the nap was delivered
     assert outcomes[-1] == ("nap", None)
+    # and nobody is left
     assert not list(staff.crews())
 
     # and the staff can still be sent home for good
@@ -151,6 +157,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

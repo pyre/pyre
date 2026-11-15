@@ -40,7 +40,9 @@ class Origin(pyre.application, family="tests.pyre.nexus.forkserver.origin"):
         liaison = Forkserver.start()
         # the channels of a new member, over the socket transport
         transport = pyre.ipc.socket()()
+        # the ends of its control channel
         parent, child = transport.open()
+        # and of its journal
         parentJournal, childJournal = transport.open()
         # the request for the member
         request = Recruit(crew=pyre.nexus.crew, channel=child, journal=childJournal)
@@ -50,6 +52,7 @@ class Origin(pyre.application, family="tests.pyre.nexus.forkserver.origin"):
         pid = liaison.recruit(request=request)
         # release the member's ends
         child.close()
+        # and the ends of its journal channel
         childJournal.close()
 
         # the member leaves on its own, and the agency reports it
@@ -76,15 +79,20 @@ class Origin(pyre.application, family="tests.pyre.nexus.forkserver.origin"):
             for record in records
             if record.severity == "firewall" and record.channel == "pyre.nexus.staffing"
         ]
+        # there is exactly one
         assert len(complaints) == 1, records
-        # which names both files
+        # read it
         text = "\n".join(complaints[0].page)
+        # it names the file the class was claimed to come from
         assert "/nowhere/Crew.py" in text, text
+        # and the one it came from
         assert Recruit.locate(crew=pyre.nexus.crew) in text, text
 
         # clean up
         parent.close()
+        # release my end of its journal channel
         parentJournal.close()
+        # and send the staffing agency home
         Forkserver.stop()
 
         # all done
