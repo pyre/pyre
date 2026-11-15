@@ -9,6 +9,8 @@
 import functools
 import os
 import signal
+import sys
+import traceback
 
 # the unit the task deadline is expressed in
 from ..units.SI import second
@@ -207,9 +209,8 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             error=self.RecoverableError(description=f"crew {self.pid} took too long"),
         )
         # my twin is still running, and it is exactly the kind of process that may never
-        # stop. a burial waits for a corpse rather than making one, so handing it a live
-        # worker would block the event loop until that worker decided to finish -- which is
-        # the very thing we have just declared it cannot be trusted to do. so end it first
+        # stop. a burial gives a member that is on its way out a grace period before it
+        # insists, and this one has had all the time it is going to get, so end it now
         try:
             # with prejudice; a member that has blown its deadline gets no chance to object
             os.kill(self.pid, signal.SIGKILL)
@@ -217,9 +218,9 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         except (OSError, ProcessLookupError):
             # nothing further
             pass
-        # and now clean up after it: the burial closes the channel, reaps the corpse -- which
-        # returns at once, since there is one -- takes it off the rosters, and lets the team
-        # recruit a replacement
+        # and now clean up after it: the burial takes it off the rosters, closes the channel,
+        # hands the process to the recruiter to collect, and lets the team recruit a
+        # replacement
         team.bury(crew=self)
         # do not reschedule
         return None
@@ -352,6 +353,104 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             self.dispatcher.whenReadReady(channel=self.journal, call=self.obey)
         # all done
         return self
+
+    @classmethod
+    def route(cls, channel):
+        """
+        Send everything this process says to the journal down {channel}, for the team to hear,
+        and hand back the device that ships it, which must be kept alive; a member whose journal
+        is not routed has no {channel}, and keeps the device it has
+
+        This needs nothing but the channel, so a member can route its journal before anything
+        else happens, even before its own class is loaded
+        """
+        # if the journal is not routed
+        if channel is None:
+            # there is nothing to do
+            return None
+        # get the journal
+        import journal
+
+        # make the device that ships the entries down the writable end of the channel; the
+        # terminal is left to the team, which replays every entry it hears
+        courier = journal.courier(descriptor=cls._descriptor(end=channel.outbound))
+        # install it
+        journal.chronicler.device = courier
+        # and hand it off
+        return courier
+
+    def work(self):
+        """
+        Carry out tasks until there is nothing more to do, then end my process; this does not
+        return
+        """
+        # assume the worst, so that anything that goes wrong is reported as a failure
+        status = 1
+        # and keep track of whether i got to finish; asking the interpreter whether an
+        # exception is in flight does not work here: a replacement member is forked from within
+        # the handler of the failure of the one it replaces, so it inherits an exception that
+        # is the team's business, not mine
+        crashed = True
+        # carefully, since an interrupt may have landed before it was set aside
+        try:
+            # spin up and carry out tasks until there is nothing more to do
+            status = self.run()
+            # i ran my course
+            crashed = False
+        # if it did
+        except KeyboardInterrupt:
+            # leave quietly; the team reports the interruption
+            status = 1
+            # and this is not a crash
+            crashed = False
+        # a request to exit
+        except SystemExit as request:
+            # carries the status it asks for
+            status = request.code
+            # and is not a crash either
+            crashed = False
+        # whatever happened, my process must terminate, and it must do so here
+        finally:
+            # so leave; this does not return
+            self.leave(status=status, crashed=crashed)
+
+    def leave(self, status, crashed=False):
+        """
+        End my process with the given exit {status}; {crashed} says that i am on my way out
+        because of an exception nobody handled
+
+        A crew member is a fork of another process, so the exit handlers it would run on the way
+        out belong to that process: registered by libraries in a process that had state i do not
+        share, e.g. threads, which do not survive a fork. Such a handler may wait forever for
+        something that exists only on the other side of the fork, and then i never leave. So i
+        end my process directly, after putting my own affairs in order, and the inherited
+        handlers never run
+        """
+        # if i got here because something went wrong that nobody handled
+        if crashed:
+            # say what it was, since the interpreter will not get the chance
+            traceback.print_exc()
+        # carefully, since nothing must get in the way of leaving
+        try:
+            # put my affairs in order, e.g. close what i have open for writing
+            self.retire()
+        # and whatever happens
+        finally:
+            # go through the standard streams
+            for stream in (sys.stdout, sys.stderr):
+                # carefully, since they may be closed or broken
+                try:
+                    # deliver what is pending; nothing else will
+                    stream.flush()
+                # if that fails
+                except (OSError, ValueError):
+                    # there is nothing to be done about it
+                    pass
+            # normalize the status the way the interpreter does: nothing means success, a
+            # number is itself, and anything else is a failure
+            code = 0 if status is None else status if isinstance(status, int) else 1
+            # and end the process without running the exit handlers
+            os._exit(code)
 
     def obey(self, channel):
         """

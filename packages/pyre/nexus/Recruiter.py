@@ -31,7 +31,22 @@ class Recruiter(pyre.protocol, family="pyre.nexus.recruiters"):
     @pyre.provides
     def dismiss(self, team, crew, **kwds):
         """
-        The {team} manager has dismissed the given {crew} member
+        The {team} manager has dismissed the given {crew} member; see that it leaves, without
+        waiting for it, and tell the {team} when it is gone
+        """
+
+    @pyre.provides
+    def bury(self, team, crew, **kwds):
+        """
+        The {crew} member of {team} died without being dismissed; collect it once its process is
+        gone, and tell the {team}
+        """
+
+    @pyre.provides
+    def settle(self, team, **kwds):
+        """
+        Wait until every member of {team} that is on its way out is gone; for a team that is
+        shutting down, when nothing else is left to do
         """
 
     @pyre.provides
