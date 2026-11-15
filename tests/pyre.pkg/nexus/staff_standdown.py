@@ -120,13 +120,13 @@ def test():
 
     # stand down
     staff.standDown()
-    # the parked members went home
+    # the parked members were sent home
     assert not staff.idle
     assert not list(staff.crews())
-    # and their processes are gone
-    assert all(gone(pid) for pid in pids)
-    # nobody was recruited in their place, even after the loop turns
+    # once the loop turns, their processes are gone
     run(seconds=1)
+    assert all(gone(pid) for pid in pids)
+    # and nobody was recruited in their place
     assert not list(staff.crews())
 
     # back to work

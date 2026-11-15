@@ -20,7 +20,8 @@ import pyre
 import journal
 
 # the machinery under test
-import pyre.nexus.Forkserver as forkserver
+from pyre.nexus.Forkserver import Forkserver
+from pyre.nexus.messages.Recruit import Recruit
 
 
 # the application
@@ -35,30 +36,26 @@ class Origin(pyre.application, family="tests.pyre.nexus.forkserver.origin"):
         """
         The main entry point
         """
-        # start the helper
-        helper = forkserver.Forkserver.start()
+        # start the staffing agency
+        liaison = Forkserver.start()
         # the channels of a new member, over the socket transport
         transport = pyre.ipc.socket()()
         parent, child = transport.open()
         parentJournal, childJournal = transport.open()
-        # claim that the crew class comes from a file it does not come from
-        actual = forkserver.origin
-        forkserver.origin = lambda cls: "/nowhere/Crew.py"
+        # the request for the member
+        request = Recruit(crew=pyre.nexus.crew, channel=child, journal=childJournal)
+        # claiming that the crew class comes from a file it does not come from
+        request.origin = "/nowhere/Crew.py"
         # ask for the member
-        pid = helper.recruit(
-            crew=pyre.nexus.crew,
-            transport="socket",
-            channel=[child.fileno()],
-            journal=[childJournal.fileno()],
-        )
-        # put things back
-        forkserver.origin = actual
+        pid = liaison.recruit(request=request)
         # release the member's ends
         child.close()
         childJournal.close()
 
-        # the member leaves on its own
-        assert helper.exited(pid=pid, patience=30)
+        # the member leaves on its own, and the agency reports it
+        while not liaison.collect(pid=pid)[0]:
+            # so listen to the agency until it does
+            liaison.hear()
         # after saying why, on the journal it ships to the team
         data = b""
         # collect everything it said
@@ -77,18 +74,18 @@ class Origin(pyre.application, family="tests.pyre.nexus.forkserver.origin"):
         complaints = [
             record
             for record in records
-            if record.severity == "firewall" and record.channel == "pyre.nexus.forkserver"
+            if record.severity == "firewall" and record.channel == "pyre.nexus.staffing"
         ]
         assert len(complaints) == 1, records
         # which names both files
         text = "\n".join(complaints[0].page)
         assert "/nowhere/Crew.py" in text, text
-        assert actual(pyre.nexus.crew) in text, text
+        assert Recruit.locate(crew=pyre.nexus.crew) in text, text
 
         # clean up
         parent.close()
         parentJournal.close()
-        forkserver.Forkserver.stop()
+        Forkserver.stop()
 
         # all done
         return 0
