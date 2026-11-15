@@ -41,6 +41,7 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
     shell = pyre.properties.str(default="forkserver")
     shell.doc = "the shell that turns a copy of the application into the staffing agency"
 
+    # how the messages on the control channel are encoded
     marshaler = pyre.ipc.marshaler()
     marshaler.doc = "the serializer of the messages on the control channel"
 
@@ -186,6 +187,7 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
         channel = journal.firewall("pyre.nexus.staffing")
         # complain
         channel.line("the staffing agency does not run what this process runs")
+        # set the details apart
         channel.indent()
         # go through the pieces
         for key, value in mine.items():
@@ -327,6 +329,7 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
         )
         # its ends are its own now
         control.child.close()
+        # both of them
         journal.child.close()
         # keep mine
         self.control = control.parent

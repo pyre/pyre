@@ -28,9 +28,11 @@ class Forkserver(Executive, family="pyre.shells.forkserver"):
     control = pyre.properties.int(default=None)
     control.doc = "the descriptor of the channel the recruiter sends its requests down"
 
+    # where my journal goes
     journal = pyre.properties.int(default=None)
     journal.doc = "the descriptor of the channel that carries my journal entries back"
 
+    # my programming model
     model = pyre.properties.str(default="forkserver")
     model.doc = "the programming model"
 
@@ -47,6 +49,7 @@ class Forkserver(Executive, family="pyre.shells.forkserver"):
             channel = application.error
             # complain
             channel.line("the forkserver shell is started by a staffing liaison, not by hand")
+            # and what is missing
             channel.line(f"'{self.pyre_name}.control' names no channel to serve")
             # flush
             channel.log()

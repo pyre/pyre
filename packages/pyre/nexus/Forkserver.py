@@ -69,6 +69,7 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
             channel = journal.firewall("pyre.nexus.staffing")
             # complain
             channel.line("the staffing agency cannot build a crew member with arguments")
+            # and name the arguments
             channel.line(f"arguments: {sorted(kwds)}")
             # flush
             channel.log()

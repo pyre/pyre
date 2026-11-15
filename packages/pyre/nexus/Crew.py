@@ -204,6 +204,7 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # wait on it any longer: hand the requester an answer it can act on, rather than
         # leaving it holding a promise that may never be kept
         self.task = None
+        # so deliver the bad news
         team.abandon(
             task=task,
             error=self.RecoverableError(description=f"crew {self.pid} took too long"),
