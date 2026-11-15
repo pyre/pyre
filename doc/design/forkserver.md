@@ -15,7 +15,10 @@ a copy of, and how a team learns that a member has left.
 
 Branch: `teardown` in `pyre`.
 
-Status: **redesign settled, not yet built.** A first version was built on branch `forkserver`
+Status: **built**, on branch `teardown`, as the design below describes. On the same server, the
+event loop of the team's process now never waits for a member: a query from outside the browser
+was answered within 76 ms throughout a build, and 32 members leaving at first contact were gone
+within about a quarter of a second. A first version was built on branch `forkserver`
 (pyre#294, merged 2026-09-29) as `pyre.nexus.recruiters.forkserver` and the shell
 `pyre.shells.forkserver`. It worked, but it did not look like pyre: loose functions and module
 state, a plain class of 340 lines beside the recruiter in one file, a hand-written event loop, and
@@ -182,22 +185,28 @@ Nothing in the team's process waits for a member to leave. A departure is an eve
 event loop, whichever way it comes about.
 
 - **Dismissal.** `Pool.dismiss` tells the member it is dismissed and hands it to the recruiter,
-  which returns at once. The recruiter arms a dispatcher alarm for the grace period; if the member
-  has not left when it fires, the recruiter sends `SIGTERM` and arms another, then `SIGKILL`. The
-  member's exit cancels whatever is armed.
+  which returns at once. The recruiter puts the member on its ledger of departures (`Departure`,
+  with a deadline one grace period away and the reminders `SIGTERM` and `SIGKILL` still to come),
+  collects it on the spot if it is gone already, and keeps one alarm per event loop: the alarm's
+  handler reminds every member whose deadline has passed and reschedules itself to the next
+  deadline, or ends by returning `None` once the ledger is empty. Nothing is ever cancelled: a
+  member that leaves is simply taken off the ledger.
 - **Exits.** For `Fork`, a member is a child of the team's process, and its exit arrives through
   `whenSignal(SIGCHLD)`, after which the recruiter reaps it without waiting. For `Forkserver`, a
   member is the agency's child; the agency reaps it and sends an exit report, which arrives
-  through `whenReadReady` on the control channel. Either way, the recruiter cancels what it armed
-  for the member and tells the team through the hook `departed(crew, status)`, which does nothing
-  by default and which a team may override.
+  through `whenReadReady` on the control channel, where the `Liaison` hands it to the recruiters
+  that subscribed. Either way, the recruiter takes the member off its ledger and tells the team
+  through the hook `departed(crew, status)`, which does nothing by default and which a team may
+  override.
 - **Deaths.** The team still learns of a death first from the end of its crew channel. It hands
   the member to its recruiter through the new recruiter obligation `bury(team, crew)`, instead of
   reaping it itself: `Pool.bury` no longer calls `waitpid`, since only the recruiter knows whose
   child the member is.
-- **Shutdown.** When the application ends, `Staff.disband` has to see its members gone before the
-  process exits, and nothing else runs then, so it may wait; it does so by turning the event loop
-  until the recruiter reports every member gone, not by waiting outside it.
+- **Shutdown.** When the application ends, `Staff.disband` tells every member to leave, hands each
+  to the recruiter, and then calls the recruiter's `settle`, once, so the exit costs one grace
+  period at most, however many members there are. The team's own event loop may have stopped, or
+  may be the one that called `disband`, and a loop cannot be nested, so `settle` makes a fresh loop
+  of the same kind, watches the departures on it, and stops it once the ledger is empty.
 - If the agency dies, the team's process sees the end of the control channel. It starts a new
   agency, and the members already running are unaffected, since they never talk to it; the ones
   that were the old agency's children are reparented to `init`, which reaps them.
@@ -208,6 +217,74 @@ event loop, whichever way it comes about.
 default (`Recruiter.pyre_default`), since only a pyre application can be re-run in the agency's
 shell; an application that never opens files in buckets pays nothing for the agency. Pools and
 staffs get either recruiter the same way.
+
+
+## States and transitions
+
+What state each party is in, and what moves it to the next one, as built. The sequence diagram
+drawn by `etc/introspection/recruiter-lifecycle.py` shows the same transitions in the order they
+happen, on the lifeline where each happens.
+
+**The staff** (`Staff`):
+
+| State | Entered by | Left by |
+|---|---|---|
+| serving | construction; `assign` after a stand-down | `standDown`, `disband` |
+| resting | `standDown`: parked members are released, members that finish a task go home, nobody is recruited | `assign` |
+| disbanded | `disband`, at exit or by the application | never: `assign` lets its callers down at once |
+
+**A member, as its team sees it** (the team side of `Crew`, on the rosters of `Pool` and `Staff`):
+
+| State | Entered by | Left by |
+|---|---|---|
+| registered | `Pool.recruit`: the recruiter deployed it | its check-in: `Pool.activate` |
+| active | check-in; woken by `assemble` | `submit` with nothing to do: parked; a report: scheduled again |
+| idle | parked by `submit`, with a vigil on its channel | `assemble` with work; `_release`; the vigil firing: buried |
+| dismissed | `Pool.dismiss`: told to leave, off the rosters, handed to the recruiter | `departed` |
+| buried | `Pool.bury`: its channel ended without a dismissal; handed to the recruiter | `departed` |
+| gone | `departed(crew, status)`, from the recruiter | |
+
+**A departure** (`Departure`, on the recruiter's ledger):
+
+| State | Entered by | Left by |
+|---|---|---|
+| leaving | `depart`, from `dismiss` or `bury`: due one grace period later | its exit; its deadline |
+| reminded | a deadline passed: `SIGTERM`, and a new deadline | its exit; the next deadline: `SIGKILL` |
+| killed | the second deadline passed: `SIGKILL`; only its exit is left | its exit |
+| collected | `collect` found its process gone: off the ledger, the team told | |
+
+**The recruiter** (`Fork`, `Forkserver`):
+
+| State | Entered by | Left by |
+|---|---|---|
+| quiet | construction; the last departure collected | the first departure |
+| watching | a departure on an event loop that is not watched yet: it listens for exits (`SIGCHLD` for `Fork`, the liaison's reports for `Forkserver`) and keeps one alarm there | the last departure collected: the exit handler and the alarm end themselves |
+| settling | `settle`: a fresh loop of its own, watched the same way | the last departure collected: the loop is stopped and closed |
+
+**The liaison** (`Liaison`, one per process):
+
+| State | Entered by | Left by |
+|---|---|---|
+| idle | construction; `stop` | `start` |
+| spawning | `start` with no agency running: the agency is spawned, its greeting awaited | the greeting: checked, a firewall on a mismatch |
+| running | the greeting; listening on every event loop it is started with | the end of the control channel; `stop` |
+| lost | the end of the control channel: the agency died; its members keep working | the next `start`: every listening loop forgets the old channels, they are closed, and a new agency is spawned |
+
+**The staffing agency** (`StaffingAgency`, in a process of its own):
+
+| State | Entered by | Left by |
+|---|---|---|
+| serving | the shell builds it and runs its loop: requests on the control channel, exits by `SIGCHLD` | the end of the control channel |
+| gone | its loop stopped, its process exits | |
+
+**A member's process** (`Crew`, on the worker side):
+
+| State | Entered by | Left by |
+|---|---|---|
+| forked | `enlist` (agency) or `deploy` (`Fork`) | `route`: its journal goes to the team before anything else happens |
+| loaded | its class loaded, refusing one from another file | registration with the team |
+| working | `register`, then `work`: tasks until there is nothing more to do | the end-of-tasks marker; the end of its channel; a signal |
+| exited | `leave`: affairs in order, streams flushed, the process ended without the inherited exit handlers | |
 
 
 ## What a member inherits today, and what it will not
