@@ -7,9 +7,10 @@
 
 
 """
-Verify that a staff recruited through the forkserver stands down promptly: its members are
-dismissed one at a time, each after the helper reports that the one before it left, so the
-helper must report every exit as soon as it happens rather than the next time it looks
+Verify that a staff recruited through the forkserver stands down promptly: standing down waits
+for nobody, every member is told to leave at once, and the staffing agency reports each exit as
+it happens, so the whole staff is gone in a fraction of the time it would take to see the
+members out one at a time
 """
 
 # externals
@@ -24,9 +25,42 @@ from pyre.units.SI import second
 
 # the size of the staff
 members = 8
-# how long the stand down may take; reporting each exit only when the helper next looks, ten
-# times a second, takes about a tenth of a second per member, i.e. twice this
+# how long it may take for every member to be gone; dismissing them one at a time, each after
+# the exit of the one before is reported, took about a tenth of a second per member, i.e.
+# twice this
 allowance = members * 0.05
+
+
+# a staff that keeps track of its departures
+class Staff(pyre.nexus.staff(), family="tests.pyre.nexus.forkserver.standdown.staff"):
+    """
+    A staff that records when each of its members is gone, and stops its event loop once all of
+    them are
+    """
+
+    # team obligations
+    @pyre.export
+    def departed(self, crew, status):
+        """
+        The process of the {crew} member is gone
+        """
+        # record when
+        self.departures[crew.pid] = time.monotonic()
+        # once everybody has left
+        if len(self.departures) == members:
+            # stop the event loop
+            self.dispatcher.stop()
+        # all done
+        return self
+
+    # metamethods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # when each member left, by pid
+        self.departures = {}
+        # all done
+        return
 
 
 # a well behaved task
@@ -73,7 +107,7 @@ class StandDown(pyre.application, family="tests.pyre.nexus.forkserver.standdown"
         The main entry point
         """
         # build a staff that recruits through the forkserver
-        staff = pyre.nexus.staff()(name="test.forkserver.standdown")
+        staff = Staff(name="test.forkserver.standdown")
         staff.size = members
         staff.recruiter = pyre.nexus.forkserver()
         # the outcome drop box
@@ -115,11 +149,20 @@ class StandDown(pyre.application, family="tests.pyre.nexus.forkserver.standdown"
         start = time.monotonic()
         staff.standDown()
         elapsed = time.monotonic() - start
-        # every member went home
+        # nobody waited for the members
+        assert elapsed < 0.1, f"standing down {members} members took {elapsed:.3f} s"
+        # and they are off the rosters
         assert not list(staff.crews())
+        # in case something goes wrong, give up after a while
+        staff.dispatcher.alarm(interval=5 * second, call=expire)
+        # let the event loop see them leave
+        staff.dispatcher.watch()
+        # every member went home
+        assert len(staff.departures) == members, staff.departures
         assert all(gone(pid) for pid in pids)
         # promptly
-        assert elapsed < allowance, f"standing down {members} members took {elapsed:.3f} s"
+        last = max(staff.departures.values()) - start
+        assert last < allowance, f"the last of {members} members left after {last:.3f} s"
 
         # send the staff home for good
         staff.disband()

@@ -7,9 +7,9 @@
 
 
 """
-Verify that dismissing a crew member cannot block forever: a member that does not leave within
-the grace period is told to go, one that ignores that is removed, and either way the team gets
-its process back
+Verify that dismissing a crew member never waits for it: the recruiter returns at once, a
+member that does not leave within the grace period is told to go, one that ignores that is
+removed, and the team hears of each departure on its event loop
 """
 
 # externals
@@ -43,49 +43,99 @@ def stubborn(ignore):
     os._exit(0)
 
 
+def gone(pid):
+    """
+    Check whether the process {pid} is gone
+    """
+    # carefully
+    try:
+        # probe it
+        os.kill(pid, 0)
+    # if there is no such process
+    except ProcessLookupError:
+        # it is gone
+        return True
+    # otherwise, it is still around
+    return False
+
+
+# a stand-in for the team, with the event loop and the hook the recruiter needs
+class Team:
+    """
+    A team that records when each of its members departed, and stops its event loop once all
+    of them have
+    """
+
+    # interface
+    def departed(self, crew, status):
+        """
+        The process of the {crew} member is gone
+        """
+        # record when
+        self.departures[crew.pid] = time.monotonic() - self.start
+        # once everybody has left
+        if len(self.departures) == self.expected:
+            # stop the event loop
+            self.dispatcher.stop()
+        # all done
+        return self
+
+    # metamethods
+    def __init__(self, expected, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the name a team has, which the recruiter uses when it talks about my members
+        self.pyre_name = "test.fork.dismiss.team"
+        # the event loop
+        self.dispatcher = pyre.ipc.newPSL()
+        # how many members are expected to leave
+        self.expected = expected
+        # when each one did, by pid
+        self.departures = {}
+        # the start of the clock
+        self.start = time.monotonic()
+        # all done
+        return
+
+
 def test():
     # make a recruiter with a short grace period, so the test does not drag
     recruiter = pyre.nexus.fork()(name="test.fork.dismiss")
     recruiter.grace = 0.25 * second
+    # and a team that expects three members to leave
+    team = Team(expected=3)
 
     # a child that leaves when it is told to
-    pid = stubborn(ignore=False)
-    # dismiss it; all the recruiter needs to know about a member is its process id
-    start = time.monotonic()
-    recruiter.dismiss(team=None, crew=types.SimpleNamespace(pid=pid))
-    elapsed = time.monotonic() - start
-    # it took the grace period, and the polite request did the rest
-    assert 0.25 <= elapsed < 0.5 + 0.25, elapsed
-    # and the child is gone and harvested
-    try:
-        os.kill(pid, 0)
-        assert False, "the child that was told to go is still around"
-    except ProcessLookupError:
-        pass
-
+    polite = stubborn(ignore=False)
     # a child that ignores polite requests
-    pid = stubborn(ignore=True)
-    # dismiss it
-    start = time.monotonic()
-    recruiter.dismiss(team=None, crew=types.SimpleNamespace(pid=pid))
-    elapsed = time.monotonic() - start
-    # it took two grace periods, and then it was removed
-    assert 0.5 <= elapsed < 0.75 + 0.25, elapsed
-    # and the child is gone and harvested
-    try:
-        os.kill(pid, 0)
-        assert False, "the child that ignored the request is still around"
-    except ProcessLookupError:
-        pass
-
-    # a child that has already left costs nothing
-    pid = os.fork()
-    if pid == 0:
+    deaf = stubborn(ignore=True)
+    # and a child that has already left
+    early = os.fork()
+    if early == 0:
         os._exit(0)
     time.sleep(0.1)
-    start = time.monotonic()
-    recruiter.dismiss(team=None, crew=types.SimpleNamespace(pid=pid))
-    assert time.monotonic() - start < 0.1
+
+    # dismiss all three, and time it, from the moment of the dismissal
+    start = team.start = time.monotonic()
+    for pid in (polite, deaf, early):
+        recruiter.dismiss(team=team, crew=types.SimpleNamespace(pid=pid))
+    elapsed = time.monotonic() - start
+    # nobody waited for anybody
+    assert elapsed < 0.1, elapsed
+    # the child that had already left was collected on the spot
+    assert early in team.departures, team.departures
+
+    # in case something goes wrong, give up after a while
+    team.dispatcher.alarm(interval=5 * second, call=lambda timestamp: team.dispatcher.stop())
+    # let the event loop see the others leave
+    team.dispatcher.watch()
+
+    # the polite child left at the first reminder, after one grace period
+    assert 0.25 <= team.departures[polite] < 0.5 + 0.25, team.departures
+    # the deaf one at the second, after two
+    assert 0.5 <= team.departures[deaf] < 0.75 + 0.25, team.departures
+    # and every child is gone and harvested
+    assert all(gone(pid) for pid in (polite, deaf, early))
 
     # all done
     return recruiter
