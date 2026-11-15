@@ -22,6 +22,7 @@ class Team(pyre.protocol, family="pyre.nexus.teams"):
     size = pyre.properties.int()
     size.doc = "the number of team members to recruit"
 
+    # how the members are recruited
     recruiter = Recruiter()
     recruiter.doc = "the strategy for recruiting team members"
 

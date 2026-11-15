@@ -49,6 +49,7 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
     marshaler = pyre.ipc.marshaler()
     marshaler.doc = "the serializer of the messages on the control channel"
 
+    # the event loop i serve on
     dispatcher = pyre.ipc.dispatcher()
     dispatcher.doc = "the manager of my event loop"
 

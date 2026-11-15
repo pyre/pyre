@@ -68,6 +68,7 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             if task in self.workplan:
                 # renew its priority: work is served newest first
                 del self.workplan[task]
+                # by putting it back at the end
                 self.workplan[task] = None
             # either way, the standing request covers this one
             return self
@@ -174,10 +175,13 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         # members that are mid-task would block writing a report nobody will drain, so a
         # graceful dismissal can deadlock the exit; they get terminated instead
         working = set(self.active)
-        # empty the rosters
+        # empty the bench
         self.idle.clear()
+        # the roster of the ones at work
         self.active.clear()
+        # the roster of the ones checking in
         self.registered.clear()
+        # and the death watches
         self.vigils.clear()
         # go through the resting members
         for crew in resting:
@@ -269,6 +273,7 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             firewall = journal.firewall("pyre.nexus.staff")
             # complain
             firewall.line(f"duplicate delivery for {task}")
+            # and say where
             firewall.line(f"while collecting a result in {self}")
             # flush
             firewall.log()
@@ -302,6 +307,7 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             firewall = journal.firewall("pyre.nexus.staff")
             # complain
             firewall.line(f"duplicate abandonment for {task}: {error}")
+            # and say where
             firewall.line(f"while delivering bad news in {self}")
             # flush
             firewall.log()
@@ -319,8 +325,9 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         A {crew} member died without a formal dismissal; clean up after it and restore the
         staff to full strength
         """
-        # take the member off the bench and cancel its death watch
+        # take the member off the bench
         self.idle.discard(crew)
+        # and cancel its death watch
         self.vigils.discard(crew)
         # chain up for the rosters, the channel, and the corpse
         super().bury(crew=crew)
@@ -390,8 +397,9 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
         """
         Send the {crew} member home, without replacing it
         """
-        # take it off the bench, and stop watching it
+        # take it off the bench
         self.idle.discard(crew)
+        # and stop watching it
         self.vigils.discard(crew)
         # the event loop must forget its channel before the channel is closed, or the handlers
         # left behind would sit under a descriptor number the next recruit may be handed

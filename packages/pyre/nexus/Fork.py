@@ -44,9 +44,11 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
     channels = pyre.ipc.transport()
     channels.doc = "the ipc mechanism that connects the team to its crew members"
 
+    # whether the members talk back
     journal = pyre.properties.bool(default=True)
     journal.doc = "whether the journal entries of each crew member are routed back to the team"
 
+    # how patient i am with a member on its way out
     grace = pyre.properties.dimensional(default=2 * second)
     grace.doc = "how long a dismissed crew member gets to leave before it is made to"
 

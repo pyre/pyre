@@ -34,6 +34,7 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
     size = pyre.properties.int(default=1)
     size.doc = "the number of crew members to recruit"
 
+    # how my members are recruited
     recruiter = Recruiter()
     recruiter.doc = "the strategy for recruiting crew members"
 
@@ -45,26 +46,34 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         # grab a journal channel
         channel = self.debug
-        # show me
+        # show me what is about to happen
         channel.line("executing the workplan")
-        channel.line("  current outstanding tasks: {}".format(len(self.workplan)))
-        channel.line("  max team size: {}".format(self.size))
-        channel.line("  current vacancies: {}".format(self.vacancies()))
-        channel.line("  registered crew members: {}".format(len(self.registered)))
-        channel.line("  active crew members: {}".format(len(self.active)))
+        # how much work is waiting
+        channel.line(f"  current outstanding tasks: {len(self.workplan)}")
+        # how many members the team may have
+        channel.line(f"  max team size: {self.size}")
+        # how many of them are missing
+        channel.line(f"  current vacancies: {self.vacancies()}")
+        # how many are checking in
+        channel.line(f"  registered crew members: {len(self.registered)}")
+        # and how many are at work
+        channel.line(f"  active crew members: {len(self.active)}")
 
         # add the new tasks to the workplan
         self.workplan |= workplan
         # tell me
         channel.line("extending the workplan")
-        channel.line("  current outstanding tasks: {}".format(len(self.workplan)))
+        # how much work is waiting now
+        channel.line(f"  current outstanding tasks: {len(self.workplan)}")
 
         # if necessary, recruit some new crew members
         self.recruit()
         # tell me
         channel.line("recruited new crew members")
-        channel.line("  registered crew members: {}".format(len(self.registered)))
-        channel.line("  active crew members: {}".format(len(self.active)))
+        # how many are checking in now
+        channel.line(f"  registered crew members: {len(self.registered)}")
+        # and how many are at work
+        channel.line(f"  active crew members: {len(self.active)}")
 
         # flush
         channel.log()
@@ -194,8 +203,9 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         journal.debug("pyre.nexus.departures").log(
             f"{self.pyre_name}: member {crew.pid} died without being dismissed"
         )
-        # remove the member from all rosters
+        # take the member off the roster of the ones checking in
         self.registered.discard(crew)
+        # and off the one of the ones at work
         self.active.discard(crew)
         # carefully
         try:

@@ -54,9 +54,13 @@ class Recruit(Message):
             channel = journal.firewall("pyre.nexus.staffing")
             # complain
             channel.line(f"the crew class '{crew.__qualname__}' was loaded from")
+            # set the two files apart
             channel.indent()
+            # the one it came from here
             channel.line(f"{self.locate(crew=crew)} in the member, but from")
+            # and the one it came from in the team's process
             channel.line(f"{self.origin} in the team's process")
+            # done with the files
             channel.outdent()
             # flush; firewalls are fatal
             channel.log()
@@ -126,6 +130,7 @@ class Recruit(Message):
     def __init__(self, crew, channel, journal=None, **kwds):
         # collect the descriptors of the member's ends
         crewDescriptors = self.unpack(channel=channel)
+        # and of the ends of its journal channel, if there is one
         journalDescriptors = self.unpack(channel=journal) if journal is not None else []
         # chain up, with the descriptors that travel with me
         super().__init__(descriptors=crewDescriptors + journalDescriptors, **kwds)
