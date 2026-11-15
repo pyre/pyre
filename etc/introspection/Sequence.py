@@ -188,6 +188,25 @@ class Sequence:
         # all done
         return
 
+    def page(self, title: str, intro: str, key: str, label: str) -> str:
+        """
+        Render the diagram, with {label} as its accessible description, in a page of its own
+        under {title}, after the {intro} and the {key} to its colors
+        """
+        # the page says how its text is encoded, so the browser reads it right
+        return (
+            '<meta charset="utf-8">'
+            + f"<title>{html.escape(title)}</title>"
+            + self.style
+            + f'<div class="wrap"><div class="prose"><h1>{html.escape(title)}</h1>'
+            + intro
+            + "</div>"
+            + key
+            + '<div class="fig">'
+            + self.render(label=label)
+            + "</div></div>"
+        )
+
     def gap(self, h: int) -> None:
         """
         Move down by {h}
@@ -341,6 +360,68 @@ class Sequence:
         )
         + "</defs>"
     )
+
+    # the style of the page around the diagram
+    style = """<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,600&display=swap">
+<style>
+  /* layout: a short reading column, then one tall sequence diagram */
+  :root {
+    --bg: #fbfbf8; --fg: #23281f; --muted: #6e7466; --life: #cfcfae; --entity: #3c7db5;
+    --call: #5f9442; --trigger: #b38b52; --data: #2f5f8f; --defect: #b4442e;
+    --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    --font-note: "Source Serif 4", Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161814; --fg: #e4e6de; --muted: #a2a898; --life: #4a4a38; --entity: #7fb3e0;
+      --call: #94c776; --trigger: #d7b07a; --data: #8fbbe6; --defect: #ef8a72; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161814; --fg: #e4e6de; --muted: #a2a898; --life: #4a4a38; --entity: #7fb3e0;
+    --call: #94c776; --trigger: #d7b07a; --data: #8fbbe6; --defect: #ef8a72; color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+  .wrap { max-width: 1260px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; }
+  .prose { max-width: 70ch; }
+  h1 { font-family: var(--font-note); font-style: italic; font-weight: 600; font-size: 1.8rem; margin: 0 0 8px; }
+  p { margin: 0 0 10px; }
+  .muted { color: var(--muted); }
+  a { color: var(--entity); }
+  .key { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 0.88rem; color: var(--muted); margin: 14px 0 10px; }
+  .key b { font-weight: 600; }
+  .key .g { color: var(--call); } .key .r { color: var(--defect); } .key .t { color: var(--trigger); } .key .d { color: var(--data); }
+  .key .o { color: var(--trigger); }
+  .fig { overflow-x: auto; }
+  svg.seq { display: block; width: 100%; min-width: 1000px; max-width: 1240px; height: auto; }
+  svg .life { stroke: var(--life); stroke-width: 1; }
+  svg .ent { fill: var(--entity); font-family: var(--font-body); font-size: 14px; }
+  svg .rel { stroke: var(--trigger); stroke-width: 1; }
+  svg .relhead { fill: var(--trigger); }
+  svg .relopen { fill: var(--bg); stroke: var(--trigger); stroke-width: 1; }
+  svg .sep { stroke: var(--life); stroke-width: 1; stroke-dasharray: 2 4; }
+  svg .trig { fill: var(--call); font-family: var(--font-note); font-style: italic; font-size: 13px; }
+  svg .trigsub { fill: var(--muted); font-family: var(--font-note); font-style: italic; font-size: 10.5px; }
+  svg .tline { stroke: var(--trigger); stroke-width: 1; stroke-dasharray: 5 3; }
+  svg .msg { stroke: var(--muted); stroke-width: 1; }
+  svg .msg.bad { stroke: var(--defect); stroke-width: 1.4; }
+  svg .msg.good { stroke: var(--call); stroke-width: 1.4; }
+  svg .back { stroke: var(--life); stroke-width: 1; }
+  svg .hd { fill: var(--muted); } svg .hd.bad { fill: var(--defect); } svg .hd.good { fill: var(--call); }
+  svg .hd.back { fill: var(--life); } svg .hd.trig { fill: var(--trigger); }
+  svg .call { fill: var(--call); font-family: var(--font-note); font-style: italic; font-size: 12px; }
+  svg .call.bad { fill: var(--defect); }
+  svg .dot { fill: var(--muted); } svg .dot.entry { fill: var(--call); } svg .dot.bad { fill: var(--defect); }
+  svg .note { fill: var(--muted); font-family: var(--font-note); font-style: italic; font-size: 10.5px; }
+  svg .note.bad { fill: var(--defect); } svg .note.good { fill: var(--call); }
+  svg .note.open { fill: var(--trigger); }
+  svg .data { fill: var(--data); font-family: var(--font-body); font-style: normal; font-size: 10.5px; }
+  svg .x { stroke: var(--muted); stroke-width: 1.1; fill: none; }
+</style>
+
+"""
 
 
 # end of file
