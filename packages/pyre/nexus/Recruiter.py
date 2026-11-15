@@ -29,9 +29,9 @@ class Recruiter(pyre.protocol, family="pyre.nexus.recruiters"):
         """
 
     @pyre.provides
-    def dismiss(self, team, member, **kwds):
+    def dismiss(self, team, crew, **kwds):
         """
-        The {team} manager has dismissed the given {member}
+        The {team} manager has dismissed the given {crew} member
         """
 
     @pyre.provides
