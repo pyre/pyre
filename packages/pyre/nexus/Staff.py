@@ -185,25 +185,28 @@ class Staff(Pool, family="pyre.nexus.teams.staff"):
             try:
                 # ask each one to exit
                 crew.dismissed()
-                # and reap the process
-                self.recruiter.dismiss(team=self, crew=crew)
-            # dead members raise while being messaged or waited on
-            except (OSError, ChildProcessError):
-                # nothing more to do for them
-                continue
+            # a dead member raises while being messaged
+            except OSError:
+                # and is collected all the same
+                pass
+            # hand it to the recruiter, which sees it leave
+            self.recruiter.dismiss(team=self, crew=crew)
         # go through the working members
         for crew in working:
             # carefully, for the same reason
             try:
                 # terminate each one; its work is moot at exit
                 os.kill(crew.pid, signal.SIGKILL)
-                # and have the recruiter collect the process, since only it knows whose child
-                # the member is
-                self.recruiter.dismiss(team=self, crew=crew)
-            # dead members raise while being signaled or waited on
-            except (OSError, ChildProcessError):
-                # nothing more to do for them
-                continue
+            # a member that is gone already
+            except ProcessLookupError:
+                # is collected all the same
+                pass
+            # hand it to the recruiter, which collects the process, since only it knows whose
+            # child the member is
+            self.recruiter.dismiss(team=self, crew=crew)
+        # every member has been told; now wait for all of them at once, so the exit costs one
+        # grace period at most, however many members there are
+        self.recruiter.settle(team=self)
         # tasks still awaiting outcomes will never get one; deliver the bad news so nobody
         # is left waiting on a promise
         for task, callbacks in list(self.pending.items()):

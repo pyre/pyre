@@ -7,7 +7,6 @@
 
 # externals
 import functools
-import os
 
 # support
 import pyre
@@ -188,6 +187,13 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         A {crew} member died without a formal dismissal; clean up after it
         """
+        # get the journal
+        import journal
+
+        # say what happened
+        journal.debug("pyre.nexus.departures").log(
+            f"{self.pyre_name}: member {crew.pid} died without being dismissed"
+        )
         # remove the member from all rosters
         self.registered.discard(crew)
         self.active.discard(crew)
@@ -199,15 +205,20 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         except OSError:
             # nothing further
             pass
-        # carefully
-        try:
-            # reap the corpse
-            os.waitpid(crew.pid, 0)
-        # tolerating one that was already collected
-        except (OSError, ChildProcessError):
-            # nothing further
-            pass
+        # its process is my recruiter's to collect, since only it knows whose child it is
+        self.recruiter.bury(team=self, crew=crew)
         # all done
+        return self
+
+    @pyre.export
+    def departed(self, crew, status):
+        """
+        The process of the {crew} member is gone, with the exit {status} my recruiter collected
+
+        A pool has taken the member off its rosters already, when it dismissed or buried it, so
+        there is nothing left to do; teams that care how their members left override this
+        """
+        # nothing to do
         return self
 
     # implementation details
@@ -226,10 +237,18 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         Assemble the team
         """
+        # get the journal; imported here because the package boots the framework, which
+        # imports me
+        import journal
+
+        # make a channel
+        channel = journal.debug("pyre.nexus.recruitment")
         # get my recruiter to recruit some workers
         for crew in self.recruiter.recruit(team=self, **kwds):
             # register the crew member
             self.registered.add(crew)
+            # and say so
+            channel.log(f"{self.pyre_name}: recruited member {crew.pid}")
         # all done
         return self
 
@@ -241,6 +260,13 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         self.registered.remove(crew)
         # to active
         self.active.add(crew)
+        # get the journal
+        import journal
+
+        # and say that it checked in
+        journal.debug("pyre.nexus.recruitment").log(
+            f"{self.pyre_name}: member {crew.pid} checked in"
+        )
         # all done
         return self
 
@@ -288,6 +314,11 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         Dismiss the {crew} member from the team
         """
+        # get the journal
+        import journal
+
+        # say what is happening
+        journal.debug("pyre.nexus.departures").log(f"{self.pyre_name}: dismissed member {crew.pid}")
         # notify this crew member it is dismissed
         crew.dismissed()
         # let the recruiter know

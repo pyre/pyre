@@ -50,6 +50,12 @@ class Team(pyre.protocol, family="pyre.nexus.teams"):
         Apply the journal {control} instruction here and in every crew member
         """
 
+    @pyre.provides
+    def departed(self, crew, status):
+        """
+        The process of the {crew} member is gone, with the exit {status} its recruiter collected
+        """
+
     # my default
     @classmethod
     def pyre_default(cls, **kwds):
