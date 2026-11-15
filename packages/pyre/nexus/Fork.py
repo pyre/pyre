@@ -84,7 +84,7 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
     grace.doc = "how long a dismissed crew member gets to leave before it is made to"
 
     # protocol obligations
-    @pyre.provides
+    @pyre.export
     def recruit(self, team, **kwds):
         """
         Recruit members for the {team}
@@ -98,7 +98,7 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         # all done
         return
 
-    @pyre.provides
+    @pyre.export
     def deploy(self, team, **kwds):
         """
         Create a new {team} member using the {fork} system call
@@ -184,10 +184,10 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         # spin it up and return it
         return crew.join(team=team)
 
-    @pyre.provides
+    @pyre.export
     def dismiss(self, team, crew, **kwds):
         """
-        The {team} manager has dismissed the given {member}
+        The {team} manager has dismissed the given {crew} member
 
         The member is expected to leave on its own, and gets a grace period to do so. One that
         is still around when the period is over is told to go, and one that ignores that is
@@ -223,7 +223,7 @@ class Fork(pyre.component, family="pyre.nexus.recruiters.fork", implements=Recru
         # all done
         return
 
-    @pyre.provides
+    @pyre.export
     def instruct(self, control):
         """
         The journal {control} was applied to the team; members forked from its process from now

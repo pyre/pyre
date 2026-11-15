@@ -480,7 +480,7 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
         return
 
     # protocol obligations
-    @pyre.provides
+    @pyre.export
     def deploy(self, team, **kwds):
         """
         Create a new {team} member by asking the helper to fork it
@@ -526,10 +526,10 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
         # spin it up and return it
         return crew.join(team=team)
 
-    @pyre.provides
+    @pyre.export
     def dismiss(self, team, crew, **kwds):
         """
-        The {team} manager has dismissed the given {member}
+        The {team} manager has dismissed the given {crew} member
 
         As with {fork}, the member gets a grace period to leave on its own, and is then told,
         and then made, to go; the difference is that the member is the helper's child, so it is
@@ -566,7 +566,7 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
         # all done
         return
 
-    @pyre.provides
+    @pyre.export
     def instruct(self, control):
         """
         Pass the journal {control} to the helper, so the members it forks later inherit it
