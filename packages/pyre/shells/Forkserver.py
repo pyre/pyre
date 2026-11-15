@@ -15,13 +15,13 @@ from .Executive import Executive
 # declaration
 class Forkserver(Executive, family="pyre.shells.forkserver"):
     """
-    A shell that never runs the application, and instead serves the recruiter that started it
-    by forking crew members on request
+    A shell that never runs the application, and instead turns it into the staffing agency of
+    the process that started it, which forks crew members on request
 
-    The recruiter spawns the application from its own command line, in this shell, so the
-    helper loads the same code and the same configuration as the application; the helper then
-    does nothing but wait for requests, so the members it forks are copies of a process that
-    has touched nothing, however long the application has been running
+    The liaison spawns the application from its own command line, in this shell, so the agency
+    loads the same code and the same configuration as the application; the agency then does
+    nothing but serve requests, so the members it forks are copies of a process that has
+    touched nothing, however long the application has been running
     """
 
     # user configurable state
@@ -38,26 +38,27 @@ class Forkserver(Executive, family="pyre.shells.forkserver"):
     @pyre.export
     def launch(self, application, *args, **kwds):
         """
-        Serve the recruiter that started me, instead of running {application}
+        Serve as the staffing agency of the process that started me, instead of running
+        {application}
         """
         # without a control channel
         if self.control is None:
             # make a channel
             channel = application.error
             # complain
-            channel.line("the forkserver shell is started by a recruiter, not by hand")
+            channel.line("the forkserver shell is started by a staffing liaison, not by hand")
             channel.line(f"'{self.pyre_name}.control' names no channel to serve")
             # flush
             channel.log()
             # and bail, in case errors are not fatal
             return 1
-        # get the recruiter that knows how to serve
-        from ..nexus.Forkserver import Forkserver as recruiter
+        # get the agency
+        from ..nexus.StaffingAgency import StaffingAgency
 
         # make one, named after me
-        server = recruiter(name=f"{self.pyre_name}.recruiter")
+        agency = StaffingAgency(name=f"{self.pyre_name}.agency")
         # and serve
-        return server.serve(control=self.control, journal=self.journal)
+        return agency.serve(control=self.control, journal=self.journal)
 
 
 # end of file
