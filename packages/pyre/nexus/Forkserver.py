@@ -594,16 +594,33 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
         channel = socket.socket(fileno=control)
         # if my journal is to be routed
         courier = self.courier(descriptor=journal) if journal is not None else None
+        # the team may be waiting on the report of an exit before it dismisses its next member,
+        # so an exit must wake me up at once: the signal that announces it rings a bell, a byte
+        # written into {alarm} that i hear on {wakeup}
+        wakeup, alarm = socket.socketpair()
+        # neither end may ever block me
+        wakeup.setblocking(False)
+        alarm.setblocking(False)
+        # the byte is written only for signals that have a handler of their own, so give the
+        # exits one
+        signal.signal(signal.SIGCHLD, self.ring)
+        # and have them ring the bell
+        signal.set_wakeup_fd(alarm.fileno(), warn_on_full_buffer=False)
         # say what i am running
         channel.send(pickle.dumps({"hello": fingerprint()}))
         # serve until my parent is gone
         while os.getppid() == parent:
             # report the members that exited
             self.harvest(channel=channel)
-            # wait a little for a request
-            ready, _, _ = select.select([channel], [], [], 0.1)
-            # if there is none
-            if not ready:
+            # wait a little for a request or an exit; the wait is short, since it is also how i
+            # notice that my parent is gone
+            ready, _, _ = select.select([channel, wakeup], [], [], 0.1)
+            # if a member exited
+            if wakeup in ready:
+                # silence the bell; the exits that rang it are reported on the next pass
+                self.silence(bell=wakeup)
+            # if there is no request
+            if channel not in ready:
                 # check again
                 continue
             # carefully
@@ -624,7 +641,11 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
             if "recruit" in request:
                 # fork the member; this returns only on my side of the fork
                 pid = self.enlist(
-                    request=request, descriptors=descriptors, control=channel, courier=courier
+                    request=request,
+                    descriptors=descriptors,
+                    control=channel,
+                    courier=courier,
+                    bell=(wakeup, alarm),
                 )
                 # tell my parent who it is
                 channel.send(pickle.dumps({"recruited": pid}))
@@ -643,7 +664,34 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
         return 0
 
     # implementation details
-    def enlist(self, request, descriptors, control, courier):
+    def ring(self, signum, frame):
+        """
+        Note that a member exited; the signal has rung the bell already, and the serving loop
+        collects the members it announces
+        """
+        # so there is nothing else to do
+        return
+
+    def silence(self, bell):
+        """
+        Empty the {bell}, so it can ring again
+        """
+        # as long as there is something in it
+        while True:
+            # carefully, since reading it must never block
+            try:
+                # take what is there
+                rings = bell.recv(4096)
+            # if there is nothing left
+            except BlockingIOError:
+                # it is silent
+                return
+            # if the other end is gone
+            if not rings:
+                # nothing more will arrive
+                return
+
+    def enlist(self, request, descriptors, control, courier, bell):
         """
         Fork a new crew member as described by {request}, talking over {descriptors}
         """
@@ -661,7 +709,13 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
         # loop of the helper
         try:
             # become the member; this does not return
-            self.member(request=request, descriptors=descriptors, control=control, courier=courier)
+            self.member(
+                request=request,
+                descriptors=descriptors,
+                control=control,
+                courier=courier,
+                bell=bell,
+            )
         # if something let an exception through before the member could leave
         finally:
             # get the complaint of the journal, which has already said what it was about
@@ -676,10 +730,17 @@ class Forkserver(Fork, family="pyre.nexus.recruiters.forkserver"):
             # and end the process
             os._exit(1)
 
-    def member(self, request, descriptors, control, courier):
+    def member(self, request, descriptors, control, courier, bell):
         """
         Turn this fresh fork of the helper into the crew member described by {request}
         """
+        # the exits of the helper's children are none of my business, so stop listening for them
+        signal.set_wakeup_fd(-1)
+        signal.signal(signal.SIGCHLD, signal.SIG_DFL)
+        # and let go of the bell they ring
+        for end in bell:
+            # one end at a time
+            end.close()
         # the control channel is the helper's business
         control.close()
         # and so is the helper's journal channel
