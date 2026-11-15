@@ -8,38 +8,23 @@ michael a.g. aïvázis <michael.aivazis@para-sim.com>
 
 # crew members from a clean process
 
-A design for recruiting the members of a `pyre.nexus` team from a helper process that is
-started with the application, instead of forking them from the process that manages the team.
+A design for recruiting the members of a `pyre.nexus` team from a staffing agency, a process that
+is started with the application, instead of forking them from the process that manages the team.
 The members talk to their team exactly as they do today; what changes is which process they are
-a copy of.
+a copy of, and how a team learns that a member has left.
 
-Branch: `forkserver` in `pyre`.
+Branch: `teardown` in `pyre`.
 
-Status: **built**, as `pyre.nexus.recruiters.forkserver` (`nexus/Forkserver.py`) and the shell
-`pyre.shells.forkserver` (`shells/Forkserver.py`). The facts about the code that predates it were
-read out of the source on 2026-09-28, with the file cited. What was built differs from the design
-below in these details:
-
-- The helper is started by `Forkserver.start()`, which an application calls as early as it needs,
-  e.g. a server while it activates; otherwise the first recruitment starts it. One helper serves
-  every team of the process.
-- The helper runs the command line of the application, with the script made absolute when the
-  recruiter is imported, followed by `--shell=forkserver --shell.control=<fd>
-  --shell.journal=<fd>`; only a pyre application can be re-run this way, so a plain script keeps
-  `Fork`.
-- The control channel is a unix datagram socket pair, so each request keeps its own descriptors;
-  the messages are pickled. The helper's first message describes the interpreter, the
-  interpreter options and the script, and the installation of pyre it runs; a mismatch with the
-  team's process breaches a firewall.
-- The crew class travels pickled, with the file its module was loaded from in the team's
-  process. The helper passes it along without loading it; the member loads it after the fork,
-  and refuses to serve, with a firewall on the journal it ships to the team, if its module comes
-  from another file.
-- The helper routes its own journal to the process that started it, which replays the entries
-  when it listens on an event loop. Journal controls reach the helper through the new recruiter
-  obligation `instruct`, which `Pool.instruct` calls; `Fork` has nothing to pass along.
-- `Staff.disband` hands the members it kills to its recruiter to collect, since only the
-  recruiter knows whose children they are.
+Status: **redesign settled, not yet built.** A first version was built on branch `forkserver`
+(pyre#294, merged 2026-09-29) as `pyre.nexus.recruiters.forkserver` and the shell
+`pyre.shells.forkserver`. It worked, but it did not look like pyre: loose functions and module
+state, a plain class of 340 lines beside the recruiter in one file, a hand-written event loop, and
+waits that block the event loop of the team's process. The last of these is what made a server
+stall: dismissing a crew took about a tenth of a second per member, on the server's event loop
+(16 builders, 1.55 s; 32 members at first contact, 3.2 s; measured with qed on 2026-11-15). The
+design below replaces it; the choices behind it were made in a tracker on 2026-11-15, and are
+recorded here as the permanent record. The facts about the code that predates both versions were
+read out of the source on 2026-09-28, with the file cited.
 
 
 ## The problem
@@ -100,73 +85,135 @@ does not survive a fork.
 
 ## The design
 
-A **helper** process is started with the application, before any product is opened, and every
-crew member is forked from the helper instead of from the team's process. The helper does
-nothing but wait for requests, so it never holds the threads of a library, and every member it
-forks is as clean as the application was when it started.
+A **staffing agency** is started with the application, before any product is opened, and every
+crew member is forked by the agency instead of by the team's process. The agency does nothing
+but wait for requests, so it never holds the threads of a library, and every member it forks is
+as clean as the application was when it started. One agency serves every team of the process.
 
 ```
-team's process ──control channel──> helper           requests, pids, exit reports
-      │                                │ fork
-      └──crew channel + journal channel┴──> crew member   as today
+team's process ──control channel──> staffing agency      requests, pids, exit reports
+      │                                     │ fork
+      └──crew channel + journal channel─────┴──> crew member   as today
 ```
 
-### Starting the helper
+### The pieces, one class per file
 
-The helper is **spawned**, not forked: a fresh interpreter that runs the application's own
-driver, with the same command line, in a shell whose only job is to serve recruitment requests.
-It therefore loads the same code and the same configuration as the application, and it is clean
-whenever it starts, so it can be started lazily, with the first team that recruits, and restarted
-if it dies. It costs the start of one interpreter, once; how long that takes for a real
-application is to be measured.
+- **`Recruiter`** (`nexus/Recruiter.py`), the protocol, keeps its obligations, with `dismiss`
+  taking `crew`, the name its implementations and its caller use. Recruiters are told when a
+  member leaves on its own (see *Members leaving*).
+- **`Fork`** (`nexus/Fork.py`) forks members from the team's process, as today, and fulfils its
+  obligations with `@pyre.export`, like every other component.
+- **`Forkserver`** (`nexus/Forkserver.py`), the recruiter that asks the staffing agency for its
+  members; it derives from `Fork`, which it shares the crew side of a member with.
+- **`StaffingAgency`** (`nexus/StaffingAgency.py`), the component that runs in the agency's
+  process: it serves recruitment requests on an event loop of its own, forks the members, and
+  reports their exits.
+- **`Liaison`** (`nexus/Liaison.py`), the agency's handle in the team's process: spawns the
+  agency, holds the team's end of the control channel, sends requests, and turns the agency's
+  reports into events on the team's event loop. It is a component with a fixed name, so pyre hands
+  every recruiter in the process the same one, which is how the process keeps a single agency.
+- **The messages** on the control channel, each a small class in a file of its own: a recruitment
+  request, its answer with the pid, a journal control, an exit report, and the agency's greeting
+  that describes what it runs.
 
-The team's process and the helper share a control channel, a socket pair whose far end the helper
-receives as an inherited descriptor, named on its command line.
+Nothing lives at the top level of a module. What the first version kept in loose functions moves
+to the entity that owns the knowledge:
+
+- the command line that launches the agency, the application's own with the script made
+  absolute, is the `Liaison`'s, which is what spawns the agency; it is captured before the working
+  directory can change, which is why the first version captured it at import;
+- the description of what a process runs (interpreter, installation of pyre, script) belongs to
+  the agency, which has to prove it runs what the team's process runs;
+- the file a crew class was loaded from travels with the recruitment request;
+- the workaround for the macOS proxy lookup that does not survive a fork (`shield`) is a step of
+  `Fork`'s configuration, which happens before any member is forked.
+
+The whole life of a team recruited this way, from the start of the agency to the shutdown of
+the application, is drawn as a sequence diagram by `etc/introspection/recruiter-lifecycle.py`.
+
+### Starting the agency
+
+The agency is **spawned**, not forked: a fresh interpreter that runs the application's own
+driver, with the same command line, in the shell `pyre.shells.forkserver`. It therefore loads the
+same code and the same configuration as the application, and it is clean whenever it starts, so
+it can be started lazily, with the first team that recruits, and restarted if it dies. An
+application may start it early, e.g. a server while it activates.
+
+The shell builds the `StaffingAgency` component and runs its event loop: a pyre dispatcher, like
+every other event loop in the framework.
+
+- Requests arrive through `whenReadReady` on the agency's end of the control channel.
+- The exits of its children arrive through `whenSignal(SIGCHLD)`, which `pyre.ipc.Signals`
+  delivers as an ordinary read event; a member forked from the agency starts without the relay,
+  so it never hears its siblings' exits.
+- The end of the control channel is how the team's process lets go, so the agency's loop ends
+  when it reads the end of the channel; nothing polls.
+
+### The control channel
+
+The control channel is a `pyre.ipc.SocketPair`, a stream, whose far end the agency inherits as a
+descriptor named on its command line. Messages are instances of the message classes, carried by
+the `Pickler` marshaler, which frames each one with its length. A message that carries
+descriptors announces how many follow, and the descriptors ride right after it through
+`SocketPair.sendDescriptors`, the way a member's report carries a trailer outside the marshaled
+stream. The agency's first message is its greeting; a greeting that does not describe what the
+team's process runs breaches a firewall.
 
 ### Recruiting a member
 
 1. The recruiter opens the crew channel, and the journal channel if the team wants one, exactly as
-   `Fork.deploy` does today.
-2. It sends the helper a recruitment request over the control channel: which crew class to build,
-   by its family, and whether a journal channel comes with it. The member's ends of the channels
-   travel with the request as ancillary data, the way the spools of rendered tiles travel between
-   a member and its team today.
-3. The recruiter closes its copies of the member's ends and keeps its own, as it does after a fork
-   today.
-4. The helper forks. The child closes the control channel, builds the crew member on the
-   descriptors it received, installs the journal courier, registers, and runs, which is the child
-   branch of `Fork.deploy` without the `team` object.
-5. The helper answers with the pid of the child. The answer is a local round trip, so the
-   recruiter can wait for it and keep recruitment synchronous, as it is today.
+   `Fork.deploy` does.
+2. It sends a recruitment request: the crew class, pickled, with the file its module was loaded
+   from, and whether a journal channel comes with it; the member's ends of the channels follow as
+   descriptors.
+3. The recruiter closes its copies of the member's ends and keeps its own, as after a fork.
+4. The agency forks. The child builds the crew member on the descriptors it received, refuses to
+   serve if the crew class's module came from another file, installs the journal courier,
+   registers, and runs.
+5. The agency answers with the pid of the child. The answer is a local round trip, so recruitment
+   stays synchronous.
 
 From here on the team and the member exchange tasks, reports, descriptors, and journal entries
-directly. The helper is not on the data path.
+directly. The agency is not on the data path.
 
 ### Members leaving
 
-A member is the helper's child, so only the helper can harvest its exit status. The helper
-reaps every child that exits and reports its pid and status over the control channel.
+Nothing in the team's process waits for a member to leave. A departure is an event on the team's
+event loop, whichever way it comes about.
 
-- The team still learns of a death first from the end of its crew channel, as it does today.
-- `Fork.dismiss` keeps its escalation: the team's process can still send `SIGTERM` and `SIGKILL` to
-  the member, which belongs to the same user. What changes is how it waits: instead of `waitpid`,
-  it waits for the helper's exit report, with the same deadline.
-- If the helper dies, the team's process sees the end of the control channel. It starts a new
-  helper, and the members already running are unaffected, since they never talk to it; the ones
-  that were the old helper's children are reparented to `init`, which reaps them.
+- **Dismissal.** `Pool.dismiss` tells the member it is dismissed and hands it to the recruiter,
+  which returns at once. The recruiter arms a dispatcher alarm for the grace period; if the member
+  has not left when it fires, the recruiter sends `SIGTERM` and arms another, then `SIGKILL`. The
+  member's exit cancels whatever is armed.
+- **Exits.** For `Fork`, a member is a child of the team's process, and its exit arrives through
+  `whenSignal(SIGCHLD)`, after which the recruiter reaps it without waiting. For `Forkserver`, a
+  member is the agency's child; the agency reaps it and sends an exit report, which arrives
+  through `whenReadReady` on the control channel. Either way, the recruiter cancels what it armed
+  for the member and tells the team through the hook `departed(crew, status)`, which does nothing
+  by default and which a team may override.
+- **Deaths.** The team still learns of a death first from the end of its crew channel. It hands
+  the member to its recruiter through the new recruiter obligation `bury(team, crew)`, instead of
+  reaping it itself: `Pool.bury` no longer calls `waitpid`, since only the recruiter knows whose
+  child the member is.
+- **Shutdown.** When the application ends, `Staff.disband` has to see its members gone before the
+  process exits, and nothing else runs then, so it may wait; it does so by turning the event loop
+  until the recruiter reports every member gone, not by waiting outside it.
+- If the agency dies, the team's process sees the end of the control channel. It starts a new
+  agency, and the members already running are unaffected, since they never talk to it; the ones
+  that were the old agency's children are reparented to `init`, which reaps them.
 
 ### Where it lives
 
-A new recruiter, `pyre.nexus.recruiters.forkserver`, beside `Fork`, selected by configuration.
-`Fork` stays as it is, so that the two can be run side by side and measured, and so that an
-application that never opens files in buckets pays nothing for the helper. Pools and staffs get
-the new recruiter the same way they get `Fork`.
+`pyre.nexus.recruiters.forkserver`, beside `Fork`, selected by configuration. `Fork` stays the
+default (`Recruiter.pyre_default`), since only a pyre application can be re-run in the agency's
+shell; an application that never opens files in buckets pays nothing for the agency. Pools and
+staffs get either recruiter the same way.
 
 
 ## What a member inherits today, and what it will not
 
 Today a member inherits the state of the team's process at the moment it is recruited. With the
-helper, it inherits the state of the application as it was at startup. Whatever the member needs
+agency, it inherits the state of the application as it was at startup. Whatever the member needs
 that is set after startup has to travel with its tasks, or be sent to it when it joins.
 
 The worker side of pyre and qed was read for everything a member takes from the process it was
@@ -182,21 +229,21 @@ fresh tokens of the archive it came from (`Chore._harvestReader`), the budgets o
 team, the state of the controllers and the statistics a tile needs, and the location of the
 workspace; a listing carries the recipe of its archive; a spool is a new temporary file.
 
-**Set at startup, and therefore present in a helper that starts with the application.** The code
+**Set at startup, and therefore present in an agency that starts with the application.** The code
 of the application and of its readers, resolved by family; the configuration store, filled from
 the configuration files and the command line at startup, from which every component a member builds
 takes its settings; the journal settings of the configuration; the environment, from which the
 member resolves AWS credentials when a reader names no profile (`qed/readers/access.py:87`); the
-working directory, since the workspace and `file:` uris may be relative; the umask. A spawned helper
+working directory, since the workspace and `file:` uris may be relative; the umask. A spawned agency
 has all of these only if it is started with the same interpreter path, environment, working
 directory, and command line as the application.
 
-**Set after startup, which a member built by the helper would not have.**
+**Set after startup, which a member built by the agency would not have.**
 
 1. *The two channel ends, and which crew to build.* Today the child picks up both ends of the fork
-   and reads `team.crew`, and whether to route the journal, from the team object. With the helper,
+   and reads `team.crew`, and whether to route the journal, from the team object. With the agency,
    the recruitment request carries the ends, the family of the crew class, and the journal flag. The
-   member no longer needs `Fork.shed`, since the helper holds none of the team's descriptors.
+   member no longer needs `Fork.shed`, since the agency holds none of the team's descriptors.
 2. *Journal settings changed while the application runs.* A client that switches a channel on
    (`qed/gql/journal/JournalChannelSet.py:50-60`) reaches the members that exist through
    `Pool.instruct`, whose docstring states the assumption this design breaks: "A member forked after
@@ -205,12 +252,12 @@ directory, and command line as the application.
    journal channel of every member it recruits; `Crew.heed` applies them before the first task
    (`nexus/Crew.py:459-461`).
 3. *The descriptor ceiling.* `qed.nexus.Server._widen` raises it when the server activates, before
-   the fleet exists, so that every member inherits it. The helper has to be started after that, or
+   the fleet exists, so that every member inherits it. The agency has to be started after that, or
    raise its own.
 4. *The environment, changed at run time.* The GDAL reader writes `AWS_PROFILE` and `AWS_REGION` into
    the environment of the server when it opens a raster in a bucket (`qed/readers/native/GDAL.py:
    130-136`), and every member forked since reads them when it resolves credentials. Members built
-   by the helper would not. This is a leak today rather than a feature, but removing it changes
+   by the agency would not. This is a leak today rather than a feature, but removing it changes
    what a reader without an explicit profile resolves to, so it should be settled explicitly: the
    GDAL reader keeps its settings to itself, and a reader that needs a profile names it.
 5. *The journal device of the server.* `Server._listen` installs the device that reaches the browser,
@@ -222,12 +269,12 @@ connections, the channels of other teams' members, and the product handles the s
 state of native libraries the server has touched, which is the reason for this design; and a
 replacement member inheriting the exception of the failure it replaces (`Fork.py:144-148`).
 
-**Rules the helper has to keep.**
+**Rules the agency has to keep.**
 
 - It never builds a component under a name a member builds. pyre hands back the existing instance
   for a name it knows and ignores the constructor's arguments (`components/Actor.py:127-133`), and
   members build theirs under derived names, `{reader}.crew`, `{reader}.crew.workspace`,
-  `{archive}.crew`; a helper that had built one would hand every member a stale instance, and the
+  `{archive}.crew`; an agency that had built one would hand every member a stale instance, and the
   recipe the task carries would be silently ignored.
 - It opens no product, mounts no archive, and makes no http request, so that it never holds threads
   of its own; that includes the proxy lookup `Fork.shield` guards against on macOS.
@@ -240,21 +287,40 @@ of the family, so an application that sets it on its own workspace would find it
 under a different folder (`qed/nexus/Tile.py:132-133`, `Decimate.py:176-177`). SIGTERM, which
 `Fork.dismiss` sends to a member that does not leave, reaches the signal handler the member inherited
 from the nexus node, which stops a loop the member does not run, so today it is SIGKILL that
-removes such a member; a member built by a spawned helper would leave on SIGTERM.
+removes such a member; a member built by a spawned agency would leave on SIGTERM.
 
 
 ## Open questions
 
-- Whether the helper should be spawned with the application's command line, which reproduces the
+- Whether a component made by name before the configuration is loaded, as the `Liaison` may be
+  when an application starts the agency early, picks up its settings.
+- Whether the agency should be spawned with the application's command line, which reproduces the
   configuration exactly, or with a smaller command line naming just the configuration files, which
   would skip whatever the command line does besides configuring.
-- What a team does when the helper cannot be restarted: refuse to recruit and say so, or fall back
+- What a team does when the agency cannot be restarted: refuse to recruit and say so, or fall back
   to forking itself.
-- Whether the macOS workaround in `Fork`, `shield`, is still needed for members forked from the
-  helper, which never builds an http client.
-- Where in the startup of a server the helper is started: after `Server._widen` raises the
+- Whether `shield` is still needed for members forked from the agency, which never builds an http
+  client; `Fork` needs it either way.
+- Where in the startup of a server the agency is started: after `Server._widen` raises the
   descriptor ceiling, and before anything mounts an archive or opens a product; the order in which
   a server loads its archives and sources relative to its activation has not been checked.
+
+
+## Blind alleys
+
+Approaches tried and abandoned, with why, and what would justify trying them again.
+
+1. **A wakeup for the first version's hand-written loop** (`7f8d28f47` on `teardown`,
+   2026-11-15). The helper reported a member's exit only between its 0.1 s waits, and the team's
+   process dismissed members one at a time, waiting for each report, so a stand-down cost about a
+   tenth of a second per member. A `SIGCHLD` handler writing into a socket pair registered with
+   `signal.set_wakeup_fd` woke the helper at once, and the stand-down of 16 builders fell from
+   1.55 s to about 75 ms. It was abandoned because it duplicated `pyre.ipc.Signals`, which already
+   delivers signals to an event loop and handles forked children, and because it left dismissal
+   waiting on the event loop of the team's process, which is the defect itself. It stays on the
+   branch as a record and as the baseline the redesign is measured against, with the test
+   `tests/pyre.pkg/nexus/forkserver_standdown.py`. Worth trying again only for a recruiter that
+   cannot use a pyre dispatcher.
 
 
 <!-- end of file -->
