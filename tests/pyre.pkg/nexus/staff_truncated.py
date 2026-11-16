@@ -79,13 +79,17 @@ def test():
     keep = crew.assess(channel=parent, team=staff, task=task)
     # the handler winds down quietly
     assert keep is False
-    # the bad news was delivered as a casualty
+    # the bad news was delivered
     result, error = outcomes[0]
+    # with no result
     assert result is None
+    # and a casualty as the error
     assert isinstance(error, pyre.nexus.exceptions.Casualty)
-    # and the member was buried, with the staff back at full strength
+    # the member was buried
     survivors = list(staff.crews())
+    # and is gone from the roster
     assert crew not in survivors
+    # with the staff back at full strength
     assert len(survivors) == 1
 
     # send everybody home
@@ -97,6 +101,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

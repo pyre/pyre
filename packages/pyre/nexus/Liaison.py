@@ -356,10 +356,11 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
         )
         # spawn it, with the same environment and working directory
         self.process = subprocess.Popen(argv, pass_fds=inherited, close_fds=True)
-        # its ends are its own now, so release my copies
+        # its ends are its own now, so release my copies: its control channel
         control.child.close()
-        # all of them
+        # its report channel
         reports.child.close()
+        # and its journal
         journal.child.close()
         # keep mine
         self.control = control.parent
