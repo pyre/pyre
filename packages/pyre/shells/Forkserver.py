@@ -25,12 +25,16 @@ class Forkserver(Executive, family="pyre.shells.forkserver"):
     """
 
     # user configurable state
-    control = pyre.properties.int(default=None)
-    control.doc = "the descriptor of the channel the recruiter sends its requests down"
+    control = pyre.properties.channel(default=None)
+    control.doc = "the channel the recruiter sends its requests down, and gets its answers on"
+
+    # where my reports of exits go
+    reports = pyre.properties.channel(default=None)
+    reports.doc = "the channel that carries my reports of the exits of my members"
 
     # where my journal goes
-    journal = pyre.properties.int(default=None)
-    journal.doc = "the descriptor of the channel that carries my journal entries back"
+    journal = pyre.properties.channel(default=None)
+    journal.doc = "the channel that carries my journal entries back"
 
     # my programming model
     model = pyre.properties.str(default="forkserver")
@@ -43,14 +47,22 @@ class Forkserver(Executive, family="pyre.shells.forkserver"):
         Serve as the staffing agency of the process that started me, instead of running
         {application}
         """
-        # without a control channel
-        if self.control is None:
+        # the channels the liaison hands me, which i cannot serve without
+        missing = [
+            name
+            for name, channel in (("control", self.control), ("reports", self.reports))
+            if channel is None
+        ]
+        # if any are missing
+        if missing:
             # make a channel
             channel = application.error
             # complain
             channel.line("the forkserver shell is started by a staffing liaison, not by hand")
-            # and what is missing
-            channel.line(f"'{self.pyre_name}.control' names no channel to serve")
+            # and say what is missing
+            for name in missing:
+                # one at a time
+                channel.line(f"'{self.pyre_name}.{name}' names no channel")
             # flush
             channel.log()
             # and bail, in case errors are not fatal
@@ -61,7 +73,7 @@ class Forkserver(Executive, family="pyre.shells.forkserver"):
         # make one, named after me
         agency = StaffingAgency(name=f"{self.pyre_name}.agency")
         # and serve
-        return agency.serve(control=self.control, journal=self.journal)
+        return agency.serve(control=self.control, reports=self.reports, journal=self.journal)
 
 
 # end of file

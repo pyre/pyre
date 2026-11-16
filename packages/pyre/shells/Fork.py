@@ -6,9 +6,14 @@
 
 
 # externals
+import collections
 import os
-import pyre  # the framework
-from .Executive import Executive  # my superclass
+
+# support
+import pyre
+
+# my superclass
+from .Executive import Executive
 
 
 # declaration
@@ -16,6 +21,10 @@ class Fork(Executive, family="pyre.shells.fork"):
     """
     A shell that invokes the main application behavior in a child process
     """
+
+    # types
+    # the channels that carry the standard streams of the child, one per stream
+    streams = collections.namedtuple("streams", ["stdin", "stdout", "stderr"])
 
     # public state
     capture = pyre.properties.bool(default=True)
@@ -25,12 +34,12 @@ class Fork(Executive, family="pyre.shells.fork"):
     @pyre.export
     def launch(self, application, *args, **kwds):
         """
-        Invoke the {application} behavior in a subprocess and return a pair of channels
-        corresponding to {stdout} and {stderr} of the child, with the write end of the channels
-        both connected to the child's {stdin}
+        Invoke the {application} behavior in a subprocess; both processes get the channels that
+        carry the standard streams of the child, one per stream
         """
         # if we are in debug mode, launch the application
         if application.DEBUG:
+            # in this process
             return application.main(*args, **kwds)
 
         # build the three pipes
@@ -47,7 +56,7 @@ class Fork(Executive, family="pyre.shells.fork"):
             # and return its status
             return status
 
-        # in the child process, convert {stdout} and {stderr} into channels
+        # in the child process, build the child side channels
         channels = self.childChannels(pipes)
         # set up a net
         try:
@@ -73,22 +82,27 @@ class Fork(Executive, family="pyre.shells.fork"):
         """
         # bail out if we are not supposed to build pipes to the child
         if not self.capture:
+            # by building none
             return (None, None, None)
 
         # otherwise, build the pipes
         stdin = os.pipe()
+        # one for each
         stdout = os.pipe()
+        # standard stream
         stderr = os.pipe()
         # and return them
         return (stdin, stdout, stderr)
 
     def parentChannels(self, pipes):
         """
-        Build the parent side of the communication channels
+        Build the parent side of the communication channels: one that writes to the {stdin} of
+        the child, and two that read its {stdout} and {stderr}
         """
         # bail out if we are not supposed to build pipes to the child
         if not self.capture:
-            return (None, None)
+            # with no channels
+            return self.streams(stdin=None, stdout=None, stderr=None)
 
         # otherwise, access the pipe transport
         import pyre.ipc
@@ -97,20 +111,26 @@ class Fork(Executive, family="pyre.shells.fork"):
         transport = pyre.ipc.newPipe()
         # unpack
         stdin, stdout, stderr = pipes
-        # turn {stdout} and {stderr} into channels
-        # careful to identify the read/write ends correctly
-        stdout = transport.wrap(infd=stdout[0], outfd=stdin[1])
-        stderr = transport.wrap(infd=stderr[0], outfd=stdin[1])
-        # return them
-        return stdout, stderr
+        # the ends the child uses are not mine
+        for descriptor in (stdin[0], stdout[1], stderr[1]):
+            # so close them, so that i see the end of its output when it exits
+            os.close(descriptor)
+        # make a channel for each stream, from the end i use
+        return self.streams(
+            stdin=transport.wrap(outfd=stdin[1]),
+            stdout=transport.wrap(infd=stdout[0]),
+            stderr=transport.wrap(infd=stderr[0]),
+        )
 
     def childChannels(self, pipes):
         """
-        Build the child side of the communication channels
+        Build the child side of the communication channels: one that reads its {stdin}, and two
+        that write its {stdout} and {stderr}
         """
         # bail out if we are not supposed to build pipes to the child
         if not self.capture:
-            return (None, None)
+            # with no channels
+            return self.streams(stdin=None, stdout=None, stderr=None)
 
         # otherwise, access the pipe transport
         import pyre.ipc
@@ -119,12 +139,16 @@ class Fork(Executive, family="pyre.shells.fork"):
         transport = pyre.ipc.newPipe()
         # unpack
         stdin, stdout, stderr = pipes
-        # convert {stdout} and {stderr} into channels
-        # careful to identify the read/write ends correctly
-        stdout = transport.wrap(infd=stdin[0], outfd=stdout[1])
-        stderr = transport.wrap(infd=stdin[0], outfd=stderr[1])
-        # and return them
-        return stdout, stderr
+        # the ends the parent uses are not mine
+        for descriptor in (stdin[1], stdout[0], stderr[0]):
+            # so close them, so that i see the end of my input when the parent is done with it
+            os.close(descriptor)
+        # make a channel for each stream, from the end i use
+        return self.streams(
+            stdin=transport.wrap(infd=stdin[0]),
+            stdout=transport.wrap(outfd=stdout[1]),
+            stderr=transport.wrap(outfd=stderr[1]),
+        )
 
 
 # end of file
