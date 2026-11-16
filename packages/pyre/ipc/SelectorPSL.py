@@ -199,9 +199,9 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
             # compute how long i'm allowed to sleep before an alarm triggers
             # N.B.: {poll} returns {None} when no alarms are registered
             timeout = self.poll()
-            # the channel signals arrive on, if any; watching it is not a reason to stay up,
+            # the descriptor signals arrive on, if any; watching it is not a reason to stay up,
             # since a loop that is left with nothing but signals has run out of work
-            relay = Signals.relay().channel()
+            relay = Signals.relay().descriptor()
             # if there is nothing to watch
             if not (len(read) - (relay in read) or write) and timeout is None:
                 # mark

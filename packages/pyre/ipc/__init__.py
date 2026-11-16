@@ -47,6 +47,19 @@ def inet(spec=""):
     return schemata.inet.coerce(value=spec)
 
 
+# journal entries shipped down a channel
+def courier(channel, **kwds):
+    """
+    The journal device that ships entries down {channel}
+    """
+    # access the device; it is built on the journal, which may still be booting when this
+    # package is first imported
+    from .Courier import Courier
+
+    # make one
+    return Courier(channel=channel, **kwds)
+
+
 # the delivery of signals to event loops
 def signals():
     """
@@ -61,6 +74,10 @@ def signals():
 
 # my exceptions
 from . import exceptions
+
+# the base class of channels, and the record of the channels that travel in a message
+from .Channel import Channel as channel
+from .Manifest import Manifest as manifest
 
 # my protocols
 from .Dispatcher import Dispatcher as dispatcher

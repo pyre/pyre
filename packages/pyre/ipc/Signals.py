@@ -125,6 +125,13 @@ class Signals:
         # easy enough
         return self._reader
 
+    def descriptor(self):
+        """
+        The descriptor the event loops watch, if the relay is in charge of any signals
+        """
+        # the end of my channel that the event loops read, if there is one
+        return self._reader.inbound if self._reader is not None else None
+
     def signals(self):
         """
         Generate the signals the relay is in charge of
