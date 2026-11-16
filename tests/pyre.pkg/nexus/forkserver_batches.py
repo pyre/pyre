@@ -56,9 +56,13 @@ class Batches(pyre.application, family="tests.pyre.nexus.forkserver.batches"):
         # build a staff that recruits through the forkserver, over the socket transport, with the
         # journals of its members routed back
         staff = pyre.nexus.staff()(name="test.forkserver.batches")
+        # one more member than a single request can carry
         staff.size = members
+        # recruited through the forkserver
         staff.recruiter = pyre.nexus.forkserver()
+        # over the socket transport
         staff.recruiter.channels = pyre.ipc.newSocket()
+        # with the journals of its members routed back
         staff.recruiter.journal = True
         # the outcome drop box
         outcomes = []

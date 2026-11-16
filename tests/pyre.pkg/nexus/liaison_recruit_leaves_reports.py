@@ -55,8 +55,9 @@ def test():
     dispatcher = pyre.ipc.newPSL(name="tests.pyre.nexus.liaison.reports.loop")
     # the liaison, with no agency behind it
     liaison = Liaison(name="tests.pyre.nexus.liaison.reports")
-    # the control channel and the report channel; this test plays the agency at the far ends
+    # the control channel, whose far end this test holds in place of the agency
     control, agencyControl = pyre.ipc.newSocket().open()
+    # and the report channel, whose far end it holds as well
     reports, agencyReports = pyre.ipc.newSocket().open()
     # hand the liaison its ends
     liaison.control = control
@@ -72,8 +73,9 @@ def test():
     # and the answer to the recruitment that is about to happen is ready too
     Recruited(pids=[202, 203]).send(channel=agencyControl, marshaler=marshaler)
 
-    # the channels of the two new members
+    # the channel of one new member
     oneTeam, oneMember = pyre.ipc.newSocket().open()
+    # and of the other
     otherTeam, otherMember = pyre.ipc.newSocket().open()
     # recruit them
     pids = liaison.recruit(request=Recruit(crew=pyre.nexus.crew, channels=[oneMember, otherMember]))
@@ -84,8 +86,9 @@ def test():
 
     # the report handler hears the report channel on the event loop
     dispatcher.whenReadReady(channel=reports, call=liaison.report)
-    # run a single pass
+    # arrange for the loop to stop after a single pass
     dispatcher.alarm(interval=0 * second, call=stop(dispatcher=dispatcher))
+    # and run it
     dispatcher.watch()
     # the report was delivered there
     assert liaison.collect(pid=member) == (True, 0)
@@ -112,6 +115,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
