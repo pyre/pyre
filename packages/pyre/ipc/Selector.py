@@ -208,9 +208,9 @@ class Selector(Scheduler, family="pyre.ipc.dispatchers.selector", implements=dis
                 # flush
                 channel.log()
 
-            # the channel signals arrive on, if any; watching it is not a reason to stay up,
+            # the descriptor signals arrive on, if any; watching it is not a reason to stay up,
             # since a loop that is left with nothing but signals has run out of work
-            relay = Signals.relay().channel()
+            relay = Signals.relay().descriptor()
             # so leave it out of the count
             sources = len(iwtd) - (relay in iwtd) + len(owtd) + len(ewtd)
             # if there is nothing to watch and no alarm to wait for

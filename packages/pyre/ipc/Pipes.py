@@ -31,9 +31,10 @@ class Pipes(pyre.component, family="pyre.ipc.transports.pipe", implements=Transp
         return Pipe.open(**kwds)
 
     @pyre.export
-    def wrap(self, infd, outfd, **kwds):
+    def wrap(self, infd=None, outfd=None, **kwds):
         """
-        Dress the already open descriptors {infd} and {outfd} as a channel
+        Dress the already open descriptors {infd} and {outfd} as a channel; a channel with only
+        one of them only reads or only writes
         """
         # dress them up
         return Pipe(infd=infd, outfd=outfd, **kwds)

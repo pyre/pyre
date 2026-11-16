@@ -69,4 +69,49 @@ class SignalRelayError(IPCError):
         return
 
 
+# a channel cannot carry descriptors
+class CarriageError(IPCError):
+    """
+    Exception raised when a channel is asked to carry open descriptors it cannot carry
+    """
+
+    # the message template
+    description = "{0.channel} cannot carry open descriptors: {0.reason}"
+
+    # metamethods
+    def __init__(self, channel, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the channel that was asked
+        self.channel = channel
+        # and why it refused
+        self.reason = reason
+        # all done
+        return
+
+
+# a channel cannot be rebuilt from its hints
+class TravelError(IPCError):
+    """
+    Exception raised when the hints of a travelling channel do not name a kind of channel that
+    can be rebuilt in this process
+    """
+
+    # the message template
+    description = "cannot rebuild the channel '{0.kind}': {0.reason}"
+
+    # metamethods
+    def __init__(self, hints, reason, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the hints that came with the channel
+        self.hints = hints
+        # the kind of channel they name
+        self.kind = hints.get("kind")
+        # and why it cannot be rebuilt
+        self.reason = reason
+        # all done
+        return
+
+
 # end of file
