@@ -101,8 +101,10 @@ class SocketPair(Socket):
             )
         # send the descriptors, along with as many of the bytes as the socket takes at once
         sent = socket.send_fds(self, [bytes], list(descriptors))
-        # and make sure the rest of the bytes follow
-        self.sendall(bytes[sent:])
+        # if the socket did not take them all
+        if sent < len(bytes):
+            # make sure the rest follow
+            self.sendall(bytes[sent:])
         # report the number of bytes sent
         return len(bytes)
 
