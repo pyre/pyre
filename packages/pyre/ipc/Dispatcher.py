@@ -100,5 +100,17 @@ class Dispatcher(pyre.protocol, family="pyre.ipc.dispatchers"):
         Generate the set of channels currently being watched, each exactly once
         """
 
+    @pyre.provides
+    def reading(self, channel):
+        """
+        Check whether a handler is waiting to read from {channel}, or is reading from it right now
+        """
+
+    @pyre.provides
+    def writing(self, channel):
+        """
+        Check whether a handler is waiting to write to {channel}, or is writing to it right now
+        """
+
 
 # end of file

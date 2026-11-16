@@ -137,8 +137,10 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         """
         # keep track of what has been reported
         seen = set()
-        # go through my event tables, and the piles whose handlers are running right now
-        for index in (self._read, self._write, dict(enumerate(self._inflight))):
+        # the piles whose handlers are running right now
+        running = {position: pile for position, (_, _, pile) in enumerate(self._inflight)}
+        # go through my event tables, and the running piles
+        for index in (self._read, self._write, running):
             # and the pile of events registered against each descriptor
             for events in index.values():
                 # go through the events
@@ -155,6 +157,22 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
                     yield channel
         # all done
         return
+
+    @pyre.export
+    def reading(self, channel) -> bool:
+        """
+        Check whether a handler is waiting to read from {channel}, or is reading from it right now
+        """
+        # look among my read handlers
+        return self._interested(index=self._read, key=channel.inbound)
+
+    @pyre.export
+    def writing(self, channel) -> bool:
+        """
+        Check whether a handler is waiting to write to {channel}, or is writing to it right now
+        """
+        # look among my write handlers
+        return self._interested(index=self._write, key=channel.outbound)
 
     @pyre.export
     def stop(self):
@@ -250,7 +268,8 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         self._read = {}
         # and the write map: fd -> list[_event]
         self._write = {}
-        # the piles of events whose handlers are running
+        # the piles of events whose handlers are running, each with the table and the descriptor
+        # it came from
         self._inflight = []
         # the channels that were forgotten, whose running handlers must not be put back; they
         # are held weakly, so the record vanishes with the channel
@@ -278,8 +297,12 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         pile = index.pop(key, [])
         # the channels of the pile are still being watched while their handlers run, so keep
         # reporting them: a handler that forks, e.g. to form a team, must be able to find the
-        # connection it is serving among the channels its child has to release
-        self._inflight.append(pile)
+        # connection it is serving among the channels its child has to release; remember the
+        # table and the descriptor the pile came from, so the running handlers can be told apart
+        # by what they are waiting for
+        flight = (index, key, pile)
+        # and put it in the air
+        self._inflight.append(flight)
         # make a pile of event handlers to reschedule
         reschedule = []
         # how many handlers have had their turn
@@ -329,7 +352,7 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
         # whatever happened
         finally:
             # the pile is no longer in flight
-            self._inflight.remove(pile)
+            self._inflight.remove(flight)
             # the handlers that did not get their turn keep their place
             reschedule += pile[done:]
             # unless their channel was forgotten while the pile was in flight
@@ -340,6 +363,23 @@ class SelectorPSL(Scheduler, family="pyre.ipc.dispatchers.psl", implements=Dispa
                 index.setdefault(key, [])[:0] = reschedule
         # all done
         return
+
+    def _interested(self, index, key) -> bool:
+        """
+        Check whether a handler in {index} is waiting on {key}, or is running from a pile of
+        {index} that was waiting on it
+        """
+        # a handler waiting in the table is interested
+        if index.get(key):
+            # so say so
+            return True
+        # so is a running one, unless its channel was forgotten, since it will not be put back
+        return any(
+            event.channel not in self._forgotten
+            for source, descriptor, pile in self._inflight
+            if source is index and descriptor == key
+            for event in pile
+        )
 
     def _interest(self, key):
         """
