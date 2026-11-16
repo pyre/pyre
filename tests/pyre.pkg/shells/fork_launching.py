@@ -17,26 +17,28 @@ def test():
 
     # declare a trivial application
     class application(pyre.application, family="shells.application"):
-        """a sample application"""
+        """
+        A sample application
+        """
 
         @pyre.export
         def main(self, channels, **kwds):
-            """The behavior of the child process"""
-            # unpack
-            stdout, stderr = channels
-            # say something
-            stdout.write(b"Hello father!")
+            """
+            The behavior of the child process
+            """
+            # say something on my output stream
+            channels.stdout.write(b"Hello father!")
             # all done
             return 0
 
         # implementation details
         @pyre.export
         def launched(self, channels, **kwds):
-            """The behavior of the parent process"""
-            # unpack the channels to the child
-            stdout, stderr = channels
-            # make sure we can read its output correctly
-            assert stdout.read(13) == b"Hello father!"
+            """
+            The behavior of the parent process
+            """
+            # make sure we can read the output of the child correctly
+            assert channels.stdout.read(13) == b"Hello father!"
             # all done
             return 0
 
@@ -54,6 +56,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
