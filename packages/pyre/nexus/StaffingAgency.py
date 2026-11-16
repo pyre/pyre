@@ -15,9 +15,6 @@ import traceback
 import journal
 import pyre
 
-# the channel the agency talks to its liaison over
-from ..ipc.SocketPair import SocketPair
-
 # the marker the marshaler raises when its peer goes away
 from ..ipc.exceptions import EndOfStream
 
@@ -41,13 +38,14 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
     same code under the same configuration, but it never does anything but serve requests: the
     members it forks are copies of a process that has touched nothing, whatever the process
     that asks for them has touched since it started. It serves on an event loop of its own:
-    requests arrive on the control channel, the exits of its members through {SIGCHLD}, and the
-    end of the control channel, which is how the process that started it lets go, ends the loop
+    requests arrive on the control channel and are answered there, the exits of its members
+    arrive through {SIGCHLD} and are reported on the report channel, and the end of the control
+    channel, which is how the process that started it lets go, ends the loop
     """
 
     # user configurable state
     marshaler = pyre.ipc.marshaler()
-    marshaler.doc = "the serializer of the messages on the control channel"
+    marshaler.doc = "the serializer of the messages on the control and report channels"
 
     # the event loop i serve on
     dispatcher = pyre.ipc.dispatcher()
@@ -71,19 +69,24 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
             "script": cls.script,
         }
 
-    def serve(self, control: int, journal: int | None = None) -> int:
+    def serve(self, control, reports, journal=None) -> int:
         """
-        Serve the requests arriving on the {control} descriptor until the process that started
-        me lets go; my own journal entries go down the {journal} descriptor
+        Serve the requests arriving on the {control} channel until the process that started me
+        lets go; the exits of my members are reported down the {reports} channel, and my own
+        journal entries go down the {journal} channel
         """
         # the interrupt key reaches the whole process group, but i leave when my parent does
         signal.signal(signal.SIGINT, signal.SIG_IGN)
-        # dress the control channel
-        self.channel = SocketPair(SocketPair.family, SocketPair.type, 0, fileno=control)
+        # hold on to the control channel
+        self.channel = control
+        # and the report channel
+        self.reports = reports
         # if my journal is to be routed
         if journal is not None:
-            # ship it
-            self.device = self.ship(descriptor=journal)
+            # hold on to its channel
+            self.journal = journal
+            # and ship it
+            self.device = self.ship(channel=journal)
         # say what i am running
         Greeting(fingerprint=self.fingerprint()).send(
             channel=self.channel, marshaler=self.marshaler
@@ -100,12 +103,18 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
     # message handlers
     def recruit(self, request):
         """
-        Fork the member described by {request}, and answer with its pid
+        Fork the members described by {request}, one after the other, and answer with their pids
         """
-        # fork it
-        pid = self.enlist(request=request)
-        # and say who it is
-        Recruited(pid=pid).send(channel=self.channel, marshaler=self.marshaler)
+        # the ends of the channels of each member
+        members = list(request.members())
+        # fork them, handing each one the ends of the members forked after it, which it inherits
+        # and must release
+        pids = [
+            self.enlist(request=request, ends=ends, others=members[index + 1 :])
+            for index, ends in enumerate(members)
+        ]
+        # and say who they are
+        Recruited(pids=pids).send(channel=self.channel, marshaler=self.marshaler)
         # all done
         return self
 
@@ -167,23 +176,26 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
             # say so
             journal.debug("pyre.nexus.staffing").log(f"agency: reaped member {pid}")
             # and report the one that did
-            Exited(pid=pid, status=status).send(channel=self.channel, marshaler=self.marshaler)
+            Exited(pid=pid, status=status).send(channel=self.reports, marshaler=self.marshaler)
         # keep listening
         return True
 
     # implementation details
-    def enlist(self, request):
+    def enlist(self, request, ends, others):
         """
-        Fork a new crew member as described by {request}
+        Fork a new crew member of the class in {request}, with the channel {ends} it talks to its
+        team over; {others} are the ends of the members of the same request yet to be forked
         """
         # fork
         pid = os.fork()
         # on my side
         if pid > 0:
-            # the descriptors belong to the member now
-            for descriptor in request.descriptors:
+            # the member's channels belong to the member now
+            for channel in ends:
                 # so release my copies
-                os.close(descriptor)
+                if channel is not None:
+                    # one at a time
+                    channel.close()
             # say so
             journal.debug("pyre.nexus.staffing").log(f"agency: forked member {pid}")
             # and hand back its pid
@@ -192,7 +204,7 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
         # event loop
         try:
             # become the member; this does not return
-            self.member(request=request)
+            self.member(request=request, ends=ends, others=others)
         # if something let an exception through before the member could leave
         finally:
             # get the complaint of the journal, which has already said what it was about
@@ -207,23 +219,36 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
             # and end the process
             os._exit(1)
 
-    def member(self, request):
+    def member(self, request, ends, others):
         """
-        Turn this fresh fork of mine into the crew member described by {request}
+        Turn this fresh fork of mine into a crew member of the class in {request}, with the
+        channel {ends} it talks to its team over, letting go of the ends of the {others}
         """
         # the control channel is my business
         self.channel.close()
-        # and so is my journal device
+        # and so is the report channel
+        self.reports.close()
+        # the ends of the members forked after this one belong to them
+        for channels in others:
+            # all of them
+            for channel in channels:
+                # that exist
+                if channel is not None:
+                    # release my copy
+                    channel.close()
+        # and so is my journal
         if self.device is not None:
-            # release it
+            # release the device that ships it
             self.device.close()
+            # and the channel it travels over
+            self.journal.close()
             # and leave the member with the console until it routes its own journal
             from journal import chronicler, cout
 
             # install it
             chronicler.device = cout()
-        # dress the descriptors as the member's channels
-        channel, journal = request.dress()
+        # the member's channels came with the request
+        channel, journal = ends
         # route the member's journal to the team first, so whatever goes wrong from here on,
         # starting with loading its class, is heard there
         courier = Crew.route(channel=journal)
@@ -236,15 +261,19 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
         # and put it to work; this does not return
         crew.work()
 
-    def ship(self, descriptor):
+    def ship(self, channel):
         """
-        Send everything this process says to the journal down {descriptor}
+        Send everything this process says to the journal down {channel}
         """
         # get the journal
         import journal
 
+        # and the device that ships its entries down a channel; it is built on the journal, which
+        # may still be booting when this module is first imported
+        from ..ipc.Courier import Courier
+
         # make the device
-        device = journal.courier(descriptor=descriptor)
+        device = Courier(channel=channel)
         # install it
         journal.chronicler.device = device
         # and hand it off
@@ -272,7 +301,11 @@ class StaffingAgency(pyre.component, family="pyre.nexus.agencies.staffing"):
         super().__init__(**kwds)
         # the control channel, while i serve
         self.channel = None
-        # and the device that ships my journal, if it is routed
+        # the channel my reports of exits travel over, while i serve
+        self.reports = None
+        # the channel my journal travels over, if it is routed
+        self.journal = None
+        # and the device that ships it
         self.device = None
         # all done
         return

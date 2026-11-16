@@ -31,19 +31,21 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
     """
     The staffing agency's representative in the process whose teams it serves
 
-    The liaison spawns the agency from the command line of the application, holds this side of
-    the control channel, sends the recruitment requests and the journal controls, and turns the
-    agency's reports of exits into events on the event loops of the teams. There is one per
-    process, reached by name, so every recruiter that uses the agency uses the same one
+    The liaison spawns the agency from the command line of the application and talks to it over
+    two channels, each with a single reader. On the control channel it sends the recruitment
+    requests and the journal controls, and reads the answers itself, synchronously; on the report
+    channel the agency reports the exits of its members, which the liaison hears on the event
+    loops of the teams and turns into events there. There is one per process, reached by name, so
+    every recruiter that uses the agency uses the same one
     """
 
     # user configurable state
     shell = pyre.properties.str(default="forkserver")
     shell.doc = "the shell that turns a copy of the application into the staffing agency"
 
-    # how the messages on the control channel are encoded
+    # how the messages on the control and report channels are encoded
     marshaler = pyre.ipc.marshaler()
-    marshaler.doc = "the serializer of the messages on the control channel"
+    marshaler.doc = "the serializer of the messages on the control and report channels"
 
     # interface
     @classmethod
@@ -78,26 +80,34 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
         # it is, if it was spawned and has not exited
         return self.process is not None and self.process.poll() is None
 
-    def recruit(self, request) -> int:
+    def recruit(self, request) -> list[int]:
         """
-        Send the recruitment {request} and wait for the pid of the member; the answer is a local
-        round trip, so recruitment stays synchronous
+        Send the recruitment {request} and wait for the pids of its members; the answer is a
+        local round trip on a channel nobody else reads, so recruitment stays synchronous
         """
         # no answer yet
         self.answer = None
         # send the request
         request.send(channel=self.control, marshaler=self.marshaler)
-        # take delivery of what the agency says until the answer is in
-        while self.answer is None:
-            # one message at a time
-            self.hear()
+        # the control channel carries nothing but answers, so the next message is this one's
+        self.hear(channel=self.control)
         # get the journal
         import journal
 
-        # say who it is
-        journal.debug("pyre.nexus.staffing").log(f"the agency recruited member {self.answer.pid}")
-        # and hand off the pid
-        return self.answer.pid
+        # if it is not
+        if self.answer is None:
+            # make a channel
+            channel = journal.firewall("pyre.nexus.staffing")
+            # complain
+            channel.line("the staffing agency did not answer a recruitment request")
+            # flush
+            channel.log()
+            # and bail, in case firewalls are not fatal
+            return []
+        # say who they are
+        journal.debug("pyre.nexus.staffing").log(f"the agency recruited {self.answer.pids}")
+        # and hand off the pids
+        return self.answer.pids
 
     def instruct(self, control) -> "Liaison":
         """
@@ -235,14 +245,23 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
     # event handlers
     def report(self, channel, **kwds):
         """
-        The agency has something to say on the control channel; hear it
+        The agency has reported an exit on the report channel; hear it
+
+        Nothing else reads the report channel, but the readiness that woke me was recorded at the
+        start of a pass of the event loop, and a reader on another event loop, e.g. one nested in
+        a handler that ran earlier in the pass, may have taken delivery since; so i hear only what
+        is still waiting
 
         N.B.: this is an event handler; returning a false value stops it
         """
-        # carefully, since the agency may be gone
+        # if the agency has nothing left to say
+        if not self.reports.pending():
+            # keep listening for what it says next
+            return True
+        # otherwise, carefully, since the agency may be gone
         try:
             # hear it
-            self.hear()
+            self.hear(channel=self.reports)
         # if the channel ended
         except EndOfStream:
             # the agency is gone; its members keep working, since they never talk to it, and the
@@ -295,10 +314,11 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
     def spawn(self) -> "Liaison":
         """
         Spawn the agency from the command line of the application, in my shell, handing it its
-        ends of the control channel and of the channel its journal entries come back over
+        ends of the control channel, of the report channel, and of the channel its journal
+        entries come back over
         """
         # if there was an agency before, let go of my ends of its channels
-        for channel in (self.control, self.journal):
+        for channel in (self.control, self.reports, self.journal):
             # unless there was none
             if channel is None:
                 # in which case there is nothing to let go of
@@ -312,27 +332,38 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
             channel.close()
         # the control channel
         control = SocketPair.open()
+        # the report channel
+        reports = SocketPair.open()
         # and the journal channel
         journal = SocketPair.open()
+        # channels cross to the agency on its command line, the way the channel schema renders
+        # them
+        schema = pyre.schemata.channel()
         # the command line of the agency: the application's own, in my shell
         argv = StaffingAgency.command + [
             # select the shell
             f"--shell={self.shell}",
-            # tell it where the control channel is
-            f"--shell.control={control.child.fileno()}",
-            # and where its journal goes
-            f"--shell.journal={journal.child.fileno()}",
+            # hand it its end of the control channel
+            f"--shell.control={schema.string(control.child)}",
+            # of the report channel
+            f"--shell.reports={schema.string(reports.child)}",
+            # and of the channel its journal goes down
+            f"--shell.journal={schema.string(journal.child)}",
         ]
-        # spawn it, with the same environment and working directory, handing it its two ends
-        self.process = subprocess.Popen(
-            argv, pass_fds=(control.child.fileno(), journal.child.fileno()), close_fds=True
+        # the descriptors of its ends, which it inherits under the same numbers
+        inherited = (
+            control.child.descriptors() + reports.child.descriptors() + journal.child.descriptors()
         )
-        # its ends are its own now
+        # spawn it, with the same environment and working directory
+        self.process = subprocess.Popen(argv, pass_fds=inherited, close_fds=True)
+        # its ends are its own now, so release my copies
         control.child.close()
-        # both of them
+        # all of them
+        reports.child.close()
         journal.child.close()
         # keep mine
         self.control = control.parent
+        self.reports = reports.parent
         self.journal = journal.parent
         # nothing has been heard from it yet
         self.exits = {}
@@ -340,7 +371,7 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
         # and no event loop listens to it yet
         self.listening.clear()
         # the first thing the agency says is what it runs
-        self.hear()
+        self.hear(channel=self.control)
         # get the journal
         import journal
 
@@ -363,18 +394,18 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
         # mark it
         self.listening.add(dispatcher)
         # hear the reports
-        dispatcher.whenReadReady(channel=self.control, call=self.report)
+        dispatcher.whenReadReady(channel=self.reports, call=self.report)
         # and the journal entries
         dispatcher.whenReadReady(channel=self.journal, call=self.overhear)
         # all done
         return self
 
-    def hear(self) -> "Liaison":
+    def hear(self, channel) -> "Liaison":
         """
-        Take delivery of the next message from the agency, and handle it
+        Take delivery of the next message from the agency on {channel}, and handle it
         """
         # get it
-        message = Message.receive(channel=self.control, marshaler=self.marshaler)
+        message = Message.receive(channel=channel, marshaler=self.marshaler)
         # and handle it
         message.deliver(recipient=self)
         # all done
@@ -386,8 +417,10 @@ class Liaison(pyre.component, family="pyre.nexus.liaisons.staffing"):
         super().__init__(**kwds)
         # the agency's process, once spawned
         self.process = None
-        # my ends of the control channel and of the agency's journal channel
+        # my ends of the control channel, of the report channel, and of the agency's journal
+        # channel
         self.control = None
+        self.reports = None
         self.journal = None
         # the exits the agency reported that nobody has collected yet, by pid
         self.exits = {}

@@ -8,11 +8,7 @@
 # externals
 import os
 import pickle
-import socket
 import sys
-
-# support
-import pyre
 
 # my superclass
 from .Message import Message
@@ -21,13 +17,14 @@ from .Message import Message
 # declaration
 class Recruit(Message):
     """
-    A request for a new crew member: the class to build it from, and the member's ends of the
-    channels it talks to its team over
+    A request for new crew members of one class: the class to build them from, and, for each of
+    them, the member's ends of the channels it talks to its team over
 
     The class travels pickled, so the staffing agency passes it along without loading it: the
-    member is the one that imports its module, after the fork, and the agency stays as clean as
+    members are the ones that import its module, after the fork, and the agency stays as clean as
     it started. It travels with the file its module was loaded from in the team's process, which
-    is where the member must load it from too
+    is where the members must load it from too. The channels travel inside the request, and the
+    agency receives copies of them
     """
 
     # interface
@@ -35,8 +32,18 @@ class Recruit(Message):
         """
         Hand me to {recipient}
         """
-        # it forks the member
+        # it forks the members
         return recipient.recruit(request=self)
+
+    def members(self):
+        """
+        Generate the ends of the channels of each member, in order: the channel it talks to its
+        team over, and the one that carries its journal back, if there is one
+        """
+        # easy enough
+        yield from zip(self.channels, self.journals)
+        # all done
+        return
 
     def load(self):
         """
@@ -62,26 +69,10 @@ class Recruit(Message):
             channel.line(f"{self.origin} in the team's process")
             # done with the files
             channel.outdent()
-            # flush; firewalls are fatal
+            # flush
             channel.log()
         # hand it off
         return crew
-
-    def dress(self):
-        """
-        Dress the descriptors i carried as the member's ends of its crew channel and, when there
-        is one, its journal channel
-        """
-        # get the transport the channels were made with
-        transport = self.transports[self.transport]()
-        # split the descriptors
-        crew, journal = self.descriptors[: self.split], self.descriptors[self.split :]
-        # dress the crew channel
-        channel = self.wrap(transport=transport, descriptors=crew)
-        # and the journal channel, if there is one
-        journal = self.wrap(transport=transport, descriptors=journal) if journal else None
-        # hand them off
-        return channel, journal
 
     # implementation details
     @staticmethod
@@ -94,62 +85,20 @@ class Recruit(Message):
         # and resolve its file, so two spellings of the same file agree
         return os.path.realpath(module.__file__)
 
-    @staticmethod
-    def kind(channel):
-        """
-        Name the kind of {channel}, so the agency can dress its descriptors the same way
-        """
-        # a socket is one descriptor, and anything else a pair of pipes
-        return "socket" if isinstance(channel, socket.socket) else "pipe"
-
-    @staticmethod
-    def unpack(channel):
-        """
-        Collect the descriptors of {channel}
-        """
-        # a socket is one descriptor
-        if isinstance(channel, socket.socket):
-            # its own
-            return [channel.fileno()]
-        # a pair of pipes is two
-        return [channel.inbound, channel.outbound]
-
-    @staticmethod
-    def wrap(transport, descriptors):
-        """
-        Dress {descriptors} as a channel of {transport}
-        """
-        # a socket is one descriptor
-        if len(descriptors) == 1:
-            # dress it
-            return transport.wrap(descriptor=descriptors[0])
-        # a pair of pipes is two
-        return transport.wrap(infd=descriptors[0], outfd=descriptors[1])
-
     # metamethods
-    def __init__(self, crew, channel, journal=None, **kwds):
-        # collect the descriptors of the member's ends
-        crewDescriptors = self.unpack(channel=channel)
-        # and of the ends of its journal channel, if there is one
-        journalDescriptors = self.unpack(channel=journal) if journal is not None else []
-        # chain up, with the descriptors that travel with me
-        super().__init__(descriptors=crewDescriptors + journalDescriptors, **kwds)
-        # the class of the member, pickled
+    def __init__(self, crew, channels, journals=None, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the class of the members, pickled
         self.crew = pickle.dumps(crew)
         # the file its module was loaded from
         self.origin = self.locate(crew=crew)
-        # the kind of channel it talks over
-        self.transport = self.kind(channel=channel)
-        # and how many of the descriptors belong to the crew channel
-        self.split = len(crewDescriptors)
+        # the member's end of the channel each member talks to its team over
+        self.channels = list(channels)
+        # and of the channel that carries its journal back, where there is one
+        self.journals = list(journals) if journals is not None else [None] * len(self.channels)
         # all done
         return
-
-    # the transports, by the name they travel under
-    transports = {
-        "pipe": pyre.ipc.pipe(),
-        "socket": pyre.ipc.socket(),
-    }
 
 
 # end of file

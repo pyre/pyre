@@ -12,7 +12,8 @@ from .Message import Message
 # declaration
 class Recruited(Message):
     """
-    The staffing agency's answer to a recruitment request: the pid of the member it forked
+    The staffing agency's answer to a recruitment request: the pids of the members it forked, in
+    the order the request listed them
     """
 
     # interface
@@ -24,11 +25,11 @@ class Recruited(Message):
         return recipient.recruited(answer=self)
 
     # metamethods
-    def __init__(self, pid, **kwds):
+    def __init__(self, pids, **kwds):
         # chain up
         super().__init__(**kwds)
-        # the pid of the new member
-        self.pid = pid
+        # the pids of the new members
+        self.pids = list(pids)
         # all done
         return
 

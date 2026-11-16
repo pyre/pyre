@@ -347,9 +347,9 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         self.dispatcher.whenWriteReady(channel=self.channel, call=self.checkin)
         # if my journal is routed to the team
         if self.journal is not None:
-            # the team may send instructions back over the same channel; the readable end must
-            # not block, since instructions are also collected right before each task
-            os.set_blocking(self._descriptor(end=self.journal.inbound), False)
+            # the team may send instructions back over the same channel, and they are also
+            # collected right before each task, so the channel must not block
+            self.journal.setBlocking(False)
             # listen for them
             self.dispatcher.whenReadReady(channel=self.journal, call=self.obey)
         # all done
@@ -372,9 +372,12 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # get the journal
         import journal
 
-        # make the device that ships the entries down the writable end of the channel; the
-        # terminal is left to the team, which replays every entry it hears
-        courier = journal.courier(descriptor=cls._descriptor(end=channel.outbound))
+        # get the device that ships journal entries down a channel
+        from ..ipc.Courier import Courier
+
+        # make one for this channel; the terminal is left to the team, which replays every entry
+        # it hears
+        courier = Courier(channel=channel)
         # install it
         journal.chronicler.device = courier
         # and hand it off
@@ -647,20 +650,11 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # all done
         return self
 
-    # implementation details
-    @staticmethod
-    def _descriptor(end):
-        """
-        Get the descriptor of a channel {end}; a socket is its own end, a pipe hands out a number
-        """
-        # easy enough
-        return end.fileno() if hasattr(end, "fileno") else end
-
     # meta-methods
     def __init__(self, pid, channel, journal=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # save my crew is; this is an opaque type, assigned to me by my recruiter
+        # save my id; this is an opaque type, assigned to me by my recruiter
         self.pid = pid
         # save the communication channel to my twin
         self.channel = channel
