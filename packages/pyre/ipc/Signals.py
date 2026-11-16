@@ -187,8 +187,9 @@ class Signals:
         if previous != -1:
             # give it back
             signal_module.set_wakeup_fd(previous)
-            # release my socket pair
+            # release my socket pair: the reading end
             reader.close()
+            # and the writing end
             writer.close()
             # and complain
             raise exceptions.SignalRelayError(
@@ -257,8 +258,9 @@ class Signals:
         self._loops = weakref.WeakSet()
         # give the wakeup descriptor back; nobody owned it before me, or i would not own it
         signal_module.set_wakeup_fd(-1)
-        # close both ends
+        # close the reading end
         reader.close()
+        # and the writing end
         self._writer.close()
         # and forget them
         self._reader = None
@@ -320,8 +322,10 @@ class Signals:
             signal_module.signal(signal, previous)
         # give the wakeup descriptor back
         signal_module.set_wakeup_fd(-1)
-        # close my copies of the socket pair; the parent still holds its own
+        # close my copies of the socket pair, since the parent still holds its own: the
+        # reading end
         self._reader.close()
+        # and the writing end
         self._writer.close()
         # and forget everything
         self._reader = None
