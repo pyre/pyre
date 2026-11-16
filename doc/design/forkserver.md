@@ -94,7 +94,8 @@ but wait for requests, so it never holds the threads of a library, and every mem
 as clean as the application was when it started. One agency serves every team of the process.
 
 ```
-team's process ──control channel──> staffing agency      requests, pids, exit reports
+team's process ──control channel──> staffing agency      requests and their answers
+               <──report channel───                      exit reports
       │                                     │ fork
       └──crew channel + journal channel─────┴──> crew member   as today
 ```
@@ -112,12 +113,13 @@ team's process ──control channel──> staffing agency      requests, pids,
   process: it serves recruitment requests on an event loop of its own, forks the members, and
   reports their exits.
 - **`Liaison`** (`nexus/Liaison.py`), the agency's handle in the team's process: spawns the
-  agency, holds the team's end of the control channel, sends requests, and turns the agency's
-  reports into events on the team's event loop. It is a component with a fixed name, so pyre hands
-  every recruiter in the process the same one, which is how the process keeps a single agency.
-- **The messages** on the control channel, each a small class in a file of its own: a recruitment
-  request, its answer with the pid, a journal control, an exit report, and the agency's greeting
-  that describes what it runs.
+  agency, holds the team's ends of the control and report channels, sends requests, and turns the
+  agency's reports into events on the team's event loop. It is a component with a fixed name, so
+  pyre hands every recruiter in the process the same one, which is how the process keeps a single
+  agency.
+- **The messages** on the control and report channels, each a small class in a file of its own: a
+  recruitment request for one or more members, its answer with their pids, a journal control, an
+  exit report, and the agency's greeting that describes what it runs.
 
 Nothing lives at the top level of a module. What the first version kept in loose functions moves
 to the entity that owns the knowledge:
@@ -145,36 +147,55 @@ application may start it early, e.g. a server while it activates.
 The shell builds the `StaffingAgency` component and runs its event loop: a pyre dispatcher, like
 every other event loop in the framework.
 
-- Requests arrive through `whenReadReady` on the agency's end of the control channel.
+- Requests arrive through `whenReadReady` on the agency's end of the control channel, and are
+  answered there.
 - The exits of its children arrive through `whenSignal(SIGCHLD)`, which `pyre.ipc.Signals`
-  delivers as an ordinary read event; a member forked from the agency starts without the relay,
-  so it never hears its siblings' exits.
+  delivers as an ordinary read event, and are reported on the report channel; a member forked
+  from the agency starts without the relay, so it never hears its siblings' exits.
 - The end of the control channel is how the team's process lets go, so the agency's loop ends
   when it reads the end of the channel; nothing polls.
 
-### The control channel
+### The control and report channels
 
-The control channel is a `pyre.ipc.SocketPair`, a stream, whose far end the agency inherits as a
-descriptor named on its command line. Messages are instances of the message classes, carried by
-the `Pickler` marshaler, which frames each one with its length. A message that carries
-descriptors announces how many follow, and the descriptors ride right after it through
-`SocketPair.sendDescriptors`, the way a member's report carries a trailer outside the marshaled
-stream. The agency's first message is its greeting; a greeting that does not describe what the
-team's process runs breaches a firewall.
+The agency talks to the team's process over two channels, each a `pyre.ipc.SocketPair`, a stream,
+whose far end the agency inherits as a channel trait of its shell, named on its command line.
+Messages are instances of the message classes, carried by the `Pickler` marshaler, which frames
+each one with its length and the number of descriptors that travel with it; the channels a message
+holds travel inside it (see `doc/design/ipc.md`).
 
-### Recruiting a member
+Each channel has a single reader in the team's process. The **control channel** carries the
+conversation the `Liaison` starts: the agency's greeting, each recruitment request and its answer,
+and the journal controls, which have no answer. Only the `Liaison` reads it, synchronously, in
+`spawn` and `recruit`; no event loop listens to it, so an answer is always the next message there.
+The **report channel** carries what the agency says on its own, its reports of exits; only
+`Liaison.report` reads it, from the event loops the liaison listens on. A recruitment therefore
+never delivers a report, and the readiness of the report channel is consumed only by the handler
+it wakes. `report` still checks `Channel.pending()` before it reads and keeps listening when
+nothing is waiting, since `settle` may run a fresh event loop from inside a handler of another
+one, and the inner loop's handler may take delivery of a report the outer pass found waiting.
 
-1. The recruiter opens the crew channel, and the journal channel if the team wants one, exactly as
-   `Fork.deploy` does.
-2. It sends a recruitment request: the crew class, pickled, with the file its module was loaded
-   from, and whether a journal channel comes with it; the member's ends of the channels follow as
-   descriptors.
-3. The recruiter closes its copies of the member's ends and keeps its own, as after a fork.
-4. The agency forks. The child builds the crew member on the descriptors it received, refuses to
-   serve if the crew class's module came from another file, installs the journal courier,
-   registers, and runs.
-5. The agency answers with the pid of the child. The answer is a local round trip, so recruitment
-   stays synchronous.
+The agency's first message is its greeting; a greeting that does not describe what the team's
+process runs breaches a firewall. Why the conversation is split this way is recorded in
+`doc/design/recruitment.md`.
+
+### Recruiting members
+
+`Forkserver.recruit` fills all the vacancies of a team at once; `deploy`, which recruits a single
+member, is the same with one vacancy.
+
+1. The recruiter opens the crew channel of each member, and its journal channel if the team wants
+   one, exactly as `Fork.deploy` does.
+2. It sends one recruitment request for as many members as the control channel can carry
+   descriptors for (`SocketPair.capacity`): the crew class, pickled, with the file its module was
+   loaded from, and the member's ends of the channels of each member. A team with more members
+   than fit is recruited in as many requests as it takes.
+3. The recruiter closes its copies of the members' ends and keeps its own, as after a fork.
+4. The agency forks the members one after the other. Each child closes the agency's channels and
+   the ends of the members forked after it, builds its crew member on the channels it received,
+   refuses to serve if the crew class's module came from another file, installs the journal
+   courier, registers, and runs.
+5. The agency answers with the pids of the children, in the order of the request. The answer is a
+   local round trip per request, so recruitment stays synchronous.
 
 From here on the team and the member exchange tasks, reports, descriptors, and journal entries
 directly. The agency is not on the data path.
@@ -194,7 +215,7 @@ event loop, whichever way it comes about.
 - **Exits.** For `Fork`, a member is a child of the team's process, and its exit arrives through
   `whenSignal(SIGCHLD)`, after which the recruiter reaps it without waiting. For `Forkserver`, a
   member is the agency's child; the agency reaps it and sends an exit report, which arrives
-  through `whenReadReady` on the control channel, where the `Liaison` hands it to the recruiters
+  through `whenReadReady` on the report channel, where the `Liaison` hands it to the recruiters
   that subscribed. Either way, the recruiter takes the member off its ledger and tells the team
   through the hook `departed(crew, status)`, which does nothing by default and which a team may
   override.
@@ -207,7 +228,7 @@ event loop, whichever way it comes about.
   period at most, however many members there are. The team's own event loop may have stopped, or
   may be the one that called `disband`, and a loop cannot be nested, so `settle` makes a fresh loop
   of the same kind, watches the departures on it, and stops it once the ledger is empty.
-- If the agency dies, the team's process sees the end of the control channel. It starts a new
+- If the agency dies, the team's process sees the end of the report channel. It starts a new
   agency, and the members already running are unaffected, since they never talk to it; the ones
   that were the old agency's children are reparented to `init`, which reaps them.
 
@@ -267,14 +288,14 @@ happen, on the lifeline where each happens.
 |---|---|---|
 | idle | construction; `stop` | `start` |
 | spawning | `start` with no agency running: the agency is spawned, its greeting awaited | the greeting: checked, a firewall on a mismatch |
-| running | the greeting; listening on every event loop it is started with | the end of the control channel; `stop` |
-| lost | the end of the control channel: the agency died; its members keep working | the next `start`: every listening loop forgets the old channels, they are closed, and a new agency is spawned |
+| running | the greeting; listening on the report channel on every event loop it is started with | the end of the report channel; `stop` |
+| lost | the end of the report channel: the agency died; its members keep working | the next `start`: every listening loop forgets the old channels, they are closed, and a new agency is spawned |
 
 **The staffing agency** (`StaffingAgency`, in a process of its own):
 
 | State | Entered by | Left by |
 |---|---|---|
-| serving | the shell builds it and runs its loop: requests on the control channel, exits by `SIGCHLD` | the end of the control channel |
+| serving | the shell builds it and runs its loop: requests on the control channel, answered there; exits by `SIGCHLD`, reported on the report channel | the end of the control channel |
 | gone | its loop stopped, its process exits | |
 
 **A member's process** (`Crew`, on the worker side):
@@ -355,8 +376,8 @@ replacement member inheriting the exception of the failure it replaces (`Fork.py
   recipe the task carries would be silently ignored.
 - It opens no product, mounts no archive, and makes no http request, so that it never holds threads
   of its own; that includes the proxy lookup `Fork.shield` guards against on macOS.
-- It holds no descriptor of the application's except its end of the control channel: in particular
-  not the listening socket of a server.
+- It holds no descriptor of the application's except its ends of the control, report and journal
+  channels: in particular not the listening socket of a server.
 
 **Found along the way.** A member's workspace receives only the path of the application's
 workspace; its `caches` setting, the name of the folder under the path, comes from the configuration
