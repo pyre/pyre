@@ -35,6 +35,7 @@ from .List import List as list
 from .Set import Set as set
 from .Tuple import Tuple as tuple
 
+# the schema of maps
 from .Mapping import Mapping as mapping
 
 # meta-types
@@ -43,18 +44,23 @@ from .InputStream import InputStream as istream
 from .OutputStream import OutputStream as ostream
 from .EnvVar import EnvVar as envvar
 from .EnvPath import EnvPath as envpath
+from .Channel import Channel as channel
 
 # put the schemata that typed properties are made of in piles; mappings are not among them,
 # since the property that holds a map is {pyre.traits.Dict}, whose entries live in the store
 basic = (identity, bool, cell, complex, decimal, enum, float, fraction, inet, int, str)
+# the ones whose values have structure
 composite = (date, dimensional, path, time, timestamp, uri)
+# the ones whose values hold others
 containers = (sequence, array, list, set, tuple)
-meta = (istream, ostream, envvar, envpath)
+# and the ones whose values are resources of the process
+meta = (istream, ostream, envvar, envpath, channel)
 # all of them
 schemata = basic + composite + containers + meta
 
 # type categories
 sequences = {list, set, tuple, array}
+# and the numbers
 numbers = {bool, complex, decimal, dimensional, float, int}
 
 

@@ -13,39 +13,63 @@ This package provides access to the factories for typed properties
 from .Property import Property as property
 
 # for convenience, expose the typed ones
-# the simple ones
+# the simple ones: truth values
 bool = property.bool
+# the types of the cells of grids
 cell = property.cell
+# complex numbers
 complex = property.complex
+# fixed point decimals
 decimal = property.decimal
+# one of a set of names
 enum = property.enum
+# floating point numbers
 float = property.float
+# internet addresses
 inet = property.inet
+# integers
 int = property.int
+# values taken as they are
 identity = property.identity
+# the same, by another name
 object = property.identity
+# strings
 str = property.str
 
-# the more complex types
+# the more complex types: dates
 date = property.date
+# quantities with units
 dimensional = property.dimensional
+# filesystem paths
 path = property.path
+# times of day
 time = property.time
+# points in time
 timestamp = property.timestamp
+# resource identifiers
 uri = property.uri
 
-# containers
+# containers: arrays
 array = property.array
+# lists
 list = property.list
+# sets
 set = property.set
+# tuples
 tuple = property.tuple
 
-# meta
+# meta: input streams
 istream = property.istream
+# output streams
 ostream = property.ostream
+# environment variables
 envvar = property.envvar
+# search paths in the environment
 envpath = property.envpath
+# channels between processes
+channel = property.channel
 
+# the trait that holds a component
 from .Facility import Facility as facility
 
 # meta-properties: trait descriptors for homogeneous containers; these require other trait
