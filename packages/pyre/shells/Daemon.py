@@ -6,10 +6,14 @@
 
 
 # externals
-import os  # access to os services
+import os
 import sys
-import pyre  # access the framework
-from .Fork import Fork  # my superclass
+
+# support
+import pyre
+
+# my superclass
+from .Fork import Fork
 
 
 # declaration
@@ -26,6 +30,7 @@ class Daemon(Fork, family="pyre.shells.daemon"):
     model = pyre.properties.str(default="daemon")
     model.doc = "the programming model"
 
+    # whether i am the process that runs the application
     daemon = pyre.properties.bool(default=False)
     daemon.doc = "internal marker to indicate that the spawning is complete"
 
@@ -40,6 +45,7 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         """
         # if i was told not to spawn, just invoke the behavior
         if application.DEBUG:
+            # in this process
             return application.main(*args, **kwds)
 
         # if spawning is done
@@ -82,6 +88,7 @@ class Daemon(Fork, family="pyre.shells.daemon"):
         # in the intermediate child, decouple from the parent environment; don't change the
         # {cwd} just yet so {exec} below can find the script that launched the application
         os.setsid()
+        # and from the permissions it would give the files it makes
         os.umask(0)
 
         # respawn
@@ -92,32 +99,21 @@ class Daemon(Fork, family="pyre.shells.daemon"):
             # exit immediately and unconditionally
             return os._exit(0)
 
-        # in the final child process, convert {stdout} and {stderr} into channels
-        stdout, stderr = self.childChannels(pipes)
-
-        # daemons use {stdin}, {stdout} and {stderr} to communicate with the launching process
-        os.dup2(stdout.inbound, 0)
-        os.dup2(stdout.outbound, 1)
-        os.dup2(stderr.outbound, 2)
-
-        # on python 3.4 and later
-        try:
-            # we have to explicitly ask for the file descriptors to become available across
-            # calls to {exec}; grab the function that enables descriptor inheritance
-            mark = os.set_inheritable
-        # older versions don't have this function
-        except AttributeError:
-            # but also pass file descriptors on to child processes, so no worries
-            pass
-        # if all is well
-        else:
-            # mark the descriptors
-            mark(0, True)
-            mark(1, True)
-            mark(2, True)
+        # in the final child process, build the channels to the launching process
+        channels = self.childChannels(pipes)
+        # if there are any
+        if self.capture:
+            # daemons use their standard streams to communicate with the launching process, so
+            # install the channels in their place, where they survive the {exec}: the launching
+            # process writes to my input
+            channels.stdin.install(stream=0)
+            # reads my output
+            channels.stdout.install(stream=1)
+            # and my error stream
+            channels.stderr.install(stream=2)
 
         # build the command line
-        argv = [sys.executable] + sys.argv + ["--{.pyre_name}.daemon=True".format(self)]
+        argv = [sys.executable] + sys.argv + [f"--{self.pyre_name}.daemon=True"]
 
         # and try
         try:
@@ -125,8 +121,8 @@ class Daemon(Fork, family="pyre.shells.daemon"):
             os.execv(sys.executable, argv)
         # if the interpreter could not be started
         except OSError as error:
-            # show me
-            print(error, file=sys.stderr)
+            # say so
+            application.error.log(str(error))
 
         # all done
         return
