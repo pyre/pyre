@@ -24,8 +24,9 @@ def test():
     parent, child = pyre.ipc.newSocket().open()
     # build a worker side member; nothing gets reaped here, so my own pid will do
     worker = pyre.nexus.crew(pid=os.getpid(), channel=child)
-    # hand-craft a message whose header promises far more than what follows
-    parent.write(bytes=struct.pack("<L", 100) + b"stub")
+    # hand-craft a message whose header, framed the way the member reads it, promises far more
+    # than what follows, and no descriptors
+    parent.write(bytes=struct.pack(worker.marshaler.packing, 100, 0) + b"stub")
     # and hang up
     parent.close()
     # fire the task handler; it finds the stub
@@ -69,8 +70,9 @@ def test():
 
     # register the callback
     staff.pending[task] = [deliver]
-    # the worker dies mid-report: a header, a fragment of the body, then nothing
-    child.write(bytes=struct.pack("<L", 64) + b"partial")
+    # the worker dies mid-report: a header, framed the way the team reads it, a fragment of the
+    # body, then nothing
+    child.write(bytes=struct.pack(staff.marshaler.packing, 64, 0) + b"partial")
     # and the channel closes
     child.close()
     # fire the harvesting handler; it finds the fragment
