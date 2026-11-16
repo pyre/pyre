@@ -20,38 +20,59 @@ from .. import schemata
 # build the typed descriptors
 @schemata.typed
 class descriptor(stem.variable):
-    pass
+    """
+    The descriptor that carries a subclass for each of the schemata
+    """
 
 
 # for convenience, expose the typed ones
-# the simple ones
+# the simple ones: truth values
 bool = descriptor.bool
+# complex numbers
 complex = descriptor.complex
+# fixed point decimals
 decimal = descriptor.decimal
+# one of a set of names
 enum = descriptor.enum
+# floating point numbers
 float = descriptor.float
+# internet addresses
 inet = descriptor.inet
+# integers
 int = descriptor.int
+# values taken as they are
 identity = descriptor.identity
+# strings
 str = descriptor.str
 
-# more complex types
+# more complex types: dates
 date = descriptor.date
+# quantities with units
 dimensional = descriptor.dimensional
+# filesystem paths
 path = descriptor.path
+# times of day
 time = descriptor.time
+# points in time
 timestamp = descriptor.timestamp
+# resource identifiers
 uri = descriptor.uri
 
-# containers
+# containers: arrays
 array = descriptor.array
+# lists
 list = descriptor.list
+# sets
 set = descriptor.set
+# tuples
 tuple = descriptor.tuple
 
-# meta-types
+# meta-types: input streams
 istream = descriptor.istream
+# output streams
 ostream = descriptor.ostream
+# channels between processes
+channel = descriptor.channel
 
 
 # common meta-descriptors
