@@ -45,20 +45,20 @@ class Origin(pyre.application, family="tests.pyre.nexus.forkserver.origin"):
         # and of its journal
         parentJournal, childJournal = transport.open()
         # the request for the member
-        request = Recruit(crew=pyre.nexus.crew, channel=child, journal=childJournal)
+        request = Recruit(crew=pyre.nexus.crew, channels=[child], journals=[childJournal])
         # claiming that the crew class comes from a file it does not come from
         request.origin = "/nowhere/Crew.py"
         # ask for the member
-        pid = liaison.recruit(request=request)
+        (pid,) = liaison.recruit(request=request)
         # release the member's ends
         child.close()
         # and the ends of its journal channel
         childJournal.close()
 
-        # the member leaves on its own, and the agency reports it
+        # the member leaves on its own, and the agency reports it on the report channel
         while not liaison.collect(pid=pid)[0]:
-            # so listen to the agency until it does
-            liaison.hear()
+            # so listen there until it does
+            liaison.hear(channel=liaison.reports)
         # after saying why, on the journal it ships to the team
         data = b""
         # collect everything it said
