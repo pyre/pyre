@@ -24,7 +24,7 @@ from pyre.units.SI import second
 # endpoints and the handlers use {recv}/{send}
 class Channel:
     """
-    A socket-backed channel whose two endpoints are the same socket
+    A socket-backed channel whose two endpoints are the descriptor of the same socket
     """
 
     # meta-methods
@@ -40,16 +40,16 @@ class Channel:
         """
         The endpoint the dispatcher watches for read-readiness
         """
-        # the socket itself
-        return self.sock
+        # the descriptor of the socket
+        return self.sock.fileno()
 
     @property
     def outbound(self):
         """
         The endpoint the dispatcher watches for write-readiness
         """
-        # the socket itself
-        return self.sock
+        # the descriptor of the socket
+        return self.sock.fileno()
 
     # input/output
     def recv(self, n):
@@ -134,6 +134,7 @@ def test():
 
     # clean up the sockets
     a.close()
+    # both of them
     b.close()
     # all done
     return

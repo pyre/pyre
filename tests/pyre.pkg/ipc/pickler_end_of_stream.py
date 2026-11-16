@@ -29,6 +29,7 @@ def test():
 
     # a channel that closes cleanly between messages: no header at all
     parent, child = pyre.ipc.newSocket().open()
+    # whose peer goes away
     child.close()
     # attempt to
     try:
@@ -59,12 +60,13 @@ def test():
     except EndOfStream as error:
         # with the fragment accounted for
         assert error.received == 2
+        # out of a whole header
         assert error.expected == m.headerSize
 
     # a peer that dies mid-body
     parent, child = pyre.ipc.newSocket().open()
-    # a header that promises much more than what follows
-    child.write(bytes=struct.pack(m.packing, 100) + b"stub")
+    # a header that promises much more than what follows, and no descriptors
+    child.write(bytes=struct.pack(m.packing, 100, 0) + b"stub")
     # and gone
     child.close()
     # attempt to
@@ -77,6 +79,7 @@ def test():
     except EndOfStream as error:
         # with the fragment accounted for
         assert error.received == 4
+        # out of the promised body
         assert error.expected == 100
 
     # a healthy peer whose message arrives in fragments that split the header
@@ -88,8 +91,10 @@ def test():
         # assemble a complete message
         import pickle
 
+        # pickle the item
         body = pickle.dumps("dribbled")
-        message = struct.pack(m.packing, len(body)) + body
+        # with a header that announces no descriptors
+        message = struct.pack(m.packing, len(body), 0) + body
         # send the first two bytes, splitting the header
         child.write(bytes=message[:2])
         # let the reader wake up on the fragment
@@ -100,16 +105,21 @@ def test():
         os._exit(0)
     # in the parent, the read blocks until the message completes
     assert m.recv(channel=parent) == "dribbled"
-    # harvest the dribbler and verify it exited cleanly
+    # harvest the dribbler
     _, status = os.waitpid(pid, 0)
+    # and verify it exited cleanly
     assert status == 0
 
     # back-to-back messages must not bleed into each other: the first read takes exactly
     # its own message, even with the second already buffered
     parent, child = pyre.ipc.newSocket().open()
+    # send two messages
     m.send(item="first", channel=child)
+    # back to back
     m.send(item="second", channel=child)
+    # the first read gets the first one
     assert m.recv(channel=parent) == "first"
+    # and the second read the second one
     assert m.recv(channel=parent) == "second"
 
     # all done
@@ -118,6 +128,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

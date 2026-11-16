@@ -21,13 +21,18 @@ def test():
     parent, child = ends
     # that matches its named endpoints
     assert ends.parent is parent
+    # on both sides
     assert ends.child is child
     # both ends are live
     assert parent.fileno() >= 0
+    # each one of them
     assert child.fileno() >= 0
-    # each end serves as both the inbound and the outbound endpoint
-    assert parent.inbound is parent
-    assert parent.outbound is parent
+    # each end reads and writes through its one descriptor
+    assert parent.inbound == parent.fileno()
+    # in both directions
+    assert parent.outbound == parent.fileno()
+    # which is all it is made of
+    assert parent.descriptors() == [parent.fileno()]
 
     # and hand them back
     return ends
@@ -35,6 +40,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

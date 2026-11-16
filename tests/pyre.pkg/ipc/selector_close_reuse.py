@@ -30,7 +30,7 @@ def scenario(transport):
     # and the original pair of channels
     parent, child = transport.open()
     # remember the descriptor number of the watched end
-    old = parent.inbound if isinstance(parent.inbound, int) else parent.fileno()
+    old = parent.inbound
     # the record of what fired
     fired = []
     # and a parking spot for the replacement pair, so it outlives the handler
@@ -52,11 +52,11 @@ def scenario(transport):
         # park them
         replacement["pair"] = (p, c)
         # find the end that reincarnated the old number
-        fresh = p if (p.inbound if isinstance(p.inbound, int) else p.fileno()) == old else c
+        fresh = p if p.inbound == old else c
         # and its peer
         other = c if fresh is p else p
         # get the descriptor number of the fresh end
-        freshfd = fresh.inbound if isinstance(fresh.inbound, int) else fresh.fileno()
+        freshfd = fresh.inbound
         # this scenario is about number reuse; insist it actually happened
         assert freshfd == old
         # register interest with the same mask as the channel just closed
