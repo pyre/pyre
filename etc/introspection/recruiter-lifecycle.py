@@ -75,9 +75,9 @@ class RecruiterLifecycle(pyre.application):
         diagram.note(
             col="StaffingAgency",
             lines=[
-                "[StaffingAgency.command] + --shell=forkserver, control and journal ends",
+                "[StaffingAgency.command] + --shell=forkserver, control, report and journal ends",
                 "the shell builds the agency, which serves on its own dispatcher:",
-                "requests by [whenReadReady], exits by [whenSignal(SIGCHLD)]",
+                "requests by [whenReadReady], exits by [whenSignal(SIGCHLD)], reported apart",
                 "agency: [serving]",
             ],
         )
@@ -95,7 +95,7 @@ class RecruiterLifecycle(pyre.application):
         diagram.call(src="Liaison", dst="dispatcher", label="whenReadReady")
         # what it listens to
         diagram.note(
-            col="dispatcher", lines=["[report] on the control channel, [overhear] on the journal"]
+            col="dispatcher", lines=["[report] on the report channel, [overhear] on the journal"]
         )
         # back to the application
         diagram.unwind("dispatcher", "Liaison", "application")
@@ -104,42 +104,49 @@ class RecruiterLifecycle(pyre.application):
 
     def recruit(self, diagram: Sequence) -> None:
         """
-        A staff with work and vacancies recruits a member
+        A staff with work and vacancies recruits its members, all of them in one request
         """
         # work arrives
         diagram.trigger(label="Staff.assign", col="Staff", sub="vacancies: recruit")
         # the staff asks its recruiter
-        diagram.call(src="Staff", dst="Forkserver", label="deploy")
+        diagram.call(src="Staff", dst="Forkserver", label="recruit")
         # which opens the channels
-        diagram.note(col="Forkserver", lines=["opens the crew channel and the journal channel"])
-        # and asks the liaison for a member
+        diagram.note(
+            col="Forkserver",
+            lines=["opens the crew channel and the journal channel of every vacancy"],
+        )
+        # and asks the liaison for the members
         diagram.call(src="Forkserver", dst="Liaison", label="recruit")
-        # which sends the request
-        diagram.call(src="Liaison", dst="StaffingAgency", label="[Recruit] + descriptors")
+        # which sends the request on the control channel
+        diagram.call(src="Liaison", dst="StaffingAgency", label="[Recruit]")
         # what it carries
         diagram.note(
             col="StaffingAgency",
-            lines=["the crew class, pickled, with the file of its module; the member's ends"],
+            lines=[
+                "the crew class, pickled, with the file of its module; the members' ends",
+                "as many members as the descriptors fit; a larger team takes more requests",
+            ],
         )
-        # the agency forks
-        diagram.call(src="StaffingAgency", dst="member", label="enlist: fork")
-        # the member makes itself
+        # the agency forks them
+        diagram.call(src="StaffingAgency", dst="member", label="enlist: fork, one after the other")
+        # each member makes itself
         diagram.note(
             col="member",
             lines=[
                 "member: [forked]",
+                "releases the agency's channels and the ends of the members forked after it",
                 "[Crew.route]: its journal goes to the team first",
                 "[Recruit.load]: a class from another file breaches a firewall, and it leaves",
                 "builds itself, [register]s, [work]s",
                 "member: [forked] → [working]",
             ],
         )
-        # the agency answers with the pid
-        diagram.call(src="StaffingAgency", dst="Liaison", label="[Recruited] pid")
+        # the agency answers with the pids, on the control channel, which carries nothing else
+        diagram.call(src="StaffingAgency", dst="Liaison", label="[Recruited] pids")
         # back to the recruiter
         diagram.ret(src="Liaison", dst="Forkserver")
-        # which makes the team side of the member
-        diagram.call(src="Forkserver", dst="Crew", label="team.crew + join")
+        # which makes the team side of each member
+        diagram.call(src="Forkserver", dst="Crew", label="team.crew + join, for each pid")
         # its first state
         diagram.note(col="Crew", lines=["crew: [registered]"])
         # back to the staff
@@ -286,12 +293,18 @@ class RecruiterLifecycle(pyre.application):
         diagram.note(
             col="StaffingAgency", lines=["[harvest]: [waitpid(-1, WNOHANG)] until none is left"]
         )
-        # and reports each one
+        # and reports each one on the report channel
         diagram.call(src="StaffingAgency", dst="dispatcher", label="[Exited] pid, status")
         # which wakes the liaison
         diagram.call(src="dispatcher", dst="Liaison", label="report")
         # which files it and tells its subscribers
-        diagram.note(col="Liaison", lines=["[hear] → [exited]: the report goes on its pile"])
+        diagram.note(
+            col="Liaison",
+            lines=[
+                "[pending]: the report is waiting; with nothing waiting, it keeps listening",
+                "[hear] → [exited]: the report goes on its pile",
+            ],
+        )
         # the recruiter
         diagram.call(src="Liaison", dst="Forkserver", label="exited")
         # collects
@@ -396,7 +409,7 @@ class RecruiterLifecycle(pyre.application):
         The agency dies; the members already running are unaffected
         """
         # the liaison hears it
-        diagram.trigger(label="end of the control channel", col="dispatcher", sub="the agency died")
+        diagram.trigger(label="end of the report channel", col="dispatcher", sub="the agency died")
         # through its handler
         diagram.call(src="dispatcher", dst="Liaison", label="report")
         # which stops listening
@@ -516,8 +529,8 @@ class RecruiterLifecycle(pyre.application):
         " grace period running out, a member dying, the agency dying, and shutdown."
     )
     # the paragraphs above the diagram
-    intro = """<p>The life of a <code>pyre.nexus</code> team whose members come from the staffing agency, as built on branch <code>teardown</code>, with the state of every party and each transition, written <span style="color:var(--data)">state → state</span> where it happens. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Generated by <code>etc/introspection/recruiter-lifecycle.py</code>; the states are tabulated in <code>doc/design/forkserver.md</code>.</p>
-<p class="muted">Lifelines: <b>application</b> is the process that runs the teams; <b>Staff</b> is the team, which owns its recruiter, <b>Forkserver</b>; <b>Crew</b> is the team side of a member; <b>Departure</b> is a member on the recruiter's ledger of departures; <b>Liaison</b> is the agency's handle in the team's process; <b>dispatcher</b> is the team's event loop; <b>StaffingAgency</b> runs in a process of its own, spawned from the application's command line; <b>member</b> is a crew member's process, forked by the agency. Messages in brackets travel on the control channel.</p>
+    intro = """<p>The life of a <code>pyre.nexus</code> team whose members come from the staffing agency, with the state of every party and each transition, written <span style="color:var(--data)">state → state</span> where it happens. One lifeline per collaborator; time runs down. Each scenario starts at the margin with what sets it off, and ends when control returns there. Generated by <code>etc/introspection/recruiter-lifecycle.py</code>; the states are tabulated in <code>doc/design/forkserver.md</code>.</p>
+<p class="muted">Lifelines: <b>application</b> is the process that runs the teams; <b>Staff</b> is the team, which owns its recruiter, <b>Forkserver</b>; <b>Crew</b> is the team side of a member; <b>Departure</b> is a member on the recruiter's ledger of departures; <b>Liaison</b> is the agency's handle in the team's process; <b>dispatcher</b> is the team's event loop; <b>StaffingAgency</b> runs in a process of its own, spawned from the application's command line; <b>member</b> is a crew member's process, forked by the agency. Messages in brackets travel on the control channel, except <code>[Exited]</code>, which travels on the report channel; each channel has a single reader in the team's process.</p>
 """
     # the key to its colors
     key = """<div class="key"><span class="d"><b>blue</b>: states, and data</span><span class="g"><b>green</b>: nobody waits</span><span class="o"><b>amber</b>: open question</span><span class="t"><b>dashed</b>: what starts a scenario</span><span>× return</span></div>"""
