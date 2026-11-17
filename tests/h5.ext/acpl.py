@@ -22,6 +22,7 @@ def test():
     uri = "h5_ext_acpl.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # a fresh attribute creation property list
@@ -35,6 +36,7 @@ def test():
     assert acpl.charEncoding == libh5.CharacterSet.ascii
     # an attribute whose name is not plain ascii says so
     acpl.charEncoding = libh5.CharacterSet.utf8
+    # and the list remembers
     assert acpl.charEncoding == libh5.CharacterSet.utf8
 
     # make a file
@@ -51,6 +53,7 @@ def test():
 
     # and one taking the library defaults, to confirm the argument is optional
     g.createAttribute(name="scale", type=libh5.types.native.double, space=space)
+    # which is there as well
     assert g.hasAttribute(name="scale")
 
     # all done

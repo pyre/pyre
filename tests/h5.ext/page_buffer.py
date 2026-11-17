@@ -34,7 +34,9 @@ def test():
     # the layout: a small raster in chunks of a kilobyte, a quarter of a page; a chunk bigger
     # than a page goes around the buffer altogether
     extent = [64, 64]
+    # the shape of a chunk
     chunk = [8, 16]
+    # and the number of cells it holds
     cells = chunk[0] * chunk[1]
     # the page size
     page = 4096
@@ -43,7 +45,9 @@ def test():
     fcpl = libh5.properties.fcpl()
     # ask for the paged file space strategy
     free = fcpl.filespaceStrategy
+    # set it
     free.strategy = libh5.FilespaceStrategy.page
+    # and hand it back to the list
     fcpl.filespaceStrategy = free
     # with small pages
     fcpl.pageSize = page
@@ -51,8 +55,9 @@ def test():
     f = libh5.File(uri=uri, mode="w", fcpl=fcpl)
     # describe the extent
     space = libh5.DataSpace(shape=extent)
-    # the creation properties: chunked
+    # the creation properties
     dcpl = libh5.properties.dcpl()
+    # chunked
     dcpl.chunk = chunk
     # make the dataset
     raster = f.create(path="raster", type=libh5.types.native.double, space=space, dcpl=dcpl)
@@ -68,6 +73,7 @@ def test():
     assert len({entry.address // page for entry in raster.chunkTable()}) == 1
     # the file was opened without a page buffer, so it has no tally, and nothing to reset
     assert f.pageBuffer is None
+    # and a reset says there was nothing to do
     assert f.resetPageBuffer() is False
     # done writing; the dataset keeps the file open for as long as it lives, and a file that is
     # still open is handed back as is when it is opened again, page buffer or not
@@ -77,6 +83,7 @@ def test():
 
     # the access properties of a reader with a page buffer of a few pages
     fapl = libh5.properties.fapl()
+    # with room for sixteen pages, and no floor for either kind of page
     fapl.pageBufferSize = libh5.properties.PageBuffer(bytes=16 * page, metadata=0, raw=0)
     # open the file again
     f = libh5.File(uri=uri, mode="r", fapl=fapl)
@@ -88,7 +95,9 @@ def test():
     assert f.resetPageBuffer() is True
     # and check that it did
     stats = f.pageBuffer
+    # no accesses, of metadata or raw data
     assert stats.accesses == [0, 0]
+    # and no hits
     assert stats.hits == [0, 0]
 
     # room for a chunk
@@ -105,8 +114,9 @@ def test():
     raster.read(scratch, libh5.types.native.double, neighbors[1], chunk)
     # this time the page was at hand
     second = f.pageBuffer
-    # so the request was a hit, and nothing more was fetched
+    # so the request was a hit
     assert second.hits[1] == first.hits[1] + 1
+    # and nothing more was fetched
     assert second.misses[1] == first.misses[1]
     # nothing went around the buffer
     assert second.bypasses[1] == 0

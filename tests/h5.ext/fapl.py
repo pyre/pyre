@@ -24,6 +24,7 @@ def test():
     uri = "h5_ext_fapl.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # a fresh file access property list
@@ -33,12 +34,14 @@ def test():
     assert (fapl.alignment.threshold, fapl.alignment.boundary) == (1, 1)
     # a product headed for a parallel filesystem lands its larger objects on boundaries
     fapl.alignment = p.Alignment(threshold=4096, boundary=4096)
+    # and the list remembers
     assert (fapl.alignment.threshold, fapl.alignment.boundary) == (4096, 4096)
 
     # the sieve buffer gathers small writes to contiguous datasets
     assert fapl.sieveBufferSize > 0
     # and it is ours to size
     fapl.sieveBufferSize = 128 * 1024
+    # and the list remembers
     assert fapl.sieveBufferSize == 128 * 1024
 
     # the caches, as {(metadata elements, chunk slots, chunk bytes, preemption)}; these are
@@ -46,19 +49,23 @@ def test():
     cache = fapl.cache
     # a workflow that sweeps large chunks wants room for more of them
     cache.bytes = 64 * 1024 * 1024
+    # hand the caches back to the list
     fapl.cache = cache
+    # which remembers them
     assert fapl.cache.bytes == 64 * 1024 * 1024
 
     # what becomes of a file closed while objects in it are still open
     assert fapl.closeDegree == libh5.CloseDegree.default
     # ask for the handle to survive until the last object is done with it
     fapl.closeDegree = libh5.CloseDegree.strong
+    # and the list remembers
     assert fapl.closeDegree == libh5.CloseDegree.strong
 
     # the file format versions the library may use; {latest} is not a fixed point, it means
     # whatever the library we were built against considers newest, so reading the bound
     # back reports the concrete version it resolved to rather than the request
     fapl.libverBounds = p.VersionBounds(low=libh5.LibVersion.earliest, high=libh5.LibVersion.latest)
+    # read the bounds back
     low, high = fapl.libverBounds.low, fapl.libverBounds.high
     # the low bound is what we asked for
     assert low == libh5.LibVersion.earliest
@@ -67,6 +74,7 @@ def test():
 
     # pinning the format keeps older libraries able to read what we write
     fapl.libverBounds = p.VersionBounds(low=libh5.LibVersion.earliest, high=libh5.LibVersion.v18)
+    # and the list remembers the pin
     assert fapl.libverBounds.high == libh5.LibVersion.v18
 
     # make a file with it

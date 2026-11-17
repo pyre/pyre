@@ -14,9 +14,6 @@ def test():
     # get the bindings
     from pyre.extensions import libh5
 
-    # the property namespace, which is where the records live
-    p = libh5.properties
-
     # for a scratch path and its cleanup
     import os
 
@@ -24,6 +21,7 @@ def test():
     uri = "h5_ext_fcpl.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # a fresh file creation property list
@@ -38,6 +36,7 @@ def test():
     # a file that another format has to carry reserves a block there; hdf5 requires it to
     # be a power of two, and at least 512 bytes
     fcpl.userblock = 1024
+    # and the list remembers
     assert fcpl.userblock == 1024
 
     # the free space strategy, as {(strategy, persist, threshold)}
@@ -46,7 +45,9 @@ def test():
     assert free.persist is False
     # ask for it to be, so a product that is revised repeatedly can reuse its own holes
     free.persist = True
+    # hand the strategy back to the list
     fcpl.filespaceStrategy = free
+    # which remembers it
     assert fcpl.filespaceStrategy.persist is True
 
     # make a file with it

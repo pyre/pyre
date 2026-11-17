@@ -21,15 +21,18 @@ def test():
     uri = "h5_ext_dcpl_fill.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # make the file
     f = libh5.File(uri=uri, mode="w")
     # describe the extent
     space = libh5.DataSpace(shape=[100, 100])
-    # the creation properties: chunked, with a declared fill value
+    # the creation properties
     dcpl = libh5.properties.dcpl()
+    # chunked
     dcpl.chunk = [30, 40]
+    # with a declared fill value
     dcpl.fillValue = -1.0
     # the property list records that the declaration is mine rather than the library's
     assert dcpl.fillValueStatus == libh5.FillValue.user_defined
@@ -40,8 +43,9 @@ def test():
     m = dataset.mosaic(cell="float64")
     # bring it in
     m.fill(tile=[1, 1])
-    # every cell holds the declared fill value, not garbage
+    # every cell holds the declared fill value, not garbage: one inside the chunk
     assert m[35, 45] == -1.0
+    # and the last
     assert m[59, 79] == -1.0
 
     # and the dataset answers for its own fill value, with no type to name and nothing to
@@ -51,7 +55,9 @@ def test():
     # a dataset nobody gave one to still has a fill value, because hdf5 supplies zero; the
     # status is what separates that from a value someone chose
     plain = f.create(path="plain", type=libh5.types.native.double, space=space)
+    # which says the value is the library's
     assert plain.dcpl.fillValueStatus == libh5.FillValue.default
+    # and that it is zero
     assert plain.fillValue == 0.0
 
     # all done

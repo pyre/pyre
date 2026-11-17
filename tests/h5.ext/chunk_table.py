@@ -34,11 +34,14 @@ def test():
     uri = "chunk_table.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
-    # the layout: a raster diced into sixteen chunks, of which we will write two
+    # the layout: a raster
     extent = [256, 256]
+    # diced into sixteen chunks, of which we will write two
     chunk = [64, 64]
+    # each holding this many cells
     cells = chunk[0] * chunk[1]
     # a double is eight bytes, and nothing here is filtered, so a stored chunk is exactly
     # this big; anything else means the pipeline changed under us
@@ -48,8 +51,9 @@ def test():
     f = libh5.File(uri=uri, mode="w")
     # describe the extent
     space = libh5.DataSpace(shape=extent)
-    # the creation properties: chunked
+    # the creation properties
     dcpl = libh5.properties.dcpl()
+    # chunked
     dcpl.chunk = chunk
     # make the chunked dataset
     chunked = f.create(path="chunked", type=libh5.types.native.double, space=space, dcpl=dcpl)
@@ -61,6 +65,7 @@ def test():
     # write two chunks, and deliberately in the wrong order: the one further along the raster
     # goes down first, so that write order and logical order disagree
     chunked.write(payload, libh5.types.native.double, [64, 64], chunk)
+    # and the one at the origin after it
     chunked.write(payload, libh5.types.native.double, [0, 0], chunk)
 
     # two of the sixteen tiles have been written, and only those are in the table
@@ -69,11 +74,15 @@ def test():
     # the table is ordered by origin, not by the order the chunks were laid down; if it were
     # write order, these two would come back the other way round
     first = chunked.chunk(index=0)
+    # and the second
     second = chunked.chunk(index=1)
+    # the first entry is the chunk at the origin
     assert first.origin == [0, 0]
+    # and the second the one further along
     assert second.origin == [64, 64]
-    # both are really there
+    # both are really there: the first
     assert first.bytes == footprint
+    # and the second
     assert second.bytes == footprint
     # nothing was filtered, so no stage was skipped
     assert first.filterMask == 0
@@ -81,7 +90,9 @@ def test():
     # a chunk can be named by any of its cells, not just its corner, and it reports its own
     # origin rather than the cell it was asked about
     interior = chunked.chunkAt(origin=[70, 70])
+    # names the chunk that contains it
     assert interior.origin == [64, 64]
+    # which is the one in the table
     assert interior.address == second.address
 
     # a tile nobody wrote has no entry, and that is the answer rather than a failure: it says
@@ -89,14 +100,17 @@ def test():
     assert chunked.chunkAt(origin=[128, 128]) is None
 
     # the questions are ill posed for a dataset that is not stored as chunks, and both of them
-    # say so rather than letting the library raise
+    # say so rather than letting the library raise: the count
     assert flat.chunks is None
+    # and the lookup
     assert flat.chunkAt(origin=[0, 0]) is None
 
     # the lookups that are given something unusable complain and decline to answer; muzzle
     # the complaint so the rest of this can run, and so the suite stays silent on success
     channel = journal.error("pyre.h5")
+    # by sending its output to the trash
     channel.device = journal.trash()
+    # and letting the test go on
     channel.fatal = False
 
     # the guarded calls below complain on the {pyre.h5} error channel and decline to answer.

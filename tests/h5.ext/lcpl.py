@@ -21,6 +21,7 @@ def test():
     uri = "h5_ext_lcpl.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # a fresh link creation property list
@@ -30,12 +31,14 @@ def test():
     assert lcpl.charEncoding == libh5.CharacterSet.ascii
     # a product whose member names are not plain ascii says so
     lcpl.charEncoding = libh5.CharacterSet.utf8
+    # and the list remembers
     assert lcpl.charEncoding == libh5.CharacterSet.utf8
 
     # missing groups along a path are not created, by default
     assert lcpl.intermediateGroupCreation is False
     # ask for them to be
     lcpl.intermediateGroupCreation = True
+    # and the list remembers
     assert lcpl.intermediateGroupCreation is True
 
     # make a file
@@ -44,15 +47,19 @@ def test():
     # without the property list, a path whose parents are missing cannot be laid down; with
     # it, one call creates the whole chain and hands back the deepest group
     deep = f.create(path="science/LSAR/GSLC/grids", lcpl=lcpl)
-    # every group along the way is there
+    # every group along the way is there: the first
     assert "science" in f
+    # one in the middle
     assert "LSAR" in f.get(path="science")
+    # and the last
     assert "grids" in f.get(path="science/LSAR/GSLC")
     # and what came back is the last one
     assert deep is not None
 
-    # datasets take the same treatment: the groups above one are created on demand
+    # datasets take the same treatment: the groups above one are created on demand; make a
+    # space
     space = libh5.DataSpace(shape=[4])
+    # and a dataset over it, deep in groups that do not exist yet
     f.create(
         path="science/LSAR/GSLC/metadata/orbit",
         type=libh5.types.native.double,
@@ -68,12 +75,14 @@ def test():
     assert lapl.traversalLimit > 0
     # and that bound is ours to set
     lapl.traversalLimit = 8
+    # and the list remembers
     assert lapl.traversalLimit == 8
 
     # nothing is prepended to the filenames external links name, by default
     assert lapl.externalPrefix == ""
     # a product whose external targets have moved says where they went
     lapl.externalPrefix = "/data/granules"
+    # and the list remembers
     assert lapl.externalPrefix == "/data/granules"
 
     # all done

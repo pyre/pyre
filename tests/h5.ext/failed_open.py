@@ -15,9 +15,6 @@ def test():
     # get the bindings
     from pyre.extensions import libh5
 
-    # for the scratch file
-    import os
-
     # a file that is not h5 at all
     uri = "h5_ext_failed_open.h5"
     # make it
@@ -38,8 +35,11 @@ def test():
     assert f.members() == []
     # a file that is not there is refused the same way
     missing = libh5.File(uri="h5_ext_failed_open_missing.h5", mode="r")
+    # with a handle the library will not vouch for
     assert not libh5.valid(missing.hid)
+    # no root
     assert missing.get(path="/") is None
+    # and no members
     assert missing.members() == []
     # all done
     return
