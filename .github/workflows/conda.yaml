@@ -127,6 +127,12 @@ jobs:
           ${mm} --jobs=$(nproc)
 
       - name: test pyre
+        env:
+          # the ranks of an mpi test share one machine, so they talk through shared memory and
+          # never touch the network devices of the runner
+          OMPI_MCA_pml: ob1
+          OMPI_MCA_btl: self,sm
+          OMPI_MCA_osc: sm
         run: |
           echo " -- switching to the pyre source directory"
           cd pyre
