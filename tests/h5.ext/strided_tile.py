@@ -33,19 +33,22 @@ def test():
     uri = "strided_tile.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # the layout: a small raster whose cells each say where they live, so a sample can be
     # checked against the coordinate it claims to have come from
     extent = [32, 32]
+    # and the number of its cells
     cells = extent[0] * extent[1]
 
     # make the file
     f = libh5.File(uri=uri, mode="w")
     # describe the extent
     space = libh5.DataSpace(shape=extent)
-    # a dataset to read back from, and one to scatter into
+    # a dataset to read back from
     src = f.create(path="src", type=libh5.types.native.double, space=space)
+    # and one to scatter into
     dst = f.create(path="dst", type=libh5.types.native.double, space=space)
 
     # every cell carries its own row and column, encoded so that either one can be recovered
@@ -58,16 +61,21 @@ def test():
     # now pull a decimated view: every second row and every fourth column, which is the case
     # that catches an implementation that assumes one stride for the whole request
     stride = [2, 4]
+    # and the number of samples along each axis
     shape = [8, 4]
     # somewhere to put the samples; they arrive packed, so the destination is the sample grid
     sampled = array.array("d", bytes(shape[0] * shape[1] * 8))
+    # pull them, starting at an origin off the corner
     src.read(sampled, libh5.types.native.double, [1, 3], shape, stride)
 
-    # each sample has to be the cell a caller would have reached for by hand
+    # each sample has to be the cell a caller would have reached for by hand: go through the
+    # rows of samples
     for row in range(shape[0]):
+        # and the columns
         for col in range(shape[1]):
             # the cell this sample was drawn from, walking out from the origin by the stride
             sourceRow = 1 + row * stride[0]
+            # in both directions
             sourceCol = 3 + col * stride[1]
             # and the value that cell was given when the raster was laid down
             assert sampled[row * shape[1] + col] == float(100 * sourceRow + sourceCol)
@@ -75,8 +83,11 @@ def test():
     # asking for no stride at all still means every cell of a solid block, which is what
     # every existing caller expects to keep getting
     solid = array.array("d", bytes(cells * 8))
+    # read the whole raster
     src.read(solid, libh5.types.native.double, [0, 0], extent)
+    # and check its first cell
     assert solid[0] == payload[0]
+    # and its last
     assert solid[cells - 1] == payload[cells - 1]
 
     # the write side scatters: put the samples back into the second dataset at the same
@@ -86,10 +97,13 @@ def test():
     # and read them back one at a time, to confirm they landed where they were aimed rather
     # than in a packed block at the corner
     one = array.array("d", bytes(8))
+    # go through the rows of samples
     for row in range(shape[0]):
+        # and the columns
         for col in range(shape[1]):
             # the slot this sample should have landed in
             targetRow = 1 + row * stride[0]
+            # in both directions
             targetCol = 3 + col * stride[1]
             # read that single cell
             dst.read(one, libh5.types.native.double, [targetRow, targetCol], [1, 1])
@@ -99,15 +113,20 @@ def test():
     # a stride that does not speak for every axis is refused rather than guessed at; muzzle
     # the complaint so the suite stays silent on success
     channel = journal.error("pyre.h5")
+    # by sending its output to the trash
     channel.device = journal.trash()
+    # and letting the test go on
     channel.fatal = False
     # a buffer that would be big enough, so nothing but the stride is wrong here
     scratch = array.array("d", bytes(shape[0] * shape[1] * 8))
     # the complaint may or may not be fatal, depending on how the build wires the journal
     # across the language boundary; either way the read must not have happened
     try:
+        # ask for a read with a stride for one axis only
         src.read(scratch, libh5.types.native.double, [0, 0], shape, [2])
+    # a fatal complaint
     except journal.ApplicationError:
+        # is as good as a refusal
         pass
     # nothing was read, so the buffer is still as it started
     assert scratch[0] == 0.0

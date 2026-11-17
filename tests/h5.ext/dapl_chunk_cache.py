@@ -31,6 +31,7 @@ def test():
     uri = "dapl_chunk_cache.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # the layout
@@ -40,49 +41,61 @@ def test():
     f = libh5.File(uri=uri, mode="w")
     # describe the extent
     space = libh5.DataSpace(shape=[256, 256])
-    # the creation properties: chunked
+    # the creation properties
     dcpl = libh5.properties.dcpl()
+    # chunked
     dcpl.chunk = chunk
     # make the dataset
     f.create(path="product", type=libh5.types.native.double, space=space, dcpl=dcpl)
-    # and let go of every handle, so the opens below start from nothing
+    # and let go of every handle, so the opens below start from nothing: close the file
     f.close()
+    # and drop it
     del f
 
-    # the budget to ask for: room for sixteen chunks
+    # the budget to ask for: the number of slots in the cache's index
     slots = 521
+    # and room for sixteen chunks
     budget = 16 * chunk[0] * chunk[1] * 8
-    # an access list carrying it
+    # an access list
     dapl = libh5.properties.dapl()
+    # carrying it
     dapl.chunkCache = libh5.properties.ChunkCache(slots, budget, 0.75)
 
     # take the dataset through it, on a file nobody else holds
     f = libh5.File(uri=uri, mode="r")
+    # by opening it with the tuned list
     tuned = f.dataset(path="product", dapl=dapl)
     # it reports the budget it was asked for
     cache = tuned.dapl.chunkCache
+    # the slots
     assert cache.slots == slots
+    # the bytes
     assert cache.bytes == budget
+    # and the preemption policy
     assert cache.preemption == 0.75
     # and the default it would otherwise have had is something else, or this proves nothing
     assert cache.bytes != libh5.properties.fapl().cache.bytes
 
     # a plain open of a dataset already in hand inherits what the first open asked for
     inherited = f.dataset(path="product")
+    # so it reports the same budget
     assert inherited.dapl.chunkCache.bytes == budget
 
-    # let everything go
+    # let everything go: close the file
     f.close()
+    # and drop every handle
     del f, tuned, inherited, cache
 
-    # and the same the other way round: a plain open first
+    # and the same the other way round: open the file again
     f = libh5.File(uri=uri, mode="r")
+    # with a plain open of the dataset first
     plain = f.dataset(path="product")
     # takes the file's default
     assert plain.dapl.chunkCache.bytes == libh5.properties.fapl().cache.bytes
     # and a tuned open afterwards does NOT get what it asks for, because the dataset is
     # already open and its cache is already settled
     late = f.dataset(path="product", dapl=dapl)
+    # so it does not report the budget it asked for
     assert late.dapl.chunkCache.bytes != budget
 
     # clean up

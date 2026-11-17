@@ -23,18 +23,22 @@ def test():
     uri = "h5_ext_handles.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # make the file
     f = libh5.File(uri=uri, mode="w")
     # with a group
     group = f.create(path="group")
-    # and a couple of datasets in it
+    # and a couple of datasets in it, over a common space
     space = libh5.DataSpace(shape=[4, 4])
+    # one of doubles
     group.create(path="one", type=libh5.types.native.double, space=space)
+    # and one of integers
     group.create(path="two", type=libh5.types.native.int32, space=space)
     # let go of everything but the file
     del group, space
+    # and make sure the collector has seen to them
     gc.collect()
     # so the file itself is the only thing it has open
     assert f.handles() == {"file": 1}
@@ -56,11 +60,13 @@ def test():
     for label, recipe in recipes.items():
         # make the object
         thing = recipe()
-        # its handle is alive
+        # get its handle
         hid = thing.hid
+        # which is alive
         assert libh5.valid(hid), label
         # let go of it
         del thing
+        # and make sure the collector has seen to it
         gc.collect()
         # the handle is gone
         assert not libh5.valid(hid), f"{label}: the handle outlived its object"
@@ -73,6 +79,7 @@ def test():
     assert f.handles() == {"file": 1, "dataset": 2}
     # and when they go
     del members
+    # and the collector has seen to them
     gc.collect()
     # so do their handles
     assert f.handles() == {"file": 1}

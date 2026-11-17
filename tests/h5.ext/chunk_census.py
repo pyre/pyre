@@ -29,9 +29,11 @@ def test():
         # by removing it
         os.remove(uri)
 
-    # the layout: a raster diced into twelve chunks that are not square
+    # the layout: a raster
     extent = [256, 192]
+    # diced into twelve chunks that are not square
     chunk = [64, 48]
+    # each holding this many cells
     cells = chunk[0] * chunk[1]
 
     # make the file
@@ -67,9 +69,11 @@ def test():
     for entry in census:
         # look it up by its origin
         single = chunked.chunkAt(origin=entry.origin)
-        # it is the same chunk
+        # it is the same chunk: at the same address
         assert single.address == entry.address
+        # of the same size
         assert single.bytes == entry.bytes
+        # and passed through the same filters
         assert single.filterMask == entry.filterMask
 
     # a chunked dataset nobody wrote into has a table, and it is empty

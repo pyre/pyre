@@ -33,7 +33,9 @@ def test():
     # the library will not make a group whose parent does not exist; capture stderr while it
     # refuses, to check that the library says nothing there on its own
     capture = tempfile.TemporaryFile(mode="w+b")
+    # save the real stderr
     saved = os.dup(2)
+    # and point stderr at the capture
     os.dup2(capture.fileno(), 2)
     # attempt to make the group
     try:
@@ -47,26 +49,36 @@ def test():
         assert str(error).startswith("pyre.h5.group")
     # anything else is a failure
     else:
+        # restore stderr
         os.dup2(saved, 2)
+        # and complain
         assert False, "a group with no parent was created"
-    # the library printed nothing on its own
+    # the library printed nothing on its own: rewind the capture
     capture.seek(0)
+    # and check that it is empty
     assert capture.read() == b""
-    # done with the capture
+    # done with the capture: let go of the saved stderr
     os.close(saved)
+    # and of the capture itself
     capture.close()
 
     # a channel that is not fatal records the entry instead; send it to a file
     log = "h5_ext_refusal.log"
+    # get the channel
     channel = journal.error("pyre.h5.group")
+    # point it at the log
     channel.device = journal.file(path=log)
+    # and let the test go on
     channel.fatal = False
     # so the same request
     group = f.create(path="missing/group")
     # answers with a handle the library will not vouch for
     assert not libh5.valid(group.hid)
-    # and the entry says what was attempted
-    text = open(log, encoding="utf-8").read()
+    # read the log
+    with open(log, encoding="utf-8") as stream:
+        # all of it
+        text = stream.read()
+    # the entry says what was attempted
     assert "creating the group 'missing/group'" in text
     # that the library refused
     assert "the hdf5 library refused" in text
@@ -78,17 +90,23 @@ def test():
     dataset = f.create(
         path="data", type=libh5.types.native.double, space=libh5.DataSpace(shape=[4, 4])
     )
+    # close it
     dataset.close()
-    # quietly
+    # and ask quietly: get the channel
     channel = journal.error("pyre.h5.dataset")
+    # point it at the log
     channel.device = journal.file(path=log)
+    # and let the test go on
     channel.fatal = False
     # the answer is a list the library will not vouch for
     assert not libh5.valid(dataset.dcpl.hid)
-    # and the entry says what was attempted, and what the library said, which names the
-    # routine that would not take the dead handle
-    text = open(log, encoding="utf-8").read()
+    # read the log again
+    with open(log, encoding="utf-8") as stream:
+        # all of it
+        text = stream.read()
+    # the entry says what was attempted
     assert "retrieving the creation property list of" in text
+    # and what the library said, which names the routine that would not take the dead handle
     assert "H5" in text.split("the hdf5 library refused")[-1]
 
     # close the file

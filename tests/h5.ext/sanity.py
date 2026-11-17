@@ -13,8 +13,9 @@ def test():
     # get the bindings
     from pyre.extensions import libh5
 
-    # the module-local flavors of the type-erased classes are registered
+    # the module-local flavors of the type-erased classes are registered: the mosaic
     assert hasattr(libh5, "Mosaic")
+    # and the grid
     assert hasattr(libh5, "Grid")
     # and datasets know how to make mosaics
     assert hasattr(libh5.DataSet, "mosaic")

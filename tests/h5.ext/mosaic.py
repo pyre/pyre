@@ -19,6 +19,9 @@ def test():
 
     # the recognizable content of the product
     def stamp(row, col):
+        """
+        The value of the cell at {row} and {col}
+        """
         # a value that encodes its own coordinates
         return float(100 * row + col)
 
@@ -26,6 +29,7 @@ def test():
     uri = "h5_ext_mosaic.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # make the file
@@ -45,9 +49,11 @@ def test():
     m = dataset.mosaic(cell="float64")
     # it is wired to its backing store
     assert m.connected is True
-    # its geometry reflects the product
+    # its geometry reflects the product: its shape
     assert m.shape == [100, 100]
+    # the shape of its tiles
     assert m.tileShape == [30, 40]
+    # and how many there are along each axis
     assert m.tiles == [4, 3]
     # and nothing is resident yet
     assert m.residents == 0
@@ -56,6 +62,7 @@ def test():
     probes = [(0, 0), (35, 45), (70, 85), (94, 94)]
     # deposit them; writes through indexing materialize the page and taint it
     for row, col in probes:
+        # one at a time
         m[row, col] = stamp(row, col)
     # push what diverged; the untouched chunks move nothing
     m.flush()
@@ -77,8 +84,9 @@ def test():
     w.fill()
     # the window touches a 2x2 block of chunks
     assert w.residents == 4
-    # and reads back in the product's own index space
+    # and reads back in the product's own index space: one probe
     assert w[70, 85] == stamp(70, 85)
+    # and the one in the doubly clipped chunk
     assert w[94, 94] == stamp(94, 94)
 
     # panes are ordinary grids over one page each: numpy-ready, zero-copy
@@ -89,9 +97,10 @@ def test():
     assert p.strategy == "pane"
     # whose cells are reachable through the buffer protocol, at tile-local coordinates
     mv = memoryview(p)
+    # where the probe sits at its offset from the corner of the chunk
     assert mv[94 - 90, 94 - 80] == stamp(94, 94)
 
-    # the update loop: pull, modify, declare, push
+    # the update loop: pull, modify, declare, push; find the chunk
     t = r.tileOf(index=[35, 45])
     # the page is already resident; change the cell
     r[35, 45] = 999.0
@@ -99,10 +108,13 @@ def test():
     r.flush()
     # a fresh reader sees the change
     v = dataset.mosaic(cell="float64")
+    # once it pulls the chunk
     v.fill(tile=t)
+    # it holds the new value
     assert v[35, 45] == 999.0
-    # and its neighbor chunk is untouched
+    # and its neighbor chunk is untouched: pull it
     v.fill(tile=v.tileOf(index=[94, 94]))
+    # and check its probe
     assert v[94, 94] == stamp(94, 94)
 
     # all done

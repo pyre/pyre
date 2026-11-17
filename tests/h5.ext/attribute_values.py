@@ -25,6 +25,7 @@ def test():
     uri = "h5_ext_attribute_values.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
     # make it
     f = libh5.File(uri=uri, mode="w")
@@ -45,23 +46,31 @@ def test():
     assert g.getAttribute(name="fill").value == complex(1.5, -2)
     # a nan survives the trip, part by part
     fill.complex(complex(float("nan"), float("nan")))
+    # read it back
     value = fill.value
+    # and check that it is still a nan, the only value unequal to itself
     assert value != value
 
-    # an integer comes back as an integer
+    # an integer comes back as an integer: make one
     count = g.createAttribute(name="count", type=libh5.types.native.int32, space=scalar)
+    # save a value
     count.int(255)
+    # and read it back
     assert count.value == 255
-    # a real as a real
+    # a real comes back as a real: make one
     scale = g.createAttribute(name="scale", type=libh5.types.native.double, space=scalar)
+    # save a value
     scale.double(0.25)
+    # and read it back
     assert scale.value == 0.25
 
     # an attribute that holds several values comes back as a list
     bounds = g.createAttribute(name="bounds", type=libh5.types.native.int64, space=triple)
     # which the accessors of a single value refuse to fill; quietly, for this test
     channel = journal.error("pyre.hdf5")
+    # by sending its output to the trash
     channel.device = journal.trash()
+    # and letting the test go on
     channel.fatal = False
     # so an attempt to save a single value into it is refused, and leaves it as it was made
     bounds.int(7)

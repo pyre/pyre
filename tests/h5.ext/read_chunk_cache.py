@@ -32,10 +32,12 @@ def test():
     uri = "read_chunk_cache.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # the layout: a raster of one chunk, big enough that inflating it is measurable
     chunk = [512, 512]
+    # and the number of cells it holds
     cells = chunk[0] * chunk[1]
 
     # make the file
@@ -44,8 +46,11 @@ def test():
     space = libh5.DataSpace(shape=chunk)
     # the creation properties: one chunk, compressed, so a read has real work to do
     dcpl = libh5.properties.dcpl()
+    # with the chunk shape
     dcpl.chunk = chunk
+    # a shuffle of the bytes of each cell
     dcpl.addShuffle()
+    # and compression
     dcpl.addDeflate(4)
     # make the dataset
     dataset = f.create(path="product", type=libh5.types.native.double, space=space, dcpl=dcpl)
@@ -68,7 +73,9 @@ def test():
             # and hand back its low bits, which carry no pattern to exploit
             yield float(state & 0xFFFFFFFF)
 
+    # make the payload
     payload = array.array("d", noise())
+    # and write it
     dataset.write(payload, libh5.types.native.double, [0, 0], chunk)
     # close, and let go of every handle into the file. the library reference counts its open
     # files: reopening one while a handle is still alive hands back the same file, chunk
@@ -76,13 +83,18 @@ def test():
     # first read would then be served from the cache like every other, and the measurement
     # would compare a cache hit against a cache hit
     f.close()
+    # drop the dataset
     del dataset
+    # and the file
     del f
 
-    # open it again, with a cache with room to spare for the one chunk
+    # open it again, with a cache with room to spare for the one chunk: make an access list
     fapl = libh5.properties.fapl()
+    # size its cache
     fapl.cache = libh5.properties.Cache(fapl.cache.metadataElements, 521, 16 * cells * 8, 0.75)
+    # open the file with it
     f = libh5.File(uri=uri, mode="r", fapl=fapl)
+    # and get the dataset
     dataset = f.dataset(path="product")
 
     # somewhere to put it
@@ -105,15 +117,18 @@ def test():
     # the ones after it must not: they are served from the cache
     repeats = [read() for _ in range(4)]
 
-    # the data has to be right, whichever path delivered it
+    # the data has to be right, whichever path delivered it: the first cell
     assert buffer[0] == payload[0]
+    # one in the middle
     assert buffer[cells // 2] == payload[cells // 2]
+    # and the last
     assert buffer[cells - 1] == payload[cells - 1]
 
     # and a repeat must be far cheaper than an inflation. the margin is deliberately loose --
     # the measured ratio is around a hundred, and this asks for four -- because the point is
     # to catch a destination that silently loses the cache, not to police the timing
     best = min(repeats)
+    # so compare the fastest repeat with the first read
     assert best * 4 < first, (
         f"a repeated read cost {best:.3f}ms against {first:.3f}ms for the first, "
         f"which means the chunk was inflated again rather than taken from the cache"

@@ -34,11 +34,14 @@ def test():
     uri = "direct_chunk.h5"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # the layout: an extent that is not a whole number of chunks, so the tiling has an edge
     extent = [200, 200]
+    # the shape of a chunk
     chunk = [64, 64]
+    # and the number of cells it holds
     cells = chunk[0] * chunk[1]
     # what a chunk would occupy if nothing were done to it
     raw = cells * 8
@@ -50,11 +53,15 @@ def test():
     # the creation properties: chunked and compressed, so that stored form and cell form
     # genuinely differ and a test cannot pass by confusing the two
     dcpl = libh5.properties.dcpl()
+    # with the chunk shape
     dcpl.chunk = chunk
+    # a shuffle of the bytes of each cell
     dcpl.addShuffle()
+    # and compression
     dcpl.addDeflate(4)
-    # a dataset to write, and an identical one to move a chunk into
+    # a dataset to write
     src = f.create(path="src", type=libh5.types.native.double, space=space, dcpl=dcpl)
+    # and an identical one to move a chunk into
     dst = f.create(path="dst", type=libh5.types.native.double, space=space, dcpl=dcpl)
     # and a contiguous one, for the question that is ill posed
     flat = f.create(path="flat", type=libh5.types.native.double, space=space)
@@ -74,6 +81,7 @@ def test():
             # and hand back its high bits
             yield float(state >> 32)
 
+    # make the payload
     payload = array.array("d", noise())
     # write one interior chunk the ordinary way
     src.write(payload, libh5.types.native.double, [0, 0], chunk)
@@ -81,8 +89,9 @@ def test():
     # now take that chunk out in the form it is stored in
     mask, stored = src.readChunk(origin=[0, 0])
     # what came back is the compressed form, not the cells: the chunk table agrees with its
-    # length, and it is smaller than the cells would be
+    # length
     assert len(stored) == src.chunkAt(origin=[0, 0]).bytes
+    # and it is smaller than the cells would be
     assert len(stored) < raw
     # nothing in the pipeline was skipped for this chunk
     assert mask == 0
@@ -90,17 +99,23 @@ def test():
     # the library would refuse a cell that is not the chunk's corner; we snap it, so any cell
     # of the chunk names it, exactly as it does for the chunk table
     interiorMask, interior = src.readChunk(origin=[5, 5])
+    # brings back the same bytes
     assert interior == stored
+    # passed through the same filters
     assert interiorMask == mask
 
     # put those bytes down in the other dataset without ever decoding them
     dst.writeChunk(origin=[0, 0], filterMask=mask, data=stored)
 
-    # and read it back the ordinary way: the cells have to survive the trip
+    # and read it back the ordinary way: the cells have to survive the trip; make room
     check = array.array("d", bytes(raw))
+    # read
     dst.read(check, libh5.types.native.double, [0, 0], chunk)
+    # and compare the first cell
     assert check[0] == payload[0]
+    # one in the middle
     assert check[cells // 2] == payload[cells // 2]
+    # and the last
     assert check[cells - 1] == payload[cells - 1]
 
     # a chunk nobody wrote has no stored form to hand over, and that is the answer rather
@@ -113,7 +128,9 @@ def test():
     # a cell outside the extent is refused rather than mistaken for an empty chunk; muzzle
     # the complaint so the suite stays silent on success
     channel = journal.error("pyre.h5")
+    # by sending its output to the trash
     channel.device = journal.trash()
+    # and letting the test go on
     channel.fatal = False
 
     # the guarded calls below complain on the {pyre.h5} error channel and decline to answer.
@@ -134,6 +151,7 @@ def test():
             # which is the same news
             return True
 
+    # ask for the stored form of a cell outside the extent, which the guard turns away
     assert declined(lambda: src.readChunk(origin=[999, 999]))
 
     # clean up
