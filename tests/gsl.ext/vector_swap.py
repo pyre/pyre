@@ -18,7 +18,9 @@ def test():
 
     # an asymmetric vector, so the swap is visible
     v = libgsl.Vector(shape=4)
+    # go through the values
     for index, value in enumerate((3, 1, 4, 2)):
+        # and place each one in its cell
         v.set(index, float(value))
 
     # swap the first cell with the last, naming the last with a reflected negative index
