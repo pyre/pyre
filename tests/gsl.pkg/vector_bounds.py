@@ -32,32 +32,43 @@ def test():
     # get the package
     import gsl
 
-    # a vector with a known pattern
+    # a vector with a known pattern: all threes
     v = gsl.vector(shape=5).fill(3.0)
+    # except for one cell
     v[1] = 7.0
 
-    # a negative index counts from the end
+    # a negative index counts from the end: the last cell
     assert v[-1] == v[4]
+    # the first
     assert v[-5] == v[0]
+    # and the odd one
     assert v[-4] == v[1] == 7.0
 
-    # reading or writing past the end raises, through the subscript and the raw accessors
+    # reading past the end raises, through the subscript
     assert raises(lambda: v[5])
+    # and through the raw accessor
     assert raises(lambda: v.get(5))
+    # and so does writing, through the subscript
     assert raises(lambda: v.__setitem__(5, 1.0))
+    # and through the raw accessor
     assert raises(lambda: v.set(5, 1.0))
 
-    # a too-negative index raises rather than reflecting to a still-negative slot
+    # a too-negative index raises rather than reflecting to a still-negative slot, through the
+    # subscript
     assert raises(lambda: v[-6])
+    # and through the raw accessor
     assert raises(lambda: v.get(-6))
 
-    # the basis constructor checks its index too
+    # the basis constructor checks its index too, past the end
     assert raises(lambda: v.basis(5))
+    # and before the beginning
     assert raises(lambda: v.basis(-6))
 
-    # swap checks both of its indices, reflecting a negative one and raising past either edge
+    # swap checks its second index past the end
     assert raises(lambda: v.swap(0, 5))
+    # its first
     assert raises(lambda: v.swap(5, 0))
+    # and a negative one that reflects before the beginning
     assert raises(lambda: v.swap(0, -6))
 
     # and a valid basis index still works, including a reflected one

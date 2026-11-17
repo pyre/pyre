@@ -17,6 +17,7 @@ def test():
 
     # a vector with a unique min and a unique max at distinct cells
     v = gsl.vector(shape=5)
+    # with these values
     v[0], v[1], v[2], v[3], v[4] = 3, 1, 4, 0, 5
 
     # the smallest cell is the zero at index 3
@@ -30,6 +31,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

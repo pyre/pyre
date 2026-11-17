@@ -17,11 +17,14 @@ def test():
 
     # a vector of distinct values
     v = gsl.vector(shape=6)
+    # go through its cells
     for index in range(6):
+        # and set each one to its own index
         v[index] = float(index)
 
-    # a seeded generator makes the shuffle reproducible
+    # a seeded generator makes the shuffle reproducible: make one
     rng = gsl.rng(algorithm="mt19937")
+    # and seed it
     rng.seed(42)
 
     # shuffle in place
@@ -38,6 +41,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
