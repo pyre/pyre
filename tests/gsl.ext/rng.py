@@ -16,27 +16,33 @@ def test():
     # the bindings
     from gsl import libgsl
 
-    # the catalogue of generators is a non-empty set of names
+    # get the catalogue of generators
     available = libgsl.rng_avail()
+    # which is a set of names
     assert isinstance(available, (set, frozenset))
+    # that includes a well known one
     assert "taus" in available
 
-    # build a named generator and seed it
+    # build a named generator
     r = libgsl.RNG(algorithm="taus")
+    # that knows its name
     assert r.algorithm == "taus"
     # seeding returns the generator, for chaining
     assert r.seed(42) is r
 
-    # its range is a pair, low below high
+    # its range is a pair
     low, high = r.range
+    # with the low end below the high one
     assert low < high
 
-    # a draw from the unit interval stays in [0, 1)
+    # draw from the unit interval
     x = r.float()
+    # and check that the draw stays in [0, 1)
     assert 0.0 <= x < 1.0
 
-    # a draw of an integer lands within the range
+    # draw an integer
     n = r.int()
+    # and check that it lands within the range
     assert low <= n <= high
 
     # an unknown algorithm is rejected
@@ -45,6 +51,7 @@ def test():
         libgsl.RNG(algorithm="no-such-generator")
     # which is what should happen
     except ValueError:
+        # so there is nothing else to check
         pass
     # and if it doesn't
     else:

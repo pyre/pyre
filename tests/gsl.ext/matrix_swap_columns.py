@@ -18,8 +18,11 @@ def test():
 
     # an asymmetric matrix, so a swap of columns cannot be confused with a swap of rows
     m = libgsl.Matrix(shape=(3, 4))
+    # go through its rows
     for row in range(3):
+        # and its columns
         for column in range(4):
+            # and number the cells in row major order
             m.set((row, column), float(row * 4 + column))
 
     # swap the first column with the last, naming the last with a reflected negative index

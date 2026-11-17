@@ -18,7 +18,9 @@ def test():
 
     # a vector with a unique min and a unique max at distinct cells
     v = libgsl.Vector(shape=5)
+    # go through the values
     for index, value in enumerate((3, 1, 4, 0, 5)):
+        # and place each one in its cell
         v.set(index, float(value))
 
     # the smallest cell is the zero at index 3

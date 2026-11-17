@@ -19,11 +19,15 @@ def test():
     # an asymmetric matrix; the extrema sit at off-diagonal cells with distinct rows and columns,
     # so a transposed coordinate is caught
     m = libgsl.Matrix(shape=(3, 4))
+    # go through its rows
     for row in range(3):
+        # and its columns
         for column in range(4):
+            # and number the cells in row major order
             m.set((row, column), float(row * 4 + column))
-    # the largest cell in the top right, the smallest in the bottom left
+    # put the largest cell in the top right
     m.set((0, 3), 99.0)
+    # and the smallest in the bottom left
     m.set((2, 0), -7.0)
 
     # the largest cell is at {row 0, column 3}

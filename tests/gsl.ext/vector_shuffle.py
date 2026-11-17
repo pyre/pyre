@@ -18,7 +18,9 @@ def test():
 
     # a vector of distinct values
     v = libgsl.Vector(shape=6)
+    # go through its cells
     for index in range(6):
+        # and set each one to its own index
         v.set(index, float(index))
 
     # a seeded generator makes the shuffle reproducible

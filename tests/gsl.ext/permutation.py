@@ -32,45 +32,61 @@ def test():
     # the bindings
     from gsl import libgsl
 
-    # allocation is the identity, and it is valid
+    # make a permutation of five elements
     p = libgsl.Permutation(shape=5)
+    # which knows its size
     assert p.shape == 5 and len(p) == 5
+    # is valid
     assert bool(p) is True
+    # and starts out as the identity
     assert p.get(3) == 3
 
-    # a negative index reflects; out of range and too-negative raise
+    # a negative index reflects
     assert p.get(-1) == 4
+    # an index past the end is refused
     assert raises(lambda: p.get(5), IndexError)
+    # and so is a negative one that reflects past the beginning
     assert raises(lambda: p.get(-6), IndexError)
 
-    # a clone is independent
+    # make a clone
     q = p.clone()
+    # change it
     q.swap(0, 4)
+    # and check that the original did not change
     assert q.get(0) == 4 and p.get(0) == 0
 
-    # swap checks both of its indices, and reflects a negative one
+    # swap checks both of its indices
     assert raises(lambda: p.swap(0, 5), IndexError)
+    # and reflects a negative one
     p.swap(0, -1)
+    # so the first and last elements trade places
     assert p.get(0) == 4 and p.get(4) == 0
 
-    # reset to the identity, then walk the sequence
+    # reset to the identity
     p.init()
+    # and check that it took
     assert p.get(0) == 0
-    # the next permutation swaps the last two
+    # step to the next permutation in the sequence
     assert p.next() is True
+    # which swaps the last two
     assert p.get(3) == 4 and p.get(4) == 3
-    # and stepping back returns to the identity
+    # step back
     assert p.prev() is True
+    # which returns to the identity
     assert p.get(3) == 3
 
-    # the inverse of a swap is the same swap
+    # reset to the identity
     p.init()
+    # swap two elements
     p.swap(0, 2)
+    # and invert
     inv = p.inverse()
+    # the inverse of a swap is the same swap
     assert inv.get(0) == 2 and inv.get(2) == 0
 
-    # reverse turns the identity into the descending permutation
+    # reset to the identity and reverse it
     p.init().reverse()
+    # which yields the descending permutation
     assert p.get(0) == 4 and p.get(4) == 0
 
     # all done
