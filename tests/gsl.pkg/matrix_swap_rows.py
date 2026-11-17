@@ -17,8 +17,11 @@ def test():
 
     # an asymmetric matrix, so a swap of rows cannot be confused with a swap of columns
     m = gsl.matrix(shape=(3, 4))
+    # go through its rows
     for row in range(3):
+        # and its columns
         for column in range(4):
+            # and number the cells in row major order
             m[row, column] = row * 4 + column
 
     # swap the first row with the last, naming the last with a negative index
@@ -35,6 +38,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

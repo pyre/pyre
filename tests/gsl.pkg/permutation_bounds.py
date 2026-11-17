@@ -35,23 +35,29 @@ def test():
     # the identity permutation of five elements
     p = gsl.permutation(shape=5).init()
 
-    # a negative index counts from the end
+    # a negative index counts from the end: the last element
     assert p[-1] == p.get(4)
+    # and the first
     assert p[-5] == p.get(0)
 
-    # reading past the end raises, through the subscript and the raw accessor
+    # reading past the end raises, through the subscript
     assert raises(lambda: p[5])
+    # and through the raw accessor
     assert raises(lambda: p.get(5))
 
-    # a too-negative index raises rather than reflecting to a still-negative slot
+    # a too-negative index raises rather than reflecting to a still-negative slot, through the
+    # subscript
     assert raises(lambda: p[-6])
+    # and through the raw accessor
     assert raises(lambda: p.get(-6))
 
-    # the swap checks both of its indices, and reflects a negative one
+    # the swap checks its second index
     assert raises(lambda: p.swap(0, 5))
+    # and its first
     assert raises(lambda: p.swap(5, 0))
     # a valid swap, with a reflected index, does its job
     p.swap(0, -1)
+    # so the first and last elements trade places
     assert p[0] == 4 and p[4] == 0
 
     # all done

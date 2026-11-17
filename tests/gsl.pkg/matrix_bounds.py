@@ -34,42 +34,59 @@ def test():
 
     # a matrix with a known pattern
     m = gsl.matrix(shape=(3, 4))
+    # go through its rows
     for row in range(3):
+        # and its columns
         for column in range(4):
+            # and number the cells in row major order
             m[row, column] = row * 4 + column
 
-    # a negative coordinate counts from the end, on either axis
+    # a negative coordinate counts from the end, on either axis: the last cell
     assert m[-1, -1] == m[2, 3]
+    # and the first
     assert m[-3, -4] == m[0, 0]
 
-    # reading or writing past either edge raises, through the subscript
+    # reading past the last row raises, through the subscript
     assert raises(lambda: m[3, 0])
+    # and so does reading past the last column
     assert raises(lambda: m[0, 4])
+    # writing past the last row
     assert raises(lambda: m.__setitem__((3, 0), 1.0))
+    # or past the last column
     assert raises(lambda: m.__setitem__((0, 4), 1.0))
 
-    # a too-negative coordinate raises rather than reflecting to a still-negative slot
+    # a too-negative row raises rather than reflecting to a still-negative slot
     assert raises(lambda: m[-4, 0])
+    # and so does a too-negative column
     assert raises(lambda: m[0, -5])
 
     # the row and column accessors check their index; these return a fresh vector of the right
-    # length, so an out of range row or column raises
+    # length, so an out of range row raises
     assert raises(lambda: m.getRow(3))
+    # and so does an out of range column
     assert raises(lambda: m.getColumn(4))
+    # the setters check the same way, for rows
     assert raises(lambda: m.setRow(3, gsl.vector(shape=4)))
+    # and for columns
     assert raises(lambda: m.setColumn(4, gsl.vector(shape=3)))
 
-    # a too-negative row or column index raises rather than reflecting to a still-negative slot
+    # a too-negative row index raises rather than reflecting to a still-negative slot
     assert raises(lambda: m.getRow(-4))
+    # and so does a too-negative column index
     assert raises(lambda: m.getColumn(-5))
 
-    # the row and column swaps check both of their indices, on the axis they act along
+    # the row and column swaps check both of their indices, on the axis they act along: the
+    # second row
     assert raises(lambda: m.swapRows(0, 3))
+    # the first row
     assert raises(lambda: m.swapRows(3, 0))
+    # the second column
     assert raises(lambda: m.swapColumns(0, 4))
+    # and the first column
     assert raises(lambda: m.swapColumns(4, 0))
-    # and a too-negative index raises rather than reflecting to a still-negative slot
+    # a too-negative row raises rather than reflecting to a still-negative slot
     assert raises(lambda: m.swapRows(0, -4))
+    # and so does a too-negative column
     assert raises(lambda: m.swapColumns(0, -5))
 
     # a reflected row index reaches the last row

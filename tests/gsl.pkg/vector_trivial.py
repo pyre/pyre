@@ -23,28 +23,32 @@ def test():
 
     # build a vector, without ever touching the mpi runtime
     θ = gsl.vector(shape=parameters)
-    # initialize it
+    # initialize it: go through its cells
     for dof in range(parameters):
+        # and set each one to its own index
         θ[dof] = dof
 
     # broadcasting from the lone process hands back what it already holds
     result = gsl.vector.bcast(vector=θ)
-    # so the values survive
+    # so the values survive: go through the cells
     for dof in range(parameters):
+        # and check each one
         assert result[dof] == dof
 
     # collecting from the lone process gathers its whole contribution
     collected = gsl.vector.collect(vector=θ)
     # into fresh storage
     assert collected is not θ
-    # that carries the same values
+    # that carries the same values: go through the cells
     for dof in range(parameters):
+        # and check each one
         assert collected[dof] == dof
 
     # scattering among the lone process hands it the whole vector
     mine = gsl.vector(shape=parameters).excerpt(vector=θ)
-    # so it gets every value
+    # so it gets every value: go through the cells
     for dof in range(parameters):
+        # and check each one
         assert mine[dof] == dof
 
     # a source that names a task which does not exist is an error
@@ -53,6 +57,7 @@ def test():
         gsl.vector.bcast(vector=θ, source=1)
     # which is what should happen
     except ValueError:
+        # so there is nothing else to check
         pass
     # and if it doesn't
     else:
@@ -65,6 +70,7 @@ def test():
         gsl.vector.bcast()
     # which is what should happen
     except TypeError:
+        # so there is nothing else to check
         pass
     # and if it doesn't
     else:

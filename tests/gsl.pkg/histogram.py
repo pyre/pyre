@@ -17,16 +17,18 @@ def test():
 
     # make a histogram of ten bins
     h = gsl.histogram(bins=10)
-    # the extension knows how many bins it holds
+    # which knows how many bins it holds, when asked for its length
     assert len(h) == 10
+    # or for its bins
     assert h.bins == 10
 
     # lay the bins out uniformly over [0, 10), which also zeroes them
     h.uniform(lower=0, upper=10)
     # so it starts empty
     assert h.sum == 0
-    # over the range we asked for
+    # over the range we asked for, from its lower end
     assert h.lower == 0
+    # to its upper one
     assert h.upper == 10
 
     # drop a value into each bin, twice into the fifth, filling from a run of samples
@@ -36,21 +38,25 @@ def test():
     assert h.find(4.5) == 4
     # a value outside the range lands in no bin at all
     assert h.find(-1) is None
-    # bin four now holds two counts, the most of any bin
+    # bin four now holds two counts
     assert h[4] == 2
+    # the most of any bin
     assert h.max() == 2
+    # which the histogram knows is in bin four
     assert h.argmax() == 4
     # the least populated bins hold one
     assert h.min() == 1
     # and the total is the eleven values we dropped in
     assert h.sum == 11
 
-    # the fourth bin covers [4, 5)
+    # get the extent of bin four
     lower, upper = h.range(4)
+    # which covers [4, 5)
     assert lower == 4 and upper == 5
 
-    # the statistics are defined
+    # the statistics are defined: the mean
     assert h.mean > 0
+    # and the standard deviation
     assert h.sdev >= 0
 
     # reading past the end raises, rather than reading garbage
@@ -59,6 +65,7 @@ def test():
         h[10]
     # which is what should happen
     except IndexError:
+        # so there is nothing else to check
         pass
     # and if it doesn't
     else:
@@ -71,42 +78,56 @@ def test():
         h.range(10)
     # which is what should happen
     except IndexError:
+        # so there is nothing else to check
         pass
     # and if it doesn't
     else:
         # the guard is gone
         assert False, "an out of range bin should not have a range"
 
-    # a clone carries the same counts, in independent storage
+    # make a clone
     c = h.clone()
+    # which is a distinct histogram
     assert c is not h
+    # with the same total
     assert c.sum == h.sum
+    # and the same counts
     assert c[4] == h[4]
 
-    # incrementing the clone leaves the original untouched
+    # increment the clone
     c.increment(4.5)
+    # which counts the new value
     assert c[4] == 3
+    # and leaves the original untouched
     assert h[4] == 2
 
-    # the counts come back as a vector
+    # get the counts as a vector
     v = h.counts()
+    # with one cell per bin
     assert v.shape == 10
+    # that holds the count of that bin
     assert v[4] == 2
 
     # numpy reads the counts through the buffer protocol, without copying
     import numpy
 
+    # as an array
     counts = numpy.asarray(h)
+    # with one cell per bin
     assert counts.shape == (10,)
+    # that holds the count of that bin
     assert counts[4] == 2
 
-    # scaling doubles every count
+    # scale the histogram
     h *= 2
+    # which doubles every count
     assert h[4] == 4
+    # and the total
     assert h.sum == 22
 
-    # adding a histogram to itself folds its counts in bin by bin
+    # add a histogram to itself
     h += h.clone()
+    # which folds its counts in bin by bin
     assert h[4] == 8
 
     # all done

@@ -17,6 +17,7 @@ def test():
 
     # an asymmetric vector, so the swap is visible
     v = gsl.vector(shape=4)
+    # with these values
     v[0], v[1], v[2], v[3] = 3, 1, 4, 2
 
     # swap the first cell with the last, naming the last with a negative index
@@ -31,6 +32,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
