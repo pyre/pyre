@@ -37,10 +37,13 @@ def test():
 
     # every linux distribution inherits the association
     from pyre.platforms.Ubuntu import Ubuntu
+
+    # and fedora too
     from pyre.platforms.Fedora import Fedora
 
     # so they all read elf
     assert Ubuntu.image is ELF
+    # both of them
     assert Fedora.image is ELF
 
     # the running host names a reader whenever we recognize the platform
@@ -49,6 +52,7 @@ def test():
     if host.platform == "darwin":
         # a mac reads mach-o
         assert host.image is MachO
+    # and on linux
     elif host.platform == "linux":
         # a linux box reads elf
         assert host.image is ELF
