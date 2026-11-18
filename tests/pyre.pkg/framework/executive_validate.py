@@ -88,10 +88,13 @@ def test() -> None:
     if clean:
         # if not, say so
         channel.line("checking right after booting found errors")
-        # and the details
+        # and the details, indented
         channel.indent()
+        # one line per error
         channel.report(report=(f"{type(error).__name__}: {error}" for error in clean))
+        # and where to look
         channel.line("look in: framework/Executive.py, Executive.validateConfiguration")
+        # back out
         channel.outdent()
     # booting must not have shown anything
     if warnings.pages or reports.pages or candidates.pages:
@@ -139,10 +142,13 @@ def test() -> None:
     if sorted(map(str, owners)) != sorted(map(str, [Bare, probe])):
         # if not, say what went wrong
         channel.line("the check did not find the two refusals, each once")
-        # and the details
+        # and the details, indented
         channel.indent()
+        # one line per error
         channel.report(report=(f"{type(error).__name__}: {error}" for error in pile))
+        # and where to look
         channel.line("look in: framework/Executive.py, Executive.validateConfiguration")
+        # back out
         channel.outdent()
     # the class sees its own
     if [error.configurable for error in Bare.pyre_classConfigurationErrors()] != [Bare]:
@@ -185,10 +191,13 @@ def test() -> None:
     if len(elsewhere.pages) != 2 or len(reports.pages) != 1 or len(candidates.pages) != 1:
         # if not, say so
         channel.line("the reports did not go to the channel they were given")
-        # and the details
+        # and the details, indented
         channel.indent()
+        # what reached the channel they were given
         channel.line(f"given: {len(elsewhere.pages)} reports, expected 2")
+        # and what reached the default ones
         channel.line(f"default: {len(reports.pages) + len(candidates.pages)} reports, expected 2")
+        # back out
         channel.outdent()
 
     # if anything went wrong
@@ -202,7 +211,7 @@ def test() -> None:
 
 # main
 if __name__ == "__main__":
-    # run the test
+    # do...
     test()
 
 
