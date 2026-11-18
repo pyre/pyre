@@ -63,7 +63,7 @@ def test():
     # a missing logical file
     try:
         # can't be opened
-        f.open(f"vfs:/{f.STARTUP_DIR}/not-there.odb")
+        f.open(f"vfs:{f.STARTUP_DIR}/not-there.odb")
         # so this is unreachable
         assert False
     # and when it fails
@@ -71,7 +71,7 @@ def test():
         # the error names the filesystem
         assert error.filesystem == f
         # and the uri
-        assert error.uri.uri == f"vfs:/{f.STARTUP_DIR}/not-there.odb"
+        assert error.uri.uri == f"vfs:{f.STARTUP_DIR}/not-there.odb"
 
     # a missing logical directory
     try:
