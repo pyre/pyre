@@ -22,8 +22,10 @@ toolchains.info:
 
 # make the universal recipes every toolchain provides: info, verify, clean. the bodies differ by
 # {kind} — a {node} tool mm installs and owns, a {vendor} tool mm only locates — so each recipe
-# dispatches to a {kind}-specific fragment. the install and update recipes are not universal; they
-# live in each tool's own definition
+# dispatches to a {kind}-specific fragment. a tool that has more to say about itself, or more to
+# check than its kind knows about, supplies those recipe lines in {toolchain.<tool>.report} and
+# {toolchain.<tool>.checks}. the install and update recipes are not universal; they live in each
+# tool's own definition
 #  usage: toolchain.workflows {tool}
 define toolchain.workflows =
 
@@ -33,11 +35,13 @@ $(1).info:
 	@${call log.var,kind,$(toolchain.$(1).kind)}
 	@${call log.var,version,$$(toolchain.$(1).version)}
 ${call toolchain.info.$(toolchain.$(1).kind),$(1)}
+${call toolchain.$(1).report}
 
 # confirm the tool is present; if it isn't, fail with a one-line instruction so a build that
 # depends on it stops with an actionable message instead of a cryptic error further downstream
 $(1).verify:
 ${call toolchain.verify.$(toolchain.$(1).kind),$(1)}
+${call toolchain.$(1).checks}
 
 # remove whatever mm is responsible for
 $(1).clean:
@@ -90,7 +94,7 @@ define toolchain.verify.vendor =
 	    ${call log.info,"download and install it from $(toolchain.$(1).url)"} ; \
 	    exit 1 \
 	)
-	@${call log.action,"verify","$(1) is available"}
+	@${call log.action,"verify","$(toolchain.$(1).cli) is available"}
 endef
 
 # {vendor}: mm does not own the installation, so there is nothing for it to remove
