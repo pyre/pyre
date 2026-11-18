@@ -191,6 +191,7 @@ pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_refused_listing.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_expired_check.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_folder_object.py)
 pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_folder_namesake.py)
+pyre_test_python_testcase(tests/pyre.pkg/filesystem/s3_metadata.py)
 
 # the {local_make} test modifies its local directory; so there are race conditions when running
 # the test suite in parallel with all the test that explore the current directory; run it after
