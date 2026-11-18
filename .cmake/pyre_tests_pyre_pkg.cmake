@@ -1166,6 +1166,7 @@ pyre_test_python_testcase(tests/pyre.pkg/ipc/pickler_channels.py)
 pyre_test_python_testcase(tests/pyre.pkg/ipc/pickler_channels_over_pipe.py)
 pyre_test_python_testcase(tests/pyre.pkg/ipc/pickler_file.py)
 pyre_test_python_testcase(tests/pyre.pkg/ipc/pickler_send_manifest.py)
+pyre_test_python_testcase(tests/pyre.pkg/ipc/pickler_channel_twice.py)
 pyre_test_python_testcase(tests/pyre.pkg/ipc/courier.py)
 
 
