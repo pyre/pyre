@@ -6,13 +6,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that every enumeration the bindings publish carries the members the collectives and the
-comparisons name, and that the members of each are distinct
-"""
-
-
 def test():
+    """
+    Verify that every enumeration the bindings publish carries the members the collectives and the
+    comparisons name, and that the members of each are distinct
+    """
     # access the bindings directly, without bringing mpi up
     from mpi import libmpi
 
@@ -66,6 +64,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

@@ -6,23 +6,23 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the group bindings: membership, the set operations python spells as methods, the
-comparisons, and the translation of ranks from one group to another
-"""
-
-
 def test():
+    """
+    Exercise the group bindings: membership, the set operations python spells as methods, the
+    comparisons, and the translation of ranks from one group to another
+    """
     # access the package that hosts the bindings
     import mpi
 
     # bring mpi up, arranging for the shutdown
     mpi.init()
-    # get the world communicator straight from the bindings
+    # get the bindings
     libmpi = mpi.libmpi
+    # and the world communicator straight from them
     world = libmpi.world()
-    # and its structure
+    # and its structure: the number of processes
     size = world.size
+    # and my place among them
     rank = world.rank
 
     # the group of every process in the world
@@ -51,14 +51,17 @@ def test():
     # the union of the two covers everybody the world holds, since between them they leave
     # nobody out
     union = evens.union(others)
+    # so it is as big as the world
     assert union.size == size
 
-    # the intersection holds the even ranks other than zero
+    # the intersection
     intersection = evens.intersection(others)
+    # holds the even ranks other than zero
     assert intersection.size == len([peer for peer in range(size) if peer % 2 == 0 and peer != 0])
 
-    # the difference holds only what {evens} has and {others} does not, which is rank zero alone
+    # the difference
     difference = evens.difference(others)
+    # holds only what {evens} has and {others} does not, which is rank zero alone
     assert difference.size == (1 if size > 0 else 0)
 
     # a group is identical to itself
@@ -67,13 +70,15 @@ def test():
     # compares equal one way or the other: congruent in general, or identical when mpi hands back
     # the very same handle, as it does for a lone process
     twin = everyone.include(list(range(size)))
+    # check
     assert everyone.compare(twin) in (libmpi.Comparison.identical, libmpi.Comparison.congruent)
 
     # the members of the even group carry ranks of their own inside it, from zero on up
     local = list(range(evens.size))
-    # translating those back to the world recovers the even ranks, in order
-    world_ranks = evens.translateRanks(local, everyone)
-    assert world_ranks == [peer for peer in range(size) if peer % 2 == 0]
+    # translating those back to the world
+    worldRanks = evens.translateRanks(local, everyone)
+    # recovers the even ranks, in order
+    assert worldRanks == [peer for peer in range(size) if peer % 2 == 0]
 
     # all done
     return
@@ -81,6 +86,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

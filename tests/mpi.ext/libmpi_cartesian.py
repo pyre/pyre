@@ -6,20 +6,19 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the cartesian communicator bindings: arrange the processes on a grid and walk it by
-coordinates, by rank, and by stepping along an axis
-"""
-
-
 def test():
+    """
+    Exercise the cartesian communicator bindings: arrange the processes on a grid and walk it by
+    coordinates, by rank, and by stepping along an axis
+    """
     # access the package that hosts the bindings
     import mpi
 
     # bring mpi up, arranging for the shutdown
     mpi.init()
-    # get the world communicator straight from the bindings
+    # get the bindings
     libmpi = mpi.libmpi
+    # and the world communicator straight from them
     world = libmpi.world()
     # and its size
     size = world.size
@@ -49,25 +48,33 @@ def test():
     behind, ahead = line.shift(direction=0, displacement=1)
     # at the low end nobody precedes me, so the axis does not wrap and the walk falls off
     if rank == 0:
+        # so my predecessor is nobody
         assert behind == libmpi.procNull
-    # everywhere else my predecessor is one step back
+    # everywhere else
     else:
+        # my predecessor is one step back
         assert behind == rank - 1
     # at the high end nobody follows me
     if rank == size - 1:
+        # so my successor is nobody
         assert ahead == libmpi.procNull
-    # everywhere else my successor is one step on
+    # everywhere else
     else:
+        # my successor is one step on
         assert ahead == rank + 1
 
-    # keeping the only axis spans the whole grid again
+    # keeping the only axis
     whole = line.sub(keep=[1])
+    # makes another cartesian communicator
     assert isinstance(whole, libmpi.Cartesian)
+    # that spans the whole grid again
     assert whole.size == size
 
-    # dropping it leaves each process alone on a grid of one
+    # dropping it
     alone = line.sub(keep=[0])
+    # makes another cartesian communicator too
     assert isinstance(alone, libmpi.Cartesian)
+    # that leaves each process alone on a grid of one
     assert alone.size == 1
 
     # when the process count is an even number greater than one, a two by half grid exercises the
@@ -79,8 +86,9 @@ def test():
         assert grid.dimensions == 2
         # of the shape we asked for
         assert grid.axes == [2, size // 2]
-        # where my coordinate and my rank name the same spot both ways
+        # where my coordinate and my rank name the same spot both ways: get my coordinate
         here = grid.coordinates()
+        # and look up the rank that sits there
         assert grid.rankAt(here) == grid.rank
 
     # all done
@@ -89,6 +97,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

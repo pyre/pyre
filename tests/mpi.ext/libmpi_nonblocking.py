@@ -6,35 +6,40 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the transfers that hand back a receipt instead of blocking, the receipt itself, the
-report it completes into, and the collective waits the module publishes
-"""
-
-
 def test():
+    """
+    Exercise the transfers that hand back a receipt instead of blocking, the receipt itself, the
+    report it completes into, and the collective waits the module publishes
+    """
     # access the package that hosts the bindings
     import mpi
 
+    # for counting who holds on to a buffer
+    import sys
+
     # bring mpi up, arranging for the shutdown
     mpi.init()
-    # get the world communicator straight from the bindings
+    # get the bindings
     libmpi = mpi.libmpi
+    # and the world communicator straight from them
     world = libmpi.world()
-    # and its structure
+    # and its structure: the number of processes
     size = world.size
+    # and my place among them
     rank = world.rank
 
-    # place the processes on a ring: the one i send to, and the one i hear from
+    # place the processes on a ring: the one i send to
     following = (rank + 1) % size
+    # and the one i hear from
     preceding = (rank - 1) % size
 
     # the payload i ship says who sent it
     payload = bytes([rank, 0xAB])
 
+    # somewhere for the message to land
+    inbox = bytearray(2)
     # post the receive first, so the message has somewhere to land, then the send; neither call
     # blocks, so the ring needs no parity split
-    inbox = bytearray(2)
     pending = [
         world.irecvBytes(inbox, preceding, 5),
         world.isendBytes(payload, following, 5),
@@ -73,6 +78,7 @@ def test():
 
     # the same, but waiting for whichever transfer finishes first
     again = bytearray(2)
+    # post the pair
     pending = [
         world.irecvBytes(again, preceding, 6),
         world.isendBytes(payload, following, 6),
@@ -103,11 +109,15 @@ def test():
     # a receipt can also be polled without blocking: post a pair, then ask until the receive says
     # it is done, which hands back a report where an empty poll hands back {None}
     landing = bytearray(2)
+    # post the receive
     receiving = world.irecvBytes(landing, preceding, 8)
+    # and the send
     sending = world.isendBytes(payload, following, 8)
     # spin on the non-blocking poll
     polled = receiving.test()
+    # until it reports
     while polled is None:
+        # asking again
         polled = receiving.test()
     # once it completes, the poll reports on the very same transfer
     assert polled.source == preceding
@@ -118,11 +128,9 @@ def test():
 
     # mpi writes into the buffer long after the call that started the transfer returned, so the
     # receipt must hold on to it; without that, a buffer nobody else names would be reclaimed
-    # while the transfer was still writing into it
-    import sys
-
-    # make one, and count who refers to it
+    # while the transfer was still writing into it. make one
     orphan = bytearray(2)
+    # and count who refers to it
     before = sys.getrefcount(orphan)
     # start a transfer into it
     receipt = world.irecvBytes(orphan, preceding, 13)
@@ -132,8 +140,9 @@ def test():
     libmpi.waitAll([receipt, world.isendBytes(payload, following, 13)])
     # carrying what the process before me sent
     assert bytes(orphan) == bytes([preceding, 0xAB])
-    # and once the receipt is spent and gone, so is its claim on the buffer
+    # once the receipt is spent and gone
     del receipt
+    # so is its claim on the buffer
     assert sys.getrefcount(orphan) == before
 
     # all done
@@ -142,6 +151,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

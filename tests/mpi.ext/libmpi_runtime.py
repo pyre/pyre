@@ -6,13 +6,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the module level runtime: bring mpi up, ask it what it granted, and check the standard
-communicators, the clock, and the host name
-"""
-
-
 def test():
+    """
+    Exercise the module level runtime: bring mpi up, ask it what it granted, and check the standard
+    communicators, the clock, and the host name
+    """
     # access the package that hosts the bindings
     import mpi
 
@@ -62,13 +60,16 @@ def test():
 
     # time only moves forward, so a later reading is no earlier than an earlier one
     first = libmpi.wtime()
+    # take another reading
     second = libmpi.wtime()
+    # and compare
     assert second >= first
 
     # the host this process runs on has a name
     host = libmpi.processorName()
-    # which is a non-empty string
+    # which is a string
     assert isinstance(host, str)
+    # and not an empty one
     assert len(host) > 0
 
     # all done
@@ -77,6 +78,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

@@ -6,32 +6,34 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the collectives that move data rather than combine it: the number versions, which cross
-the binding as lists, and the object versions, which pickle whatever they are handed
-"""
-
-
 def test():
+    """
+    Exercise the collectives that move data rather than combine it: the number versions, which cross
+    the binding as lists, and the object versions, which pickle whatever they are handed
+    """
     # access the package that hosts the bindings
     import mpi
 
     # bring mpi up, arranging for the shutdown
     mpi.init()
-    # get the world communicator straight from the bindings
+    # get the bindings
     libmpi = mpi.libmpi
+    # and the world communicator straight from them
     world = libmpi.world()
-    # and its structure
+    # and its structure: the number of processes
     size = world.size
+    # and my place among them
     rank = world.rank
 
     # gather every rank at the root, where a c++ vector of cells crosses the binding as a list
     gathered = world.gather(rank, 0)
     # only the root collects
     if rank == 0:
+        # one rank from each process, in order
         assert gathered == list(range(size))
     # and everybody else is told so
     else:
+        # by getting nothing back
         assert gathered is None
 
     # the same, delivered to everybody
@@ -47,6 +49,7 @@ def test():
 
     # broadcast an object from rank zero; only the source supplies one, and everybody rebuilds it
     word = world.bcast({"greeting": "hello", "from": 0} if rank == 0 else None, 0)
+    # and everybody has the same one
     assert word == {"greeting": "hello", "from": 0}
 
     # the object collectives carry whatever pickle can flatten, so each process brings a value of
@@ -57,9 +60,11 @@ def test():
     collected = world.gatherObject(mine, 0)
     # only the root collects
     if rank == 0:
+        # one object per process, in rank order
         assert collected == [{"rank": slot, "payload": "x" * (slot + 1)} for slot in range(size)]
     # and everybody else is told so
     else:
+        # by getting nothing back
         assert collected is None
 
     # the same, delivered to everybody
@@ -87,6 +92,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
