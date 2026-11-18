@@ -83,6 +83,18 @@ def test():
     assert index in (0, 1)
     # and that receipt is now empty, while the other may still be in flight
     assert not pending[index].active
+    # the report of a send says nothing about its peer, so if the send won
+    if index == 1:
+        # wait again; the spent receipt is passed over, and the receive is what completes
+        index, outcome = libmpi.waitAny(pending)
+        # so it is the one named
+        assert index == 0
+    # the report belongs to the receive: it names the process before me
+    assert outcome.source == preceding
+    # the label we agreed on
+    assert outcome.tag == 6
+    # and the two octets of the payload
+    assert outcome.bytes == 2
     # finish whatever is left
     libmpi.waitAll(pending)
     # and the payload came round once more
