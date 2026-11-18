@@ -47,9 +47,13 @@ class Executive:
     linker = None  # the pyre plug-in manager
 
     # the runtime environment; patched during discovery
+    # the host i am running on
     host = None
+    # the user who launched me
     user = None
+    # the terminal i am attached to
     terminal = None
+    # and the environment variables i was given
     environ = None
 
     # bookkeeping
@@ -368,6 +372,7 @@ class Executive:
 
         # if the address part is empty, do not go any further
         if not uri.address:
+            # there is nothing to resolve
             return
 
         # load the component recognizers
@@ -777,15 +782,21 @@ class Executive:
 
                 # make a channel
                 channel = journal.warning("pyre.config")
-                # complain
+                # say what went wrong
                 channel.line(f"{error}")
+                # and, indented
                 channel.indent()
+                # with which regex
                 channel.line(f"while compiling the regex '{regex}'")
+                # for which nickname
                 channel.line(f"for '{info.name}'")
+                # and where it was configured
                 channel.line(f"in {info.locator}")
+                # back at the margin
                 channel.outdent()
+                # say that the regex is ignored, and flush
                 channel.log(f"discarding and moving on...")
-                # complain
+                # and move on to the next nickname
                 continue
             # if either my hostname or my fully qualified domain name is a match
             if parser.match(host.hostname) or parser.match(host.fqdn):
@@ -815,8 +826,9 @@ class Executive:
         # instantiate and attach
         self.environ = Environ(executive=self)
 
-        # build weak references to the managers of the runtime environment
+        # build weak references to the managers of the runtime environment: the user
         self.dashboard.pyre_user = weakref.proxy(self.user)
+        # and the host
         self.dashboard.pyre_host = weakref.proxy(self.host)
 
         # all done
