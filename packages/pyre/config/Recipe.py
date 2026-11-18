@@ -8,6 +8,9 @@
 # support
 from ..calc.Interpolation import Interpolation
 
+# the configuration events a recipe turns into
+from .events import Assignment
+
 
 # the configuration of a component, as it was configured
 class Recipe:
@@ -18,19 +21,27 @@ class Recipe:
     Each section records the configured traits of one component, keyed by the component's
     name. Properties appear as plain values: scalars as they are, containers as lists, paths
     and uris as strings, with the braces of text escaped, since a configuration file is
-    interpolated when it is read and the values are what the text evaluated to. Facilities always appear, as the specification of the component they
-    are bound to: a binding decides which class gets built, and therefore what the section of
-    the bound component means, so it is recorded whether it was configured or came from the
-    default. A part the component owns appears by family alone, since its name is the name of
-    the slot being bound; anything else appears by family and name. The bound component then
-    gets a section of its own, so the recipe follows references until it has described
-    everything the components lean on. Properties that took their default are left out, so
-    the recipe says what was configured rather than freezing every default, and so are traits
-    marked as not persistent, e.g. state a component derives at runtime and would derive
-    again. Components without a name or a family stay outside the configuration store, so
-    they cannot be described: one that is bound to a facility is left out, and asking for the
-    recipe of one is an error
+    interpolated when it is read and the values are what the text evaluated to. Facilities
+    always appear, as the specification of the component they are bound to: a binding decides
+    which class gets built, and therefore what the section of the bound component means, so it
+    is recorded whether it was configured or came from the default. A part the component owns
+    appears by family alone, since its name is the name of the slot being bound; anything else
+    appears by family and name. The bound component then gets a section of its own, so the
+    recipe follows references until it has described everything the components lean on.
+    Properties that took their default are left out, so the recipe says what was configured
+    rather than freezing every default, and so are traits marked as not persistent, e.g. state
+    a component derives at runtime and would derive again. Components without a name or a
+    family stay outside the configuration store, so they cannot be described: one that is
+    bound to a facility is left out, and asking for the recipe of one is an error
+
+    A recipe is saved in a configuration file, or loaded straight into the configuration store
+    of another process, which it can travel to: it travels without the components it
+    described, since they belong to the process that described them
     """
+
+    # constants
+    # the separator of the levels of a component name, as configuration files spell it
+    scopeSeparator = "."
 
     # exceptions
     from .exceptions import PersistenceError
@@ -114,6 +125,22 @@ class Recipe:
         # and write the document back, all at once
         return document.save()
 
+    def assignments(self, locator=None):
+        """
+        Generate the configuration events that load my sections into the configuration store,
+        one assignment for each trait of each section, attributed to {locator}
+        """
+        # go through the sections
+        for name, section in self.sections.items():
+            # split the name of the component into its levels, as a configuration file does
+            scope = name.split(self.scopeSeparator)
+            # go through the configured traits
+            for trait, value in section.items():
+                # and assign each one in the scope of its component
+                yield Assignment(key=scope + [trait], value=value, locator=locator)
+        # all done
+        return
+
     # metamethods
     def __init__(self, **kwds):
         # chain up
@@ -126,6 +153,18 @@ class Recipe:
         self.components = {}
         # all done
         return
+
+    def __getstate__(self):
+        """
+        Pack my sections and the families of my components for the trip to another process,
+        leaving the components behind, since they belong to the process that described them
+        """
+        # copy my state
+        state = dict(self.__dict__)
+        # and arrive without components
+        state["components"] = {}
+        # hand it off
+        return state
 
     # implementation details
     def _describe(self, component, workload):
