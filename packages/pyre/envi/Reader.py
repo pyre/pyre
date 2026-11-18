@@ -9,6 +9,9 @@
 import pyre
 import journal
 
+# the refusal of a value that converts but is not one a trait accepts
+from ..constraints.exceptions import ConstraintViolationError
+
 # the header
 from .Header import Header
 
@@ -24,8 +27,8 @@ class Reader:
     The text is a sequence of {keyword = value} entries after a line with the {ENVI} marker;
     lines that start with a semicolon are comments, and a value in braces may span lines. Known
     keywords land on the traits of the header, converted to their documented types; a known
-    keyword whose value cannot be converted, and every keyword the standard does not define, land
-    in the header's {extras} as text.
+    keyword whose value cannot be converted or is not one its trait accepts, and every keyword the
+    standard does not define, land in the header's {extras} as text.
     """
 
     # constants
@@ -184,12 +187,24 @@ class Reader:
                     raise exceptions.MalformedValueError(keyword=keyword, value=value)
             # if a sequence lost items
             except exceptions.MalformedValueError:
-                # the sequence has already said which ones and why
+                # the value is not of its documented type
+                complaint = f"is not of type '{trait.type}'"
+                # and the sequence has already said which items it dropped, and why
                 detail = None
-            # if the conversion fails outright
-            except pyre.PyreError as error:
-                # nobody has said why yet
-                detail = str(error)
+            # if the trait refuses the value outright
+            except Header.TraitValueError as error:
+                # get the reason, without the account of where the trait lives
+                refusal = error.error
+                # a value that converts but is not one the trait accepts
+                if isinstance(refusal, ConstraintViolationError):
+                    # is not allowed
+                    complaint = "is not allowed"
+                # any other refusal
+                else:
+                    # is a failed conversion to the documented type
+                    complaint = f"is not of type '{trait.type}'"
+                # either way, nobody has said why yet
+                detail = str(refusal)
             # if all went well
             else:
                 # on to the next entry
@@ -201,12 +216,12 @@ class Reader:
             # and the user hears about it, with what the header knows about the value
             channel.line(f"while reading '{uri}'")
             channel.indent()
-            # the value, as the header wrote it, and the type it is documented to have
+            # the value, as the header wrote it, and what is wrong with it
             shown = f"{{{text}}}" if isinstance(value, list) else repr(text)
-            channel.line(f"the value of '{keyword}', {shown}, is not of type '{trait.type}'")
+            channel.line(f"the value of '{keyword}', {shown}, {complaint}")
             # the reason, unless it has been given already
             if detail is not None:
-                # in the words of the conversion
+                # in the words of the refusal
                 channel.line(detail)
             # and what became of the value
             channel.line(f"so '{keyword}' is left unset; its text is in the extras of the header")
