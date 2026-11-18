@@ -17,7 +17,9 @@ class Manifest:
     A marshaler that meets a channel while encoding a message declares it here, and encodes the
     token it gets back in the channel's place; the descriptors of every channel declared travel
     with the message. On arrival, the marshaler gives each token back, and the channel is
-    rebuilt from the descriptors that came with the message. Marshalers connect a manifest to
+    rebuilt from the descriptors that came with the message. The sender's own channels are
+    still open after the message leaves, and the manifest of the message names them, so the
+    sender can release the ones it no longer needs. Marshalers connect a manifest to
     whatever hook their serializer offers for objects that are not encoded by value, so channels
     know nothing about marshalers, and marshalers nothing about each other
     """
@@ -32,7 +34,9 @@ class Manifest:
         if not isinstance(item, Channel):
             # everything else is left to the marshaler
             return None
-        # ask the channel how it leaves
+        # record the channel
+        self.channels.append(item)
+        # ask it how it leaves
         hints, descriptors = item.depart()
         # its descriptors go after the ones already declared
         first = len(self.descriptors)
@@ -56,7 +60,9 @@ class Manifest:
     def __init__(self, descriptors=(), **kwds):
         # chain up
         super().__init__(**kwds)
-        # the descriptors of the channels in the message, in the order they were declared
+        # the channels declared in a message on its way out, in the order they were declared
+        self.channels = []
+        # and the descriptors of the channels in the message, in the same order
         self.descriptors = list(descriptors)
         # all done
         return

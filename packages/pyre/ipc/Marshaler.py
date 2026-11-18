@@ -36,7 +36,8 @@ class Marshaler(pyre.protocol, family="pyre.ipc.marshalers"):
     @pyre.provides
     def send(self, item, channel):
         """
-        Pack and ship {item} over {channel}
+        Pack and ship {item} over {channel}, and hand back the manifest of the message, which
+        names the channels that travelled inside it
         """
 
 

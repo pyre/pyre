@@ -51,7 +51,8 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
     @pyre.export
     def send(self, item, channel):
         """
-        Pack and ship {item} over {channel}
+        Pack and ship {item} over {channel}, and hand back the manifest of the message, which
+        names the channels that travelled inside it
         """
         # the record of the channels in the item
         manifest = Manifest()
@@ -67,8 +68,10 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
         body = stream.getvalue()
         # build its header
         header = struct.pack(self.packing, len(body), len(manifest.descriptors))
-        # and send it off, along with the descriptors of the channels in the item
-        return channel.write(bytes=header + body, descriptors=manifest.descriptors)
+        # send it off, along with the descriptors of the channels in the item
+        channel.write(bytes=header + body, descriptors=manifest.descriptors)
+        # and hand back the record of the channels that travelled
+        return manifest
 
     @pyre.export
     def recv(self, channel):
