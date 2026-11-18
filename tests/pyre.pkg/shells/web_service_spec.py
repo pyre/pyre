@@ -6,13 +6,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that the web shell's service specification is configurable and resolves through the
-nexus service slot the way {launch} wires it
-"""
-
-
 def test():
+    """
+    Verify that the web shell's service specification is configurable and resolves through the
+    nexus service slot the way {launch} wires it
+    """
     # get access to the framework
     import pyre
 
@@ -46,6 +44,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
