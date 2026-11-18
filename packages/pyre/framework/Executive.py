@@ -99,6 +99,25 @@ class Executive:
         # all done
         return
 
+    def loadRecipe(self, recipe, locator=None, priority=priority.user):
+        """
+        Load the sections of {recipe} into the configuration database with the given
+        {priority}, so components built by the names it records get the configuration it
+        describes
+        """
+        # attribute the settings to the recipe, on behalf of {locator}
+        where = tracking.chain(this=tracking.simple("while loading a recipe"), next=locator)
+        # turn the recipe into configuration events and process them
+        errors = self.configurator.processEvents(
+            events=recipe.assignments(locator=where), priority=priority
+        )
+        # go through any errors
+        for error in errors:
+            # and record each one
+            self.recordConfigurationError(error=error)
+        # all done
+        return
+
     def recordConfigurationError(self, error, configurable=None):
         """
         Add {error} to my pile, filed under {configurable}, the component class or instance it

@@ -74,6 +74,17 @@ def saveConfiguration(uri, components):
     return recipe.save(uri=uri)
 
 
+def loadRecipe(recipe):
+    """
+    Load the configuration {recipe} describes into the configuration model, so components
+    built by the names it records get the configuration it describes
+    """
+    # build a locator for these settings
+    here = tracking.here(level=1)
+    # get the executive to do its thing
+    return executive.loadRecipe(recipe=recipe, locator=here)
+
+
 # version dependent constants
 def computeCallerStackDepth():
     """
