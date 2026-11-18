@@ -31,7 +31,7 @@ def test():
 
     # close the channel
     channel.close()
-    # the shared file still reaches the contents
+    # the shared file can still read the contents
     assert os.pread(shared.fileno(), 6, 0) == b"shared"
 
     # clean up

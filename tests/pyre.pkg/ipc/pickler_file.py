@@ -46,7 +46,7 @@ def test():
 
     # the sender's copy is no longer needed
     original.close()
-    # but the arrival still reaches the contents
+    # but the arrival can still map the contents
     view = arrival.map()
     # all of them
     assert view[:] == b"travelling"
