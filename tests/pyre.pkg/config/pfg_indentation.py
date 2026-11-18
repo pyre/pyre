@@ -48,7 +48,9 @@ def test() -> None:
                 channel.line(f"the error for {text!r} does not point to line {line}")
                 # and the details
                 channel.indent()
+                # the error that was raised
                 channel.line(f"error: {error}")
+                # done with the details
                 channel.outdent()
         # if it is accepted
         else:
