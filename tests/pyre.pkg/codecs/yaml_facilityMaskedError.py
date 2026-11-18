@@ -6,18 +6,17 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that an error raised while instantiating a component that was resolved successfully
-is not disguised as a failure to resolve the original specification
-
-Resolving a facility specification includes instantiating the component it names. If that
-instantiation fails because one of the component's own facilities is misconfigured, the
-report must identify the misconfigured facility. Blaming the outer specification, which is
-perfectly good, sends the reader looking in the wrong place.
-"""
-
-
 def test():
+    """
+    Verify that an error raised while instantiating a component that was resolved successfully is
+    not disguised as a failure to resolve the original specification
+
+    Resolving a facility specification includes instantiating the component it names. If that
+    instantiation fails because one of the component's own facilities is misconfigured, the report
+    must identify the misconfigured facility. Blaming the outer specification, which is perfectly
+    good, sends the reader looking in the wrong place.
+    """
+    # access the framework
     import pyre
 
     # load the configuration file
@@ -29,37 +28,54 @@ def test():
 
     # a protocol for the innermost component
     class discretizations(pyre.protocol, family="test.discretizations"):
-        """the requirements of a discretization"""
+        """
+        The requirements of a discretization
+        """
 
+        # the order of the basis
         basis_order = pyre.properties.int()
 
         @classmethod
         def pyre_default(cls, **kwds):
-            """the preferred implementation"""
+            """
+            The preferred implementation
+            """
+            # is the uniform discretization
             return uniform
 
     # and an implementation
     class uniform(
         pyre.component, family="test.discretizations.uniform", implements=discretizations
     ):
-        """a trivial discretization"""
+        """
+        A trivial discretization
+        """
 
+        # the order of the basis
         basis_order = pyre.properties.int()
 
     # a protocol for the component that gets bound to a facility
     class fields(pyre.protocol, family="test.fields"):
-        """the requirements of a field"""
+        """
+        The requirements of a field
+        """
 
         @classmethod
         def pyre_default(cls, **kwds):
-            """the preferred implementation"""
+            """
+            The preferred implementation
+            """
+            # is the basic field
             return basic
 
     # and an implementation that touches its nested component while it is being built, so
     # that the misconfiguration is discovered during instantiation
     class basic(pyre.component, family="test.fields.basic", implements=fields):
-        """a field with a nested discretization"""
+        """
+        A field with a nested discretization
+        """
 
+        # the nested component
         discretization = discretizations(default=uniform)
 
         def __init__(self, **kwds):
@@ -72,8 +88,11 @@ def test():
 
     # the component that owns the facility
     class subject(pyre.component, family="test.subject"):
-        """the client"""
+        """
+        The client
+        """
 
+        # the facility
         field = fields()
 
     # instantiate the client
@@ -101,6 +120,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
