@@ -21,29 +21,33 @@ def test():
     # make an ANSI terminal
     from pyre.terminals.ANSI import ANSI
 
-    term = ANSI(name="test.ansi")
+    # and instantiate it
+    terminal = ANSI(name="test.ansi")
 
     # a named color renders as a 24-bit truecolor escape
-    assert term.color("red") == "\x1b[38;2;255;0;0m"
+    assert terminal.color("red") == "\x1b[38;2;255;0;0m"
     # alias spellings resolve too, since the palette is complete
-    assert term.color("fuchsia") != ""
+    assert terminal.color("fuchsia") != ""
     # an unknown name renders nothing
-    assert term.color("not-a-color") == ""
+    assert terminal.color("not-a-color") == ""
     # a 24-bit color also renders from a hex string or an integer, with an optional "#"
-    assert term.rgb("c02020") == "\x1b[38;2;192;32;32m"
-    assert term.rgb("#c02020") == "\x1b[38;2;192;32;32m"
-    assert term.rgb(0xC02020) == "\x1b[38;2;192;32;32m"
+    assert terminal.rgb("c02020") == "\x1b[38;2;192;32;32m"
+    # with the marker
+    assert terminal.rgb("#c02020") == "\x1b[38;2;192;32;32m"
+    # or as a number
+    assert terminal.rgb(0xC02020) == "\x1b[38;2;192;32;32m"
     # an invalid hex code renders nothing
-    assert term.rgb("nothex") == ""
+    assert terminal.rgb("nothex") == ""
     # the reset sequence is the canonical one
-    assert term.reset() == "\x1b[0m"
+    assert terminal.reset() == "\x1b[0m"
     # cursor control emits the expected DEC private-mode sequences
-    assert term.hideCursor() == "\x1b[?25l"
-    assert term.showCursor() == "\x1b[?25h"
+    assert terminal.hideCursor() == "\x1b[?25l"
+    # both ways
+    assert terminal.showCursor() == "\x1b[?25h"
     # a rewind steps up over the frame, returns to the margin, and clears downward
-    assert term.rewind(3) == "\x1b[3A\r\x1b[J"
+    assert terminal.rewind(3) == "\x1b[3A\r\x1b[J"
     # a zero-height frame skips the cursor-up step
-    assert term.rewind(0) == "\r\x1b[J"
+    assert terminal.rewind(0) == "\r\x1b[J"
 
     # all done
     return
@@ -51,7 +55,7 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # run the test
+    # do...
     test()
 
 

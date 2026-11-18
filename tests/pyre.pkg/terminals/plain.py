@@ -16,21 +16,28 @@ def test():
     # make a plain terminal
     from pyre.terminals.Plain import Plain
 
-    term = Plain(name="test.plain")
+    # and instantiate it
+    terminal = Plain(name="test.plain")
 
     # it has no color capability, so every color request comes back empty
-    assert term.color("red") == ""
-    assert term.rgb("c02020") == ""
-    assert term.render(None) == ""
-    assert term.reset() == ""
+    assert terminal.color("red") == ""
+    # named or numeric
+    assert terminal.rgb("c02020") == ""
+    # it renders nothing
+    assert terminal.render(None) == ""
+    # and has nothing to reset
+    assert terminal.reset() == ""
     # it does not advertise cursor control or raw input at all
-    assert not hasattr(term, "hideCursor")
-    assert not hasattr(term, "rawmode")
+    assert not hasattr(terminal, "hideCursor")
+    # and no raw input
+    assert not hasattr(terminal, "rawmode")
 
     # and the device queries return values of the expected kind
-    assert isinstance(term.width(), int)
-    assert isinstance(term.height(), int)
-    assert isinstance(term.interactive(), bool)
+    assert isinstance(terminal.width(), int)
+    # both dimensions
+    assert isinstance(terminal.height(), int)
+    # and whether it is interactive
+    assert isinstance(terminal.interactive(), bool)
 
     # all done
     return
@@ -38,7 +45,7 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # run the test
+    # do...
     test()
 
 

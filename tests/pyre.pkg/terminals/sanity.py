@@ -17,16 +17,21 @@ def test():
     terminals = pyre.terminals
     # the two capability protocols are published
     assert terminals.terminal is not None
+    # both of them
     assert terminals.console is not None
     # as are the three implementation foundries
     assert terminals.ansi is not None
+    # the interactive one
     assert terminals.interactive is not None
+    # and the plain one
     assert terminals.plain is not None
     # and the key decoder
     assert terminals.keys is not None
 
-    # the compatibility sniff now lives on the terminal protocol and answers the known cases
+    # the compatibility sniff lives on the terminal protocol: it recognizes the terminals it knows
+    # are compatible
     assert terminals.terminal.compatible("xterm") is True
+    # and the ones it knows are not
     assert terminals.terminal.compatible("dumb") is False
 
     # all done
@@ -35,7 +40,7 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # run the test
+    # do...
     test()
 
 
