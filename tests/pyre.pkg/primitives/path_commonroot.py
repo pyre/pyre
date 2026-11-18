@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise {path.commonRoot}, the longest logical ancestor shared by two paths
-"""
-
-
 def test():
+    """
+    Exercise {path.commonRoot}, the longest logical ancestor shared by two paths
+    """
     # the home of the factory
     import pyre
 
@@ -20,12 +18,14 @@ def test():
 
     # two absolute paths that share a leading portion
     mine = path("/Users/mga/dv/pyre")
+    # diverging after it
     hers = path("/Users/mga/tmp/foo")
     # their common root is the shared prefix
     assert str(mine.commonRoot(hers)) == "/Users/mga"
 
-    # when one path is a logical ancestor of the other
+    # when one path is a logical ancestor
     ancestor = path("/Users/mga")
+    # of the other
     child = path("/Users/mga/dv/pyre")
     # the common root is the ancestor itself
     assert str(child.commonRoot(ancestor)) == "/Users/mga"
@@ -38,9 +38,11 @@ def test():
     # two absolute paths that diverge right after the root
     assert str(path("/Users/mga").commonRoot("/etc/hosts")) == "/"
 
-    # the operation is symmetric
+    # the operation is symmetric: given one path
     left = path("/a/b/c")
+    # and another
     right = path("/a/x")
+    # the order does not matter
     assert str(left.commonRoot(right)) == str(right.commonRoot(left))
 
     # two relative paths that share a prefix
