@@ -51,7 +51,7 @@ def test():
     assert taskstatus is worker.taskcodes.completed
     # and a copy of the file
     assert isinstance(result, File)
-    # that still reaches the contents
+    # whose contents can still be mapped
     view = result.map()
     # all of them
     assert view[:] == b"the result"
