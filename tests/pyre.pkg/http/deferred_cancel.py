@@ -6,22 +6,17 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a peer hangup cancels the response parked on its connection, and that delivery
-clears the parking registry
-"""
-
 # externals
 import journal
+
+# the transport that stands in for the client connection
+import pyre.ipc
 
 # the server under test
 from pyre.http.Server import Server
 
 # the document that gets delivered in the happy case
 from pyre.http.documents import OK
-
-# the transport that stands in for the client connection
-import pyre.ipc
 
 
 # the minimal application surface the server consults while processing traffic
@@ -50,6 +45,10 @@ class Page(OK):
 
 
 def test():
+    """
+    Verify that a peer hangup cancels the response parked on its connection, and that delivery
+    clears the parking registry
+    """
     # build a server; no port is bound until activation, which this test never triggers
     server = Server(name="test.http.deferred.cancel")
     # give it an application to talk to
@@ -80,9 +79,11 @@ def test():
 
     # the happy scenario: delivery also clears the registry
     connection, client = pyre.ipc.newSocket().open()
-    # park a fresh placeholder
+    # make a fresh placeholder
     deferred = server.deferred()
+    # park it
     server.respond(channel=connection, request=None, response=deferred)
+    # and check that the server remembers it
     assert connection in server.parked
     # the document becomes available and is delivered
     deferred.resolve(response=Page(server=server))
@@ -90,7 +91,9 @@ def test():
     assert connection not in server.parked
     # and the client received the response
     wire = client.read(minlen=15)
+    # with the status line
     assert wire.startswith(b"HTTP/1.1 200 OK\r\n")
+    # and the body
     assert wire.endswith(b"<html>hi</html>")
 
     # all done
@@ -99,6 +102,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

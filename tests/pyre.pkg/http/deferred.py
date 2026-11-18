@@ -6,21 +6,17 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a deferred response parks the connection and delivers its document on resolution
-"""
+# externals: to peek at the wire without blocking
+import select
+
+# the transport that stands in for the client connection
+import pyre.ipc
 
 # the server under test
 from pyre.http.Server import Server
 
 # the document that eventually gets delivered
 from pyre.http.documents import OK
-
-# the transport that stands in for the client connection
-import pyre.ipc
-
-# to peek at the wire without blocking
-import select
 
 
 # a document that carries a body, so the delivery has something recognizable to ship
@@ -39,6 +35,9 @@ class Page(OK):
 
 
 def test():
+    """
+    Verify that a deferred response parks the connection and delivers its document on resolution
+    """
     # build a server; no port is bound until activation, which this test never triggers
     server = Server(name="test.http.deferred")
     # and a connection, with the parent end playing the server side
@@ -52,8 +51,9 @@ def test():
     assert parked is True
     # and has installed its delivery hook
     assert deferred.deliver is not None
-    # without writing anything to the wire yet
+    # without writing anything to the wire yet: peek
     ready, _, _ = select.select([client], [], [], 0)
+    # and find nothing
     assert not ready
 
     # now the actual document becomes available
@@ -73,6 +73,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

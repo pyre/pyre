@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify the http {Hub}: it arms a channel once, drains with partial sends, re-arms once empty,
-cleans up on unsubscribe, coalesces identical frames, drops a subscriber that overflows its queue,
-and broadcasts a recurring keep-alive while it has subscribers
-"""
-
 # the registry under test
 from pyre.http.Hub import Hub
 
@@ -93,16 +87,22 @@ class Channel:
 
 
 def test():
-    # arm exactly once across publishes, then drain fully
-    # a fresh dispatcher and hub
+    """
+    Verify the http {Hub}: it arms a channel once, drains with partial sends, re-arms once
+    empty, cleans up on unsubscribe, coalesces identical frames, drops a subscriber that
+    overflows its queue, and broadcasts a recurring keep-alive while it has subscribers
+    """
+    # arm exactly once across publishes, then drain fully: a fresh dispatcher
     dispatcher = Dispatcher()
+    # and hub
     hub = Hub(dispatcher=dispatcher)
     # a channel that accepts everything
     channel = Channel()
     # subscribe it to a topic
     hub.subscribe(channel=channel, topic="t")
-    # publish two events to that topic
+    # publish two events to that topic: the first
     hub.publish(b"one", topic="t")
+    # and the second
     hub.publish(b"two", topic="t")
     # the two publishes armed the channel exactly once
     assert len(dispatcher.armed) == 1
@@ -113,9 +113,9 @@ def test():
     # and it is no longer armed
     assert channel not in hub._armed
 
-    # a frame larger than one send is delivered across flushes
-    # a fresh dispatcher and hub
+    # a frame larger than one send is delivered across flushes: a fresh dispatcher
     dispatcher = Dispatcher()
+    # and hub
     hub = Hub(dispatcher=dispatcher)
     # a channel that takes only three bytes per send
     channel = Channel(limit=3)
@@ -136,16 +136,15 @@ def test():
     # and the channel is disarmed
     assert channel not in hub._armed
 
-    # a publish after the queue empties arms the channel afresh
-    # remember how many armings we have seen
+    # a publish after the queue empties arms the channel afresh: remember how many armings we
+    # have seen
     before = len(dispatcher.armed)
     # publish once more
     hub.publish(b"z")
     # which arms the channel again
     assert len(dispatcher.armed) == before + 1
 
-    # unsubscribe forgets the channel; a later send to it is a quiet no-op
-    # drop the channel
+    # unsubscribe forgets the channel, and a later send to it is a quiet no-op: drop the channel
     hub.unsubscribe(channel)
     # its queue is gone
     assert channel not in hub._queues
@@ -154,33 +153,36 @@ def test():
     # and sending to it now does nothing, rather than raising
     hub.send(channel=channel, data=b"x")
 
-    # coalescing skips an identical frame already pending at the tail
-    # a fresh dispatcher and hub
+    # coalescing skips an identical frame already pending at the tail: a fresh dispatcher
     dispatcher = Dispatcher()
+    # and hub
     hub = Hub(dispatcher=dispatcher)
     # a channel
     channel = Channel()
     # subscribe it
     hub.subscribe(channel=channel)
-    # publish the same frame twice, coalescing
+    # publish a frame, coalescing
     hub.publish(b"same", coalesce=True)
+    # and the same frame again
     hub.publish(b"same", coalesce=True)
     # only one copy is pending
     assert len(hub._queues[channel]) == 1
-    # a different frame is still queued
+    # a different frame
     hub.publish(b"other", coalesce=True)
+    # is still queued
     assert len(hub._queues[channel]) == 2
 
-    # a subscriber that overflows its queue is dropped and closed
-    # a hub that holds at most two frames per subscriber
+    # a subscriber that overflows its queue is dropped and closed: a fresh dispatcher
     dispatcher = Dispatcher()
+    # and a hub that holds at most two frames per subscriber
     hub = Hub(dispatcher=dispatcher, capacity=2)
-    # a channel that never drains (its socket is not flushed during this block)
+    # a channel that never drains, since nothing flushes it during this block
     channel = Channel()
     # subscribe it
     hub.subscribe(channel=channel)
-    # fill the queue to capacity
+    # fill the queue to capacity: one frame
     hub.send(channel=channel, data=b"a")
+    # and another
     hub.send(channel=channel, data=b"b")
     # the queue is full
     assert len(hub._queues[channel]) == 2
@@ -191,69 +193,91 @@ def test():
     # and its connection was closed
     assert channel.closed is True
 
-    # the keep-alive heartbeat runs while there are subscribers and lapses when there are none
-    # a hub configured with a keep-alive frame and an interval
+    # the keep-alive heartbeat runs while there are subscribers and lapses when there are none:
+    # a fresh dispatcher
     dispatcher = Dispatcher()
+    # and a hub configured with a keep-alive frame and an interval
     hub = Hub(dispatcher=dispatcher, keepalive=b": keepalive\n\n", interval=1)
     # before anyone subscribes, no timer is scheduled
     assert len(dispatcher.alarms) == 0
-    # the first subscriber starts the timer
+    # the first subscriber
     first = Channel()
+    # starts the timer
     hub.subscribe(channel=first)
+    # just one
     assert len(dispatcher.alarms) == 1
-    # a second subscriber does not start a second timer
+    # a second subscriber
     second = Channel()
+    # joins
     hub.subscribe(channel=second)
+    # but does not start a second timer
     assert len(dispatcher.alarms) == 1
-    # firing the timer broadcasts the keep-alive to every subscriber and asks to recur
+    # firing the timer
     interval, beat = dispatcher.alarms[0]
+    # broadcasts the keep-alive to every subscriber and asks to recur
     assert beat(timestamp=0) == 1
-    # each subscriber has the keep-alive queued
+    # so the first subscriber has the keep-alive queued
     assert hub._queues[first][-1] == b": keepalive\n\n"
+    # and so does the second
     assert hub._queues[second][-1] == b": keepalive\n\n"
-    # with no subscribers left, the next tick declines to recur
+    # once the first subscriber leaves
     hub.unsubscribe(first)
+    # and the second one too
     hub.unsubscribe(second)
+    # the next tick declines to recur
     assert beat(timestamp=0) is None
-    # and a fresh subscription restarts the timer
+    # and a fresh subscriber
     third = Channel()
+    # joining
     hub.subscribe(channel=third)
+    # restarts the timer
     assert len(dispatcher.alarms) == 2
 
-    # unsubscribe touches only the leaving channel's topics and prunes the ones left empty
-    # a fresh dispatcher and hub
+    # unsubscribe touches only the leaving channel's topics and prunes the ones left empty: a
+    # fresh dispatcher
     dispatcher = Dispatcher()
+    # and hub
     hub = Hub(dispatcher=dispatcher)
-    # one channel on topic "x", another on topic "y"
+    # one channel
     here = Channel()
+    # and another
     there = Channel()
+    # the first on topic "x"
     hub.subscribe(channel=here, topic="x")
+    # the second on topic "y"
     hub.subscribe(channel=there, topic="y")
     # drop the first
     hub.unsubscribe(here)
-    # it is gone from the reverse index and its queue
+    # it is gone from the reverse index
     assert here not in hub._topics
+    # and its queue
     assert here not in hub._queues
     # its now-empty topic is pruned entirely
     assert "x" not in hub._subscribers
-    # the other channel and its topic are untouched
+    # the other channel
     assert there in hub._subscribers["y"]
+    # and its topic are untouched
     assert hub._topics[there] == {"y"}
 
-    # a channel on several topics is removed from all of them at once
-    # a fresh dispatcher and hub
+    # a channel on several topics is removed from all of them at once: a fresh dispatcher
     dispatcher = Dispatcher()
+    # and hub
     hub = Hub(dispatcher=dispatcher)
-    # one channel joining two topics
+    # one channel
     both = Channel()
+    # joining one topic
     hub.subscribe(channel=both, topic="a")
+    # and another
     hub.subscribe(channel=both, topic="b")
     # the reverse index records both
     assert hub._topics[both] == {"a", "b"}
-    # unsubscribe removes it from both and prunes both now-empty topics
+    # unsubscribe
     hub.unsubscribe(both)
+    # removes it from the first topic, which is pruned now that it is empty
     assert "a" not in hub._subscribers
+    # and from the second
     assert "b" not in hub._subscribers
+    # and forgets the channel
     assert both not in hub._topics
 
     # all done
@@ -262,7 +286,7 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # run the test
+    # do...
     test()
 
 

@@ -6,10 +6,14 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a response whose body is in a file is sent straight from the file, with its size as
-the content length, and that the server closes the file once it is on the wire
-"""
+# externals: for the file that holds the body
+import tempfile
+
+# the client reads while the server writes
+import threading
+
+# the transport that stands in for the client connection
+import pyre.ipc
 
 # the server under test
 from pyre.http.Server import Server
@@ -17,17 +21,12 @@ from pyre.http.Server import Server
 # the document that carries the file
 from pyre.http.documents import BMP
 
-# the transport that stands in for the client connection
-import pyre.ipc
-
-# for the file that holds the body
-import tempfile
-
-# the client reads while the server writes
-import threading
-
 
 def test():
+    """
+    Verify that a response whose body is in a file is sent straight from the file, with its size
+    as the content length, and that the server closes the file once it is on the wire
+    """
     # build a server; no port is bound until activation, which this test never triggers
     server = Server(name="test.http.transmit")
     # and a connection, with the parent end playing the server side
@@ -55,8 +54,10 @@ def test():
         # all done
         return
 
-    # start reading before the server writes, since the server blocks until the body is sent
+    # the client must be reading before the server writes, since the server blocks until the
+    # body is sent
     reader = threading.Thread(target=receive)
+    # so start it
     reader.start()
     # the document
     document = BMP(server=server, payload=payload)
@@ -86,6 +87,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
