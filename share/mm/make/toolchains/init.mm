@@ -50,6 +50,10 @@ define toolchain.init =
     # extra environment a consumer must set to use the tool, beyond {NODE_PATH} and {PATH}; tool
     # specific, so each definition fills it in (e.g. a browser path); empty when nothing more is needed
     ${eval toolchain.$(1).env ?=}
+    # recipe lines a tool adds to its {info} and its {verify}, for what its kind does not cover;
+    # empty when the kind says it all
+    ${eval toolchain.$(1).report ?=}
+    ${eval toolchain.$(1).checks ?=}
 # all done
 endef
 
