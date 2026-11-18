@@ -97,8 +97,9 @@ def computeCallerStackDepth():
 # administrative
 def copyright():
     """
-    Return the pyre copyright note
+    Print the pyre copyright note
     """
+    # print it
     return print(meta.header)
 
 
@@ -114,6 +115,7 @@ def version():
     """
     Return the pyre version
     """
+    # it is part of the package metadata
     return meta.version
 
 
@@ -295,9 +297,11 @@ from .traits.Facility import Facility as facility
 # interface decorators: requirements
 from .traits.Behavior import Behavior as provides
 
+# which also go by the name of what they ask of implementers
 required = provides
 # implementations
 export = provides
+# which also go by the name of what they do for their protocols
 implements = export
 
 # the base class of all pyre exceptions
