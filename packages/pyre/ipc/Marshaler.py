@@ -19,8 +19,13 @@ class Marshaler(pyre.protocol, family="pyre.ipc.marshalers"):
     # factory for my default implementation
     @classmethod
     def pyre_default(cls, **kwds):
+        """
+        The marshaler to use when nobody asks for a specific one
+        """
+        # get the pickler
         from .Pickler import Pickler
 
+        # and hand it off
         return Pickler
 
     # interface
