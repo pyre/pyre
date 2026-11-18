@@ -93,8 +93,11 @@ def test():
     # the mpi demands cannot be reconciled
     assert "mpi" in report.conflicted
     # the evidence names both irreconcilable requirements
-    evidence = {str(req) for req in report.conflicted["mpi"]}
-    assert "mpi[openmpi]" in evidence and "mpi[mpich]" in evidence
+    evidence = {str(requirement) for requirement in report.conflicted["mpi"]}
+    # the openmpi one
+    assert "mpi[openmpi]" in evidence
+    # and the mpich one
+    assert "mpi[mpich]" in evidence
     # and no mpi was selected
     assert "mpi" not in report.selections
 

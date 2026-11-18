@@ -81,8 +81,9 @@ def test():
     # the class under test
     from pyre.externals.Linkage import Linkage
 
-    # the patterns the hdf5 recipes use to tell the mpi implementations apart
+    # the patterns the hdf5 recipes use to tell the mpi implementations apart: openmpi
     openmpi = Linkage(library="hdf5", pattern=r"libmpi\.(so\.4\d|4\d\.dylib)")
+    # and mpich
     mpich = Linkage(library="hdf5", pattern=r"libmpich|libmpi\.(so\.1\d|1\d\.dylib)")
 
     # make a scratch directory to hold the synthesized libraries
@@ -99,9 +100,11 @@ def test():
 
         # the openmpi linkage claims it
         ok, values = openmpi.evaluate(folders=folders)
+        # with nothing to report
         assert ok and not values
         # and the mpich linkage refuses it
         ok, values = mpich.evaluate(folders=folders)
+        # outright
         assert not ok
 
         # replace it with a serial build, which names no mpi at all
@@ -111,22 +114,29 @@ def test():
 
         # neither parallel linkage claims it
         assert not openmpi.evaluate(folders=folders)[0]
+        # either one
         assert not mpich.evaluate(folders=folders)[0]
         # while an exclusion is satisfied: the build links to no mpi
         forbidden = Linkage(library="hdf5", pattern=r"libmpi", forbid=True)
+        # by this build
         assert forbidden.evaluate(folders=folders)[0]
 
         # and an extractor names what it found
         harvester = Linkage(library="hdf5", pattern=r"(libc\.so\.\d+)", harvest="version")
+        # when it evaluates
         ok, values = harvester.evaluate(folders=folders)
+        # in the slot it was given
         assert ok and values == {"version": "libc.so.6"}
 
     # with the scratch directory gone, the library is nowhere to be found, so every
     # linkage abstains: nothing readable means no evidence either way, and a check that
     # vetoed on silence would reject installations their headers already proved good
     assert openmpi.evaluate(folders=folders) == (True, {})
+    # both of them
     assert mpich.evaluate(folders=folders) == (True, {})
+    # so do exclusions
     assert Linkage(library="hdf5", pattern=r"libmpi", forbid=True).evaluate(folders=folders)[0]
+    # and extractors, with nothing to report
     assert harvester.evaluate(folders=folders) == (True, {})
 
     # all done

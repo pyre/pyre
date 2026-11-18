@@ -45,6 +45,7 @@ def test():
     assert values["libraries"] == ["cudart"]
     # and the compiler came from its own fragment
     assert values["compiler"] == "nvcc"
+    # along with the folder that holds it
     assert [str(folder) for folder in values["bindir"]] == ["conda/bin"]
     # the prefix collapses to the environment root, the common root of all the pieces
     assert str(values["prefix"]) == "conda"

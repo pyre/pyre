@@ -42,7 +42,10 @@ def test():
     assert not report.conflicted
     # and the dependency edges arrived as structured requirements too
     parmetis = report.selections["parmetis"]
-    assert all(isinstance(req, pyre.externals.requirement) for req in parmetis.dependencies)
+    # are all requirements
+    assert all(
+        isinstance(requirement, pyre.externals.requirement) for requirement in parmetis.dependencies
+    )
 
     # all done
     return
