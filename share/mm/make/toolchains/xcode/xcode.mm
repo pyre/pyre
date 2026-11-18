@@ -13,6 +13,9 @@ toolchain.xcode.doc := "apple's developer tools: swift, sdks, bundles, signing (
 toolchain.xcode.kind := vendor
 toolchain.xcode.url := https://developer.apple.com/xcode/
 toolchain.xcode.cli := xcrun
+# apple ships these tools for macOS only; elsewhere this is empty, and projects test it before they
+# include anything that needs them
+toolchain.xcode.supported := ${if ${filter darwin,$(platform.os)},yes,}
 
 # the developer directory of the xcode installation to use; when left empty, the tools come from
 # the one the environment selects, through {DEVELOPER_DIR} or {xcode-select}. the command line
