@@ -85,14 +85,6 @@ def test():
         # is a failure
         assert False, "an unterminated brace was accepted"
 
-    # a data type code ENVI does not define is caught by the trait validator on the way in, so
-    # it lands in the extras; the datatype lookup itself refuses an unknown code
-    hdr = pyre.envi.header()
-    # set its data type code
-    hdr.dataType = 12
-    # and look it up
-    assert hdr.datatype == "uint16"
-
     # all done
     return
 

@@ -39,6 +39,7 @@ tests.pyre.pkg.framework.executive_guesses.clean := executive_guesses.scratch
 tests.pyre.pkg.framework.fileserver_open_errors.clean := fileserver_open_errors.scratch
 tests.pyre.pkg.filesystem.zip_open.clean := zip_open.zip
 tests.pyre.pkg.envi.extras.clean := extras.log
+tests.pyre.pkg.envi.datatype_unknown.clean := datatype_unknown.log
 tests.pyre.pkg.schemata.mappings_text.clean := mappings_text.log
 tests.pyre.pkg.schemata.lists_text.clean := lists_text.log
 tests.pyre.pkg.components.component_dict_text.clean := component_dict_text.log
