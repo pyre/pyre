@@ -614,7 +614,8 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
 
     def report(self, channel, crewstatus, taskstatus, result, **kwds):
         """
-        Post the task completion {report}
+        Post the task completion report, and release the channels it carried, which the team
+        now holds copies of
         """
         # make a report
         report = (crewstatus, taskstatus, result)
@@ -625,11 +626,17 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
         # carefully, since the team may be gone
         try:
             # serialize and send
-            self.marshaler.send(channel=channel, item=report)
+            manifest = self.marshaler.send(channel=channel, item=report)
         # if the team is unreachable
         except OSError:
             # nobody will ever hear from me again; wind down my event loop
             self.stop()
+            # and don't reschedule
+            return False
+        # go through the channels that travelled with the report
+        for carried in manifest.channels:
+            # and close my copy of each one
+            carried.close()
         # all done; don't reschedule
         return False
 
