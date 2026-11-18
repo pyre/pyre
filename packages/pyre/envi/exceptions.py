@@ -84,22 +84,4 @@ class MalformedValueError(ENVIError):
         return
 
 
-class UnknownDataTypeError(ENVIError):
-    """
-    Exception raised when a header declares a data type code that ENVI does not define
-    """
-
-    # public data
-    description = "unknown ENVI data type code {0.code}"
-
-    # metamethods
-    def __init__(self, code, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save the code
-        self.code = code
-        # all done
-        return
-
-
 # end of file

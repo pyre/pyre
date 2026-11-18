@@ -11,9 +11,6 @@ import pyre
 # the georeferencing record
 from .MapInfo import MapInfo
 
-# the local exceptions
-from . import exceptions
-
 
 # the contents of an ENVI header
 class Header(pyre.component, family="pyre.envi.header"):
@@ -302,16 +299,8 @@ class Header(pyre.component, family="pyre.envi.header"):
         if code is None:
             # there is nothing to say
             return None
-        # look it up
-        try:
-            # get the name
-            name = self.datatypes[code]
-        # if the code is not one ENVI defines
-        except KeyError:
-            # complain
-            raise exceptions.UnknownDataTypeError(code=code)
-        # if all goes well, return the {name}
-        return name
+        # the trait accepts only the codes ENVI defines, so the code is in the table
+        return self.datatypes[code]
 
     @property
     def cell(self) -> str | None:
