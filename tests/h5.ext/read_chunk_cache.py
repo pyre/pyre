@@ -20,12 +20,14 @@ def test():
     compressed product that is the difference between repeating a read in microseconds and
     repeating it in milliseconds, and it is invisible to any test that only checks the values
     """
-    # get the bindings
+    # get the framework, for its timers
+    import pyre
+
+    # the bindings
     from pyre.extensions import libh5
 
-    # for a scratch path, timing, and a buffer
+    # for a scratch path and a buffer
     import os
-    import time
     import array
 
     # a scratch data product
@@ -99,18 +101,24 @@ def test():
 
     # somewhere to put it
     buffer = array.array("d", bytes(cells * 8))
+    # and a clock for the reads
+    timer = pyre.timers.wall(name="tests.h5.ext.read_chunk_cache")
 
     # time a read
     def read():
         """
         Read the whole chunk and report how long it took, in milliseconds
         """
-        # start the clock
-        start = time.perf_counter()
+        # clear the clock of earlier reads
+        timer.reset()
+        # start it
+        timer.start()
         # pull the tile
         dataset.read(buffer, libh5.types.native.double, [0, 0], chunk)
+        # stop the clock
+        timer.stop()
         # and report
-        return (time.perf_counter() - start) * 1000
+        return timer.ms()
 
     # the first read inflates the chunk
     first = read()
