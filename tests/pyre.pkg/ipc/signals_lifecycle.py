@@ -6,13 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that the relay takes a signal over while it has handlers for it, and hands it back,
-along with the wakeup descriptor of the interpreter, once the last one is gone; and that a loop
-left with nothing to watch but signals has run out of work
-"""
-
-
 def wakeup():
     """
     Peek at the wakeup descriptor of the interpreter, without disturbing it
@@ -31,6 +24,11 @@ def wakeup():
 
 
 def test():
+    """
+    Verify that the relay takes a signal over while it has handlers for it, and hands it back, along
+    with the wakeup descriptor of the interpreter, once the last one is gone; and that a loop left
+    with nothing to watch but signals has run out of work
+    """
     # externals
     import signal
 
@@ -49,6 +47,7 @@ def test():
     signal.signal(signal.SIGUSR1, original)
     # at first, the relay is in charge of nothing
     assert relay.channel() is None
+    # and no wakeup descriptor is installed
     assert wakeup() == -1
 
     # make an event loop
@@ -78,6 +77,7 @@ def test():
     relay.forget(signal=signal.SIGUSR1, call=handler)
     # the relay is in charge of nothing
     assert list(relay.signals()) == []
+    # and has no channel
     assert relay.channel() is None
     # the signal is back with its original handler
     assert signal.getsignal(signal.SIGUSR1) is original
@@ -107,6 +107,7 @@ def test():
     relay.forget(signal=signal.SIGUSR1, call=ear.heard)
     # which is enough to hand the signal back
     assert list(relay.signals()) == []
+    # and the original handler is back
     assert signal.getsignal(signal.SIGUSR1) is original
 
     # all done

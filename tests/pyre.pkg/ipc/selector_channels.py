@@ -6,11 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a selector can report the channels it is currently watching
-"""
-
-
 def idle(channel, **kwds):
     """A do-nothing handler"""
     # decline to be rescheduled
@@ -18,6 +13,9 @@ def idle(channel, **kwds):
 
 
 def test():
+    """
+    Verify that a selector can report the channels it is currently watching
+    """
     # access the package
     import pyre.ipc
 
@@ -51,6 +49,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that the two ends of a socket pair honor the {Pipe} inheritance contract
-"""
-
-
 def test():
+    """
+    Verify that the two ends of a socket pair honor the {Pipe} inheritance contract
+    """
     # get the package
     import pyre.ipc
 
@@ -28,6 +26,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

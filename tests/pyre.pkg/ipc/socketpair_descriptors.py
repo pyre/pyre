@@ -6,19 +6,18 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Grant a child process access to an open file by shipping its descriptor over a socket pair
-
-This is the capability that distinguishes socket pairs from pipes: the descriptor crosses the
-process boundary through {SCM_RIGHTS}, not through fork inheritance, so it works for files
-opened long after the child was spawned
-"""
-
 # what the child writes into the borrowed file
 marker = b"delivered by descriptor passing"
 
 
 def test():
+    """
+    Grant a child process access to an open file by shipping its descriptor over a socket pair
+
+    This is the capability that distinguishes socket pairs from pipes: the descriptor crosses the
+    process boundary through {SCM_RIGHTS}, not through fork inheritance, so it works for files
+    opened long after the child was spawned
+    """
     # externals
     import os
 
@@ -48,8 +47,9 @@ def onParent(child_pid, channel):
     document = tempfile.TemporaryFile()
     # lend its descriptor to the child
     channel.sendDescriptors(descriptors=[document.fileno()])
-    # wait for the child to finish writing and verify it exited cleanly
+    # wait for the child to finish writing
     _, status = os.waitpid(child_pid, 0)
+    # which must have exited cleanly
     assert status == 0
     # rewind the file
     document.seek(0)
@@ -80,6 +80,7 @@ def onChild(channel):
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

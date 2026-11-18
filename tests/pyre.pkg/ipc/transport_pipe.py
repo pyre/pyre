@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the pipe transport: build a pair, exchange a message, wrap raw descriptors
-"""
-
-
 def test():
+    """
+    Exercise the pipe transport: build a pair, exchange a message, wrap raw descriptors
+    """
     # externals
     import os
 
@@ -24,9 +22,11 @@ def test():
     parent, child = transport.open()
     # push a message through, parent to child
     parent.write(bytes=b"ping")
+    # and it arrives
     assert child.read(minlen=4) == b"ping"
     # and back
     child.write(bytes=b"pong")
+    # and it arrives
     assert parent.read(minlen=4) == b"pong"
 
     # make a raw pipe
@@ -35,6 +35,7 @@ def test():
     loop = transport.wrap(infd=infd, outfd=outfd)
     # push a message through it
     loop.write(bytes=b"loop")
+    # and it comes back
     assert loop.read(minlen=4) == b"loop"
 
     # all done
@@ -43,6 +44,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
