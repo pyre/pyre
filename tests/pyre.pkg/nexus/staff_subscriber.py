@@ -6,15 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a subscriber that fails while taking delivery does not cost the team a member
-
-The delivery of a task's outcome runs code that belongs to whoever asked for the task, inside
-the harvest of the member that did the work. If that code raises, the exception reaches the
-event loop's caller, as it should; but the member's own fate must be settled regardless, or it
-stays counted as busy with nobody listening to it, and the team never hands it work again
-"""
-
 # support
 import journal
 import pyre
@@ -83,6 +74,14 @@ class Recorder(journal.device):
 
 
 def test():
+    """
+    Verify that a subscriber that fails while taking delivery does not cost the team a member
+
+    The delivery of a task's outcome runs code that belongs to whoever asked for the task, inside
+    the harvest of the member that did the work. If that code raises, the exception reaches the
+    event loop's caller, as it should; but the member's own fate must be settled regardless, or it
+    stays counted as busy with nobody listening to it, and the team never hands it work again
+    """
     # build a staff of one
     staff = pyre.nexus.staff()(name="test.staff.subscriber")
     staff.size = 1
@@ -120,8 +119,9 @@ def test():
         # and don't reschedule
         return None
 
-    # the dispatcher reports the handler it discards on this channel; keep its entries
+    # the dispatcher reports the handler it discards on this channel; make a device
     recorder = Recorder()
+    # and keep its entries
     journal.warning("pyre.ipc.psl").device = recorder
 
     # hand over a task whose subscriber fails
@@ -130,24 +130,29 @@ def test():
     # the failure does not reach us: the dispatcher discards a handler that raises an
     # {OSError}, which is exactly what makes this failure silent in the field
     staff.dispatcher.alarm(interval=1 * second, call=expire)
+    # so start it
     staff.dispatcher.watch()
     # the subscriber was served
     assert outcomes == [("failing", "done", None)]
     # and the dispatcher said that it discarded the handler, because the process appeared to
-    # have run out of resources
+    # have run out of resources: once
     assert len(recorder.pages) == 1
+    # naming the handler
     assert recorder.pages[0][0].startswith("discarding a handler of")
+    # and the reason
     assert recorder.pages[0][1] == "after it raised [Errno 24] Too many open files"
 
-    # the member that did the work is accounted for: it is on the bench, or on its way there
-    # with a wake-up pending, and in either case not counted as busy with nobody listening
+    # the member that did the work is accounted for
     (member,) = list(staff.crews())
+    # it is on the bench, or on its way there with a wake-up pending, and in either case not
+    # counted as busy with nobody listening
     assert member not in staff.active or staff.dispatcher._write.get(member.channel.outbound)
 
     # a second task, with a subscriber that behaves, completes normally
     staff.assign(task=Quick(), callback=record)
     # let the loop run long enough
     staff.dispatcher.alarm(interval=1 * second, call=expire)
+    # by starting it
     staff.dispatcher.watch()
     # the second outcome arrived
     assert outcomes[-1] == ("record", "done", None)
@@ -160,7 +165,7 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # run the test
+    # do...
     test()
 
 

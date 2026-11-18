@@ -6,13 +6,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that an idle node stops as soon as it receives {TERM}: it watches a channel that never
-speaks and has no alarm to wake it up, so the request reaches it only through the relay
-"""
-
-
 def test():
+    """
+    Verify that an idle node stops as soon as it receives {TERM}: it watches a channel that never
+    speaks and has no alarm to wake it up, so the request reaches it only through the relay
+    """
     # externals
     import os
     import signal
@@ -103,8 +101,9 @@ def test():
     # and the node stopped right away, not when the last resort was due
     assert elapsed < 5, elapsed
 
-    # clean up
+    # clean up: close one end
     quiet.close()
+    # and the other
     mute.close()
     # all done
     return server
