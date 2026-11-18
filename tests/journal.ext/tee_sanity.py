@@ -51,13 +51,18 @@ def test():
             os.dup2(stdout, 1)
             # and release the spare descriptor
             os.close(stdout)
-    # let go of the tee so the file is flushed
+    # detach the tee from the channel
     channel.device = journal.trash()
+    # and let go of it, so the file is flushed
     del tee
-    # check that the message made it to the console
-    assert "hello world!" in open(capture, encoding="utf-8").read()
-    # and to the file
-    assert "hello world!" in open(path, encoding="utf-8").read()
+    # read what reached the console
+    with open(capture, encoding="utf-8") as stream:
+        # check that the message made it there
+        assert "hello world!" in stream.read()
+    # and what reached the file
+    with open(path, encoding="utf-8") as stream:
+        # check that the message made it there too
+        assert "hello world!" in stream.read()
     # all done
     return
 
