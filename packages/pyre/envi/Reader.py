@@ -215,9 +215,11 @@ class Reader:
             header.extras[keyword] = value
             # and the user hears about it, with what the header knows about the value
             channel.line(f"while reading '{uri}'")
+            # indent the details
             channel.indent()
-            # the value, as the header wrote it, and what is wrong with it
+            # show the value as the header wrote it
             shown = f"{{{text}}}" if isinstance(value, list) else repr(text)
+            # and say what is wrong with it
             channel.line(f"the value of '{keyword}', {shown}, {complaint}")
             # the reason, unless it has been given already
             if detail is not None:
@@ -225,7 +227,9 @@ class Reader:
                 channel.line(detail)
             # and what became of the value
             channel.line(f"so '{keyword}' is left unset; its text is in the extras of the header")
+            # done with the details
             channel.outdent()
+            # and send the report
             channel.log()
         # all done
         return header
