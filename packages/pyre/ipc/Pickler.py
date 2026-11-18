@@ -79,7 +79,9 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
         Extract and return a single item from {channel}
 
         Raises {EndOfStream} when the channel closes before a complete message arrives,
-        whether cleanly between messages or mid-transmission
+        whether cleanly between messages or mid-transmission, and {ArrivalError} when the
+        message arrives without all of its descriptors; the whole message is consumed either
+        way, so the next one arrives intact
         """
         # get the header; insist on a complete one, since it may arrive in pieces even from a
         # healthy peer, and read exactly the header, since overreading would swallow the
@@ -97,7 +99,7 @@ class Pickler(pyre.component, family="pyre.ipc.marshalers.pickler", implements=m
         if len(body) < length:
             # the peer died while transmitting
             raise EndOfStream(channel=channel, received=len(body), expected=length)
-        # collect the descriptors that came with the message
+        # with the whole message in hand, collect the descriptors that came with it
         manifest = Manifest(descriptors=channel.claim(count=count))
         # make an unpickler
         unpickler = pickle.Unpickler(io.BytesIO(body))

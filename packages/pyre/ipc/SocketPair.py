@@ -6,16 +6,16 @@
 
 
 # externals
+import errno
+import os
+import resource
 import socket
-
-# support
-import journal
 
 # my base class
 from .Socket import Socket
 
-# the exception raised when asked to carry too many descriptors
-from .exceptions import CarriageError
+# the exceptions raised when descriptors cannot be carried, or did not arrive
+from .exceptions import ArrivalError, CarriageError
 
 
 # declaration
@@ -29,7 +29,9 @@ class SocketPair(Socket):
     one process can grant another access to a file or socket it has opened
 
     Descriptors travel with the bytes they are written with, and arrive with the first of
-    them; every read collects whatever arrives, and keeps it until it is claimed
+    them; every read collects whatever arrives, and keeps it until it is claimed. A process
+    whose descriptor table is full receives the bytes without their descriptors, and the claim
+    that finds them missing says so
     """
 
     # constants
@@ -65,24 +67,30 @@ class SocketPair(Socket):
     def receive(self, count):
         """
         Pull up to {count} bytes from the socket, and keep the descriptors that arrive with them
+
+        When my descriptor table is full, the bytes arrive without their descriptors, and
+        nothing is recorded about the loss; the claim that finds them missing reports it
         """
-        # read, making room for as many descriptors as a write may carry
-        data, descriptors, flags, _ = socket.recv_fds(self, count, self.capacity)
+        # until the bytes come through
+        while True:
+            # carefully
+            try:
+                # read, making room for as many descriptors as a write may carry
+                data, descriptors, _, _ = socket.recv_fds(self, count, self.capacity)
+            # if the read was refused
+            except OSError as error:
+                # because the descriptors that came with the bytes had no room, which is how
+                # some kernels report a full descriptor table after dropping the descriptors
+                if error.errno == errno.EMSGSIZE:
+                    # the bytes are still there, so read again
+                    continue
+                # anything else is not mine to handle
+                raise
+            # got the bytes
+            break
         # keep the descriptors until they are claimed
         self.arrivals.extend(descriptors)
-        # if some did not fit
-        if flags & socket.MSG_CTRUNC:
-            # make a channel
-            channel = journal.firewall("pyre.ipc.carriage")
-            # complain
-            channel.line(
-                f"{self} received more descriptors than the {self.capacity} it has room for"
-            )
-            # and say what that means
-            channel.line("the descriptors that did not fit were closed by the kernel")
-            # flush
-            channel.log()
-        # hand off the bytes
+        # and hand off the bytes
         return data
 
     def write(self, bytes, descriptors=()):
@@ -111,18 +119,25 @@ class SocketPair(Socket):
     def claim(self, count):
         """
         Take the {count} descriptors that arrived with the bytes just read
+
+        When fewer arrived, which happens when my descriptor table was full, the ones that did
+        are closed, and {ArrivalError} is raised
         """
-        # if fewer arrived than promised
+        # if fewer arrived than were sent
         if len(self.arrivals) < count:
-            # make a channel
-            channel = journal.firewall("pyre.ipc.carriage")
-            # complain
-            channel.line(f"{self} was asked for {count} descriptors")
-            # and say how many it has
-            channel.line(f"but only {len(self.arrivals)} arrived")
-            # flush
-            channel.log()
-        # take the ones asked for
+            # get the ones that did
+            arrived = self.arrivals[:]
+            # forget them
+            self.arrivals.clear()
+            # go through them
+            for descriptor in arrived:
+                # and close each one, since a message without all of its channels is lost
+                os.close(descriptor)
+            # look up the most files this process may hold open
+            limit, _ = resource.getrlimit(resource.RLIMIT_NOFILE)
+            # and complain
+            raise ArrivalError(channel=self, expected=count, received=len(arrived), limit=limit)
+        # otherwise, take the ones asked for
         claimed = self.arrivals[:count]
         # and keep the rest
         del self.arrivals[:count]
