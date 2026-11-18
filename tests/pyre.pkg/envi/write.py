@@ -41,16 +41,21 @@ def render():
     text = pyre.envi.writer().render(header=hdr)
     # the text opens with the marker
     assert text.startswith("ENVI\n")
-    # spells keywords the ENVI way
+    # spells keywords the ENVI way, with spaces
     assert "\nheader offset = 0\n" in text
+    # all of them
     assert "\ndata ignore value = -9999.0\n" in text
-    # braces text fields and sequences, and leaves scalars bare
+    # braces text fields
     assert "\ndescription = {a product; with punctuation, and an = sign}\n" in text
+    # lists are braced
     assert "\nband names = {red, green, blue}\n" in text
+    # while scalar text
     assert "\nfile type = ENVI Standard\n" in text
+    # and keywords are bare
     assert "\ninterleave = bsq\n" in text
-    # and carries the extras
+    # and carries the extras: scalars
     assert "\ncustom scalar = 42\n" in text
+    # in the same style
     assert "\ncustom list = {a, b}\n" in text
 
     # read it back
@@ -83,9 +88,11 @@ def write():
     pyre.envi.writer().write(header=hdr, uri=uri)
     # read it back
     copy = pyre.envi.reader().read(uri=uri)
-    # check
+    # check its shape
     assert copy.shape == (4, 5)
+    # its data type
     assert copy.datatype == "uint16"
+    # and its interleave
     assert copy.interleave == "bip"
 
     # all done
@@ -94,8 +101,9 @@ def write():
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # check rendering headers
     render()
+    # and writing them to a file
     write()
 
 

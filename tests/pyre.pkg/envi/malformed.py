@@ -29,6 +29,7 @@ def test():
     except exceptions.MissingMarkerError as error:
         # names the source
         assert error.uri == "memory"
+        # and so does its description
         assert "memory" in str(error)
     # anything else
     else:
@@ -50,6 +51,7 @@ def test():
 
     # a line that is not an assignment
     text = "ENVI\nsamples = 10\nthis is not an entry\n"
+    # is refused
     try:
         # parse
         reader.parse(stream=io.StringIO(text), uri="memory")
@@ -57,7 +59,9 @@ def test():
     except exceptions.MalformedHeaderError as error:
         # points at the line
         assert error.line == 3
+        # quotes it
         assert error.text == "this is not an entry"
+        # and its description names the line
         assert "line 3" in str(error)
     # anything else
     else:
@@ -66,6 +70,7 @@ def test():
 
     # a brace that is never closed
     text = "ENVI\nsamples = 10\nband names = {Band 1,\nBand 2\n"
+    # is refused
     try:
         # parse
         reader.parse(stream=io.StringIO(text), uri="memory")
@@ -73,6 +78,7 @@ def test():
     except exceptions.MalformedHeaderError as error:
         # points at the line that opened the brace
         assert error.line == 3
+        # and says what is wrong with it
         assert error.reason == "unterminated brace"
     # anything else
     else:
@@ -82,7 +88,9 @@ def test():
     # a data type code ENVI does not define is caught by the trait validator on the way in, so
     # it lands in the extras; the datatype lookup itself refuses an unknown code
     hdr = pyre.envi.header()
+    # set its data type code
     hdr.dataType = 12
+    # and look it up
     assert hdr.datatype == "uint16"
 
     # all done

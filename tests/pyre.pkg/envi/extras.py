@@ -21,7 +21,9 @@ def test():
     # the warnings are expected, from the header and from the list that drops a bad item, so
     # send them to a file
     log = journal.file(path="extras.log")
+    # the ones from the header
     journal.warning("pyre.envi.header").device = log
+    # and the ones from the list
     journal.warning("pyre.config.containers").device = log
 
     # a header with a bad line count and a bad wavelength list
@@ -39,8 +41,9 @@ def test():
 
     # the good field made it
     assert hdr.samples == 10
-    # the bad ones did not
+    # the bad ones did not: the line count
     assert hdr.lines is None
+    # neither did the list
     assert hdr.wavelength is None
     # and their text is in the bag, a bare value as a string and a braced one as a list
     assert hdr.extras == {"lines": "many", "wavelength": ["0.4", "blue", "0.6"]}
@@ -66,7 +69,7 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # run the test
+    # do...
     test()
 
 
