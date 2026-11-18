@@ -6,10 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a pool can be configured to manage its crew over the socket transport
-"""
-
 # support
 import pyre
 
@@ -30,6 +26,9 @@ class Task(pyre.nexus.task):
 
 
 def test():
+    """
+    Verify that a pool can be configured to manage its crew over the socket transport
+    """
     # get the pool component from its foundry and build a team
     team = pyre.nexus.pool()(name="test.pool.sockets")
     # ask its recruiter to manage the crew over the socket transport
@@ -55,6 +54,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

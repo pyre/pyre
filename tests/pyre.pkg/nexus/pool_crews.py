@@ -6,10 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a pool can report its current crew members
-"""
-
 # support
 import pyre
 
@@ -30,6 +26,9 @@ class Task(pyre.nexus.task):
 
 
 def test():
+    """
+    Verify that a pool can report its current crew members
+    """
     # get the pool component from its foundry and build a team
     team = pyre.nexus.pool()(name="test.pool.crews")
     # a fresh team has no members
@@ -60,6 +59,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

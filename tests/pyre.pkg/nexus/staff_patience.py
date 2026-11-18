@@ -6,18 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a task which outlives the team's patience is answered for
-
-A team whose members are separate processes is exposed to a worker that accepts a task and
-never reports: it may be wedged, it may be waiting on something that will never arrive, or it
-may simply be slower than anybody is willing to wait for. Without a limit the requester holds
-a promise that is never kept, and every task queued behind that member waits with it. So a
-team may declare how long it is prepared to wait; when the deadline passes the task is
-abandoned with a recoverable error, the member is buried on the assumption that a worker
-nobody can trust is worse than none, and a replacement takes its place
-"""
-
 # externals
 import os
 
@@ -49,6 +37,17 @@ class Forever(pyre.nexus.task):
 
 
 def test():
+    """
+    Verify that a task which outlives the team's patience is answered for
+
+    A team whose members are separate processes is exposed to a worker that accepts a task and never
+    reports: it may be wedged, it may be waiting on something that will never arrive, or it may
+    simply be slower than anybody is willing to wait for. Without a limit the requester holds a
+    promise that is never kept, and every task queued behind that member waits with it. So a team
+    may declare how long it is prepared to wait; when the deadline passes the task is abandoned with
+    a recoverable error, the member is buried on the assumption that a worker nobody can trust is
+    worse than none, and a replacement takes its place
+    """
     # build a staff of one that will not wait long
     staff = pyre.nexus.staff()(name="test.staff.patience")
     staff.size = 1
@@ -78,23 +77,28 @@ def test():
 
     # hand over a task nobody will ever hear the end of
     staff.assign(task=Forever(), callback=record)
-    # let the member be recruited and take it, then remember which process it is, so we can
-    # ask afterwards whether anybody cleaned up
+    # give the member long enough to be recruited and take it
     staff.dispatcher.alarm(interval=1 * second / 2, call=expire)
+    # by running the loop until then
     staff.dispatcher.watch()
+    # then get the member
     (member,) = staff.active
+    # and remember which process it is, so we can ask afterwards whether anybody cleaned up
     overrun = member.pid
-    # and let the loop run well past the deadline
+    # now let the loop run well past the deadline
     staff.dispatcher.alarm(interval=4 * second, call=expire)
+    # and run it
     staff.dispatcher.watch()
 
     # the requester was told, rather than left waiting
     assert len(outcomes) == 1
     # with nothing to show for it
     result, error = outcomes[0]
+    # no result
     assert result is None
     # and a reason it can act on: this one is worth asking about again
     assert isinstance(error, staff.RecoverableError)
+    # because the task took too long
     assert "took too long" in error.description
 
     # the member that swallowed the task is gone from the rosters
@@ -122,6 +126,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
