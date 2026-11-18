@@ -133,11 +133,17 @@ def test() -> None:
                 channel.line(f"'{trait}' refused {value!r}, but its error is incomplete")
                 # and the details
                 channel.indent()
+                # the complaint
                 channel.line(f"error: {complaint}")
+                # what it lacks
                 channel.line(f"lacks: {', '.join(map(repr, missing))}")
+                # the error that refused the value
                 channel.line(f"refused by: {type(error.error).__name__}")
+                # the error that should have
                 channel.line(f"expected: {refusal.__name__}")
+                # where to look
                 channel.line("look in: traits/SlotFactory.py, components/exceptions.py")
+                # done with the details
                 channel.outdent()
         # if it is refused some other way
         except pyre.PyreError as error:
@@ -145,8 +151,11 @@ def test() -> None:
             channel.line(f"'{trait}' refused {value!r} with the wrong error")
             # and the details
             channel.indent()
+            # the error
             channel.line(f"error: {type(error).__name__}: {error}")
+            # where to look
             channel.line("look in: traits/SlotFactory.py")
+            # done with the details
             channel.outdent()
         # if it is not refused at all
         else:

@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a {set} trait declared with a non-empty default and no schema for its items
-can be built: the item schema comes from the trait layer, so the configuration store can ask
-it how to evaluate each item
-"""
-
 # support
 import pyre
 
@@ -22,10 +16,16 @@ class Bag(pyre.component, family="containers.set"):
     A bag with a set in it
     """
 
+    # a set with two items in it by default
     tags = pyre.properties.set(default={"x", "y"})
 
 
 def test():
+    """
+    Check that a {set} trait declared with a non-empty default and no schema for its items can be
+    built: the item schema comes from the trait layer, so the configuration store can ask it how to
+    evaluate each item
+    """
     # build one
     bag = Bag(name="containers.set.default")
     # the default comes through, item by item
@@ -36,6 +36,7 @@ def test():
 
     # values assigned later go through the same item schema
     bag.tags = ["z", "z"]
+    # and come out without the duplicate
     assert set(bag.tags) == {"z"}
     # all done
     return bag

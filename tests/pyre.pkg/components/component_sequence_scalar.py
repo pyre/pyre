@@ -60,8 +60,11 @@ def test() -> None:
             channel.line(f"'{trait}' refused 5 when it was assigned: {type(error).__name__}")
             # and the details
             channel.indent()
+            # the error
             channel.line(f"error: {error}")
+            # where to look
             channel.line("look in: traits/Property.py, Property.sequences.native")
+            # done with the details
             channel.outdent()
             # and move on
             continue

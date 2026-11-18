@@ -80,9 +80,13 @@ def test() -> None:
             channel.line(f"checking '{name}' again found other refusals")
             # and the details
             channel.indent()
+            # what the first check found
             channel.line(f"first: {[str(error) for error in first]}")
+            # what the second one found
             channel.line(f"second: {[str(error) for error in second]}")
+            # where to look
             channel.line("look in: components/Component.py, Component.pyre_recordRefusal")
+            # done with the details
             channel.outdent()
         # without recording them again
         if len(executive.errors) != recorded:
@@ -106,7 +110,9 @@ def test() -> None:
         channel.line("a slot that refuses for another reason is not a new refusal")
         # and the details
         channel.indent()
+        # what it sees
         channel.line(f"sees: {[str(error) for error in probe.pyre_configurationErrors]}")
+        # done with the details
         channel.outdent()
 
     # a new assignment
@@ -121,7 +127,9 @@ def test() -> None:
         channel.line("a new assignment that is refused is not a new refusal")
         # and the details
         channel.indent()
+        # what the class sees
         channel.line(f"sees: {[str(error) for error in Bare.pyre_classConfigurationErrors()]}")
+        # done with the details
         channel.outdent()
 
     # if anything went wrong

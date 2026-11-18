@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that an {array} trait declared with a non-empty default and no schema for its items
-can be built: the item schema comes from the trait layer, so the configuration store can ask
-it how to evaluate each item
-"""
-
 # support
 import pyre
 
@@ -22,10 +16,16 @@ class Bag(pyre.component, family="containers.array"):
     A bag with an array in it
     """
 
+    # an array with two items in it by default
     support = pyre.properties.array(default=(0, 1))
 
 
 def test():
+    """
+    Check that an {array} trait declared with a non-empty default and no schema for its items can be
+    built: the item schema comes from the trait layer, so the configuration store can ask it how to
+    evaluate each item
+    """
     # build one
     bag = Bag(name="containers.array.default")
     # the default comes through, item by item
@@ -38,6 +38,7 @@ def test():
 
     # values assigned later go through the same item schema
     bag.support = ("2", "3.5")
+    # and come out as floats
     assert tuple(bag.support) == (2.0, 3.5)
     # all done
     return bag
