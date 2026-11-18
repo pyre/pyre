@@ -85,11 +85,13 @@ def test():
 
     # make a scratch installation to point the fake database at
     with tempfile.TemporaryDirectory() as scratch:
-        # the canonical layout
+        # the canonical layout: the headers
         include = os.path.join(scratch, "include")
+        # and the libraries
         lib = os.path.join(scratch, "lib")
-        # make the folders
+        # make the folders: the headers
         os.makedirs(include)
+        # and the libraries
         os.makedirs(lib)
 
         # the umbrella header, which the recipe uses as its marker
@@ -98,6 +100,7 @@ def test():
         with open(os.path.join(include, "H5pubconf.h"), "w") as stream:
             # exactly as a real parallel build does
             stream.write("#define H5_HAVE_PARALLEL 1\n")
+            # and of a known version
             stream.write('#define H5_VERSION "1.14.5"\n')
         # the library, linked against mpich rather than openmpi
         with open(os.path.join(lib, "libhdf5.so"), "wb") as stream:

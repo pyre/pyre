@@ -90,15 +90,17 @@ def test():
     index._engines = (engine(name="dpkg.fake.hdf5.parallel"),)
     # demand any parallel flavor
     report = index.resolve(requested=["hdf5[parallel]"])
-    # the preferred parallel flavor is the openmpi build
+    # the preferred parallel flavor, the openmpi build
     hdf5 = report.selections["hdf5"]
+    # is selected
     assert hdf5.flavor == "hdf5-openmpi"
     # it answers to the parallel class
     assert "parallel" in hdf5.tags
     # the matching mpi implementation was pulled in
     assert report.selections["mpi"].flavor == "openmpi"
-    # in link order: hdf5 precedes the mpi it depends on
+    # the selections are in link order
     order = list(report.selections)
+    # so hdf5 precedes the mpi it depends on
     assert order.index("hdf5") < order.index("mpi")
     # nothing was conflicted
     assert not report.conflicted

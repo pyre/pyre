@@ -18,8 +18,9 @@ def test():
     # support
     import pyre.externals
 
-    # get the requirement class and its syntax error
+    # get the requirement class
     requirement = pyre.externals.requirement
+    # and its syntax error
     syntaxError = requirement.RequirementSyntaxError
 
     # the pile of malformed specifications
