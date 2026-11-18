@@ -74,6 +74,18 @@ def test():
     assert index in (0, 1)
     # and mpi has emptied that receipt, while the other may well still be in flight
     assert not pending[index].active
+    # the report of a send says nothing about its peer, so if the send won
+    if index == 1:
+        # wait again; the spent receipt is passed over, and the receive is what completes
+        index, report = ext.waitAny(pending)
+        # so it is the one named
+        assert index == 0
+    # the report belongs to the receive: it names the process before me
+    assert report.source == preceding
+    # the label we agreed on
+    assert report.tag == 6
+    # and the two octets of the payload
+    assert report.bytes == 2
     # finish whatever is left
     ext.waitAll(pending)
     # and the payload came round once more
