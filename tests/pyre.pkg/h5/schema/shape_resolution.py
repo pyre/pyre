@@ -6,16 +6,14 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a {Root} resolves dataset shape references against the named dimensions of its
-tree: providers are registered (unresolved) at their scoped paths, dataset references are
-aliased to the nearest enclosing provider by walking up, a set dimension makes referencing
-datasets compute, and an unset one raises {UnresolvedNodeError} at read time
-"""
-
-
 # the driver
 def test():
+    """
+    Check that a {Root} resolves dataset shape references against the named dimensions of its tree:
+    providers are registered (unresolved) at their scoped paths, dataset references are aliased to
+    the nearest enclosing provider by walking up, a set dimension makes referencing datasets
+    compute, and an unset one raises {UnresolvedNodeError} at read time
+    """
     # support
     import pyre
     from pyre.calc.exceptions import UnresolvedNodeError
@@ -40,41 +38,58 @@ def test():
 
         # a dimension shared across the inner groups
         nrows = pyre.h5.schema.dimension()
-        # two independent inner groups
+        # two independent inner groups: one
         a = Inner()
+        # and another
         b = Inner()
 
     # realize it; resolution runs eagerly in {Root.__init__}
     spec = Product(name="root")
+    # get its index of dimensions
     shapes = spec._pyre_shapes
 
-    # providers are registered at their scoped paths
+    # providers are registered at their scoped paths: the shared one
     assert "nrows" in shapes
+    # the columns of the first group
     assert "a.ncols" in shapes
+    # and those of the second
     assert "b.ncols" in shapes
-    # dataset references are aliased to them
+    # dataset references are aliased to them: the rows
     assert "a.data.nrows" in shapes
+    # and the columns
     assert "a.data.ncols" in shapes
 
-    # before any values are supplied, reading a referenced extent raises
+    # before any values are supplied, reading a referenced extent
     try:
+        # is attempted
         shapes.retrieve("a.data.nrows").value
+        # we should not get here
         assert False, "expected an unresolved dimension"
+    # and raises
     except UnresolvedNodeError:
+        # as expected
         pass
 
-    # set the shared row dimension; both inners' rows resolve to the same node
+    # set the shared row dimension
     shapes["nrows"] = 100
+    # and the rows of both inner groups resolve to it: the first
     assert shapes.retrieve("a.data.nrows").value == 100
+    # and the second
     assert shapes.retrieve("b.data.nrows").value == 100
 
-    # the per-group column dimension is independent: setting a's does not set b's
+    # the per-group column dimension is independent: set the columns of {a}
     shapes["a.ncols"] = 50
+    # its dataset sees them
     assert shapes.retrieve("a.data.ncols").value == 50
+    # but those of {b}
     try:
+        # when read
         shapes.retrieve("b.data.ncols").value
+        # we should not get here
         assert False, "expected b's column dimension to remain unresolved"
+    # are still unset, and raise
     except UnresolvedNodeError:
+        # as expected
         pass
 
     # all done

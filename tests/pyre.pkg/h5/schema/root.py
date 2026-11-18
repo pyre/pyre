@@ -6,14 +6,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a schema {Root} is a group that carries an absolute mount point and an
-instance-level index of named shape dimensions, one per realization
-"""
-
-
 # the driver
 def test():
+    """
+    Check that a schema {Root} is a group that carries an absolute mount point and an instance-level
+    index of named shape dimensions, one per realization
+    """
     # support
     import pyre
 
@@ -29,20 +27,23 @@ def test():
     # a root is a group
     assert issubclass(Product, pyre.h5.schema.group)
 
-    # two independent realizations
+    # make a realization
     a = Product(name="root")
+    # and another, independent of the first
     b = Product(name="root")
 
-    # each carries the absolute mount, inherited like any root
+    # each carries the absolute mount, inherited like any root: the first
     assert a._pyre_location == "/science/LSAR"
+    # and the second
     assert b._pyre_location == "/science/LSAR"
 
     # each has its own shape index; the nodes are structural but their values bind per
     # realization, so the indices must be distinct objects
     assert a._pyre_shapes is not b._pyre_shapes
 
-    # the index is a named container: set a dimension on {a} and read it back
+    # the index is a named container: set a dimension on {a}
     a._pyre_shapes["nlines"] = 9000
+    # and read it back
     assert a._pyre_shapes["nlines"] == 9000
 
     # all done
