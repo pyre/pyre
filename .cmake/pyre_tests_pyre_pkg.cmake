@@ -659,6 +659,10 @@ pyre_test_python_cleanup(recipe_numbers.yaml tests/pyre.pkg/config/recipe_number
 pyre_test_python_testcase(tests/pyre.pkg/config/recipe_braces.py)
 pyre_test_python_cleanup(recipe_braces.yaml tests/pyre.pkg/config/recipe_braces.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/recipe_owned.py)
+pyre_test_python_testcase(tests/pyre.pkg/config/recipe_load.py)
+pyre_test_python_testcase(tests/pyre.pkg/config/recipe_load_facility.py)
+pyre_test_python_testcase(tests/pyre.pkg/config/recipe_load_braces.py)
+pyre_test_python_testcase(tests/pyre.pkg/config/recipe_pickle.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/persist.py)
 pyre_test_python_testcase(tests/pyre.pkg/config/yaml_editor_levels.py)
 # reverted pending review; in mm's drivers.exclude
