@@ -6,17 +6,15 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the value model for array datasets: their values are raster handles. A raster is
-cheap to build and moves no data; it carries the hdf5 metadata a consumer needs in order to
-choose an access strategy, and the factories that realize the choice: {mosaic} builds an
-out-of-core view whose chunks move only when asked to, and {tile} materializes a dense
-private grid on the heap. A producer writes a chunked product through a mosaic, the pkg read
-path hands the dataset value back as a raster, and the consumer exercises both strategies.
-"""
-
-
 def test():
+    """
+    Exercise the value model for array datasets: their values are raster handles. A raster is
+    cheap to build and moves no data; it carries the hdf5 metadata a consumer needs in order to
+    choose an access strategy, and the factories that realize the choice: {mosaic} builds an
+    out-of-core view whose chunks move only when asked to, and {tile} materializes a dense
+    private grid on the heap. A producer writes a chunked product through a mosaic, the pkg read
+    path hands the dataset value back as a raster, and the consumer exercises both strategies.
+    """
     # support
     import pyre
 
@@ -33,6 +31,9 @@ def test():
 
     # the recognizable content of the product
     def stamp(row, col):
+        """
+        The value of the cell at {row}, {col}
+        """
         # a value that encodes its own coordinates
         return float(100 * row + col)
 
@@ -55,6 +56,7 @@ def test():
     probes = [(0, 0), (35, 45), (94, 94)]
     # deposit them; writes through indexing materialize the page and taint it
     for row, col in probes:
+        # stamp each one
         m[row, col] = stamp(row, col)
     # make the file agree
     m.flush()
@@ -68,16 +70,19 @@ def test():
     # rasters are cheap: no payload moved; they answer the questions that inform the
     # choice of access strategy, starting with the geometry
     assert value.shape == [100, 100]
+    # and the rank
     assert value.rank == 2
-    # the on-disk layout: this product is chunked, with the producer's tiling
+    # the on-disk layout: this product is chunked
     assert value.layout == libh5.Layout.chunked
+    # with the producer's tiling
     assert value.chunk == [30, 40]
     # no filters were applied
     assert list(value.filters) == []
     # the in-memory type is interrogable, down to its grid cell name
     assert value.memtype.cell == "float64"
-    # so is the on-disk type: a bound datatype proxy with its class and precision
+    # so is the on-disk type: a bound datatype proxy with its class
     assert value.disktype.cell == libh5.DataSetType.float
+    # and its precision
     assert value.disktype.bytes == 8
 
     # the out-of-core strategy: a mosaic over the product's own chunking
@@ -86,6 +91,7 @@ def test():
     assert m.connected is True
     # with the product's geometry
     assert m.shape == [100, 100]
+    # and tiling
     assert m.tileShape == [30, 40]
     # and nothing resident: building the view moved no payload
     assert m.residents == 0
@@ -93,8 +99,9 @@ def test():
     for row, col in probes:
         # each one materializes on demand
         m.fill(tile=m.tileOf(index=[row, col]))
-    # the stamps came through
+    # go through the probes
     for row, col in probes:
+        # and check that each stamp came through
         assert m[row, col] == stamp(row, col)
     # update the product in place: writes through indexing declare for themselves
     m[35, 45] = 999.0
