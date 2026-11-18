@@ -6,18 +6,17 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Push a payload much larger than the socket buffers through a socket pair
-
-This exercises the reassembly loop in the channel {read}: the payload arrives in many packets
-and the marshaler must collect them all before unpickling
-"""
-
 # a deterministic payload of one megabyte
 payload = bytes(range(256)) * (1024 * 4)
 
 
 def test():
+    """
+    Push a payload much larger than the socket buffers through a socket pair
+
+    This exercises the reassembly loop in the channel {read}: the payload arrives in many packets
+    and the marshaler must collect them all before unpickling
+    """
     # externals
     import os
 
@@ -50,8 +49,9 @@ def onParent(child_pid, marshaler, channel):
     echo = marshaler.recv(channel)
     # verify it survived the round trip intact
     assert echo == payload
-    # harvest the child and verify it exited cleanly
+    # harvest the child
     _, status = os.waitpid(child_pid, 0)
+    # which must have exited cleanly
     assert status == 0
     # all done
     return
@@ -69,6 +69,7 @@ def onChild(marshaler, channel):
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

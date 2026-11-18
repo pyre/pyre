@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the socket transport: build a pair, exchange a message, wrap a received descriptor
-"""
-
-
 def test():
+    """
+    Exercise the socket transport: build a pair, exchange a message, wrap a received descriptor
+    """
     # get the package
     import pyre.ipc
 
@@ -21,9 +19,11 @@ def test():
     parent, child = transport.open()
     # push a message through, parent to child
     parent.write(bytes=b"ping")
+    # and it arrives
     assert child.read(minlen=4) == b"ping"
     # and back
     child.write(bytes=b"pong")
+    # and it arrives
     assert parent.read(minlen=4) == b"pong"
 
     # build a second pair, standing in for a conversation whose descriptor changes hands
@@ -36,6 +36,7 @@ def test():
     borrowed = transport.wrap(descriptor=descriptors[0])
     # and verify it is connected to the other pair's parent end
     borrowed.write(bytes=b"knock")
+    # and it arrives
     assert other.parent.read(minlen=5) == b"knock"
 
     # all done
@@ -44,6 +45,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

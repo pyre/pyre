@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a signal reaches an idle event loop as soon as it arrives: the loop watches a
-channel that never speaks and has no alarm to wake it up, so only the relay can
-"""
-
-
 def check(dispatcher):
     """
     Relay a signal to {dispatcher} while it sleeps, and check its handler stopped the loop
@@ -74,13 +68,19 @@ def check(dispatcher):
     pyre.ipc.signals().forget(signal=signal.SIGALRM)
     # and the channel
     dispatcher.forget(channel=quiet)
+    # close one end
     quiet.close()
+    # and the other
     mute.close()
     # all done
     return
 
 
 def test():
+    """
+    Verify that a signal reaches an idle event loop as soon as it arrives: the loop watches a
+    channel that never speaks and has no alarm to wake it up, so only the relay can
+    """
     # support
     import pyre.ipc
 

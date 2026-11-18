@@ -6,14 +6,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that the relay refuses what the interpreter does not allow, and leaves things as it
-found them: a request from a thread other than the main one, a wakeup descriptor that somebody
-else owns, and a signal that cannot be caught
-"""
-
-
 def test():
+    """
+    Verify that the relay refuses what the interpreter does not allow, and leaves things as it found
+    them: a request from a thread other than the main one, a wakeup descriptor that somebody else
+    owns, and a signal that cannot be caught
+    """
     # externals
     import signal
     import socket
@@ -48,9 +46,11 @@ def test():
         # all done
         return
 
-    # run it
+    # make a thread to run it
     thread = threading.Thread(target=ask)
+    # start it
     thread.start()
+    # and wait for it to finish
     thread.join()
     # the request was refused
     assert len(outcome) == 1
@@ -59,7 +59,9 @@ def test():
 
     # somebody else takes the wakeup descriptor
     theirs, other = socket.socketpair()
+    # make their end non-blocking
     theirs.setblocking(False)
+    # and install it as the wakeup descriptor
     signal.set_wakeup_fd(theirs.fileno())
     # carefully
     try:
@@ -77,6 +79,7 @@ def test():
     assert signal.set_wakeup_fd(-1) == theirs.fileno()
     # who is done with it
     theirs.close()
+    # and its peer
     other.close()
     # and the relay is in charge of nothing
     assert relay.channel() is None
@@ -95,6 +98,7 @@ def test():
         assert False, "the relay took over SIGKILL"
     # and the relay let go of the wakeup descriptor it took for it
     assert relay.channel() is None
+    # and nobody holds the wakeup descriptor
     assert signal.set_wakeup_fd(-1) == -1
 
     # all done

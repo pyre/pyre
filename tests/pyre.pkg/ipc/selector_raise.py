@@ -6,16 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a handler that raises does not take the rest of its channel's handlers with it
-
-The selector takes possession of a channel's handlers before invoking them, so that interest
-registered while they run is not invoked prematurely. A handler that raises unwinds through
-that pass; the handlers that never got their turn are still interested, and losing them
-leaves a channel nobody listens to, which is a silent failure. So the ones that did not run
-keep their place, the one that raised is dropped, and the exception still reaches the caller
-"""
-
 # support
 import pyre
 
@@ -28,6 +18,15 @@ class Failure(Exception):
 
 
 def test():
+    """
+    Verify that a handler that raises does not take the rest of its channel's handlers with it
+
+    The selector takes possession of a channel's handlers before invoking them, so that interest
+    registered while they run is not invoked prematurely. A handler that raises unwinds through that
+    pass; the handlers that never got their turn are still interested, and losing them leaves a
+    channel nobody listens to, which is a silent failure. So the ones that did not run keep their
+    place, the one that raised is dropped, and the exception still reaches the caller
+    """
     # a pair of connected channels
     reader, writer = pyre.ipc.newSocket().open()
     # a selector
@@ -57,6 +56,7 @@ def test():
 
     # register both, the failing one first
     selector.whenReadReady(channel=reader, call=failing)
+    # and the patient one
     selector.whenReadReady(channel=reader, call=patient)
     # make the channel readable
     writer.write(bytes=b"x")
@@ -74,8 +74,9 @@ def test():
         assert False, "the failing handler did not raise through the loop"
     # only the failing handler got its turn
     assert ran == ["failing"]
-    # the patient one kept its place
+    # get the handlers still registered for the channel
     registered = [event.handler for event in selector._read[reader.inbound]]
+    # the patient one kept its place
     assert patient in registered
     # and the failing one was dropped
     assert failing not in registered
@@ -93,6 +94,7 @@ def test():
     # let the loop run again; the byte is still there, so the patient handler runs, on every
     # turn of the loop until the alarm stops it, since nobody consumes the byte
     selector.alarm(interval=0.1 * pyre.units.SI.second, call=expire)
+    # and run it
     selector.watch()
     # it ran
     assert "patient" in ran
@@ -103,6 +105,7 @@ def test():
 
     # clean up
     reader.close()
+    # and its peer
     writer.close()
     # all done
     return selector

@@ -6,11 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a selector survives a registration whose channel was closed behind its back,
-and keeps serving the live ones
-"""
-
 # access the package
 import pyre.ipc
 
@@ -67,9 +62,11 @@ def scenario(factory):
 
     # register both
     s.whenReadReady(channel=doomedParent, call=ghost)
+    # and the live one
     s.whenReadReady(channel=parent, call=live)
     # kill the doomed pair behind the selector's back
     doomedParent.close()
+    # and its peer
     doomedChild.close()
     # make the live channel readable
     child.write(bytes=b"!")
@@ -85,6 +82,10 @@ def scenario(factory):
 
 
 def test():
+    """
+    Verify that a selector survives a registration whose channel was closed behind its back, and
+    keeps serving the live ones
+    """
     # the scenario must hold on the classic selector
     scenario(factory=pyre.ipc.newSelector)
     # and on the psl flavor
@@ -95,6 +96,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

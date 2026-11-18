@@ -6,14 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that interest registered on a channel while its own pile is being dispatched is
-neither invoked prematurely nor lost
-
-The successor's wakeup is delivered only after the current dispatch pass, so a selector that
-invokes it early finds an empty channel, and one that drops it never delivers the record
-"""
-
 # externals
 import select
 
@@ -25,6 +17,13 @@ from pyre.units.SI import second
 
 
 def test():
+    """
+    Verify that interest registered on a channel while its own pile is being dispatched is neither
+    invoked prematurely nor lost
+
+    The successor's wakeup is delivered only after the current dispatch pass, so a selector that
+    invokes it early finds an empty channel, and one that drops it never delivers the record
+    """
     # build a selector
     s = pyre.ipc.newPSL()
     # and a pair of channels
@@ -107,6 +106,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

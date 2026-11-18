@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Build two processes that communicate using pickler over a socket pair
-"""
-
-
 def test():
+    """
+    Build two processes that communicate using pickler over a socket pair
+    """
     # externals
     import os
 
@@ -35,6 +33,7 @@ def test():
 
 # the trivial messages
 hello = "hello"
+# and the response
 goodbye = "goodbye"
 
 
@@ -49,8 +48,9 @@ def onParent(child_pid, marshaler, channel):
     response = marshaler.recv(channel)
     # check it
     assert response == goodbye
-    # harvest the child and verify it exited cleanly
+    # harvest the child
     _, status = os.waitpid(child_pid, 0)
+    # which must have exited cleanly
     assert status == 0
     # and return
     return
@@ -70,6 +70,7 @@ def onChild(marshaler, channel):
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

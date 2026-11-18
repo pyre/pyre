@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a PSL selector forgets a channel: its handlers never fire, a fresh channel that
-recycles its descriptor numbers is watched normally, and a handler that forgets its own channel
-while it runs is not put back
-"""
-
 # externals
 import pyre.ipc
 
@@ -54,6 +48,7 @@ def scenario(transport, factory):
 
     # watch the channel for reading and writing
     s.whenReadReady(channel=parent, call=stale)
+    # and for writing
     s.whenWriteReady(channel=parent, call=stale)
     # it is watched
     assert parent in set(s.channels())
@@ -63,6 +58,7 @@ def scenario(transport, factory):
     assert parent not in set(s.channels())
     # close it, freeing its descriptor numbers
     parent.close()
+    # and its peer
     child.close()
 
     # a fresh pair, which recycles them
@@ -124,12 +120,18 @@ def scenario(transport, factory):
 
     # clean up
     p.close()
+    # and its peer
     c.close()
     # all done
     return
 
 
 def test():
+    """
+    Verify that a PSL selector forgets a channel: its handlers never fire, a fresh channel that
+    recycles its descriptor numbers is watched normally, and a handler that forgets its own channel
+    while it runs is not put back
+    """
     # the scenario must hold over socket pairs, whose table keys are channel objects
     scenario(transport=pyre.ipc.newSocket(), factory=pyre.ipc.newPSL)
     # and over pipes, whose table keys are raw descriptor numbers
@@ -140,6 +142,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

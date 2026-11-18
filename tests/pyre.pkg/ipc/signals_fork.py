@@ -6,14 +6,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a forked child starts without the relay of its parent: its signals have the
-dispositions they had before the relay took them over, and the wakeup descriptor is free, so a
-signal sent to the child can neither wake the parent nor run the parent's handlers
-"""
-
-
 def test():
+    """
+    Verify that a forked child starts without the relay of its parent: its signals have the
+    dispositions they had before the relay took them over, and the wakeup descriptor is free, so a
+    signal sent to the child can neither wake the parent nor run the parent's handlers
+    """
     # externals
     import os
     import signal
@@ -44,6 +42,7 @@ def test():
         try:
             # the relay is in charge of nothing
             assert relay.channel() is None
+            # and relays no signals
             assert list(relay.signals()) == []
             # the signal is back to its default disposition
             assert signal.getsignal(signal.SIGUSR2) is signal.SIG_DFL
@@ -62,6 +61,7 @@ def test():
     assert os.waitstatus_to_exitcode(status) == 0
     # while the parent still relays the signal
     assert list(relay.signals()) == [signal.SIGUSR2]
+    # and keeps its channel
     assert relay.channel() is not None
 
     # let go of the signal

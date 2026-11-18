@@ -6,20 +6,19 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Delegate a client connection to a worker process
-
-The parent holds a connection to a client and a channel to a worker; it ships the connection's
-descriptor to the worker, which then responds to the client directly, without the parent ever
-touching the payload. This is the pattern that lets a server offload response generation to
-worker processes
-"""
-
 # the response the worker sends to the client
 response = b"served directly by the worker"
 
 
 def test():
+    """
+    Delegate a client connection to a worker process
+
+    The parent holds a connection to a client and a channel to a worker; it ships the connection's
+    descriptor to the worker, which then responds to the client directly, without the parent ever
+    touching the payload. This is the pattern that lets a server offload response generation to
+    worker processes
+    """
     # externals
     import os
 
@@ -54,8 +53,9 @@ def onServer(worker_pid, channel, client, connection):
     incoming = client.read(minlen=len(response))
     # check it
     assert incoming == response
-    # harvest the worker and verify it exited cleanly
+    # harvest the worker
     _, status = os.waitpid(worker_pid, 0)
+    # which must have exited cleanly
     assert status == 0
     # all done
     return
@@ -69,6 +69,7 @@ def onWorker(channel, client, connection):
     # the fork duplicated the parent's endpoints in me; retire the copies so descriptor
     # ownership stays with the processes that speak through them
     client.close()
+    # and the other
     connection.close()
 
     # receive the connection's descriptor
@@ -87,6 +88,7 @@ def onWorker(channel, client, connection):
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

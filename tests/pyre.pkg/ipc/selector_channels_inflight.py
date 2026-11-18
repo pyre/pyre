@@ -6,14 +6,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that a selector keeps reporting a channel while the handlers of that channel are
-running: a handler that forks a worker must be able to find the connection it is serving
-among the channels the worker has to release
-"""
-
-
 def test():
+    """
+    Verify that a selector keeps reporting a channel while the handlers of that channel are running:
+    a handler that forks a worker must be able to find the connection it is serving among the
+    channels the worker has to release
+    """
     # access the package
     import pyre.ipc
 
@@ -51,6 +49,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
