@@ -8,20 +8,22 @@
 
 def test():
     """
-    A {Select} honors a reply through its numbered fallback, and takes its default when the input
-    stream is exhausted
+    A {Select} honors a reply through its numbered fallback, and takes its default when the
+    input stream is exhausted
     """
-    # get the package and a few helpers
+    # for scripting the replies and silencing the chatter
     import builtins
     import contextlib
     import io
+
+    # get the framework and the package
     import pyre
     import survey
 
-    # a plain terminal over in-memory streams reports as non-interactive; make it the one
-    # terminal the prompts ride, forcing the numbered fallback
+    # a plain terminal over in-memory streams reports as non-interactive
     from pyre.terminals.Plain import Plain
 
+    # make it the one terminal the prompts ride, forcing the numbered fallback
     pyre.executive.terminal = Plain(
         name="test.select.plain", istream=io.StringIO(), ostream=io.StringIO()
     )
@@ -38,11 +40,15 @@ def test():
     assert choice == "green", choice
 
     # an exhausted or closed input stream raises {EOFError}
-    def _eof(prompt=""):
-        # stand in for a reader that has hit end-of-input
+    def exhausted(prompt=""):
+        """
+        Stand in for a reader that has hit the end of its input
+        """
+        # by saying so
         raise EOFError
 
-    builtins.input = _eof
+    # feed it
+    builtins.input = exhausted
     # so the numbered fallback settles on its default rather than looping or crashing
     with contextlib.redirect_stdout(io.StringIO()):
         # run the selection with no answer available
