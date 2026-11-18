@@ -11,9 +11,10 @@ def test():
     Booting pyre with the pure-python journal installs a real console through the boot handoff,
     replacing the bootstrap buffer journal used while the framework was still coming up
     """
-    # force the pure-python journal before anything imports it
+    # the choice of journal is made through the main module
     import __main__
 
+    # so force the pure-python journal there, before anything imports it
     __main__.journal_no_libjournal = True
 
     # booting the framework drives the whole sequence: while {pyre.executive} is None journal
@@ -30,9 +31,11 @@ def test():
     assert journal.without_libjournal is True
     # pyre finished booting, so the executive is published
     assert pyre.executive is not None
-    # and the handoff swapped the bootstrap buffer for a real console
+    # and the handoff swapped the bootstrap buffer for a real console: get the device
     device = journal.chronicler.device
+    # check that it is a console
     assert isinstance(device, Console)
+    # and not the bootstrap buffer
     assert not isinstance(device, BootDevice)
 
     # all done

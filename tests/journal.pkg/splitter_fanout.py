@@ -13,14 +13,13 @@ def test():
     # access
     import journal
 
-    # for the scratch files
-    import os
-
-    # two files
+    # two files: one
     first = "splitter_fanout_pkg_first.log"
+    # and another
     second = "splitter_fanout_pkg_second.log"
-    # a splitter over a device for each
+    # a splitter
     splitter = journal.splitter()
+    # over a device for each
     splitter.attach(journal.file(path=first)).attach(journal.file(path=second))
     # make a channel
     channel = journal.info(name="tests.journal.splitter")
@@ -28,12 +27,19 @@ def test():
     channel.device = splitter
     # inject something
     channel.log("hello world!")
-    # let go of the splitter so the files are flushed
+    # detach the splitter from the channel
     channel.device = journal.trash()
+    # and let go of it, so the files are flushed
     del splitter
+    # read the first file
+    with open(first, encoding="utf-8") as stream:
+        # all of it
+        one = stream.read()
+    # and the second
+    with open(second, encoding="utf-8") as stream:
+        # all of it
+        two = stream.read()
     # both files got the message
-    one = open(first, encoding="utf-8").read()
-    two = open(second, encoding="utf-8").read()
     assert "hello world!" in one
     # and the same message
     assert one == two
