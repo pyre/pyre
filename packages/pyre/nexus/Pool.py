@@ -31,8 +31,17 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
     from .Crew import Crew as crew
 
     # user configurable state
-    size = pyre.properties.int(default=1)
+    size = pyre.properties.int()
+    size.default = 1
     size.doc = "the number of crew members to recruit"
+
+    # how often a task may fail before i give up on it
+    retries = pyre.properties.int()
+    retries.default = 3
+    retries.doc = (
+        "the number of times a task that fails with a recoverable error is tried again before "
+        "it is abandoned"
+    )
 
     # how my members are recruited
     recruiter = Recruiter()
@@ -156,6 +165,8 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
 
         # my workplan is the set of tasks that are pending
         self.workplan = set()
+        # and the recoverable failures of the tasks that have had any
+        self.failures = {}
 
         # all done
         return
@@ -165,6 +176,8 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         A crew member has delivered the {result} of {task}
         """
+        # the task is done, so its failures no longer count
+        self.failures.pop(task, None)
         # nothing to do with the {result} of the {task}, but if someone is listening
         if self.debug.active:
             # let them know the {task} is complete
@@ -175,7 +188,18 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
     def requeue(self, task, error):
         """
         A crew member reports that {task} failed with a recoverable {error}
+
+        The task goes back in my workplan, unless it has already been tried again as many times
+        as my {retries} allow, in which case it is abandoned with this {error}
         """
+        # count this failure
+        failures = self.failures.get(task, 0) + 1
+        # if the task has used up its retries
+        if failures > self.retries:
+            # give up on it, with the last error
+            return self.abandon(task=task, error=error)
+        # otherwise, remember how often it has failed
+        self.failures[task] = failures
         # tell me
         self.debug.log(f"requeueing {task} after {error}")
         # put the task back in the workplan so somebody else gets a crack at it
@@ -187,6 +211,8 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
         """
         A crew member reports that {task} is permanently lost to {error}
         """
+        # the task is gone, so its failures no longer count
+        self.failures.pop(task, None)
         # log it; the batch completes without this task
         self.debug.log(f"abandoning {task} after {error}")
         # all done
@@ -343,6 +369,7 @@ class Pool(Peer, family="pyre.nexus.teams.pool", implements=Team):
     # private data
     active = None  # the set of currently deployed crew members
     retired = None  # the set of retired crew members
+    failures = None  # the number of recoverable failures of each task that has had any
 
 
 # end of file
