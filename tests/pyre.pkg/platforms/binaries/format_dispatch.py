@@ -25,6 +25,7 @@ def test():
 
     # the thin mach-o magics, in both widths
     assert binaries.macho.claims(b"\xcf\xfa\xed\xfe")
+    # the narrow one too
     assert binaries.macho.claims(b"\xce\xfa\xed\xfe")
     # the universal wrapper, which is written big endian
     assert binaries.macho.claims(b"\xca\xfe\xba\xbe")
@@ -33,6 +34,7 @@ def test():
 
     # a file that announces nothing belongs to nobody
     assert not binaries.elf.claims(b"#!/bin/sh\n")
+    # by either reader
     assert not binaries.macho.claims(b"#!/bin/sh\n")
     # and a file too short to carry a magic number is refused rather than crashing
     assert not binaries.macho.claims(b"\xcf\xfa")

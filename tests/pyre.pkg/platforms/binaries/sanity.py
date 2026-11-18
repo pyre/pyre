@@ -20,6 +20,7 @@ def test():
 
     # the readers must be there
     assert pyre.platforms.binaries.elf is not None
+    # both of them
     assert pyre.platforms.binaries.macho is not None
     # along with the base they share
     assert pyre.platforms.binaries.image is not None
