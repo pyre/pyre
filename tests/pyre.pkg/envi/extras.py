@@ -58,8 +58,12 @@ def test():
     assert "the value of 'wavelength', {0.4, blue, 0.6}, is not of type 'list[float]'" in report
     # and says what became of it
     assert "so 'wavelength' is left unset; its text is in the extras of the header" in report
-    # for a scalar, nobody said why, so the header passes on the reason, once
+    # for a scalar, the header names the type it expected
+    assert "the value of 'lines', 'many', is not of type 'int'" in report, report
+    # and, since nobody said why, passes on the reason, once
     assert report.count("could not coerce 'many' into an integer") == 1, report
+    # without saying where the trait lives
+    assert "an instance of" not in report, report
     # and no message repeats what another one already said
     assert report.count("could not coerce 'blue'") == 1, report
 

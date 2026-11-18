@@ -35,6 +35,17 @@ def test():
     # and the text of the code is in the bag
     assert header.extras == {"data type": "7"}
 
+    # get the warnings
+    with open("datatype_unknown.log") as stream:
+        # all of them
+        report = stream.read()
+    # the header says the value is not allowed
+    assert "the value of 'data type', '7', is not allowed" in report, report
+    # and why, in the words of the trait
+    assert "7 is not a member of {1, 2, 3, 4, 5, 6, 9, 12, 13, 14, 15}" in report, report
+    # without saying where the trait lives
+    assert "an instance of" not in report, report
+
     # a header that is assigned the same code
     header = pyre.envi.header()
     # takes it
