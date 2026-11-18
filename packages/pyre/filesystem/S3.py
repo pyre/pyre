@@ -110,6 +110,7 @@ class S3(Filesystem):
                     self._processPage(
                         folder=folder,
                         here=here,
+                        prefix=prefix,
                         level=level,
                         dead=dead,
                         page=page,
@@ -196,14 +197,16 @@ class S3(Filesystem):
         # S3 says so by its code
         return error.response.get("Error", {}).get("Code") in self.expirations
 
-    def _processPage(self, folder, here, level, dead, page, todo):
+    def _processPage(self, folder, here, prefix, level, dead, page, todo):
         """
-        Process one page of bucket contents
+        Process one page of the contents of the bucket at {prefix}; an object whose key is the
+        {prefix} itself, such as the empty object the S3 console makes for a new folder, stands
+        for the {folder} itself
         """
         # make a timestamp
         timestamp = time.gmtime()
-        # get the items that are stored at this prefix
-        items = [entry["Key"] for entry in page.get("Contents", [])]
+        # get the items that are stored at this prefix, other than the one that stands for it
+        items = [entry["Key"] for entry in page.get("Contents", []) if entry["Key"] != prefix]
         # go through the items
         for entry in items:
             # build nodes for them
