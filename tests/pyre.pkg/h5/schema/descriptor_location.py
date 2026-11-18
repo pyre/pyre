@@ -6,14 +6,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that the {location} class keyword declares the absolute mount point of a root
-group, that subclasses inherit it, and that ordinary groups default to {None}
-"""
-
-
 # the driver
 def test():
+    """
+    Check that the {location} class keyword declares the absolute mount point of a root group, that
+    subclasses inherit it, and that ordinary groups default to {None}
+    """
     # support
     import pyre
 
@@ -42,9 +40,11 @@ def test():
     # ordinary groups default to {None}
     assert Plain._pyre_location is None
 
-    # instances see the mount through their class
+    # instances see the mount through their class: the root
     assert LSAR(name="root")._pyre_location == "/science/LSAR"
+    # its subclass
     assert RSLC(name="root")._pyre_location == "/science/LSAR"
+    # and the ordinary group
     assert Plain(name="root")._pyre_location is None
 
     # all done

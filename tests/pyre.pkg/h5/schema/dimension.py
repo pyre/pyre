@@ -6,14 +6,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that the metaclass harvests {dimension} descriptors into a bucket separate from a
-group's members, and that dimensions are inherited across the class hierarchy
-"""
-
-
 # the driver
 def test():
+    """
+    Check that the metaclass harvests {dimension} descriptors into a bucket separate from a group's
+    members, and that dimensions are inherited across the class hierarchy
+    """
     # support
     import pyre
 
@@ -30,18 +28,20 @@ def test():
         # a regular member
         zeroDopplerTime = pyre.h5.schema.int()
 
-    # the dimension is harvested as a dimension, not a member
+    # the dimension is harvested as a dimension
     assert "nlines" in Swaths._pyre_classDimensions
+    # not a member
     assert "nlines" not in Swaths._pyre_classDescriptors
-    # so it never enters the member alias map (the writer/find machinery won't see it)
+    # so it never enters the member alias map, which the writer and the member lookup consult
     assert "nlines" not in Swaths._pyre_staticAliases
 
-    # the member is a member, not a dimension
+    # the member is a member
     assert "zeroDopplerTime" in Swaths._pyre_classDescriptors
+    # not a dimension
     assert "zeroDopplerTime" not in Swaths._pyre_classDimensions
 
     # the dimension carries its documentation like any descriptor
-    assert getattr(Swaths, "nlines").doc == "the number of azimuth lines"
+    assert Swaths.nlines.doc == "the number of azimuth lines"
 
     # dimensions are inherited and accumulate across the hierarchy
     class Frequency(Swaths):
@@ -52,8 +52,9 @@ def test():
         # a second dimension
         nsamples = pyre.h5.schema.dimension()
 
-    # the subclass sees both the inherited and the local dimension
+    # the subclass sees both the inherited dimension
     assert "nlines" in Frequency._pyre_classDimensions
+    # and the local one
     assert "nsamples" in Frequency._pyre_classDimensions
 
     # all done
