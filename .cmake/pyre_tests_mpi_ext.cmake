@@ -28,7 +28,7 @@ pyre_test_python_testcase_mpi(tests/mpi.ext/libmpi_port.py 4)
 pyre_test_python_testcase(tests/mpi.ext/libmpi_nonblocking.py)
 pyre_test_python_testcase_mpi(tests/mpi.ext/libmpi_nonblocking.py 4)
 pyre_test_python_testcase(tests/mpi.ext/libmpi_cartesian.py)
-pyre_test_python_testcase_mpi(tests/mpi.ext/libmpi_cartesian.py 8)
+pyre_test_python_testcase_mpi(tests/mpi.ext/libmpi_cartesian.py 12)
 
 
 # end of file
