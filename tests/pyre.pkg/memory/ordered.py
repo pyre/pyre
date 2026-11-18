@@ -30,17 +30,20 @@ def heap():
     heap = pyre.memory.heap(type=cell, cells=4)
     # the class is the foreign order one
     assert type(heap).__name__ == f"HeapUInt16{foreign}"
-    # fill and read back as native values
+    # fill it
     heap.fill(0x0102)
+    # and read back native values
     assert list(heap) == [0x0102] * 4
     # while the bytes sit in the declared order
     assert bytes(heap) == struct.pack(f"{code}4H", *([0x0102] * 4))
 
-    # a cell in the host's own order is the native cell
+    # the marker that names the host's own order
     native = "LE" if foreign == "BE" else "BE"
+    # picks out the native cell
     cell = getattr(cells, f"uint16{native}")()
     # so the factory hands back the native heap
     heap = pyre.memory.heap(type=cell, cells=4)
+    # with the native name
     assert type(heap).__name__ == "HeapUInt16"
 
     # all done
@@ -62,6 +65,7 @@ def map():
     values = [1, 2, 3, 0x1234]
     # write the product in the foreign order
     with open(uri, "wb") as product:
+        # all at once
         product.write(struct.pack(f"{code}4H", *values))
 
     # open it read-only
@@ -74,6 +78,7 @@ def map():
     # a writable map over an existing product goes through the bindings directly
     from pyre.extensions.pyre.memory import maps
 
+    # make one in the foreign order
     writable = getattr(maps, f"MapUInt16{foreign}")(str(uri), True)
     # change a cell
     writable[3] = 0xABCD
@@ -81,7 +86,9 @@ def map():
     del writable
     # and the file must hold it in the foreign order
     with open(uri, "rb") as product:
+        # so read it back
         stored = struct.unpack(f"{code}4H", product.read())
+    # and compare
     assert list(stored) == values[:3] + [0xABCD]
 
     # all done
@@ -107,8 +114,9 @@ def numpy():
 
     # allocate over foreign order complex cells
     heap = pyre.memory.heap(type=getattr(cells, f"complexFloat{foreign}")(), cells=2)
-    # fill
+    # fill the first cell
     heap[0] = 1.5 - 2j
+    # and the second
     heap[1] = 3 + 4j
     # view through numpy, without copying
     a = numpy.asarray(heap)
@@ -127,9 +135,11 @@ def numpy():
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # check the heaps
     heap()
+    # the maps
     map()
+    # and the view from numpy
     numpy()
 
 

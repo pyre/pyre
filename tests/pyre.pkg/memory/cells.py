@@ -13,23 +13,24 @@ import itertools
 # the driver
 def intCells() -> None:
     """
-    Sanity test: make sure the bindings for integral type cells
+    Sanity test: make sure the bindings for integral type cells exist
     """
     # access the cell types
     from pyre.memory import cells
 
     # access rights
-    const = ["", "Const"]
-    # integral types
+    rights = ["", "Const"]
+    # integral types: signed and unsigned
     signs = ["", "u"]
+    # in every width
     sizes = [8, 16, 32, 64]
 
     # build the integral type names
-    for perm, sign, size in itertools.product(const, signs, sizes):
+    for access, sign, size in itertools.product(rights, signs, sizes):
         # assemble the python name of the cell
-        name = f"{sign}int{size}{perm}"
+        name = f"{sign}int{size}{access}"
         # assemble the name the cell reports
-        cellName = f"{sign.upper()}Int{size}{perm}"
+        cellName = f"{sign.upper()}Int{size}{access}"
         # verify that the bindings exist
         cell = getattr(cells, name)
         # check the name
@@ -39,7 +40,7 @@ def intCells() -> None:
         # check the size, in bytes
         assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("" if cell.mutable else "Const")
+        assert access == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -47,22 +48,22 @@ def intCells() -> None:
 
 def floatCells() -> None:
     """
-    Sanity test: make sure the bindings for float type cells
+    Sanity test: make sure the bindings for float type cells exist
     """
     # access the cell types
     from pyre.memory import cells
 
     # access rights
-    const = ["", "Const"]
+    rights = ["", "Const"]
     # float types
     sizes = [("float", 32), ("double", 64)]
 
-    # build the integral type names
-    for perm, (marker, size) in itertools.product(const, sizes):
+    # build the float type names
+    for access, (marker, size) in itertools.product(rights, sizes):
         # assemble the name in the module
-        name = f"{marker}{perm}"
+        name = f"{marker}{access}"
         # assemble the name the cell reports
-        cellName = f"{marker.capitalize()}{perm}"
+        cellName = f"{marker.capitalize()}{access}"
         # verify that the bindings exist
         cell = getattr(cells, name)
         # check the name
@@ -72,7 +73,7 @@ def floatCells() -> None:
         # check the size, in bytes
         assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("" if cell.mutable else "Const")
+        assert access == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -80,25 +81,25 @@ def floatCells() -> None:
 
 def complexCells() -> None:
     """
-    Sanity test: make sure the bindings for complex type cells
+    Sanity test: make sure the bindings for complex type cells exist
     """
     # access the cell types
     from pyre.memory import cells
 
     # access rights
-    const = ["", "Const"]
-    # float types
+    rights = ["", "Const"]
+    # complex types
     sizes = [
         ("complexFloat", "ComplexFloat", 64),
         ("complexDouble", "ComplexDouble", 128),
     ]
 
-    # build the integral type names
-    for perm, (marker, tag, size) in itertools.product(const, sizes):
+    # build the complex type names
+    for access, (marker, tag, size) in itertools.product(rights, sizes):
         # assemble the name in the module
-        name = f"{marker}{perm}"
+        name = f"{marker}{access}"
         # assemble the name the cell reports
-        cellName = f"{tag}{perm}"
+        cellName = f"{tag}{access}"
         # verify that the bindings exist
         cell = getattr(cells, name)
         # check the name
@@ -108,7 +109,7 @@ def complexCells() -> None:
         # check the size, in bytes
         assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("" if cell.mutable else "Const")
+        assert access == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -127,7 +128,7 @@ def orderedCells() -> None:
     # the marker that names the host's order
     native = "LE" if sys.byteorder == "little" else "BE"
     # access rights
-    const = ["", "Const"]
+    rights = ["", "Const"]
     # byte order markers
     markers = ["BE", "LE"]
     # the scalars wide enough to have a byte order, with the names they report
@@ -145,11 +146,11 @@ def orderedCells() -> None:
     ]
 
     # go through them
-    for perm, marker, (scalar, tag, size) in itertools.product(const, markers, scalars):
+    for access, marker, (scalar, tag, size) in itertools.product(rights, markers, scalars):
         # assemble the name in the module
-        name = f"{scalar}{marker}{perm}"
+        name = f"{scalar}{marker}{access}"
         # the name the cell reports: the host's own order is the native cell
-        cellName = f"{tag}{perm}" if marker == native else f"{tag}{marker}{perm}"
+        cellName = f"{tag}{access}" if marker == native else f"{tag}{marker}{access}"
         # verify that the cell exists
         cell = getattr(cells, name)
         # check the name
@@ -159,7 +160,7 @@ def orderedCells() -> None:
         # check the size, in bytes
         assert size == 8 * cell.bytes
         # check the access rights
-        assert perm == ("" if cell.mutable else "Const")
+        assert access == ("" if cell.mutable else "Const")
 
     # all done
     return
@@ -167,10 +168,13 @@ def orderedCells() -> None:
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # check the integral cells
     intCells()
+    # the float ones
     floatCells()
+    # the complex ones
     complexCells()
+    # and the byte ordered ones
     orderedCells()
 
 
