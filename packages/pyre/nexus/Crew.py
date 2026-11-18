@@ -15,8 +15,9 @@ import traceback
 # the unit the task deadline is expressed in
 from ..units.SI import second
 
-# the marker the marshaler raises when its peer dies mid-conversation
-from ..ipc.exceptions import EndOfStream
+# the markers the marshaler raises when its peer dies mid-conversation, and when a message
+# arrives without all of its descriptors
+from ..ipc.exceptions import ArrivalError, EndOfStream
 
 # the marker for tasks that took their crew member down
 from .exceptions import Casualty
@@ -242,6 +243,12 @@ class Crew(Peer, family="pyre.nexus.peers.crew"):
             team.bury(crew=self)
             # and stop listening
             return False
+        # if the report arrived without the descriptors it carried, there was no room for them
+        # here, and what my twin reported is lost
+        except ArrivalError as error:
+            # my twin answered, so it stays at work, and the task counts as failed in a way
+            # worth trying again
+            memberstatus, taskstatus, result = self.crewcodes.healthy, self.taskcodes.failed, error
         # my twin has answered for this task, so any deadline still standing over it is moot
         self.task = None
         # if anybody is listening
