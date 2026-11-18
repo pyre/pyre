@@ -33,16 +33,20 @@ def test():
 
     # the linux spellings: bare, and versioned after the suffix
     assert re.match(pattern, "libmpi.so")
+    # with a major version
     assert re.match(pattern, "libmpi.so.40")
+    # and with a full one
     assert re.match(pattern, "libmpi.so.40.30.0")
     # the darwin spellings: bare, and versioned ahead of the suffix
     assert re.match(pattern, "libmpi.dylib")
+    # and with a version
     assert re.match(pattern, "libmpi.40.dylib")
     # and the static archive
     assert re.match(pattern, "libmpi.a")
 
     # the stem is captured, whichever spelling matched
     assert re.match(pattern, "libmpi.so.40").group("stem") == "mpi"
+    # in either spelling
     assert re.match(pattern, "libmpi.40.dylib").group("stem") == "mpi"
 
     # a different library is not mine
@@ -58,6 +62,7 @@ def test():
     assert not re.match(dynamic, "libmpi.a")
     # while the shared libraries still do
     assert re.match(dynamic, "libmpi.so.40")
+    # in both spellings
     assert re.match(dynamic, "libmpi.40.dylib")
 
     # the stem is a pattern in its own right, which is how versioned names are reached
