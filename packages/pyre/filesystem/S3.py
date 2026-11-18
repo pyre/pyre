@@ -25,6 +25,9 @@ class S3(Filesystem):
     # exceptions
     from .exceptions import DirectoryListingError, ExpiredCredentialsError
 
+    # the metadata of my leaves
+    from .InfoS3 import InfoS3
+
     # public data
     # the codes S3 uses to report that the credentials of a request have expired
     expirations = ("ExpiredToken",)
@@ -206,21 +209,27 @@ class S3(Filesystem):
         # make a timestamp
         timestamp = time.gmtime()
         # get the items that are stored at this prefix, other than the one that stands for it
-        items = [entry["Key"] for entry in page.get("Contents", []) if entry["Key"] != prefix]
+        items = [entry for entry in page.get("Contents", []) if entry["Key"] != prefix]
         # go through the items
         for entry in items:
             # build nodes for them
             node = folder.node()
             # assemble the path to the entry
-            loc = pyre.primitives.path.root / entry
+            loc = pyre.primitives.path.root / entry["Key"]
             # form the name by which they are known to their container
             name = loc.name
+            # describe the object as the listing reports it, marked with the time of this sync;
+            # its location is set when the node is attached to its folder
+            meta = self.InfoS3(
+                uri=None,
+                sync=timestamp,
+                size=entry.get("Size"),
+                modified=entry.get("LastModified"),
+                etag=entry.get("ETag"),
+                storageClass=entry.get("StorageClass"),
+            )
             # connect the pair to the folder we are visiting
-            folder[name] = node
-            # get the metadata of the new {node}
-            meta = self.info(node)
-            # so we can mark the time of last sync
-            meta.sync = timestamp
+            folder._insert(node=node, uri=pyre.primitives.path(name), metadata=meta)
             # and remove this node from the {dead} pile, if it's there
             dead.discard(name)
 
