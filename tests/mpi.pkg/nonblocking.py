@@ -6,21 +6,23 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the transfers that hand back a receipt instead of blocking
-"""
-
-
 def test():
+    """
+    Exercise the transfers that hand back a receipt instead of blocking
+    """
     # access the package
     import mpi
+
+    # for counting who holds on to a buffer
+    import sys
 
     # initialize
     ext = mpi.init()
     # get the world communicator
     world = mpi.world
-    # and its structure
+    # and its structure: the number of processes
     size = world.size
+    # and my place among them
     rank = world.rank
 
     # place the processes on a ring: the one i send to
@@ -86,6 +88,7 @@ def test():
     waiting = None
     # asking as often as it takes
     while waiting is None:
+        # whether it is here yet
         waiting = world.iprobe(preceding, 7)
     # what is waiting carries two octets
     assert waiting.bytes == 2
@@ -98,10 +101,7 @@ def test():
 
     # mpi writes into the buffer long after the call that started the transfer has returned, so
     # the receipt must hold on to it; without that, a buffer nobody else names would be
-    # reclaimed while the transfer was still writing into it
-    import sys
-
-    # make one
+    # reclaimed while the transfer was still writing into it. make one
     orphan = bytearray(2)
     # count who refers to it
     before = sys.getrefcount(orphan)
@@ -114,12 +114,15 @@ def test():
     ext.waitAll([receipt, world.isendBytes(payload, following, 13)])
     # carrying what the process before me sent
     assert bytes(orphan) == bytes([preceding, 0xAB])
-    # and once the receipt is spent and gone, so is its claim on the buffer
+    # once the receipt is spent and gone
     del receipt
+    # so is its claim on the buffer
     assert sys.getrefcount(orphan) == before
 
-    # a conduit offers the same transfers, with the peer and the label already remembered
+    # a conduit offers the same transfers, with the peer and the label already remembered: one
+    # to hear from the process before me
     upstream = world.port(peer=preceding, tag=11)
+    # and one to talk to the process after me
     downstream = world.port(peer=following, tag=11)
 
     # post the receive, then the send
@@ -137,6 +140,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

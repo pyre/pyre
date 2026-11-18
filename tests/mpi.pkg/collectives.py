@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the collective family, each of which names its operator explicitly
-"""
-
-
 def test():
+    """
+    Exercise the collective family, each of which names its operator explicitly
+    """
     # access the package
     import mpi
 
@@ -19,8 +17,9 @@ def test():
     mpi.init()
     # get the world communicator
     world = mpi.world
-    # and its structure
+    # and its structure: the number of processes
     size = world.size
+    # and my place among them
     rank = world.rank
     # the sum of every rank, which several of the checks below lean on
     total = size * (size - 1) // 2
@@ -34,17 +33,20 @@ def test():
     # and adds up too
     assert world.allreduce(float(rank), mpi.Op.sum) == float(total)
 
-    # the extrema
+    # the extrema: the largest rank
     assert world.allreduce(rank, mpi.Op.maximum) == size - 1
+    # and the smallest
     assert world.allreduce(rank, mpi.Op.minimum) == 0
 
     # a reduction that names a destination delivers to that rank alone
     largest = world.reduce(rank, mpi.Op.maximum, 0)
     # so only the root sees an answer
     if rank == 0:
+        # which is the largest rank
         assert largest == size - 1
     # and everybody else is told there is none
     else:
+        # by getting nothing back
         assert largest is None
 
     # an inclusive scan hands me the sum over everybody who precedes me, myself included
@@ -54,18 +56,22 @@ def test():
     running = world.exscan(rank, mpi.Op.sum)
     # and the standard leaves it undefined at rank zero, where nothing precedes
     if rank == 0:
+        # so there is nothing to report
         assert running is None
-    # everywhere else it is the sum over my strict predecessors
+    # everywhere else
     else:
+        # it is the sum over my strict predecessors
         assert running == rank * (rank - 1) // 2
 
     # gather every rank at the root
     gathered = world.gather(rank, 0)
     # only the root collects
     if rank == 0:
+        # one rank from each process, in order
         assert gathered == list(range(size))
     # and everybody else is told so
     else:
+        # by getting nothing back
         assert gathered is None
 
     # the same, delivered to everybody
@@ -91,6 +97,7 @@ def test():
         assert collected == [{"rank": slot, "payload": "x" * (slot + 1)} for slot in range(size)]
     # and everybody else is told so
     else:
+        # by getting nothing back
         assert collected is None
 
     # the same, delivered to everybody
@@ -125,6 +132,7 @@ def test():
             world.alltoallObject([None] * (size - 1))
         # the package refuses with a shape error
         except mpi.ShapeError:
+            # which raises the flag
             refused = True
         # check that it did
         assert refused
@@ -140,6 +148,7 @@ def test():
             world.scatterObject([None] * (size - 1), 0)
         # the package refuses with a shape error
         except mpi.ShapeError:
+            # which raises the flag
             refused = True
         # check that it did
         assert refused
@@ -157,6 +166,7 @@ def test():
             world.scatter([0] * (size - 1), 0)
         # the package refuses with a shape error
         except mpi.ShapeError:
+            # which raises the flag
             refused = True
         # check that it did
         assert refused
@@ -170,6 +180,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
