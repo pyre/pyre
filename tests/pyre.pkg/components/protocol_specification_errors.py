@@ -66,10 +66,15 @@ def test() -> None:
                 channel.line(f"the protocol refused {spec!r}, but its error is wrong")
                 # and the details
                 channel.indent()
+                # the complaint
                 channel.line(f"error: {complaint}")
+                # what it lacks
                 channel.line(f"lacks: {', '.join(map(repr, missing))}")
+                # what is wrong with it
                 channel.line(f"wrong: {', '.join(flaws)}")
+                # where to look
                 channel.line("look in: components/Protocol.py, components/exceptions.py")
+                # done with the details
                 channel.outdent()
         # if it is refused some other way
         except pyre.PyreError as error:
@@ -77,9 +82,13 @@ def test() -> None:
             channel.line(f"the protocol refused {spec!r} with the wrong error")
             # and the details
             channel.indent()
+            # what was expected
             channel.line("expected: FacilitySpecificationError")
+            # what was raised
             channel.line(f"got: {type(error).__name__}: {error}")
+            # where to look
             channel.line("look in: components/Protocol.py, Protocol.pyre_resolveSpecification")
+            # done with the details
             channel.outdent()
         # if it is not refused at all
         else:

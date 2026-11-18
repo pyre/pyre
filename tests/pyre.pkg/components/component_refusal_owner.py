@@ -55,6 +55,7 @@ def test() -> None:
 
     # a named instance, a nameless one, a class with a family, and one without
     named = Probe(name="probe")
+    # and a nameless one
     nameless = Probe()
     # the refusals, as the configurable, and the text its complaint must contain
     cases = [
@@ -83,10 +84,15 @@ def test() -> None:
                 channel.line(f"the refusal by {configurable} is not attributed to it")
                 # and the details
                 channel.indent()
+                # the complaint
                 channel.line(f"error: {complaint}")
+                # what it lacks
                 channel.line(f"lacks: {', '.join(map(repr, missing))}")
+                # whom it names as the owner
                 channel.line(f"owner: {error.configurable}")
+                # where to look
                 channel.line("look in: traits/Slotted.py, components/exceptions.py")
+                # done with the details
                 channel.outdent()
         # if it is not refused at all
         else:

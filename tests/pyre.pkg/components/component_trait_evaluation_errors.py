@@ -102,7 +102,9 @@ def test() -> None:
             channel.line(f"'{name}' was refused with {type(error).__name__}: {error}")
             # and the details
             channel.indent()
+            # where to look
             channel.line("look in: traits/Slotted.py, Slotted.__get__")
+            # done with the details
             channel.outdent()
         # if it is not refused at all
         else:
@@ -138,6 +140,7 @@ def test() -> None:
         for refusal in refusals:
             # show each one
             channel.line(f"{refusal}")
+        # done with the refusals
         channel.outdent()
 
     # if anything went wrong

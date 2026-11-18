@@ -148,8 +148,11 @@ def test() -> None:
         channel.line("checking 'probe' did not find the two refusals")
         # and the details
         channel.indent()
+        # what it found
         channel.line(f"found: {[str(error) for error in found]}")
+        # where to look
         channel.line("look in: components/Component.py, Component.pyre_validateConfiguration")
+        # done with the details
         channel.outdent()
     # each must be in the pile
     for error in found:

@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a {tuple} trait declared with a non-empty default and no schema for its items
-can be built: the item schema comes from the trait layer, so the configuration store can ask
-it how to evaluate each item
-"""
-
 # support
 import pyre
 
@@ -22,10 +16,16 @@ class Bag(pyre.component, family="containers.tuple"):
     A bag with a tuple in it
     """
 
+    # a tuple with two items in it by default
     pair = pyre.properties.tuple(default=("p", "q"))
 
 
 def test():
+    """
+    Check that a {tuple} trait declared with a non-empty default and no schema for its items can be
+    built: the item schema comes from the trait layer, so the configuration store can ask it how to
+    evaluate each item
+    """
     # build one
     bag = Bag(name="containers.tuple.default")
     # the default comes through, item by item
@@ -36,6 +36,7 @@ def test():
 
     # values assigned later go through the same item schema
     bag.pair = ["r"]
+    # and come out as a tuple
     assert tuple(bag.pair) == ("r",)
     # all done
     return bag

@@ -6,38 +6,54 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that the values of secret traits stay out of the displays of the configuration, and that
-a configuration whose components refer to each other is displayed without going around forever
-"""
-
-
 def test():
+    """
+    Check that the values of secret traits stay out of the displays of the configuration, and
+    that a configuration whose components refer to each other is displayed without going around
+    forever
+    """
+    # support
     import pyre
 
+    # a protocol
     class peer(pyre.protocol):
-        """a trivial protocol"""
+        """
+        A trivial protocol
+        """
 
+    # and a component that implements it
     class node(pyre.component, implements=peer):
-        """a component with a secret, and a reference to a peer"""
+        """
+        A component with a secret, and a reference to a peer
+        """
 
         # a secret
-        password = pyre.properties.str(default="hunter2")
+        password = pyre.properties.str()
+        password.default = "hunter2"
         password.secret = True
-        # something that is not
-        user = pyre.properties.str(default="guest")
-        # and a peer
-        partner = peer(default=None)
 
-    # traits are not secret unless they say so
+        # something that is not
+        user = pyre.properties.str()
+        user.default = "guest"
+
+        # and a peer
+        partner = peer()
+        partner.default = None
+
+    # traits are not secret unless they say so: the one that does
     assert node.pyre_trait(alias="password").secret is True
+    # the one that does not
     assert node.pyre_trait(alias="user").secret is False
+    # and the facility
     assert node.pyre_trait(alias="partner").secret is False
 
-    # two nodes that refer to each other
+    # make a node
     a = node(name="a")
+    # and another
     b = node(name="b")
+    # that refer to each other: the first to the second
     a.partner = b
+    # and the second to the first
     b.partner = a
     # the secret is still there for whoever uses it
     assert a.password == "hunter2"
@@ -50,42 +66,63 @@ def test():
     assert "value: (secret)" in display
     # shows the rest
     assert "value: guest" in display
-    # shows the peer once, and refers back to the node it started from
+    # shows the peer once
     assert display.count("\nb:") + display.count("  b:") == 1
+    # and refers back to the node it started from
     assert "see a" in display
 
     # the json friendly rendering
     doc = a.pyre_renderConfiguration()
-    # keeps the secret out
+    # keeps the secret out of the value
     assert doc["properties"]["password"]["value"] is None
+    # and the default
     assert doc["properties"]["password"]["default"] is None
     # and marks it
     assert doc["properties"]["password"]["secret"] is True
-    # but not the rest
+    # but not the rest, whose value is there
     assert doc["properties"]["user"]["value"] == "guest"
+    # and which is not marked
     assert doc["properties"]["user"]["secret"] is False
 
     # a renderer that writes traits as assignments
     class renderer:
-        """a stand-in for the renderers of the weaver"""
+        """
+        A stand-in for the renderers of the weaver
+        """
 
         # the start of a component
         def componentStart(self, component):
+            """
+            Open a section for {component}
+            """
             # as a section
             yield f"{component.pyre_name}:"
+            # all done
+            return
 
         # the end of a component
         def componentEnd(self, component):
+            """
+            Close the section of {component}
+            """
             # with a blank line
             yield ""
+            # all done
+            return
 
         # a trait and its value
         def trait(self, name, value):
+            """
+            Render the trait {name} with its {value}
+            """
             # as an assignment
             return f"{name} = {value}"
 
         # a value on a line of its own
         def value(self, value):
+            """
+            Render a {value} by itself
+            """
             # as it is
             return f"{value}"
 
@@ -102,6 +139,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a {list} trait declared with a non-empty default and no schema for its items
-can be built: the item schema comes from the trait layer, so the configuration store can ask
-it how to evaluate each item
-"""
-
 # support
 import pyre
 
@@ -22,10 +16,16 @@ class Bag(pyre.component, family="containers.list"):
     A bag with a list in it
     """
 
+    # a list with two items in it by default
     names = pyre.properties.list(default=["a", "b"])
 
 
 def test():
+    """
+    Check that a {list} trait declared with a non-empty default and no schema for its items can be
+    built: the item schema comes from the trait layer, so the configuration store can ask it how to
+    evaluate each item
+    """
     # build one
     bag = Bag(name="containers.list.default")
     # the default comes through, item by item
@@ -36,6 +36,7 @@ def test():
 
     # values assigned later go through the same item schema
     bag.names = ("c",)
+    # and come out as they went in
     assert list(bag.names) == ["c"]
     # all done
     return bag

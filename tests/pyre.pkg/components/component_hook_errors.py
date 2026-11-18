@@ -135,8 +135,11 @@ def test() -> None:
             channel.line(f"the complaints of '{name}' are not in the pile, attributed to it")
             # and the details
             channel.indent()
+            # the complaints that were added
             channel.line(f"added: {[f'{type(error).__name__}: {error}' for error in added]}")
+            # where to look
             channel.line("look in: components/Component.py, components/Actor.py")
+            # done with the details
             channel.outdent()
         # the instance must see them
         if grumpy.pyre_configurationErrors != added:
@@ -144,8 +147,11 @@ def test() -> None:
             channel.line(f"the instance '{name}' does not see its complaints")
             # and the details
             channel.indent()
+            # what it sees
             channel.line(f"sees: {[str(error) for error in grumpy.pyre_configurationErrors]}")
+            # where to look
             channel.line("look in: components/Component.py, Component.pyre_configurationErrors")
+            # done with the details
             channel.outdent()
         # and each must have been logged with what it says
         for complaint in ["the configuration is wrong", "the resources are missing"]:

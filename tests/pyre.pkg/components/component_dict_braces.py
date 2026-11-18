@@ -34,6 +34,7 @@ def test() -> None:
 
     # load the configuration files
     pyre.loadConfiguration("component_dict_braces.pfg")
+    # and its yaml twin
     pyre.loadConfiguration("component_dict_braces.yaml")
     # and process a command line
     commandline = [
@@ -74,12 +75,15 @@ def test() -> None:
     assert dict(reader.selection) == {"band": "{L}"}
     # and so does the text form of the same table
     reader.selection = "band:{{L}}"
+    # holds a literal one too
     assert dict(reader.selection) == {"band": "{L}"}
     # and a key set by itself
     reader.selection["band"] = "{{S}}"
+    # holds a literal one
     assert dict(reader.selection) == {"band": "{S}"}
     # just like a string
     reader.label = "{{L}}"
+    # reads it the same way
     assert reader.label == "{L}"
 
     # all done
