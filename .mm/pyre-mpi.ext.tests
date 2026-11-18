@@ -98,7 +98,7 @@ tests.mpi.ext.libmpi_cartesian.cases := \
     tests.pyre-mpi.ext.libmpi_cartesian.serial tests.pyre-mpi.ext.libmpi_cartesian.parallel
 # {serial} runs as is
 # {parallel} has a harness
-tests.pyre-mpi.ext.libmpi_cartesian.parallel.harness = $(pyre-mpi.ext.harness) -np 8
+tests.pyre-mpi.ext.libmpi_cartesian.parallel.harness = $(pyre-mpi.ext.harness) -np 12
 
 
 # end of file

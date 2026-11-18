@@ -77,19 +77,75 @@ def test():
     # that leaves each process alone on a grid of one
     assert alone.size == 1
 
-    # when the process count is an even number greater than one, a two by half grid exercises the
-    # multi-axis paths the single axis above cannot reach
-    if size > 1 and size % 2 == 0:
-        # arrange the processes on two rows, wrapping the second axis, numbering held fixed
-        grid = world.cartesian(axes=[2, size // 2], periods=[1, 1], reorder=0)
+    # a grid whose rows do not wrap but whose columns do reaches the multi-axis paths the single
+    # axis above cannot, and mixes the two kinds of axis; with three rows, the middle one has
+    # neighbors on both sides while the outer ones fall off the edge, and with at least three
+    # columns my two neighbors along a row are distinct processes; so the grid needs a process
+    # count that is a multiple of three, and at least nine
+    if size >= 9 and size % 3 == 0:
+        # the number of rows
+        rows = 3
+        # and of columns
+        columns = size // rows
+        # arrange the processes on the grid, wrapping only the columns, numbering held fixed
+        grid = world.cartesian(axes=[rows, columns], periods=[0, 1], reorder=0)
         # the grid has two axes
         assert grid.dimensions == 2
         # of the shape we asked for
-        assert grid.axes == [2, size // 2]
+        assert grid.axes == [rows, columns]
+        # and only the second one wraps
+        assert grid.periods == [0, 1]
+
         # where my coordinate and my rank name the same spot both ways: get my coordinate
         here = grid.coordinates()
         # and look up the rank that sits there
         assert grid.rankAt(here) == grid.rank
+        # unpack my place on the grid
+        row, column = here
+        # with the numbering fixed, the processes fill the grid one row at a time
+        assert grid.rank == row * columns + column
+
+        # stepping along the first axis names my neighbors in the rows above and below mine
+        above, below = grid.shift(direction=0, displacement=1)
+        # the top row has nobody above it, since the rows do not wrap
+        if row == 0:
+            # so my neighbor above is nobody
+            assert above == libmpi.procNull
+        # everywhere else
+        else:
+            # it is the process one row up, in my column
+            assert above == grid.rankAt([row - 1, column])
+        # similarly, the bottom row has nobody below it
+        if row == rows - 1:
+            # so my neighbor below is nobody
+            assert below == libmpi.procNull
+        # everywhere else
+        else:
+            # it is the process one row down, in my column
+            assert below == grid.rankAt([row + 1, column])
+
+        # stepping along the second axis names my neighbors in my row, which always exist since
+        # the columns wrap
+        left, right = grid.shift(direction=1, displacement=1)
+        # the one on my left, wrapping around from the first column to the last
+        assert left == grid.rankAt([row, (column - 1) % columns])
+        # the one on my right, wrapping around from the last column to the first
+        assert right == grid.rankAt([row, (column + 1) % columns])
+        # and they are two different processes
+        assert left != right
+
+        # keeping only the first axis makes the column of the grid i belong to
+        myColumn = grid.sub(keep=[1, 0])
+        # which holds one process from each row
+        assert myColumn.size == rows
+        # and does not wrap
+        assert myColumn.periods == [0]
+        # keeping only the second axis makes my row
+        myRow = grid.sub(keep=[0, 1])
+        # which holds one process from each column
+        assert myRow.size == columns
+        # and wraps
+        assert myRow.periods == [1]
 
     # all done
     return
