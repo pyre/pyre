@@ -6,29 +6,39 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise "isNotEmpty"
-"""
-
-
 def test():
+    """
+    Exercise "isNotEmpty"
+    """
+    # access the constraints
     import pyre.constraints
 
+    # make one
     constraint = pyre.constraints.isNotEmpty()
 
-    # non-empty containers pass
+    # non-empty containers pass: a list with one item
     constraint.validate(["one"])
+    # a list with more
     constraint.validate(["one", "two"])
+    # and a map
     constraint.validate({"a": 1})
 
-    # an empty container is rejected
+    # an empty container
     stranger = []
+    # must be rejected
     try:
+        # so validating it
         constraint.validate(stranger)
+        # can't succeed
+        assert False, "unreachable"
+    # and when it fails
     except constraint.ConstraintViolationError as error:
+        # the error names the constraint
         assert error.constraint == constraint
+        # and the value it refused
         assert error.value == stranger
 
+    # all done
     return constraint
 
 
