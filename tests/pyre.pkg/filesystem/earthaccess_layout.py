@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Impose a hierarchy on the page a granule query answers, and check that discovering a folder
-below the root is answered from the page in hand
-"""
-
-
 def granule(name, stack, date):
     """
     Build a catalog record that carries the attributes a layout groups on
@@ -27,6 +21,10 @@ def granule(name, stack, date):
 
 
 def test():
+    """
+    Impose a hierarchy on the page a granule query answers, and check that discovering a folder
+    below the root is answered from the page in hand
+    """
     # support
     import pyre.filesystem
 
@@ -41,6 +39,9 @@ def test():
 
     # an engine that answers with the canned page and counts its invocations
     def engine(query, count):
+        """
+        Record the {query} and answer it with the canned page
+        """
         # tally
         runs.append(query)
         # and answer
@@ -48,6 +49,9 @@ def test():
 
     # a layout that groups by stack, then by date
     def layout(granule):
+        """
+        Place {granule} under its stack and the date of its acquisition
+        """
         # dig out the stack
         stack = granule["umm"]["AdditionalAttributes"][0]["Values"][0]
         # and the date of the acquisition
@@ -61,14 +65,17 @@ def test():
     assert len(runs) == 1
     # the first level is the stacks
     assert sorted(fs.contents) == ["004_A_018", "011_D_003"]
-    # the second level is the dates
+    # the second level is the dates: two in one stack
     assert sorted(fs["004_A_018"].contents) == ["2026-01-01", "2026-01-13"]
+    # and one in the other
     assert sorted(fs["011_D_003"].contents) == ["2026-01-01"]
     # and the granules are the leaves
     assert list(fs["004_A_018/2026-01-13"].contents) == ["g2"]
+    # whose address spells out the hierarchy
     assert str(fs["004_A_018/2026-01-13/g2"].uri) == "/004_A_018/2026-01-13/g2"
-    # the folders are stamped with the sync
+    # the folders are stamped with the sync: the stacks
     assert fs["004_A_018"].info.sync == fs.info(node=fs).sync
+    # and the dates
     assert fs["004_A_018/2026-01-13"].info.sync == fs.info(node=fs).sync
 
     # discovering a folder below the root is answered from the page in hand
@@ -77,13 +84,16 @@ def test():
     assert len(runs) == 1
     # and the folder is unchanged
     assert sorted(folder.contents) == ["2026-01-01", "2026-01-13"]
-    # a folder deeper down is on the tree already, so reaching it runs no query either
+    # a folder deeper down is on the tree already
     node = fs["011_D_003/2026-01-01"].discover(levels=1)
+    # with its contents
     assert list(node.contents) == ["g3"]
+    # so reaching it runs no query either
     assert len(runs) == 1
 
-    # discovering the root runs the query again
+    # discovering the root
     fs.discover()
+    # runs the query again
     assert len(runs) == 2
 
     # all done
