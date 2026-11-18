@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Sanity check: verify that the bindings module is present and loadable
-"""
-
-
 def test():
+    """
+    Sanity check: verify that the bindings module is present and loadable
+    """
     # access the package that hosts the bindings
     import mpi
 
@@ -25,6 +23,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 

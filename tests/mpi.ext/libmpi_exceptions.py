@@ -6,13 +6,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Verify that the exception hierarchy the bindings register has the right shape, and that a failed
-call arrives in python under its own name rather than its parent's
-"""
-
-
 def test():
+    """
+    Verify that the exception hierarchy the bindings register has the right shape, and that a failed
+    call arrives in python under its own name rather than its parent's
+    """
     # access the package that hosts the bindings
     import mpi
 
@@ -26,8 +24,9 @@ def test():
     assert issubclass(libmpi.MPIError, libmpi.Error)
     # and so is an argument whose shape does not fit
     assert issubclass(libmpi.ShapeError, libmpi.Error)
-    # but a shape error is not an mpi failure, and neither derives from the other
+    # but a shape error is not an mpi failure
     assert not issubclass(libmpi.ShapeError, libmpi.MPIError)
+    # and neither derives from the other
     assert not issubclass(libmpi.MPIError, libmpi.ShapeError)
 
     # bring mpi up, arranging for the shutdown
@@ -50,17 +49,21 @@ def test():
             world.scatter([0] * (size - 1), 0)
         # the mismatch must arrive under its own name, not as the base {Error}
         except libmpi.ShapeError:
+            # which raises the flag
             refused = True
         # check that it did
         assert refused
 
-        # and the very same failure must still be caught when the handler asks only for the base
+        # and the very same failure must still be caught when the handler asks only for the
+        # base; lower the flag
         refused = False
         # ask again
         try:
+            # for the same scatter
             world.scatter([0] * (size - 1), 0)
         # a {ShapeError} is an {Error}, so this must catch it too
         except libmpi.Error:
+            # which raises the flag
             refused = True
         # check
         assert refused
@@ -74,6 +77,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # do...
     test()
 
 
