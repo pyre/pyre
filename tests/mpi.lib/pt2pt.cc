@@ -9,6 +9,7 @@
 #include <portinfo>
 // other packages
 #include <cassert>
+#include <tuple>
 // grab the mpi objects
 #include <pyre/mpi.h>
 
@@ -192,12 +193,25 @@ main()
         assert(winner == 0 || winner == 1);
         // and mpi has emptied that receipt, while the other may well still be in flight
         assert(!inflight[winner].active());
+        // the report of a send says nothing about its peer, so if the send won
+        if (winner == 1) {
+            // wait again; the spent receipt is passed over, and the receive is what completes
+            std::tie(winner, outcome) = pyre::mpi::waitAny(inflight);
+            // so it is the one named
+            assert(winner == 0);
+        }
+        // the report belongs to the receive: it names the process before me
+        assert(outcome.source() == previous);
+        // the label of the port
+        assert(outcome.tag() == 31);
+        // and a single cell
+        assert(outcome.count(MPI_INT) == 1);
+        // nothing was cancelled
+        assert(!outcome.cancelled());
         // finish whatever is left
         pyre::mpi::waitAll(inflight);
         // and the value came round
         assert(first == previous);
-        // the report belongs to the transfer that won
-        assert(!outcome.cancelled());
 
         // once a message has landed, {iprobe} sees it without blocking; before it lands, it
         // says so rather than waiting. drive it with a payload that is already on its way
