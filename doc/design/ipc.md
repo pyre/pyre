@@ -15,9 +15,9 @@ both cases the channel says how it is encoded and rebuilds itself on arrival.
 
 Branch: `ipc` in `pyre`.
 
-Status: **built** on branch `ipc`, as the design below describes; agreed on 2026-11-15, from
-the choices made in a tracker that day. The facts below were read out of the source on
-2026-11-15, at `bba28dae0`, with the file cited.
+Status: **merged** as pyre#411 on 2026-11-16, as the design below describes; agreed on
+2026-11-15, from the choices made in a tracker that day. The facts below were read out of the
+source on 2026-11-15, at `bba28dae0`, with the file cited.
 
 ## What is already true
 
