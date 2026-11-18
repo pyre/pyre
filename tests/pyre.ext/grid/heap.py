@@ -16,8 +16,9 @@ def test():
 
     # make a three dimensional grid of doubles on the heap
     g = grid.heap(shape=[2, 3, 4], cell="float64")
-    # it reports its own geometry
+    # it reports its own geometry: its rank
     assert g.rank == 3
+    # and its shape
     assert g.shape == [2, 3, 4]
     # canonically packed, so the trailing axis is contiguous
     assert g.strides == [12, 4, 1]
@@ -28,18 +29,24 @@ def test():
 
     # a grid presents the python buffer protocol, which the builtin {memoryview} reads
     mv = memoryview(g)
-    # matching geometry and cell type
+    # with matching geometry: the rank
     assert mv.ndim == 3
+    # the shape
     assert tuple(mv.shape) == (2, 3, 4)
+    # and the cell type
     assert mv.format == "d"
     # writable, since the storage is
     assert not mv.readonly
 
-    # a write through one view is a write to the grid's memory, so a second view sees it
+    # a write through one view is a write to the grid's memory: write the last cell
     mv[1, 2, 3] = 42.0
+    # and the first
     mv[0, 0, 0] = 7.0
+    # make a second view
     other = memoryview(g)
+    # which sees the last
     assert other[1, 2, 3] == 42.0
+    # and the first
     assert other[0, 0, 0] == 7.0
 
     # one bound class serves every cell type and every rank; check a spread of them

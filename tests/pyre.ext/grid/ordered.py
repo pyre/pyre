@@ -51,6 +51,7 @@ def map():
     uri = "grid_ordered_test.dat"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # the shape
@@ -120,9 +121,11 @@ def numpy():
     for marker in ["be", "le"]:
         # make a grid
         g = grid.heap(shape=[2, 2], cell=f"uint16{marker}")
-        # fill it
+        # fill it, row by row
         for i in range(2):
+            # and column by column
             for j in range(2):
+                # with values that tell the cells apart
                 g[i, j] = value + 2 * i + j
         # view it through numpy, without copying
         a = numpy.asarray(g)
@@ -161,10 +164,13 @@ def bad():
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # run the tests: grids on the heap
     heap()
+    # grids over files
     map()
+    # grids read by numpy, when it is available
     numpy()
+    # and markers on cells that do not exist
     bad()
 
 

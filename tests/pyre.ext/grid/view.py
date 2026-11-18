@@ -31,8 +31,9 @@ def test():
     # so the original array sees it: cell {1,2,3} of a {2,3,4} c-order grid is flat index 23
     assert source[23] == 9.0
 
-    # and a write to the source block is a read through the grid
+    # and a write to the source block
     source[0] = 4.0
+    # is a read through the grid
     assert memoryview(g)[0, 0, 0] == 4.0
 
     # all done

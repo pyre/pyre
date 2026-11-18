@@ -90,11 +90,15 @@ def heaps():
     assert bytes(heap) == struct.pack(f"{code}4H", value, value, value, 0x0304)
     # a slice is a view over the same cells, in the same order
     view = heap[1:3]
+    # of the matching type
     assert type(view).__name__ == f"ViewUInt16{foreign}"
+    # whose cells read as the heap's
     assert list(view) == [value, value]
+    # and whose buffer description carries the same marker
     assert memoryview(view).format == f"{code}H"
-    # and writes through the view land in the heap
+    # and writes through the view
     view[0] = 7
+    # land in the heap
     assert heap[1] == 7
 
     # all done
@@ -110,8 +114,9 @@ def complexHeaps():
 
     # make a heap over foreign order complex cells
     heap = getattr(heaps, f"HeapComplexFloat{foreign}")(cells=2)
-    # write
+    # write the first cell
     heap[0] = 1.5 - 2j
+    # and the second
     heap[1] = 3 + 4j
     # read back
     assert list(heap) == [1.5 - 2j, 3 + 4j]
@@ -138,14 +143,16 @@ def maps():
     values = [1, 2, 3, 0x1234]
     # write the product in the foreign order
     with open(uri, "wb") as product:
+        # packed
         product.write(struct.pack(f"{code}4H", *values))
 
     # map it read-only
     const = getattr(maps, f"MapUInt16{foreign}Const")(uri)
     # every cell reads as its value
     assert list(const) == values
-    # and the description says so
+    # and the description says so: it carries the marker
     assert memoryview(const).format == f"{code}H"
+    # and refuses writes
     assert memoryview(const).readonly
     # let go
     del const
@@ -160,7 +167,9 @@ def maps():
     del writable
     # the file must hold the new value in the foreign order
     with open(uri, "rb") as product:
+        # unpacked
         stored = struct.unpack(f"{code}4H", product.read())
+    # and the rest untouched
     assert list(stored) == [0xABCD] + values[1:]
 
     # all done
@@ -169,10 +178,13 @@ def maps():
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # run the tests: the bindings are there
     presence()
+    # heaps
     heaps()
+    # heaps of complex cells
     complexHeaps()
+    # and maps
     maps()
 
 

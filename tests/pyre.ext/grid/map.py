@@ -20,6 +20,7 @@ def test():
     uri = "grid_map_test.dat"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # create a file-backed grid

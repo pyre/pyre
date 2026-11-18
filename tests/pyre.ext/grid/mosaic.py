@@ -14,14 +14,21 @@ def test():
     # the grid bindings
     from pyre.extensions.pyre import grid
 
+    # the collector, so we can force the issue of a pane outliving its mosaic
+    import gc
+
     # describe a product diced into a hundred tiles; nothing is allocated yet
     m = grid.mosaic(shape=[100, 100], tile=[10, 10], cell="float64")
 
-    # the metadata reflects the description
+    # the metadata reflects the description: the rank
     assert m.rank == 2
+    # the shape
     assert m.shape == [100, 100]
+    # the origin
     assert m.origin == [0, 0]
+    # the shape of a tile
     assert m.tileShape == [10, 10]
+    # and the number of tiles along each axis
     assert m.tiles == [10, 10]
     # the storage bill is every tile at full size
     assert m.cells == 100 * 100
@@ -69,14 +76,17 @@ def test():
         for j in range(10):
             # with a recognizable value
             mv[i, j] = 45.0
-    # declare the deposit, mirroring the c++ discipline
+    # declare the deposit, mirroring the c++ discipline: the contents are meaningful
     m.validate(tile=t)
+    # and differ from what is saved
     m.taint(tile=t)
-    # the state reflects the declarations
+    # the state reflects the declarations: the tile is valid
     assert m.valid(tile=t) is True
+    # and not clean
     assert m.clean(tile=t) is False
-    # saving the page marks it clean again
+    # saving the page
     m.flush(tile=t)
+    # marks it clean again
     assert m.clean(tile=t) is True
 
     # a fresh pane over the same tile addresses the same page, so the writes are there
@@ -93,9 +103,6 @@ def test():
 
     # a pane must keep the store alive after the mosaic object itself is gone
     del m, p, q
-    # the collector, so we can force the issue
-    import gc
-
     # sweep
     gc.collect()
     # the surviving view still reads the page
@@ -107,6 +114,7 @@ def test():
     m[3, 4] = 13
     # this cell falls in tile {1,1}, whose page is now the only resident one
     assert m.residents == 1
+    # and it is resident
     assert m.resident(tile=[1, 1]) is True
     # and the write tainted it, since the divergence is visible to the binding
     assert m.clean(tile=[1, 1]) is False
@@ -150,13 +158,15 @@ def test():
     m.flush(tile=[1, 1])
     # keep a pane and a view of its cells alive across the release
     p = m.pane(tile=[1, 1])
+    # and the view
     mv = memoryview(p)
     # the cell written earlier, at its tile-local coordinates
     assert mv[1, 1] == 13
     # let the page go
     m.release(tile=[1, 1])
-    # the store forgot it: the tile is back in the never-touched state
+    # the store forgot it: nothing is resident
     assert m.residents == 0
+    # and the tile is back in the never-touched state
     assert m.resident(tile=[1, 1]) is False
     # so reading the cell through the mosaic is refused again
     try:

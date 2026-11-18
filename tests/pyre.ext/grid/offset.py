@@ -230,12 +230,17 @@ def empty():
 
 # main
 if __name__ == "__main__":
-    # run the tests
+    # run the tests: cells past a header that is a multiple of their size
     aligned()
+    # past one that is not
     unaligned()
+    # in the other byte order
     foreign()
+    # read by numpy, when it is available
     numpy()
+    # offsets that make no sense
     bad()
+    # and maps with nothing in them
     empty()
 
 
