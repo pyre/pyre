@@ -6,13 +6,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a launcher without an mpi installation refuses to spawn, and says how to point it
-at one, instead of failing on a missing attribute
-"""
-
-
 def test():
+    """
+    Check that a launcher without an mpi installation refuses to spawn, and says how to point it
+    at one, instead of failing on a missing attribute
+    """
     # access the framework
     import pyre
 
@@ -29,6 +27,7 @@ def test():
     channel = journal.error("mpi.launcher")
     # capture it in a file
     log = "launcher_missing.log"
+    # by pointing the channel at it
     channel.device = journal.file(path=log)
     # and keep it from raising, so the exit code can be checked
     channel.fatal = False
@@ -36,10 +35,15 @@ def test():
     status = launcher.spawn(application=None)
     # the launch is refused
     assert status == 1
-    # and the entry names the problem and the remedy
-    text = open(log, encoding="utf-8").read()
+    # read the log
+    with open(log, encoding="utf-8") as stream:
+        # all of it
+        text = stream.read()
+    # the entry names the problem
     assert "could not find an mpi installation" in text
+    # the setting that fixes it
     assert "mpi.shells.mpirun.mpi" in text
+    # and where the launcher looked
     assert "prefix:" in text
     # all done
     return launcher

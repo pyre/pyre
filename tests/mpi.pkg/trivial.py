@@ -6,50 +6,59 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Exercise the single process stand-in for a communicator
-
-This is what {mpi.world} names before anybody calls {mpi.init}, and everywhere on a machine
-with no mpi at all; deliberately, this test never brings the runtime up
-"""
-
-
 def test():
+    """
+    Exercise the single process stand-in for a communicator
+
+    This is what {mpi.world} names before anybody calls {mpi.init}, and everywhere on a machine
+    with no mpi at all; deliberately, this test never brings the runtime up
+    """
     # externals
     import mpi
 
     # before {init}, the world is the trivial communicator
     world = mpi.world
 
-    # it holds this process alone
+    # it holds this process alone: its rank is zero
     assert world.rank == 0
+    # and it has no company
     assert world.size == 1
     # and it always names a communicator
     assert world.isNull is False
+    # so it is never false
     assert bool(world) is True
 
     # the barrier is satisfied by the lone process arriving at it
     world.barrier()
 
-    # every collective is an identity
+    # every collective is an identity: the broadcast
     assert world.bcast(item=42) == 42
+    # the reduction
     assert world.reduce(item=42, op=None) == 42
+    # the reduction delivered to everybody
     assert world.allreduce(item=42, op=None) == 42
+    # and the inclusive scan
     assert world.scan(item=42, op=None) == 42
     # except the exclusive scan, which mpi leaves undefined at rank zero
     assert world.exscan(item=42, op=None) is None
 
     # collecting one cell from each process yields the one cell there is
     assert world.gather(item=7) == [7]
+    # whether at a root or at everybody
     assert world.allgather(item=7) == [7]
     # and handing one cell to each process hands it right back
     assert world.scatter(items=[5]) == 5
+    # as does the exchange among all of them
     assert world.alltoall(items=[9]) == [9]
 
-    # the object flavored collectives behave the same, on payloads that are not numbers
+    # the object flavored collectives behave the same, on payloads that are not numbers: the
+    # gather
     assert world.gatherObject(item={"a": 1}) == [{"a": 1}]
+    # the gather delivered to everybody
     assert world.allgatherObject(item={"a": 1}) == [{"a": 1}]
+    # the scatter
     assert world.scatterObject(items=[{"b": 2}]) == {"b": 2}
+    # and the exchange
     assert world.alltoallObject(items=[{"c": 3}]) == [{"c": 3}]
 
     # a duplicate holds the same lone process
@@ -61,6 +70,7 @@ def test():
         world.bcast(item=1, source=1)
     # which is what should happen
     except ValueError:
+        # so there is nothing else to check
         pass
     # and if it doesn't
     else:
@@ -73,6 +83,7 @@ def test():
         world.scatter(items=[1, 2])
     # which is what should happen
     except ValueError:
+        # so there is nothing else to check
         pass
     # and if it doesn't
     else:
