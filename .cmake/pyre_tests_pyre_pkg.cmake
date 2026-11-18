@@ -1192,6 +1192,7 @@ pyre_test_python_testcase(tests/pyre.pkg/nexus/liaison_recruit_leaves_reports.py
 pyre_test_python_testcase(tests/pyre.pkg/nexus/liaison_report_drained.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/pool_crews.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/pool_over_sockets.py)
+pyre_test_python_testcase(tests/pyre.pkg/nexus/pool_retries.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/staff.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/staff_bench.py)
 pyre_test_python_testcase(tests/pyre.pkg/nexus/staff_casualty.py)
