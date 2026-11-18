@@ -73,9 +73,14 @@ def test():
 
     # the folder that disappeared is forgotten
     assert "gone" not in fs.contents
-    # and the rest of the tree is there
-    assert "keep" in fs.contents and "other" in fs.contents
-    assert "inner" in fs["keep"].contents and "file" in fs["keep"].contents
+    # while the rest of the tree is there: the folder that stayed
+    assert "keep" in fs.contents
+    # the one that was never in danger
+    assert "other" in fs.contents
+    # the folder inside the one that stayed
+    assert "inner" in fs["keep"].contents
+    # and the file next to it
+    assert "file" in fs["keep"].contents
     # every folder was listed exactly once, the one that disappeared included
     assert all(count == 1 for count in Vanishing.listings.values()), Vanishing.listings
     # and they were all listed

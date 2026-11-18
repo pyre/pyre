@@ -6,12 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Re-run a granule query and check that the tree keeps the granules that are still on the page,
-drops the ones that vanished along with the folders they leave empty, and adds the newcomers
-"""
-
-
 def granule(name, folder):
     """
     Build a catalog record that names the folder it belongs to
@@ -21,6 +15,10 @@ def granule(name, folder):
 
 
 def test():
+    """
+    Re-run a granule query and check that the tree keeps the granules that are still on the page,
+    drops the ones that vanished along with the folders they leave empty, and adds the newcomers
+    """
     # support
     import pyre.filesystem
 
@@ -36,6 +34,9 @@ def test():
 
     # an engine that answers with the next page
     def engine(query, count):
+        """
+        Answer the {query} with the next page
+        """
         # hand out the pages in order
         page = pages.pop(0)
         # and answer
@@ -43,18 +44,25 @@ def test():
 
     # a layout that groups by the folder named in the record
     def layout(granule):
+        """
+        Place {granule} under the folder its record names
+        """
         # place the granule under its folder
         return granule["umm"]["AdditionalAttributes"][0]["Values"][0], granule["meta"]["native-id"]
 
     # mount the filesystem and discover its contents
     fs = pyre.filesystem.earthaccess(query={}, layout=layout, engine=engine).discover()
-    # check the first page
+    # check the first page: the folders
     assert sorted(fs.contents) == ["a", "b"]
+    # the contents of the first
     assert sorted(fs["a"].contents) == ["g1", "g2"]
+    # and of the second
     assert sorted(fs["b"].contents) == ["g3"]
-    # hold on to a survivor, a casualty, and the folder that empties
+    # hold on to a survivor
     survivor = fs["a/g1"]
+    # a casualty
     casualty = fs["a/g2"]
+    # the folder that empties
     emptied = fs["b"]
     # and the stamp of the first sync
     first = fs.info(node=fs).sync
@@ -67,11 +75,13 @@ def test():
     assert fs["a/g1"] is survivor
     # with metadata refreshed from the new page
     assert survivor.info.record is not None
+    # and the stamp of the second sync
     assert survivor.info.sync == fs.info(node=fs).sync
     # the casualty is gone from its folder
     assert sorted(fs["a"].contents) == ["g1"]
     # and forgotten by the filesystem
     assert casualty not in fs.vnodes
+    # and so is the folder it emptied
     assert emptied not in fs.vnodes
     # the newcomer is in place
     assert sorted(fs["c"].contents) == ["g4"]
