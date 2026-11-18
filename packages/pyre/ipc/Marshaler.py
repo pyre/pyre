@@ -35,7 +35,9 @@ class Marshaler(pyre.protocol, family="pyre.ipc.marshalers"):
         Extract and return one object from {channel}
 
         Implementations raise {exceptions.EndOfStream} when the channel closes before a
-        complete message arrives, so clients can tell a dead peer from a bad payload
+        complete message arrives, so clients can tell a dead peer from a bad payload, and
+        {exceptions.ArrivalError} when a message arrives without all of its descriptors, after
+        consuming the whole of it
         """
 
     @pyre.provides

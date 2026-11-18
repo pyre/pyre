@@ -90,6 +90,33 @@ class CarriageError(IPCError):
         return
 
 
+# a message arrived without all of its descriptors
+class ArrivalError(CarriageError):
+    """
+    Exception raised when fewer open descriptors arrive with a message than were sent with it,
+    because the receiving process has no room for more open files
+    """
+
+    # the message template
+    description = (
+        "a message arrived with {0.received} of the {0.expected} open files sent with it: "
+        "this process has no room for more open files; its limit is {0.limit}"
+    )
+
+    # metamethods
+    def __init__(self, channel, expected, received, limit, **kwds):
+        # chain up
+        super().__init__(channel=channel, reason=f"only {received} of {expected} arrived", **kwds)
+        # the number of descriptors sent with the message
+        self.expected = expected
+        # the number that arrived
+        self.received = received
+        # and the most files the receiving process may hold open
+        self.limit = limit
+        # all done
+        return
+
+
 # a channel cannot be rebuilt from its hints
 class TravelError(IPCError):
     """
