@@ -20,6 +20,7 @@ def test():
     uri = "grid_readonly_test.dat"
     # make sure a stale one is not lying around
     if os.path.exists(uri):
+        # by removing it
         os.remove(uri)
 
     # create a product and stamp a cell
@@ -37,7 +38,9 @@ def test():
     assert r[1, 2] == 3.5
     # and through the buffer protocol, whose view is marked read-only
     mv = memoryview(r)
+    # so says the view
     assert mv.readonly is True
+    # and the cell is there too
     assert mv[1, 2] == 3.5
 
     # writes through indexing are refused
@@ -86,8 +89,9 @@ def test():
     v = grid.view(source=source, shape=[2, 3], cell="int8", writable=False)
     # the description says so
     assert v.writable is False
-    # and the cells read back
+    # and the cells read back: the first
     assert v[0, 0] == 1
+    # and the last
     assert v[1, 2] == 6
     # while writes are refused
     try:

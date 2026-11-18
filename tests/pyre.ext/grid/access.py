@@ -23,27 +23,35 @@ def test():
         for j in range(3):
             # lay down a definite zero
             g[i, j] = 0.0
-    # now the grid reads back as the zeros we wrote
+    # now the grid reads back as the zeros we wrote, at its first cell
     assert g[0, 0] == 0.0
+    # and at its last
     assert g[1, 2] == 0.0
 
-    # a write through the index is a write to the grid's memory, so the buffer protocol sees it
+    # a write through the index is a write to the grid's memory, so the buffer protocol sees
+    # it: write the last cell
     g[1, 2] = 42.0
+    # and the first
     g[0, 0] = 7.0
-    # read it straight back through the index
+    # read them straight back through the index
     assert g[1, 2] == 42.0
+    # both of them
     assert g[0, 0] == 7.0
     # and the very same cells through a memoryview, proving they share one block
     mv = memoryview(g)
+    # the last
     assert mv[1, 2] == 42.0
+    # and the first
     assert mv[0, 0] == 7.0
 
-    # the traffic runs the other way too: a write through the buffer is visible through the index
+    # the traffic runs the other way too: write through the buffer
     mv[0, 1] = 3.5
+    # and the index sees it
     assert g[0, 1] == 3.5
 
-    # a negative coordinate counts from the end of its axis
+    # a negative coordinate counts from the end of its axis: write through one
     g[-1, -1] = 9.0
+    # and find the value in the last cell
     assert g[1, 2] == 9.0
 
     # out of range indices are rejected
@@ -67,26 +75,33 @@ def test():
     row = g[0]
     # it has dropped the first axis
     assert row.rank == 1
+    # and kept the second
     assert row.shape == [3]
     # and it reads the parent's row
     assert row[1] == 3.5
-    # writing through the sub-grid writes to the parent's memory
+    # writing through the sub-grid
     row[2] = 11.0
+    # writes to the parent's memory
     assert g[0, 2] == 11.0
 
     # a slice keeps its axis and selects a strided run
     tail = g[1, 1:3]
-    # one axis, two cells
+    # one axis
     assert tail.rank == 1
+    # with two cells
     assert tail.shape == [2]
-    # reading the tail of row 1: column 1 still holds its stamped zero, column 2 holds the 9.0
+    # reading the tail of row 1: column 1 still holds its stamped zero
     assert tail[0] == 0.0
+    # and column 2 holds the 9.0
     assert tail[1] == 9.0
 
-    # a full slice over both axes is the whole grid again, still sharing memory
+    # a full slice over both axes is the whole grid again
     whole = g[:, :]
+    # with the whole shape
     assert whole.shape == [2, 3]
+    # still sharing memory: write through it
     whole[0, 0] = 5.0
+    # and the grid sees it
     assert g[0, 0] == 5.0
 
     # assigning through a non-scalar index is refused; write the sub-grid's cells instead
