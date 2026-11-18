@@ -6,16 +6,15 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a failed coercion carries the reason the converter gave, and that the report of
-the error passes it along after the framework's own description
-"""
-
 # support
 import pyre
 
 
 def test():
+    """
+    Check that a failed coercion carries the reason the converter gave, and that the report of
+    the error passes it along after the framework's own description
+    """
     # go through the processors, with a value each one refuses
     for schema, value in (
         (pyre.schemata.timestamp(), "1992-13-45 25:61:00"),
@@ -39,10 +38,13 @@ def test():
             assert repr(value) in str(error)
             # the converter's reason rides along
             assert isinstance(error.error, Exception)
-            # and the report has it, after the description
+            # and the report of the error
             report = list(error._pyre_report())
+            # opens with the description
             assert report[0] == str(error)
+            # and closes with the reason
             assert report[-1] == f"reason: {error.error}"
+
     # all done
     return
 
