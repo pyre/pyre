@@ -10,8 +10,10 @@ def test():
     """
     A {Confirm} maps replies, and a blank line, onto a bool
     """
-    # get the package and the input builtin
+    # for scripting the replies
     import builtins
+
+    # get the package
     import survey
 
     # feed an explicit no
@@ -30,13 +32,18 @@ def test():
     assert survey.Confirm(message="ok", default=True).ask() is True
 
     # an exhausted or closed input stream raises {EOFError}
-    def _eof(prompt=""):
-        # stand in for a reader that has hit end-of-input
+    def exhausted(prompt=""):
+        """
+        Stand in for a reader that has hit the end of its input
+        """
+        # by saying so
         raise EOFError
 
-    builtins.input = _eof
+    # feed it
+    builtins.input = exhausted
     # which takes the default rather than crashing, whichever way it points
     assert survey.Confirm(message="ok", default=True).ask() is True
+    # in both directions
     assert survey.Confirm(message="ok", default=False).ask() is False
 
     # all done

@@ -10,8 +10,10 @@ def test():
     """
     An {Input} returns what the user typed, and its default on a blank reply
     """
-    # get the package and the input builtin
+    # for scripting the replies
     import builtins
+
+    # get the package
     import survey
 
     # feed a typed reply
@@ -25,11 +27,15 @@ def test():
     assert survey.Input(message="name", default="anon").ask() == "anon"
 
     # an exhausted or closed input stream raises {EOFError}
-    def _eof(prompt=""):
-        # stand in for a reader that has hit end-of-input
+    def exhausted(prompt=""):
+        """
+        Stand in for a reader that has hit the end of its input
+        """
+        # by saying so
         raise EOFError
 
-    builtins.input = _eof
+    # feed it
+    builtins.input = exhausted
     # which is treated as a blank reply, so the default stands
     assert survey.Input(message="name", default="anon").ask() == "anon"
     # and with no default, it comes back as the empty string rather than crashing
