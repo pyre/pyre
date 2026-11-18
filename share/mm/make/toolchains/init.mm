@@ -54,6 +54,9 @@ define toolchain.init =
     # empty when the kind says it all
     ${eval toolchain.$(1).report ?=}
     ${eval toolchain.$(1).checks ?=}
+    # whether the tool can exist on this platform at all; most tools run everywhere, and one that
+    # does not leaves this empty where it cannot, so projects can leave out what depends on it
+    ${eval toolchain.$(1).supported ?= yes}
 # all done
 endef
 

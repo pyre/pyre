@@ -34,6 +34,7 @@ $(1).info:
 	@${call log.sec,$(1),$(toolchain.$(1).doc)}
 	@${call log.var,kind,$(toolchain.$(1).kind)}
 	@${call log.var,version,$$(toolchain.$(1).version)}
+	@${call log.var,supported,${if $(toolchain.$(1).supported),yes,no}}
 ${call toolchain.info.$(toolchain.$(1).kind),$(1)}
 ${call toolchain.$(1).report}
 
