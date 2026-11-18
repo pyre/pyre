@@ -6,13 +6,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a recipe always records the binding of an owned part, by family and never by
-name: a specification that carries the name of the part leads the loader back to the slot it
-is trying to bind. Components without a family stay out of recipes, and asking for the
-recipe of one is an error
-"""
-
 # support
 import pyre
 
@@ -38,7 +31,9 @@ class Widget(pyre.component, family="recipe.gadgets.widget", implements=Gadget):
     A widget
     """
 
-    level = pyre.properties.int(default=1)
+    # its level
+    level = pyre.properties.int()
+    level.default = 1
 
 
 # the owner
@@ -47,6 +42,7 @@ class Holder(pyre.component, family="recipe.holder"):
     A holder of gadgets
     """
 
+    # the part it owns
     gadget = Gadget()
 
 
@@ -56,10 +52,18 @@ class Loner(pyre.component, implements=Gadget):
     A gadget that stays outside the configuration store
     """
 
-    level = pyre.properties.int(default=1)
+    # its level
+    level = pyre.properties.int()
+    level.default = 1
 
 
 def test():
+    """
+    Check that a recipe always records the binding of an owned part, by family and never by name: a
+    specification that carries the name of the part leads the loader back to the slot it is trying
+    to bind. Components without a family stay out of recipes, and asking for the recipe of one is an
+    error
+    """
     # a holder nobody has looked into
     fresh = Holder(name="recipe.fresh")
     # records the binding of its part, even though it came from the default
@@ -87,6 +91,7 @@ def test():
     other = Holder(name="recipe.other")
     # and check that its part is what the recipe said
     assert isinstance(other.gadget, Widget)
+    # named after the slot it fills
     assert other.gadget.pyre_name == "recipe.other.gadget"
 
     # a holder bound to a gadget without a family
@@ -95,6 +100,7 @@ def test():
     recipe = pyre.config.newRecipe().add(private)
     # and leaves the gadget out, since no configuration file can say how to rebuild it
     assert recipe.section("recipe.private") == {}
+    # and gives it no section of its own
     assert recipe.section("recipe.loner") is None
     # asking for the recipe of the gadget itself
     try:

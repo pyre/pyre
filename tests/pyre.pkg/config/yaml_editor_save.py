@@ -6,13 +6,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a document saved by the editor reads back the same, and that a document opened
-at a location that does not exist starts out empty and creates the file when saved
-"""
-
-
 def test():
+    """
+    Check that a document saved by the editor reads back the same, and that a document opened at a
+    location that does not exist starts out empty and creates the file when saved
+    """
     # support
     import pyre.config
     from pyre.config.yaml import editor
@@ -26,7 +24,9 @@ def test():
     # a defensive guard against a stale product
     import os
 
+    # if there is one
     if os.path.exists(product):
+        # remove it
         os.remove(product)
     # open a document that does not exist
     editor = pyre.config.newYamlEditor(uri=product)
@@ -34,6 +34,7 @@ def test():
     assert editor.get("anything") is None
     # fill it
     editor.set("local", "uri", value="file:/tmp/data")
+    # and an archive
     editor.append("archives", value="qed.archives.local#local")
     # save it
     editor.save()
@@ -45,6 +46,7 @@ def test():
     again = pyre.config.newYamlEditor(uri=product)
     # the contents survived
     assert again.get("local", "uri") == "file:/tmp/data"
+    # the archive too
     assert list(again.get("archives")) == ["qed.archives.local#local"]
     # remove the archive
     assert again.remove("archives", value="qed.archives.local#local")

@@ -6,15 +6,13 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that edits by key path leave everything else as it was: a key added at the end of a
-section lands before the comment block that follows the section, a new section lands before
-the end of file marker, a list grows in place, a replaced value keeps its comments, and a
-removed first entry leaves the comment above it at the top of its section
-"""
-
-
 def test():
+    """
+    Check that edits by key path leave everything else as it was: a key added at the end of a
+    section lands before the comment block that follows the section, a new section lands before the
+    end of file marker, a list grows in place, a replaced value keeps its comments, and a removed
+    first entry leaves the comment above it at the top of its section
+    """
     # support
     import pyre.config
     from pyre.config.yaml import editor
@@ -31,6 +29,7 @@ def test():
     editor.set("crete", "collection", value="NISAR_L2_GSLC_PROVISIONAL_V1")
     # add a new section
     editor.set("local", "uri", value="file:/tmp/data")
+    # with an empty list in it
     editor.set("local", "expanded", value=[])
     # grow the list of archives
     editor.append("archives", value="qed.archives.local#local")

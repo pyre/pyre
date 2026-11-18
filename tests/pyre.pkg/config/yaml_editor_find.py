@@ -6,14 +6,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that the editor finds entries the way the configuration loader scopes them: by the
-dotted name a setting is known by, across keys that spell several levels of it and keys that
-carry a family, and by the line a locator points at
-"""
-
-
 def test():
+    """
+    Check that the editor finds entries the way the configuration loader scopes them: by the dotted
+    name a setting is known by, across keys that spell several levels of it and keys that carry a
+    family, and by the line a locator points at
+    """
     # support
     import pyre.config
     from pyre.config.yaml import editor
@@ -38,9 +36,11 @@ def test():
     )
     # a name spelled partly by a key with a family
     doc.set("qed.archives.earth#crete", "count", value=3)
+    # is found under that key
     assert doc.find("crete.count") == ("qed.archives.earth#crete", "count")
     # a name spelled twice: by the entry that binds a component, and by its section
     doc.set("qed.app", "renderer", value="qed.renderers.plain")
+    # and configure it in a section of its own
     doc.set("qed.app.renderer", "width", value=80)
     # the first entry that spells it is the binding
     assert doc.find("qed.app.renderer") == ("qed.app", "renderer")
@@ -52,16 +52,21 @@ def test():
     assert doc.find("crete.polygon", section=True) is None
     # names the document does not configure
     assert doc.find("crete.missing") is None
+    # at any level
     assert doc.find("nowhere") is None
     # a name that a key spells more of than there is
     assert doc.find("qed") is None
-    # by line: the lines of the fixture, counting from one
-    lines = open("editor.yaml", encoding="utf-8").read().splitlines()
+    # by line: read the fixture
+    with open("editor.yaml", encoding="utf-8") as stream:
+        # and split it into lines, counting from one
+        lines = stream.read().splitlines()
     # the line of the collection
     line = 1 + next(i for i, text in enumerate(lines) if text.strip().startswith("collection:"))
+    # leads to its key
     assert doc.locate(line=line) == ("crete", "collection")
     # the line of a nested key
     line = 1 + next(i for i, text in enumerate(lines) if text.strip().startswith("address:"))
+    # leads to the whole path
     assert doc.locate(line=line) == ("qed.app", "nexus.services.web", "address")
     # a line with no key
     assert doc.locate(line=1) is None

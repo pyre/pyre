@@ -6,12 +6,10 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check that a document that goes through the editor untouched comes out byte for byte the same
-"""
-
-
 def test():
+    """
+    Check that a document that goes through the editor untouched comes out byte for byte the same
+    """
     # support
     import pyre.config
     from pyre.config.yaml import editor
@@ -20,18 +18,23 @@ def test():
     if not editor.available():
         # there is nothing to check
         return None
-    # the fixture
-    text = open("editor.yaml", encoding="utf-8").read()
+    # read the fixture
+    with open("editor.yaml", encoding="utf-8") as stream:
+        # all of it
+        text = stream.read()
     # open it
     editor = pyre.config.newYamlEditor(uri="editor.yaml")
     # the rendering is the original
     assert editor.render() == text
     # and the values are reachable by key path
     assert editor.get("crete", "uri") == "earth:crete"
+    # a list
     assert list(editor.get("archives")) == ["qed.archives.earth#crete"]
+    # and a value under keys that spell several levels of a name
     assert editor.get("qed.app", "nexus.services.web", "address") == "ip4:0.0.0.0:8005"
     # a path that leads nowhere yields the default
     assert editor.get("crete", "missing") is None
+    # and so does one that runs past a value, with the default the caller supplies
     assert editor.get("crete", "uri", "deeper", default="nope") == "nope"
     # all done
     return editor

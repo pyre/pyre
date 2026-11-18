@@ -6,16 +6,14 @@
 # (c) 1998-2026 all rights reserved
 
 
-"""
-Check where the comments of a removed entry go: the block that trailed a removed section
-stays where it was, whether the section was first or in the middle; a comment on the line of
-a removed entry goes with it; a mapping emptied by a removal becomes a bare key that carries
-the block and takes new keys later; and a list emptied by a removal keeps its brackets while
-the block moves above it
-"""
-
-
 def test():
+    """
+    Check where the comments of a removed entry go: the block that trailed a removed section stays
+    where it was, whether the section was first or in the middle; a comment on the line of a removed
+    entry goes with it; a mapping emptied by a removal becomes a bare key that carries the block and
+    takes new keys later; and a list emptied by a removal keeps its brackets while the block moves
+    above it
+    """
     # support
     import pyre.config
     from pyre.config.yaml import editor
@@ -24,20 +22,27 @@ def test():
     if not editor.available():
         # there is nothing to check
         return None
-    # the fixture header, common to every outcome
-    header = open("editor.yaml", encoding="utf-8").read().split("# a section with comments")[0]
+    # read the fixture
+    with open("editor.yaml", encoding="utf-8") as stream:
+        # and keep its header, common to every outcome
+        header = stream.read().split("# a section with comments")[0]
     # go through the scenarios
     for label, edits, tail in scenarios:
         # open the fixture
         doc = pyre.config.newYamlEditor(uri="editor.yaml")
         # apply the edits
         for operation, path, value in edits:
-            # each in its own way
+            # each in its own way: a deletion
             if operation == "delete":
+                # removes an entry
                 assert doc.delete(*path), label
+            # a removal
             elif operation == "remove":
+                # takes a value out of a list
                 assert doc.remove(*path, value=value), label
+            # anything else
             else:
+                # sets a value
                 doc.set(*path, value=value)
         # render
         text = doc.render()

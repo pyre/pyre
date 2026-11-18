@@ -47,8 +47,11 @@ def test() -> None:
             channel.line(f"loading {uri!r} did not report one decoding error")
             # and the details
             channel.indent()
+            # the errors that were reported
             channel.line(f"errors: {[f'{type(error).__name__}: {error}' for error in found]}")
+            # and where to look
             channel.line(f"look in: config/{encoding}, the codec and its parser")
+            # done with the details
             channel.outdent()
         # that names the file and a line in it
         elif uri not in str(found[0]) or "line=" not in str(found[0]):
@@ -56,7 +59,9 @@ def test() -> None:
             channel.line(f"the error from {uri!r} does not say where the file goes wrong")
             # and the details
             channel.indent()
+            # the error that was reported
             channel.line(f"error: {found[0]}")
+            # done with the details
             channel.outdent()
         # carefully
         try:
