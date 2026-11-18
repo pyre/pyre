@@ -6,7 +6,7 @@
 
 
 # the registry of known toolchains
-toolchains := playwright vitest eslint docker
+toolchains := playwright vitest eslint docker xcode
 
 # load each tool's definition
 include ${foreach tool,$(toolchains),$(toolchains.mm)/$(tool)/$(tool).mm}
