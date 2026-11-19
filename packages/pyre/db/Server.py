@@ -16,8 +16,8 @@ class Server(pyre.component, implements=datastore):
     Abstract component that encapsulates the connection to a database back end
 
     This class is meant to be used as the base class for back end specific component
-    implementations. It provides a complete but trivial implementation of the {DataStore}
-    interface.
+    implementations. It builds every statement of the {DataStore} interface out of the SQL
+    generator, and leaves {attach}, {detach} and {execute} to the back ends
     """
 
     # types

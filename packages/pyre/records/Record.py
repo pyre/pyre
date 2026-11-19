@@ -65,7 +65,7 @@ class Record(Dashboard, metaclass=Templater):
     @classmethod
     def pyre_immutable(cls, data=None, **kwds):
         """
-        Build a mutable instance
+        Build an immutable instance
         """
         # easy enough
         return cls.pyre_immutableTuple(record=cls, data=data, **kwds)

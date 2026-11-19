@@ -67,10 +67,10 @@ class Postgres(Server, family="pyre.db.server.postgres"):
             )
 
         # assemble the connection specification; each parameter is a name and a value, and the
-        # two are kept apart all the way down to libpq. splicing them into one string, as this
-        # component used to, means a password with a space in it silently becomes a password and
-        # a garbage keyword. the extension drops the entries whose value is {None}, so that libpq
-        # falls back on its own defaults, which are better than any we could invent
+        # two are kept apart all the way down to libpq, since a password with a space in it,
+        # spliced into one string, would silently become a password and a garbage keyword. the
+        # extension drops the entries whose value is {None}, so that libpq falls back on its own
+        # defaults, which are better than any we could invent
         spec = {
             "dbname": self.database,
             "user": self.username,
@@ -118,8 +118,9 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         """
         Execute the sequence of SQL statements in {sql} as a single command
 
-        The answer is a {Result}: a sequence of rows, each of which is a sequence of values,
-        with the names of the columns available separately, as {result.headers}
+        The answer is the {Result} of the last statement: a sequence of rows, each of which is
+        a sequence of values, with the names of the columns available separately, as
+        {result.headers}
         """
         # a statement sent through a session that was never opened is worth naming
         if self.connection is None:
