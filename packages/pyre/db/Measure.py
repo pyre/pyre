@@ -258,8 +258,8 @@ class Measure(records.measure):
     # the following markers interpret {None} as 'unspecified'
     _primary = None  # am i a primary key?
     _unique = None  # are my values unique across the rows of the table?
-    _notNull = None  # do i accept NULL as a value?
-    _foreign = None  # foreign key: a tuple (foreign_table, field_descriptor)
+    _notNull = None  # do i refuse NULL as a value?
+    _foreign = None  # foreign key: the {ForeignKey} that describes what i refer to
 
 
 # end of file

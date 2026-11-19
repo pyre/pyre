@@ -7,7 +7,7 @@
 
 class ForeignKey:
     """
-    A field decorator the encapsulates references to table fields
+    A field decorator that encapsulates references to table fields
     """
 
     # types
