@@ -302,9 +302,9 @@ pyre::postgres::Connection::sendParams(view_t statement, const arguments_type & 
 auto
 pyre::postgres::Connection::consume() const -> void
 {
-    // pull whatever has arrived on the socket into libpq's buffer. the bindings this package
-    // replaces threw this answer away, and so could not tell a socket that had gone quiet from
-    // one that had gone away; a loop over {busy} would then spin forever
+    // pull whatever has arrived on the socket into libpq's buffer. the answer is what tells a
+    // socket that has gone quiet from one that has gone away; without it, a loop over {busy}
+    // would spin forever on a broken connection
     if (PQconsumeInput(_handle()) == 0) {
         // a zero means the socket is broken
         _fail("");
@@ -645,8 +645,8 @@ pyre::postgres::Connection::_established(handle_type connection) -> handle_type
     }
 
     // a session that did not come up still has to be cleaned up: libpq allocated it, filled it
-    // with the reason it failed, and is waiting to be told to let go. the bindings this package
-    // replaces raised at this point and walked away, leaking one session per failed connection
+    // with the reason it failed, and is waiting to be told to let go; raising without letting go
+    // would leak one session per failed connection
     if (PQstatus(connection) != CONNECTION_OK) {
         // take libpq's account of the failure before it goes away with the session
         string_t explanation(PQerrorMessage(connection));
