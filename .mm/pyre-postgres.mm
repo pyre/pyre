@@ -20,7 +20,7 @@ pyre-postgres.libraries := pyre-postgres.lib
 # a python extension, deposited into the {pyre} package that hosts it
 pyre-postgres.extensions := pyre-postgres.ext
 # the library stands on its own, so it gets a c++ suite of its own; the extension suite exercises
-# the bindings. everything past {sanity} needs a live server
+# the bindings. both are skipped whole when no server answers
 pyre-postgres.tests := pyre-postgres.lib.tests pyre-postgres.ext.tests
 
 

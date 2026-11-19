@@ -17,8 +17,8 @@ pyre-postgres.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 
 # every driver below {sanity} needs a live server, and they all talk to the same one; the ones
 # that create objects do so in the temporary schema of their own session, so they do not collide
-# with each other and they leave nothing behind. run them in order anyway, so that a server that
-# is not there is reported once, by the first of them, rather than seven times
+# with each other and they leave nothing behind. they run in order, the simplest first, so that
+# the first failure points at the most basic thing that is broken
 # skip the whole suite when no server is reachable
 pyre-postgres.lib.tests.drivers.exclude := \
     ${if $(postgres.live),,${notdir ${wildcard tests/postgres.lib/*.cc}}}
