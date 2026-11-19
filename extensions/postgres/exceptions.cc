@@ -38,7 +38,7 @@ namespace pyre::postgres::py {
         py::dict kwds;
         kwds["diagnostic"] = diagnostic.message();
         // the only part of a complaint that is portable, and hence the only part worth branching
-        // on; this is what the bindings this package replaces threw away
+        // on
         kwds["sqlstate"] = diagnostic.sqlstate();
         // the statement that provoked it
         kwds["command"] = diagnostic.command();
