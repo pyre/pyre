@@ -117,6 +117,30 @@ class ArrivalError(CarriageError):
         return
 
 
+# a channel was pickled or copied outside a marshaler
+class ChannelError(IPCError):
+    """
+    Exception raised when a channel is pickled or copied outside a marshaler
+    """
+
+    # the message template
+    description = (
+        "cannot pickle or copy the channel '{0.kind}': "
+        "a channel travels only inside a message sent by a marshaler"
+    )
+
+    # metamethods
+    def __init__(self, channel, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the channel
+        self.channel = channel
+        # and its kind
+        self.kind = type(channel).__qualname__
+        # all done
+        return
+
+
 # a channel cannot be rebuilt from its hints
 class TravelError(IPCError):
     """

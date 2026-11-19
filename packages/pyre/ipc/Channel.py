@@ -14,7 +14,7 @@ import os
 import select
 
 # the exceptions raised by channels
-from .exceptions import CarriageError, TravelError
+from .exceptions import CarriageError, ChannelError, TravelError
 
 
 # declaration
@@ -196,6 +196,16 @@ class Channel:
         """
         # every kind of channel knows how to rebuild itself
         raise NotImplementedError(f"class '{cls.__name__}' must implement 'rebuild'")
+
+    # metamethods
+    def __reduce_ex__(self, protocol):
+        """
+        Refuse to be pickled, or copied, outside a marshaler: my descriptors are numbers that
+        mean something only in this process, so i travel only inside a marshaled message,
+        which carries the descriptors themselves
+        """
+        # complain
+        raise ChannelError(channel=self)
 
     # support
     @staticmethod
