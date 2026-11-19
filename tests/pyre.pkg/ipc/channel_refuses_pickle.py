@@ -65,17 +65,19 @@ def test():
     # which holds the payload
     assert mapped[:] == payload
 
-    # clean up
+    # clean up: the mapping
     mapped.close()
     # the clone
     clone.close()
-    # all of it
+    # the original
     file.close()
-    # both ends of the pipe
+    # the ends of the pipe
     pipe.parent.close()
+    # both of them
     pipe.child.close()
-    # and of the socket pair
+    # and the ends of the socket pair
     pair.parent.close()
+    # both of them
     pair.child.close()
 
     # all done
