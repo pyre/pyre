@@ -66,6 +66,13 @@ private:
 // note that this does not derive from {Error}: the database api puts the two side by side, so
 // that a warning, which is not a failure, is not caught by a {catch} that is looking for one
 class pyre::postgres::Warning : public pyre::postgres::Exception {
+    // types
+public:
+    // me
+    using self_type = Warning;
+    // my superclass
+    using super_type = pyre::postgres::Exception;
+
     // metamethods
 public:
     // adopt the server's report
@@ -81,6 +88,13 @@ public:
 
 // the base of everything that did stop the back end
 class pyre::postgres::Error : public pyre::postgres::Exception {
+    // types
+public:
+    // me
+    using self_type = Error;
+    // my superclass
+    using super_type = pyre::postgres::Exception;
+
     // metamethods
 public:
     // adopt the server's report
@@ -100,6 +114,13 @@ public:
 // the two ways to get one of these. the server is not involved, and so has nothing to say: a
 // diagnostic built here carries a message we wrote ourselves and no SQLSTATE at all
 class pyre::postgres::InterfaceError : public pyre::postgres::Error {
+    // types
+public:
+    // me
+    using self_type = InterfaceError;
+    // my superclass
+    using super_type = pyre::postgres::Error;
+
     // metamethods
 public:
     // explain, in our own words, what the caller did wrong
@@ -117,6 +138,13 @@ public:
 
 // a complaint that came back from the server
 class pyre::postgres::DatabaseError : public pyre::postgres::Error {
+    // types
+public:
+    // me
+    using self_type = DatabaseError;
+    // my superclass
+    using super_type = pyre::postgres::Error;
+
     // metamethods
 public:
     // adopt the server's report
@@ -132,6 +160,13 @@ public:
 
 // the data in the statement was wrong; SQLSTATE class 22
 class pyre::postgres::DataError : public pyre::postgres::DatabaseError {
+    // types
+public:
+    // me
+    using self_type = DataError;
+    // my superclass
+    using super_type = pyre::postgres::DatabaseError;
+
     // metamethods
 public:
     explicit inline DataError(diagnostic_type diagnostic);
@@ -145,6 +180,13 @@ public:
 
 // the environment failed us; SQLSTATE classes 08, 53 through 58, and their neighbors
 class pyre::postgres::OperationalError : public pyre::postgres::DatabaseError {
+    // types
+public:
+    // me
+    using self_type = OperationalError;
+    // my superclass
+    using super_type = pyre::postgres::DatabaseError;
+
     // metamethods
 public:
     explicit inline OperationalError(diagnostic_type diagnostic);
@@ -158,6 +200,13 @@ public:
 
 // the statement would have left the database inconsistent; SQLSTATE class 23
 class pyre::postgres::IntegrityError : public pyre::postgres::DatabaseError {
+    // types
+public:
+    // me
+    using self_type = IntegrityError;
+    // my superclass
+    using super_type = pyre::postgres::DatabaseError;
+
     // metamethods
 public:
     explicit inline IntegrityError(diagnostic_type diagnostic);
@@ -172,6 +221,13 @@ public:
 // the back end found itself in a state it does not believe in; SQLSTATE classes XX, P0, and
 // the ones that say a cursor or a transaction is not where the server left it
 class pyre::postgres::InternalError : public pyre::postgres::DatabaseError {
+    // types
+public:
+    // me
+    using self_type = InternalError;
+    // my superclass
+    using super_type = pyre::postgres::DatabaseError;
+
     // metamethods
 public:
     explicit inline InternalError(diagnostic_type diagnostic);
@@ -186,6 +242,13 @@ public:
 // the statement was malformed; SQLSTATE class 42, and the ones that name a thing that is not
 // there
 class pyre::postgres::ProgrammingError : public pyre::postgres::DatabaseError {
+    // types
+public:
+    // me
+    using self_type = ProgrammingError;
+    // my superclass
+    using super_type = pyre::postgres::DatabaseError;
+
     // metamethods
 public:
     explicit inline ProgrammingError(diagnostic_type diagnostic);
@@ -199,6 +262,13 @@ public:
 
 // the statement asked for something this server cannot do; SQLSTATE class 0A
 class pyre::postgres::NotSupportedError : public pyre::postgres::DatabaseError {
+    // types
+public:
+    // me
+    using self_type = NotSupportedError;
+    // my superclass
+    using super_type = pyre::postgres::DatabaseError;
+
     // metamethods
 public:
     explicit inline NotSupportedError(diagnostic_type diagnostic);

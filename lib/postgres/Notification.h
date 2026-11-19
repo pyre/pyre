@@ -19,6 +19,8 @@
 struct pyre::postgres::Notification {
     // types
 public:
+    // me
+    using self_type = Notification;
     using string_type = string_t;
 
     // metamethods
