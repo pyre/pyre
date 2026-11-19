@@ -79,6 +79,9 @@ from . import exceptions
 from .Channel import Channel as channel
 from .Manifest import Manifest as manifest
 
+# a channel over an open file
+from .File import File as file
+
 # my protocols
 from .Dispatcher import Dispatcher as dispatcher
 from .Marshaler import Marshaler as marshaler
