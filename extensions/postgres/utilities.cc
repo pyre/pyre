@@ -74,9 +74,8 @@ pyre::postgres::py::render(py::handle value) -> argument_t
 auto
 pyre::postgres::py::pythonize(const Field & field) -> py::object
 {
-    // a value the server did not send becomes {None}. this is what the database api asks for,
-    // and what the sqlite back end has always done; the bindings this package replaces handed
-    // back {pyre.db.null} instead, which is a fragment of sql and not a value at all
+    // a value the server did not send becomes {None}, which is what the database api asks for,
+    // and what the sqlite back end does; {pyre.db.null} is a fragment of sql, not a value
     if (field.isNull()) {
         return py::none();
     }

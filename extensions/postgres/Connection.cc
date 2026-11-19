@@ -27,9 +27,9 @@ namespace pyre::postgres::py {
             if (item.second.is_none()) {
                 continue;
             }
-            // everything else goes as a name and a value, kept apart. a password with a space
-            // in it, spliced into a conninfo string, silently becomes a password and a garbage
-            // keyword; the bindings this package replaces built the string that way
+            // everything else goes as a name and a value, kept apart: a password with a space
+            // in it, spliced into a conninfo string, would silently become a password and a
+            // garbage keyword
             parameters.emplace_back(
                 item.first.cast<string_t>(), py::str(item.second).cast<string_t>());
         }
@@ -41,9 +41,8 @@ namespace pyre::postgres::py {
 
 // add the bindings for a session with the back end
 //
-// every call below that waits on the server lets go of the interpreter lock while it waits. the
-// bindings this package replaces held it throughout, so a single slow query stopped every thread
-// in the process
+// every call below that waits on the server lets go of the interpreter lock while it waits, so
+// a slow query stops only the thread that sent it
 void
 pyre::postgres::py::connection(py::module & m)
 {

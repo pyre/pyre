@@ -102,8 +102,7 @@ pyre::postgres::py::field(py::module & m)
             if (self.isNull()) {
                 return py::none();
             }
-            // and one that is arrives exactly as the server sent it, uninterpreted; this is the
-            // way to reach a column the server was asked to send in its binary format
+            // and one that is arrives exactly as the server sent it, uninterpreted
             const auto octets = self.bytes();
             return py::bytes(octets.data(), octets.size());
         },

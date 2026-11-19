@@ -33,9 +33,8 @@ namespace pyre::postgres::py {
 // add the bindings for everything the server sent back in answer to one statement
 //
 // a result reads as a sequence of rows, each of which reads as a sequence of values. the column
-// names are a property of the result rather than its first row, which is where the bindings this
-// package replaces used to put them: they returned a tuple whose head was the headers and whose
-// tail was the data, and every caller had to know to skip it
+// names are a property of the result rather than its first row, so no caller has to know to skip
+// a row of headers
 void
 pyre::postgres::py::result(py::module & m)
 {
