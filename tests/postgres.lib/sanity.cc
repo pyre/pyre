@@ -50,7 +50,7 @@ main()
     // make a channel
     auto channel = pyre::journal::debug_t("pyre.postgres.sanity");
     // and say something
-    channel << pyre::journal::at() << "the postgres bindings are there" << pyre::journal::endl;
+    channel << pyre::journal::here() << "the postgres bindings are there" << pyre::journal::endl;
 
     // all done
     return 0;
