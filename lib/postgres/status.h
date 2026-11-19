@@ -15,8 +15,7 @@
 //
 // every one of them has a fallback, and every fallback trips a firewall: a status this package
 // does not recognize means libpq has grown one since this file was written, and the code must
-// change. the old bindings had no such backstop, and quietly reported half of what the server
-// said as a syntax error
+// change, rather than report what the server said as something it did not say
 
 
 // how a session is doing
@@ -103,7 +102,7 @@ pyre::postgres::execStatus(ExecStatusType status) -> ExecStatus
     // so complain
     channel
         // where
-        << pyre::journal::at()
+        << pyre::journal::here()
         // what
         << "unknown result status"
         << pyre::journal::newline
@@ -191,7 +190,7 @@ pyre::postgres::describe(ExecStatus status) -> view_t
     // so complain
     channel
         // where
-        << pyre::journal::at()
+        << pyre::journal::here()
         // what
         << "no description for result status "
         << static_cast<int>(status)
@@ -231,7 +230,7 @@ pyre::postgres::transactionStatus(PGTransactionStatusType status) -> Transaction
     // so complain
     channel
         // where
-        << pyre::journal::at()
+        << pyre::journal::here()
         // what
         << "unknown transaction status"
         << pyre::journal::newline
@@ -264,7 +263,7 @@ pyre::postgres::format(int code) -> Format
     // so complain
     channel
         // where
-        << pyre::journal::at()
+        << pyre::journal::here()
         // what
         << "unknown column format"
         << pyre::journal::newline

@@ -157,7 +157,7 @@ pyre::postgres::Transaction::_close() noexcept -> void
         // and complain
         channel
             // where
-            << pyre::journal::at()
+            << pyre::journal::here()
             // what
             << "failed to roll back a transaction that was never committed"
             << pyre::journal::newline
@@ -173,7 +173,7 @@ pyre::postgres::Transaction::_close() noexcept -> void
         // and complain
         channel
             // where
-            << pyre::journal::at()
+            << pyre::journal::here()
             // what
             << "failed to roll back a transaction that was never committed"
             << pyre::journal::newline

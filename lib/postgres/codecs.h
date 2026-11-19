@@ -109,7 +109,7 @@ namespace pyre::postgres::codecs {
             auto channel = pyre::journal::firewall_t("pyre.postgres.codecs");
             channel
                 // where
-                << pyre::journal::at()
+                << pyre::journal::here()
                 // what
                 << "failed to render a floating point value"
                 // flush

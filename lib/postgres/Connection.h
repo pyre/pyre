@@ -30,8 +30,8 @@
 //
 // copies of a connection share the session, and the last one to go away closes it. {close}
 // hands it back early, and every copy learns that it has: a statement sent through a connection
-// that has been closed raises an {InterfaceError}, and does not, as the bindings this package
-// replaces used to, hand libpq a pointer to memory it had already freed
+// that has been closed raises an {InterfaceError}, rather than handing libpq a pointer to memory
+// it has already freed
 class pyre::postgres::Connection {
     // types
 public:
