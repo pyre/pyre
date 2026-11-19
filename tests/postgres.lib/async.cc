@@ -30,9 +30,8 @@ specification() -> pyre::postgres::parameters_t
 // wait for the statement in flight to finish
 //
 // this is the loop the asynchronous calls exist to support: read whatever has arrived, ask
-// whether the answer is complete, and go around again. the bindings this package replaces threw
-// away the answer of {consume}, and so a loop like this one could not tell a socket that had
-// gone quiet from one that had gone away
+// whether the answer is complete, and go around again; {consume} is what lets it tell a socket
+// that has gone quiet from one that has gone away
 static auto
 settle(const pyre::postgres::Connection & session) -> bool
 {
