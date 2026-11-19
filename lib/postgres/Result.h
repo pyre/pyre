@@ -140,6 +140,8 @@ private:
 class pyre::postgres::Result::const_iterator {
     // types
 public:
+    // me
+    using self_type = const_iterator;
     // what a standard algorithm needs to know about me
     using iterator_category = std::input_iterator_tag;
     using value_type = Row;
