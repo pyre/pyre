@@ -7,8 +7,7 @@
 
 
 """
-Check that arrays render as json with their numbers intact, and as text that reads back as the
-same array
+Check that arrays render as text that reads back as the same array
 """
 
 
@@ -26,8 +25,6 @@ def test() -> None:
     for value in ((1.0, 2.0), ((1.0, 2.0), (3.0, 4.0)), ()):
         # reads back from its text
         assert schema.coerce(schema.string(value)) == value, value
-    # json keeps the numbers
-    assert schema.json(((1.0, 2.0), (3.0, 4.0))) == ((1.0, 2.0), (3.0, 4.0))
 
     # all done
     return

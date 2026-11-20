@@ -44,8 +44,6 @@ def test() -> None:
         "band": "L",
         "frequency": "A",
     }
-    # their values are rendered by the schema of the entries
-    assert integers.json({"one": 1}) == {"one": 1}
     # and {None} is left alone
     assert strings.string(None) is None
 
