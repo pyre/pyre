@@ -19,7 +19,7 @@ class Fraction(Number):
 
     # constants
     typename = "fraction"  # the name of my type
-    complaint = "could not coerce {0.value!r} into a fraction"
+    complaint = "could not coerce {0.value!r} into a fraction"  # what i say when i refuse
 
     # interface
     def coerce(self, value, **kwds):
@@ -37,13 +37,6 @@ class Fraction(Number):
             raise self.CastingError(value=value, description=self.complaint, error=error)
         # if all goes well, return the {fraction}
         return fraction
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

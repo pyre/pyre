@@ -24,7 +24,7 @@ class Mapping(Container):
     # constants
     typename = "mapping"  # the name of my type
     container = dict  # the default container i represent
-    complaint = "could not coerce {0.value!r} to a mapping"
+    complaint = "could not coerce {0.value!r} to a mapping"  # what i say when i refuse
     delimiter = ","  # the separator of the entries in the text form
     separator = ":"  # the separator of a key from its value in the text form
 
@@ -43,19 +43,6 @@ class Mapping(Container):
         return f"{self.delimiter} ".join(
             f"{key}{self.separator}{schema.string(item)}" for key, item in value.items()
         )
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # respect {None}
-        if value is None:
-            # by leaving it alone
-            return None
-        # get my schema
-        schema = self.schema
-        # ask it for the representation of each value
-        return {key: schema.json(item) for key, item in value.items()}
 
     def render(self, renderer, value, incognito=False, **kwds):
         """

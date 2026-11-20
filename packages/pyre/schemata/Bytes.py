@@ -56,13 +56,6 @@ class Bytes(Schema):
         # write the hexadecimal digits of the octets
         return value.hex()
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """

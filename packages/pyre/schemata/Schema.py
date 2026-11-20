@@ -15,8 +15,8 @@ class Schema:
     from .exceptions import CastingError, EnumError
 
     # constants
-    typename = "identity"
-    isContainer = False
+    typename = "identity"  # the name of my type
+    isContainer = False  # whether my values hold the values of other schemata
 
     # public data
     @property
@@ -70,18 +70,6 @@ class Schema:
             return None
         # my value knows
         return str(value)
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # respect {None}
-        if value is None:
-            # by leaving it alone
-            return None
-        # by default, let the raw value through; the schemata that are not JSON representable
-        # must override to provide something suitable
-        return value
 
     def render(self, renderer, value, incognito=False, **kwds):
         """

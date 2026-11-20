@@ -60,13 +60,6 @@ class Dimensional(Number):
         # anything else is not a quantity
         raise self.CastingError(value=value, description=self.complaint)
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """

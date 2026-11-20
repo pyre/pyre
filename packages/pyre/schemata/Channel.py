@@ -63,13 +63,6 @@ class Channel(Schema):
         # put it all together
         return f"{hints['kind']}?{settings}#{numbers}"
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # implementation details
     def parse(self, text):
         """

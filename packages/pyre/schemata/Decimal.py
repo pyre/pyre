@@ -38,13 +38,6 @@ class Decimal(Number):
         # if all goes well, return the {number}
         return number
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """

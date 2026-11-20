@@ -69,13 +69,6 @@ class Date(Schema):
         # my value knows
         return value.strftime(self.format)
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
