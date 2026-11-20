@@ -70,24 +70,6 @@ pyre::postgres::py::render(py::handle value) -> argument_t
 }
 
 
-// turn the value of {field} into a python object
-auto
-pyre::postgres::py::pythonize(const Field & field) -> py::object
-{
-    // a value the server did not send becomes {None}, which is what the database api asks for,
-    // and what the sqlite back end does; {pyre.db.null} is a fragment of sql, not a value
-    if (field.isNull()) {
-        return py::none();
-    }
-
-    // everything else arrives as the text the server's output function produced
-    const auto text = field.bytes();
-    // which becomes a python string; the server tells us it is encoded the way the session
-    // negotiated, and that is very nearly always utf-8
-    return py::str(text.data(), text.size());
-}
-
-
 // turn every argument of a call into the text of a statement's placeholders
 auto
 pyre::postgres::py::arguments(const py::args & args) -> arguments_t

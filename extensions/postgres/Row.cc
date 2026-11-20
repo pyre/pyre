@@ -22,7 +22,8 @@ namespace pyre::postgres::py {
         py::tuple rendering(columns);
         // fill it in
         for (Row::index_type column = 0; column < columns; ++column) {
-            // each value becomes a string, or {None} when the server sent nothing
+            // each value becomes the python value of its type, or {None} when the server sent
+            // nothing
             rendering[column] = pythonize(row[column]);
         }
         // hand it off
