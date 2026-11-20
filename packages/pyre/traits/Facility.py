@@ -140,19 +140,6 @@ class Facility(Slotted, schemata.component):
         # instantiate and return
         return protocol.pyre_instantiate(spec=spec, component=value, name=name, locator=locator)
 
-    def render(self, value, renderer, workload, incognito=False):
-        """
-        Render {value} using renderer
-        """
-        # get the name to use
-        name = None if incognito else self.name
-        # delegate to my protocol
-        yield from self.protocol.pyre_render(
-            renderer=renderer, name=name, component=value, workload=workload
-        )
-        # all done
-        return
-
     # meta-methods
     def __init__(self, protocol, optional=False, **kwds):
         # chain up; facilities are required by default, overriding the dormant descriptor
