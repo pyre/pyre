@@ -44,23 +44,6 @@ class Mapping(Container):
             f"{key}{self.separator}{schema.string(item)}" for key, item in value.items()
         )
 
-    def render(self, renderer, value, incognito=False, **kwds):
-        """
-        Render {value} using {renderer}
-        """
-        # a mapping fits on one line, in the form its text is read back from
-        entry = self.string(value)
-        # if i'm incognito
-        if incognito:
-            # render just my value
-            yield renderer.value(value=entry)
-        # otherwise
-        else:
-            # render both my name and the value
-            yield renderer.trait(name=self.name, value=entry)
-        # all done
-        return
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """

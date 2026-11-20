@@ -17,7 +17,7 @@ class Container(Schema):
 
     # constants
     typename = "container"  # the name of my type
-    isContainer = True
+    isContainer = True  # i hold other values
 
     @property
     def type(self):
@@ -44,29 +44,6 @@ class Container(Schema):
         """
         # get the worker to build an iterable, cast it into my container type and return it
         return self.container(self._coerce(value=value, **kwds))
-
-    def render(self, renderer, value, incognito=False, **kwds):
-        """
-        Render {value} using {renderer}
-        """
-        # if i'm the item of another container
-        if incognito:
-            # i fit on its line
-            yield renderer.value(value=self.string(value))
-            # and i'm done
-            return
-        # get my schema
-        schema = self.schema
-        # render just my name
-        yield renderer.trait(name=self.name, value="")
-        # go through the items
-        for item in value:
-            # ask my schema to render each one
-            entry = ",".join(schema.render(renderer=renderer, value=item, incognito=True, **kwds))
-            # and put it on a separate line
-            yield renderer.value(value=f"{entry},")
-        # all done
-        return
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
