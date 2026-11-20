@@ -86,9 +86,9 @@ class Date(Schema):
         return handler(schema=self, **kwds)
 
     # meta-methods
-    def __init__(self, default=datetime.date.today(), format=format, **kwds):
-        # chain up with my default
-        super().__init__(default=default, **kwds)
+    def __init__(self, format=format, **kwds):
+        # chain up; with no default of my own, mine is {None}, as for any schema
+        super().__init__(**kwds)
         # store the format
         self.format = format
         # all done

@@ -126,9 +126,9 @@ class Time(Schema):
         return handler(schema=self, **kwds)
 
     # meta-methods
-    def __init__(self, default=datetime.datetime.today(), format=format, timezone=None, **kwds):
-        # chain up with my default
-        super().__init__(default=default, **kwds)
+    def __init__(self, format=format, timezone=None, **kwds):
+        # chain up; with no default of my own, mine is {None}, as for any schema
+        super().__init__(**kwds)
         # store the format
         self.format = format
         # and what i say about time zones
