@@ -52,7 +52,7 @@ def test():
     # the statement ran
     assert answer.ok
     # and produced what was asked for
-    assert answer[0][0] == "42"
+    assert answer[0][0] == 42
     # the second is the sign that the server is done, and the session may be used again
     assert connection.result() is None
 
@@ -93,7 +93,7 @@ def test():
         assert error.sqlstate == "42P01"
 
     # the session, having been drained, works again
-    assert connection.exec("SELECT 1")[0][0] == "1"
+    assert connection.exec("SELECT 1")[0][0] == 1
 
     # a message from another session; there is only one here, and postgres delivers a
     # notification to the session that raised it, so listen

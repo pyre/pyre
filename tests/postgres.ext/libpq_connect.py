@@ -31,7 +31,7 @@ def test():
     # take a copy; the two now share one session with the server
     alias = connection
     # which the copy can use
-    assert alias.exec("SELECT 1")[0][0] == "1"
+    assert alias.exec("SELECT 1")[0][0] == 1
 
     # close the session through one of them
     connection.close()
