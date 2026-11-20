@@ -621,8 +621,8 @@ class Configurable(Dashboard):
                 continue
             # get the value
             value = inventory.getTraitValue(trait=trait)
-            # get the trait to render the value
-            yield from trait.render(renderer=renderer, value=value, workload=workload)
+            # let the trait tell {renderer} what kind of value it holds, so it gets rendered
+            yield from trait._pyre_identify(authority=renderer, value=value, workload=workload)
 
         # done with me
         yield from renderer.componentEnd(component=self)
