@@ -23,6 +23,10 @@ class Address:
     # public data
     @property
     def value(self):
+        """
+        The form of my address that {socket.connect} expects
+        """
+        # each kind of address knows its own
         raise NotImplementedError(f"class {type(self).__name__!r} must implement 'value'")
 
 
@@ -33,7 +37,9 @@ class IPv4(Address):
 
     # public data
     family = socket.AF_INET
+    # the host
     host = ""
+    # and the port
     port = 0
 
     @property
@@ -41,6 +47,7 @@ class IPv4(Address):
         """
         Build the tuple required by {socket.connect}
         """
+        # the host and the port
         return (self.host, self.port)
 
     # meta methods
@@ -65,6 +72,7 @@ class Unix(Address):
 
     # public data
     family = socket.AF_UNIX
+    # the path to the socket
     path = None
 
     @property
@@ -72,6 +80,7 @@ class Unix(Address):
         """
         Build the value expected by {socket.connect}
         """
+        # the path to the socket
         return self.path
 
     # meta methods
@@ -105,12 +114,13 @@ class INet(Schema):
     address = Address
     # the more specialized types
     ip = ip4 = ipv4 = IPv4
+    # and unix sockets
     unix = local = Unix
 
     # constants
     any = ip(host="", port=0)  # the moral equivalent of zero...
     typename = "inet"  # the name of my type
-    complaint = "could not coerce {0.value!r} into an internet address"
+    complaint = "could not coerce {0.value!r} into an internet address"  # when i refuse
 
     # interface
     def coerce(self, value, **kwds):
@@ -179,6 +189,21 @@ class INet(Schema):
         # if we get this far, there was no explicit family name in the address, in which case
         # just build an ipv4 address
         return self.ipv4(host=match.group("host"), port=match.group("port"))
+
+    def string(self, value):
+        """
+        Render {value} as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None:
+            # by leaving it alone
+            return None
+        # a unix address names its family, and then its path
+        if isinstance(value, self.unix):
+            # so spell both
+            return f"unix:{value.path}"
+        # and an ip address is a host and a port
+        return f"{value.host}:{value.port}"
 
     def json(self, value):
         """

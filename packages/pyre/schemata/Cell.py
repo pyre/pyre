@@ -20,7 +20,7 @@ class Cell(Schema):
 
     # constants
     typename = "cell"  # the name of my type
-    complaint = "could not coerce {0.value!r} to cell"
+    complaint = "could not coerce {0.value!r} to cell"  # what i say when i refuse a value
 
     # interface
     def coerce(self, value, **kwds):
@@ -34,13 +34,7 @@ class Cell(Schema):
         # strings
         if isinstance(value, str):
             # get the translation table
-            xlat = self.xlat
-            # if i don't have a translation table yet
-            if xlat is None:
-                # build it
-                xlat = self.makeTranslationTable()
-                # and attach it as a class resource
-                Cell.xlat = xlat
+            xlat = self.translationTable()
             # carefully
             try:
                 # look the name up in the table
@@ -54,7 +48,35 @@ class Cell(Schema):
         # all other types are incompatible, for now
         raise self.CastingError(description=self.complaint, value=value)
 
+    def string(self, value):
+        """
+        Render {value} as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None:
+            # by leaving it alone
+            return None
+        # get the translation table
+        xlat = self.translationTable()
+        # the table lists the full name of each cell after its abbreviations, so the last name
+        # that maps to {value} is the one to write
+        names = {cell: name for name, cell in xlat.items()}
+        # look it up
+        return names[value]
+
     # implementation details
+    @classmethod
+    def translationTable(cls):
+        """
+        Get the table that maps the names of cells to cells, building it the first time
+        """
+        # if there is no table yet
+        if cls.xlat is None:
+            # build it, and attach it as a class resource
+            Cell.xlat = cls.makeTranslationTable()
+        # hand it off
+        return cls.xlat
+
     # the name lookup table
     @classmethod
     def makeTranslationTable(cls):
