@@ -486,6 +486,10 @@ pyre::postgres::Connection::reset() const -> void
     if (PQstatus(_connection.handle()) != CONNECTION_OK) {
         _fail("");
     }
+    // the new session starts from the server's settings, so fix them again
+    if (!_pin(_connection.handle())) {
+        _fail("");
+    }
 
     // all done
     return;
@@ -656,8 +660,35 @@ pyre::postgres::Connection::_established(handle_type connection) -> handle_type
         throw OperationalError(Diagnostic(std::move(explanation)));
     }
 
+    // fix the way the session spells its values; one that will not take the settings is
+    // cleaned up and reported the same way as one that did not come up
+    if (!_pin(connection)) {
+        // take libpq's account of the failure before it goes away with the session
+        string_t explanation(PQerrorMessage(connection));
+        // hand the session back
+        PQfinish(connection);
+        // and complain
+        throw OperationalError(Diagnostic(std::move(explanation)));
+    }
+
     // hand off the session
     return connection;
+}
+
+
+// fix the settings that decide how the server spells the values it sends
+auto
+pyre::postgres::Connection::_pin(handle_type connection) -> bool
+{
+    // dates and times in the one style the decoders read, and text in utf-8, whatever the
+    // server's configuration or the caller's options asked for
+    PGresult * result = PQexec(connection, "SET DateStyle TO ISO; SET client_encoding TO 'UTF8'");
+    // the settings took when the server ran both commands
+    const bool pinned = result != nullptr && PQresultStatus(result) == PGRES_COMMAND_OK;
+    // give the result back
+    PQclear(result);
+    // and report
+    return pinned;
 }
 
 

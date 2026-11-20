@@ -32,6 +32,10 @@
 // hands it back early, and every copy learns that it has: a statement sent through a connection
 // that has been closed raises an {InterfaceError}, rather than handing libpq a pointer to memory
 // it has already freed
+//
+// every session writes its dates and times the ISO way and its text in utf-8, whatever the server's
+// configuration or the caller's parameters ask for, so that the values it sends always read the
+// same way
 class pyre::postgres::Connection {
     // types
 public:
@@ -201,6 +205,8 @@ private:
     static inline auto _connect(view_t conninfo) -> handle_type;
     // and the check the two of them share
     static inline auto _established(handle_type connection) -> handle_type;
+    // fix the settings that decide how the server spells the values it sends
+    static inline auto _pin(handle_type connection) -> bool;
 
     // data
 private:
