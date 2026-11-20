@@ -5,9 +5,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-# support
-from ..calc.Interpolation import Interpolation
-
 # the configuration events a recipe turns into
 from .events import Assignment
 
@@ -295,16 +292,11 @@ class Recipe:
         """
         Reduce {value}, the value of {trait}, to plain values a configuration file can hold
         """
-        # a table travels as a table, entry by entry; the trait would render it whole as one
-        # string, which a configuration file cannot tell from text
-        if self._tabular(value=value):
-            # so flatten it directly
-            return self._flatten(value=value)
-        # let the trait render everything else the way it knows how, e.g. paths and uris as
-        # strings and tuples in the form the loader reads back
-        rendered = trait.json(value)
-        # and flatten whatever structure is left
-        return self._flatten(value=rendered)
+        # get the renderer of values into the plain values of yaml
+        from ..weaver import yaml
+
+        # and let it reduce the value the way its schema reads it back
+        return yaml().render(schema=trait, value=value)
 
     def _tabular(self, value):
         """
@@ -312,29 +304,6 @@ class Recipe:
         """
         # anything with items to go through
         return isinstance(value, dict) or callable(getattr(value, "items", None))
-
-    def _flatten(self, value):
-        """
-        Reduce {value} to scalars, lists, and tables of them
-        """
-        # text was evaluated already, and is interpolated again when the file is read
-        if isinstance(value, str):
-            # so it travels with its braces escaped
-            return Interpolation.escape(value)
-        # the other scalars travel as they are
-        if value is None or isinstance(value, (bool, int, float)):
-            # untouched
-            return value
-        # tables, entry by entry
-        if self._tabular(value=value):
-            # with string keys
-            return {str(key): self._flatten(value=item) for key, item in value.items()}
-        # sequences of every kind become lists
-        if isinstance(value, (list, tuple, set, frozenset)):
-            # item by item
-            return [self._flatten(value=item) for item in value]
-        # anything else travels as its string form, which is text like any other
-        return Interpolation.escape(str(value))
 
 
 # end of file
