@@ -15,6 +15,8 @@ from .Property import Property as property
 # for convenience, expose the typed ones
 # the simple ones: truth values
 bool = property.bool
+# strings of octets
+bytes = property.bytes
 # the types of the cells of grids
 cell = property.cell
 # complex numbers
@@ -48,6 +50,8 @@ time = property.time
 timestamp = property.timestamp
 # resource identifiers
 uri = property.uri
+# universally unique identifiers
+uuid = property.uuid
 
 # containers: arrays
 array = property.array

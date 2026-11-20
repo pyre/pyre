@@ -10,6 +10,7 @@ from .Schema import Schema as identity
 
 # simple types
 from .Boolean import Boolean as bool
+from .Bytes import Bytes as bytes
 from .Cell import Cell as cell
 from .Complex import Complex as complex
 from .Decimal import Decimal as decimal
@@ -27,6 +28,7 @@ from .Path import Path as path
 from .Time import Time as time
 from .Timestamp import Timestamp as timestamp
 from .URI import URI as uri
+from .UUID import UUID as uuid
 
 # containers
 from .Sequence import Sequence as sequence
@@ -48,9 +50,9 @@ from .Channel import Channel as channel
 
 # put the schemata that typed properties are made of in piles; mappings are not among them,
 # since the property that holds a map is {pyre.traits.Dict}, whose entries live in the store
-basic = (identity, bool, cell, complex, decimal, enum, float, fraction, inet, int, str)
+basic = (identity, bool, bytes, cell, complex, decimal, enum, float, fraction, inet, int, str)
 # the ones whose values have structure
-composite = (date, dimensional, path, time, timestamp, uri)
+composite = (date, dimensional, path, time, timestamp, uri, uuid)
 # the ones whose values hold others
 containers = (sequence, array, list, set, tuple)
 # and the ones whose values are resources of the process
