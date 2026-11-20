@@ -20,7 +20,7 @@ class Component(Schema):
 
     # constants
     default = object()
-    complaint = "could not coerce {0.value!r} into a component"
+    complaint = "could not coerce {0.value!r} into a component"  # when i refuse a value
 
     # public data
     protocol = None
@@ -30,6 +30,7 @@ class Component(Schema):
         """
         Identify my schema through my protocol
         """
+        # the family of my protocol, or a generic name when it has none
         return self.protocol.pyre_family() or "component"
 
     # interface
@@ -128,13 +129,6 @@ class Component(Schema):
             return None
         # my value knows
         return value.pyre_name
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

@@ -21,9 +21,9 @@ class InputStream(Schema, Dashboard):
     """
 
     # constants
-    mode = "r"
-    typename = "istream"
-    complaint = "could not use {0.value!r} as an input stream"
+    mode = "r"  # the mode i open files in
+    typename = "istream"  # the name of my type
+    complaint = "could not use {0.value!r} as an input stream"  # when i refuse a value
 
     # types
     from . import uri
@@ -62,13 +62,6 @@ class InputStream(Schema, Dashboard):
             return None
         # my value knows
         return value.name
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):

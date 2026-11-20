@@ -78,13 +78,6 @@ class Time(Schema):
         # otherwise, my format knows
         return value.strftime(self.format)
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # implementation details
     def _parse(self, text):
         """

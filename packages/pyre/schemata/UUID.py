@@ -61,13 +61,6 @@ class UUID(Schema):
         # the canonical form, with its hyphens
         return str(value)
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """

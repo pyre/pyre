@@ -43,17 +43,6 @@ class Sequence(Container):
         # render each item, and put them together in the form my text is read back from
         return f"{self.delimiter} ".join(schema.string(item) for item in value)
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # respect {None}
-        if value is None:
-            # by leaving it alone
-            return None
-        # render each item the way my schema does, so numbers stay numbers
-        return self.container(self.schema.json(item) for item in value)
-
     # implementation details
     def _coerce(self, value, incognito=True, anonymous=True, **kwds):
         """

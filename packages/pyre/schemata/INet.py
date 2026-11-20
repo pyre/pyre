@@ -205,13 +205,6 @@ class INet(Schema):
         # and an ip address is a host and a port
         return f"{value.host}:{value.port}"
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """

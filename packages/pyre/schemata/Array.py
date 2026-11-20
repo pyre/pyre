@@ -55,17 +55,6 @@ class Array(Sequence):
         # an array
         return self._text(value=value)
 
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}, with my entries rendered by my schema
-        """
-        # respect {None}
-        if value is None:
-            # by leaving it alone
-            return None
-        # render each level, all the way down to the entries
-        return self._json(value=value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
@@ -326,17 +315,6 @@ class Array(Sequence):
             return self.schema.string(value)
         # a level goes in brackets, with its entries rendered the same way
         return "[" + ", ".join(self._text(value=entry) for entry in value) + "]"
-
-    def _json(self, value):
-        """
-        Render {value}, an entry or a level of an array, as json
-        """
-        # an entry
-        if not isinstance(value, tuple):
-            # is rendered by my schema
-            return self.schema.json(value)
-        # a level is a tuple of its entries, rendered the same way
-        return tuple(self._json(value=entry) for entry in value)
 
     def _firewall(self, message):
         """

@@ -23,12 +23,12 @@ class Path(Schema):
 
     # constants
     typename = "path"  # the name of my type
-    complaint = "cannot cast {0.value!r} into a path"
+    complaint = "cannot cast {0.value!r} into a path"  # what i say when i refuse a value
 
     # magic values
-    cwd = primitives.path.cwd
-    root = primitives.path.root
-    home = primitives.path.home()
+    cwd = primitives.path.cwd  # the current working directory
+    root = primitives.path.root  # the root of the filesystem
+    home = primitives.path.home()  # the home directory of the user
 
     # interface
     def coerce(self, value, **kwds):
@@ -50,13 +50,6 @@ class Path(Schema):
             raise self.CastingError(value=value, description=self.complaint, error=error)
         # if all goes well, return the {path}
         return path
-
-    def json(self, value):
-        """
-        Generate a JSON representation of {value}
-        """
-        # represent as a string
-        return self.string(value)
 
     # metamethods
     def __init__(self, default=object, **kwds):
