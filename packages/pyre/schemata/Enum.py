@@ -46,6 +46,17 @@ class Enum(Schema):
         # if all goes well, return the {member}
         return member
 
+    def string(self, value):
+        """
+        Render {value} as a string that can be persisted for later coercion
+        """
+        # respect {None}
+        if value is None:
+            # by leaving it alone
+            return None
+        # a member is known by its name
+        return value.name
+
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
