@@ -151,6 +151,11 @@ class Configurable(Dashboard):
         """
         Traverse my configuration and represent it in a JSON friendly way
         """
+        # get the renderer of values into the plain values of JSON
+        from ..weaver import json
+
+        # make one
+        renderer = json()
         # prime the document
         doc = {}
         # meta-data about all my traits
@@ -226,7 +231,7 @@ class Configurable(Dashboard):
             # with properties, attach the property meta-data, keeping secrets out of it
             properties[traitName] = {
                 "name": traitName,
-                "value": None if trait.secret else trait.json(value),
+                "value": None if trait.secret else renderer.render(schema=trait, value=value),
                 "default": None if trait.secret else trait.default,
                 "secret": trait.secret,
             }
