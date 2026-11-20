@@ -25,26 +25,40 @@ class Postgres(Server, family="pyre.db.server.postgres"):
     from .exceptions import OperationalError
 
     # public state
-    database = pyre.properties.str(default="postgres")
+    # the database
+    database = pyre.properties.str()
+    database.default = "postgres"
     database.doc = "the name of the database to connect to"
 
-    username = pyre.properties.str(default=None)
+    # who connects
+    username = pyre.properties.str()
+    username.default = None
     username.doc = "the database user name to use during authentication"
 
-    password = pyre.properties.str(default=None)
+    # their password
+    password = pyre.properties.str()
+    password.default = None
     password.secret = True
     password.doc = "the password of the database user"
 
-    application = pyre.properties.str(default=None)
+    # the name the server shows for this session
+    application = pyre.properties.str()
+    application.default = None
     application.doc = "the application name to use for the connection"
 
-    hostname = pyre.properties.str(default=None)
+    # where the server is
+    hostname = pyre.properties.str()
+    hostname.default = None
     hostname.doc = "the host the database server is running on"
 
-    port = pyre.properties.str(default=None)
+    # and the port it listens on
+    port = pyre.properties.str()
+    port.default = None
     port.doc = "the port the database server is listening on"
 
-    quiet = pyre.properties.bool(default=True)
+    # how talkative the server is
+    quiet = pyre.properties.bool()
+    quiet.default = True
     quiet.doc = "control whether certain postgres informationals are shown"
 
     # interface
@@ -53,8 +67,9 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         """
         Connect to the database
         """
-        # if i have an existing connection to the back end, do nothing
+        # if i have an existing connection to the back end
         if self.connection is not None:
+            # there is nothing to do
             return self
 
         # get the bindings
@@ -100,8 +115,9 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         to all objects that may retain a reference to the connection being closed. Any
         uncommitted changes will be lost
         """
-        # if i don't have an existing connection to the back end, do nothing
+        # if i don't have an existing connection to the back end
         if self.connection is None:
+            # there is nothing to do
             return
 
         # otherwise, close the connection; every copy of it observes this, so nothing that still
@@ -122,8 +138,9 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         a sequence of values, with the names of the columns available separately, as
         {result.headers}
         """
-        # a statement sent through a session that was never opened is worth naming
+        # a statement sent through a session that was never opened
         if self.connection is None:
+            # is worth naming
             raise exceptions.InterfaceError(diagnostic="this server is not attached")
 
         # assemble the command and pass it on to the session. this is the simple protocol, so
@@ -138,8 +155,9 @@ class Postgres(Server, family="pyre.db.server.postgres"):
         This is the safe way to put a value into a statement: the values travel beside the sql
         rather than inside it, so nothing they contain can change what the statement does
         """
-        # a statement sent through a session that was never opened is worth naming
+        # a statement sent through a session that was never opened
         if self.connection is None:
+            # is worth naming
             raise exceptions.InterfaceError(diagnostic="this server is not attached")
 
         # hand it to the session
