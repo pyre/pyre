@@ -91,7 +91,7 @@ pyre::postgres::py::field(py::module & m)
         // the implementation
         [](const Field & self) -> py::object { return pythonize(self); },
         // the docstring
-        "my value as a string, or {None} when the server sent nothing");
+        "my value as the python value of my type, or {None} when the server sent nothing");
 
     cls.def_property_readonly(
         // the name

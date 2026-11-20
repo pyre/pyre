@@ -45,8 +45,8 @@ namespace pyre::postgres::py {
     // turn a python object into the text that fills one placeholder of a statement; {None}
     // becomes the {NULL} that no text can spell
     auto render(py::handle value) -> argument_t;
-    // turn the value of {field} into a python object; a {NULL} becomes {None}, which is what
-    // the database api asks for and what the sqlite back end already does
+    // turn the value of {field} into the python value of its type; a {NULL} becomes {None},
+    // which is what the database api asks for and what the sqlite back end already does
     auto pythonize(const Field & field) -> py::object;
     // turn every argument of a call into the text of a statement's placeholders
     auto arguments(const py::args & args) -> arguments_t;
