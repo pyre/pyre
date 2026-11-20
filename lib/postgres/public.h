@@ -25,6 +25,8 @@
 #include "Handle.h"
 // the names for the states libpq reports
 #include "status.h"
+// the identifiers of the built in types
+#include "types.h"
 // the translation between the values of a c++ program and the text postgres exchanges
 #include "codecs.h"
 // what the server sends back when a statement does work out
