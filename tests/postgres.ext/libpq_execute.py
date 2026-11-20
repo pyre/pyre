@@ -30,13 +30,13 @@ def test():
     assert result.columns == 2
     # the names live on the result, not in a first row every caller has to skip
     assert result.headers == ("one", "two")
-    # and the values are what the server sent, as strings
-    assert tuple(result[0]) == ("1", "two")
+    # and the values are what the server sent, as the python values of their types
+    assert tuple(result[0]) == (1, "two")
 
     # a row reads
     row = result[0]
     # by position
-    assert row[0] == "1"
+    assert row[0] == 1
     # and by name
     assert row["two"] == "two"
     # and the field behind a value knows its own column
@@ -47,7 +47,7 @@ def test():
     # there are five of them
     assert len(series) == 5
     # and they add up
-    assert sum(int(record[0]) for record in series) == 15
+    assert sum(record[0] for record in series) == 15
 
     # a value the server did not send is {None}, and not the empty string; this is the database
     # api's rule, and the one the sqlite back end follows
@@ -63,7 +63,7 @@ def test():
     # change what the statement does
     parameterized = connection.execute("SELECT $1::int + $2::int AS sum", 20, 22)
     # and the server combined them
-    assert parameterized[0][0] == "42"
+    assert parameterized[0][0] == 42
 
     # a statement that changes something reports how much, and comes back tagged as what it
     # was: make a table
