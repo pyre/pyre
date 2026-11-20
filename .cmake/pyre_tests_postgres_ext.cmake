@@ -16,6 +16,17 @@ pyre_test_python_testcase(tests/postgres.ext/libpq_connect.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_execute.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_exceptions.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_async.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_values_bool.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_values_numbers.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_values_bytea.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_values_times.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_values_json.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_values_arrays.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_values_datestyle.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_arguments_nul.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_arguments_types.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_transaction_failed_commit.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_threads.py)
 
 # components
 pyre_test_python_testcase(tests/postgres.ext/postgres_database.py)
@@ -25,6 +36,19 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_table.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_reserved.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_references.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_database_drop.py)
+
+# pyre.db against the default database, each in a transaction it rolls back
+pyre_test_python_testcase(tests/postgres.ext/postgres_null_insert.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_null_text.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_time.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_timestamp.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_update_null.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_update_all.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_group_by.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_where_null.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_where_date.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_where_like.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
 # the drop a cleanup one, and everything in between requires it

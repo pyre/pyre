@@ -1085,6 +1085,17 @@ pyre_test_python_testcase(tests/pyre.pkg/db/query_collation_explicit.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/query_collation_expression.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/query_inheritance.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/persistent_declaration.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/table_foreign_table.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/table_reference_actions.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/table_keys_order.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/sql_indentation.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/sqlite_commit.py)
+pyre_test_python_cleanup(sqlite_commit.db tests/pyre.pkg/db/sqlite_commit.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/sqlite_attach_twice.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/sqlite_bool.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/sqlite_insert_tables.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/backup_transaction.py)
+pyre_test_python_cleanup(backup_transaction.sql tests/pyre.pkg/db/backup_transaction.py)
 
 
 #
