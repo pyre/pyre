@@ -77,9 +77,9 @@ class URI(Schema):
         return handler(schema=self, **kwds)
 
     # meta-methods
-    def __init__(self, default=locator(), scheme=None, authority=None, address=None, **kwds):
-        # chain up with my default
-        super().__init__(default=default, **kwds)
+    def __init__(self, scheme=None, authority=None, address=None, **kwds):
+        # chain up; with no default of my own, mine is {None}, as for any schema
+        super().__init__(**kwds)
         # save my defaults
         self.scheme = scheme
         self.authority = authority
