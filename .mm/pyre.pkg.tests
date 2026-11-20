@@ -12,6 +12,8 @@ pyre.pkg.tests.prerequisites := journal.pkg pyre.pkg
 
 # clean up
 tests.pyre.pkg.components.clean := __pycache__
+tests.pyre.pkg.db.backup_transaction.clean := backup_transaction.sql
+tests.pyre.pkg.db.sqlite_commit.clean := sqlite_commit.db
 tests.pyre.pkg.descriptors.ostreams.clean := output.cfg
 tests.pyre.pkg.filesystem.local_make.clean := local-make
 tests.pyre.pkg.filesystem.zip.clean := sample.zip
