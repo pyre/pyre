@@ -232,12 +232,30 @@ class Configurable(Dashboard):
             properties[traitName] = {
                 "name": traitName,
                 "value": None if trait.secret else renderer.render(schema=trait, value=value),
-                "default": None if trait.secret else trait.default,
+                "default": (
+                    None
+                    if trait.secret
+                    else self.pyre_renderDefault(trait=trait, renderer=renderer)
+                ),
                 "secret": trait.secret,
             }
 
         # all done
         return doc
+
+    def pyre_renderDefault(self, trait, renderer):
+        """
+        Render the default of {trait} the way it was declared, using {renderer} for its values
+        """
+        # get the default
+        default = trait.default
+        # text, which may be an expression that only the configuration store can evaluate, is
+        # already in the form the schema reads, and {None} means there is no default
+        if default is None or isinstance(default, str):
+            # so both are shown as they are
+            return default
+        # anything else may hold text of its own, so make it a value of the schema, and render it
+        return renderer.render(schema=trait, value=trait.coerce(value=default))
 
     def pyre_showSummary(self, indent, **kwds):
         """
