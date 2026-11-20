@@ -221,13 +221,6 @@ class INet(Schema):
         # otherwise, invoke the handler
         return handler(schema=self, **kwds)
 
-    # meta-methods
-    def __init__(self, default=any, **kwds):
-        # chain up with my default
-        super().__init__(default=default, **kwds)
-        # all done
-        return
-
     # private data
     regex = re.compile(
         r"(?P<unix>unix|local):(?P<path>.+)"
