@@ -84,6 +84,7 @@ function(pyre_postgresModule)
       extensions/postgres/enums.cc
       extensions/postgres/exceptions.cc
       extensions/postgres/utilities.cc
+      extensions/postgres/values.cc
       )
 
     # install the extension
