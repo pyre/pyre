@@ -71,24 +71,6 @@ class Schema:
         # my value knows
         return str(value)
 
-    def render(self, renderer, value, incognito=False, **kwds):
-        """
-        Render {value} using {renderer}
-        """
-        # render value
-        entry = self.string(value)
-        # if i'm incognito
-        if incognito:
-            # render just my value
-            yield renderer.value(value=entry)
-        # otherwise
-        else:
-            # render both my name and the value
-            yield renderer.trait(name=self.name, value=entry)
-
-        # all done
-        return
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
