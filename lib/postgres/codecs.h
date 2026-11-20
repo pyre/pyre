@@ -67,21 +67,22 @@ namespace pyre::postgres::codecs {
     template <typename valueT>
     inline auto real(view_t value, view_t what) -> valueT
     {
-        // {std::from_chars} covers the floating point types only in the newest standard
-        // libraries, so go through the C library, which has always been able to do this. it
-        // wants a terminated string, and a {view_t} promises no such thing
-        const string_t text(value);
-        // where the parse stopped
-        char * end = nullptr;
-        // read the number; {strtod} understands the 'Infinity' and 'NaN' that postgres writes,
-        // and it understands them whatever case they are in
-        const double number = std::strtod(text.c_str(), &end);
-        // an empty parse, or one that stopped early, means this was never a number
-        if (end == text.c_str() || end != text.c_str() + text.size()) {
+        // room for the answer
+        valueT number = 0;
+        // parse, the same way whatever the locale of the process; postgres always writes a
+        // point, never a comma, and this reads its 'Infinity' and 'NaN' in any case
+        const auto outcome = std::from_chars(value.data(), value.data() + value.size(), number);
+        // text that is not a number at all, and text that names one too large for {valueT},
+        // are both failures of the same kind as far as a caller is concerned
+        if (outcome.ec != std::errc()) {
             codecs::reject(value, what);
         }
-        // narrow it to what the caller asked for
-        return static_cast<valueT>(number);
+        // trailing garbage means the column did not hold what its type said it did
+        if (outcome.ptr != value.data() + value.size()) {
+            codecs::reject(value, what);
+        }
+        // hand it off
+        return number;
     }
 
     // render the real number {value} as the text postgres reads back without loss
@@ -96,16 +97,13 @@ namespace pyre::postgres::codecs {
             return value > 0 ? "Infinity" : "-Infinity";
         }
 
-        // {max_digits10} is the number of significant digits that guarantees a round trip; any
-        // fewer and the value that comes back out of the database is not the one that went in.
-        // {std::to_string} writes six digits, which is not enough
-        constexpr int digits = std::numeric_limits<valueT>::max_digits10;
-        // room for the longest rendering: sign, digits, point, exponent, terminator
+        // room for the longest rendering: sign, digits, point and exponent
         char buffer[64];
-        // write it
-        const int length = std::snprintf(buffer, sizeof(buffer), "%.*g", digits, value);
-        // a negative return is an encoding error, which cannot happen for a format we control
-        if (length < 0) {
+        // write the shortest text that reads back as exactly {value}, with a point whatever the
+        // locale of the process
+        const auto outcome = std::to_chars(buffer, buffer + sizeof(buffer), value);
+        // running out of room cannot happen for a buffer this size
+        if (outcome.ec != std::errc()) {
             auto channel = pyre::journal::firewall_t("pyre.postgres.codecs");
             channel
                 // where
@@ -119,7 +117,7 @@ namespace pyre::postgres::codecs {
         }
 
         // hand back exactly the characters that were written
-        return string_t(buffer, static_cast<std::size_t>(length));
+        return string_t(buffer, outcome.ptr);
     }
 } // namespace pyre::postgres::codecs
 
