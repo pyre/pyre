@@ -100,17 +100,21 @@ class Record(Dashboard, metaclass=Templater):
                     yield headers[alias]
                     # get the next field
                     break
+                # if it doesn't
                 except KeyError:
+                    # try the next one
                     continue
             # error: unable to find a source for this field
             else:
                 # if it is not an optional field
                 if not measure.optional:
-                    # complain
-                    msg = "unable to find a source for field {!r}".format(measure.name)
+                    # get the journal
                     import journal
 
-                    raise journal.error("pyre.records").log(msg)
+                    # and complain
+                    raise journal.error("pyre.records").log(
+                        f"unable to find a source for field {measure.name!r}"
+                    )
         # all done
         return
 

@@ -23,6 +23,7 @@ class ForeignKey:
         """
         Return the field to which I refer
         """
+        # my reference knows
         return self.reference.field
 
     @property
@@ -30,6 +31,7 @@ class ForeignKey:
         """
         Return the table to which I refer
         """
+        # my reference knows
         return self.reference.table
 
     # meta methods
