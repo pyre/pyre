@@ -84,54 +84,15 @@ def test():
     # and which is not marked
     assert doc["properties"]["user"]["secret"] is False
 
-    # a renderer that writes traits as assignments
-    class renderer:
-        """
-        A stand-in for the renderers of the weaver
-        """
-
-        # the start of a component
-        def componentStart(self, component):
-            """
-            Open a section for {component}
-            """
-            # as a section
-            yield f"{component.pyre_name}:"
-            # all done
-            return
-
-        # the end of a component
-        def componentEnd(self, component):
-            """
-            Close the section of {component}
-            """
-            # with a blank line
-            yield ""
-            # all done
-            return
-
-        # a trait and its value
-        def trait(self, name, value):
-            """
-            Render the trait {name} with its {value}
-            """
-            # as an assignment
-            return f"{name} = {value}"
-
-        # a value on a line of its own
-        def value(self, value):
-            """
-            Render a {value} by itself
-            """
-            # as it is
-            return f"{value}"
+    # a mill of configuration files
+    mill = pyre.weaver.pfg()(name="mill")
 
     # the rendered configuration, which is written to files that are read back
-    rendered = list(a.pyre_renderTraitValues(renderer=renderer()))
+    rendered = list(a.pyre_renderTraitValues(renderer=mill))
     # leaves the secret out altogether, since a placeholder would read back as its value
     assert not any("password" in line or "hunter2" in line for line in rendered), rendered
     # but not the rest
-    assert "user = guest" in rendered, rendered
+    assert "    user = guest" in rendered, rendered
 
     # all done
     return a, b
