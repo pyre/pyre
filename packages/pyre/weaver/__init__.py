@@ -20,6 +20,12 @@ from .Weaver import Weaver as weaver
 # the language interface
 from .Language import Language as language
 
+# the renderers of the values of schemata into plain values: for JSON documents
+from .JSON import JSON as json
+
+# and for yaml configuration files
+from .YAML import YAML as yaml
+
 
 # the mill base classes
 @foundry(implements=language)
@@ -139,6 +145,7 @@ def html():
     # grab the component class
     from .HTML import HTML as html
 
+    # and return it
     return html
 
 
