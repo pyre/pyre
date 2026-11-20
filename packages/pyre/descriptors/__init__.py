@@ -28,6 +28,8 @@ class descriptor(stem.variable):
 # for convenience, expose the typed ones
 # the simple ones: truth values
 bool = descriptor.bool
+# strings of octets
+bytes = descriptor.bytes
 # complex numbers
 complex = descriptor.complex
 # fixed point decimals
@@ -57,6 +59,8 @@ time = descriptor.time
 timestamp = descriptor.timestamp
 # resource identifiers
 uri = descriptor.uri
+# universally unique identifiers
+uuid = descriptor.uuid
 
 # containers: arrays
 array = descriptor.array
