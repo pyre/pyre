@@ -80,7 +80,7 @@ from .Object import Object as object
 from .DataStore import DataStore as datastore
 
 # components
-from .SQL import SQL as sql
+from .dialects import standard as sql
 from .Server import Server as server
 from .Client import Client as client
 
