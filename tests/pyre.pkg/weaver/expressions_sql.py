@@ -45,6 +45,8 @@ def test():
     assert mill.expression(one * zero) == "(1) * (0)"
     # division
     assert mill.expression(one / zero) == "(1) / (0)"
+    # floor division
+    assert mill.expression(one // zero) == "FLOOR((1) / (0))"
     # exponentiation
     assert mill.expression(one**zero) == "POWER(1, 0)"
     # remainder
