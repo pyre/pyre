@@ -688,11 +688,11 @@ def commits(*, root: str, base: str | None) -> list:
 
 def changed(*, root: str, base: str) -> list:
     """
-    The files added or modified since {base}
+    The files added, modified or renamed since {base}, the renamed ones under their new names
     """
     # ask git
     result = run(
-        command=["git", "diff", "--name-only", "--diff-filter=AM", f"{base}...HEAD"], cwd=root
+        command=["git", "diff", "--name-only", "--diff-filter=AMR", f"{base}...HEAD"], cwd=root
     )
     # hand off the names
     return [name for name in result.stdout.split("\n") if name]
