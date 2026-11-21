@@ -12,12 +12,14 @@ class UnaryPostfix:
     """
 
     # public data
-    operand = None
-    operator = None
+    operand = None  # the expression the operator applies to
+    operator = None  # and the operator, supplied by my subclasses
 
     # interface
     def sql(self):
-        """SQL rendering of the expression I represent"""
+        """
+        SQL rendering of the expression I represent
+        """
         # straightforward
         return "{} {.operator}".format(self.operand.sql(), self)
 
@@ -78,25 +80,20 @@ class Cast:
 # some built-in operators
 class Like:
     """
-    Implementation of the LIKE operator
+    The match of a field against a pattern, in which a backslash escapes the wildcards
     """
 
-    # interface
-    def sql(self, **kwds):
-        """
-        SQL rendering of the expression I represent
-        """
-        # easy enough
-        return "({} LIKE '{}')".format(self.field.sql(**kwds), self.regex)
+    # public data
+    escape = "\\"  # the character that escapes the wildcards in my pattern
 
     # meta-methods
-    def __init__(self, field, regex, **kwds):
+    def __init__(self, field, pattern, **kwds):
         # chain up
         super().__init__(**kwds)
         # save my field reference
         self.field = field
-        # and the target type
-        self.regex = regex
+        # and the pattern
+        self.pattern = pattern
         # all done
         return
 
