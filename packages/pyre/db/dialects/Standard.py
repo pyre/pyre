@@ -14,9 +14,9 @@ from pyre.weaver.SQL import SQL as Mill
 
 
 # declaration
-class SQL(Mill, family="pyre.db.dialects.standard"):
+class Standard(Mill, family="pyre.db.dialects.standard"):
     """
-    Generate SQL statements
+    Generate SQL statements in standard SQL
     """
 
     # constants
@@ -24,12 +24,12 @@ class SQL(Mill, family="pyre.db.dialects.standard"):
 
     # types
     # the metaclasses for tables and queries
-    from .Schemer import Schemer as schemer
-    from .Selector import Selector as selector
+    from ..Schemer import Schemer as schemer
+    from ..Selector import Selector as selector
 
     # the base classes for tables and queries
-    from .Table import Table as table
-    from .Query import Query as query
+    from ..Table import Table as table
+    from ..Query import Query as query
 
     # queries
     def select(self, query):
@@ -486,14 +486,14 @@ class SQL(Mill, family="pyre.db.dialects.standard"):
     # meta-methods
     def __init__(self, **kwds):
         # get the field definition
-        from . import field
+        from .. import field
 
         # chain up
         super().__init__(nodeType=field, **kwds)
 
         # local expressions
-        from .Collation import Collation as collation
-        from .FieldReference import FieldReference as fieldReference
+        from ..Collation import Collation as collation
+        from ..FieldReference import FieldReference as fieldReference
 
         # add them to the rendering strategy: collations
         self._renderers[collation] = self._collationRenderer
@@ -501,7 +501,7 @@ class SQL(Mill, family="pyre.db.dialects.standard"):
         self._renderers[fieldReference] = self._fieldReferenceRenderer
 
         # the SQL primitives
-        from .expressions import (
+        from ..expressions import (
             IsNull as isNull,
             IsNotNull as isNotNull,
             Cast as cast,
