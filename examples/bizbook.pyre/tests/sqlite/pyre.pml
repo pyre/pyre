@@ -11,7 +11,7 @@
 <config>
 
   <!--  settings for particular test cases -->
-  <component name="bizbook" family="pyre.db.server.sqlite">
+  <component name="bizbook" family="pyre.db.servers.sqlite">
     <bind property="database">bizbook.sql</bind>
   </component>
 
