@@ -13,6 +13,7 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_database.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_attach.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_table.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_references.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_where_like_escape.py)
 # cleanup
 add_test(NAME tests.sqlite.clean
   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/sqlite.pkg"
