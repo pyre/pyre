@@ -59,6 +59,16 @@ class SQL(LineMill, Expression):
         # all done
         return
 
+    # interface
+    def quote(self, text):
+        """
+        Render {text} as a string literal
+        """
+        # double the single quotes
+        escaped = text.replace("'", "''")
+        # and enclose the result in single quotes
+        return f"'{escaped}'"
+
     # implementation details
     def _functionRenderer(self, node, **kwds):
         """
@@ -100,10 +110,8 @@ class SQL(LineMill, Expression):
         value = node._value
         # if it is already a string
         if isinstance(value, str):
-            # just escape the single quotes
-            escaped = value.replace("'", "''")
-            # and quote it
-            return f"'{escaped}'"
+            # quote it
+            return self.quote(text=value)
 
         # check whether
         try:
