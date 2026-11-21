@@ -16,7 +16,7 @@ from . import exceptions
 
 
 # declaration
-class Postgres(Server, family="pyre.db.server.postgres"):
+class Postgres(Server, family="pyre.db.servers.postgres"):
     """
     Component that manages the connection to a Postgres database
     """

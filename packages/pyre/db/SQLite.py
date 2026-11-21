@@ -14,7 +14,7 @@ from .Server import Server
 
 
 # declaration
-class SQLite(Server, family="pyre.db.server.sqlite"):
+class SQLite(Server, family="pyre.db.servers.sqlite"):
     """
     Component that manages the connection to a sqlite database
     """
@@ -29,8 +29,9 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
         """
         Connect to the database
         """
-        # if i have an existing connection to the database, do nothing
+        # if i have an existing connection to the database
         if self.connection is not None:
+            # there is nothing to do
             return
         # otherwise, make a connection
         self.connection = sqlite3.connect(self.database)
@@ -44,8 +45,9 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
         """
         Close the connection to the database
         """
-        # if i don't have an existing connection to the database, do nothing
+        # if i don't have an existing connection to the database
         if self.connection is None:
+            # there is nothing to do
             return
         # otherwise, close my cursor
         self.cursor.close()
@@ -68,8 +70,8 @@ class SQLite(Server, family="pyre.db.server.sqlite"):
         return self.cursor
 
     # implementation details
-    cursor = None
-    connection = None
+    cursor = None  # the cursor that executes my statements
+    connection = None  # my connection to the database
 
 
 # end of file

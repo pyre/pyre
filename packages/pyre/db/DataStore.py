@@ -10,7 +10,7 @@ import pyre
 
 
 # declaration
-class DataStore(pyre.protocol, family="pyre.db.server"):
+class DataStore(pyre.protocol, family="pyre.db.servers"):
     """
     Protocol declaration for database managers
     """
