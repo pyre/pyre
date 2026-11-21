@@ -514,8 +514,8 @@ class SQL(Mill, family="pyre.db.dialects.standard"):
         self._renderers[isNotNull] = self._primitiveSQLExpressionRenderer
         # type conversions
         self._renderers[cast] = self._primitiveSQLExpressionRenderer
-        # and pattern matching
-        self._renderers[like] = self._primitiveSQLExpressionRenderer
+        # and pattern matching, which has a renderer of its own
+        self._renderers[like] = self._likeRenderer
 
         # all done
         return
@@ -541,6 +541,20 @@ class SQL(Mill, family="pyre.db.dialects.standard"):
         """
         # get the primitive to render itself
         return node.sql(context=context, **kwds)
+
+    def _likeRenderer(self, node, context=None, **kwds):
+        """
+        Render {node}, the match of a field against a pattern, naming the character that escapes
+        its wildcards, since the back ends disagree on what it is when it is left out
+        """
+        # render the field
+        field = self.expression(root=node.field, context=context, **kwds)
+        # quote the pattern
+        pattern = self.quote(text=node.pattern)
+        # and the escape character
+        escape = self.quote(text=node.escape)
+        # put it all together
+        return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # declarations
     def _fieldDeclaration(self, field, comma):
