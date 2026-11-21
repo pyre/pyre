@@ -540,6 +540,40 @@ def skips() -> None:
     return
 
 
+def renames() -> None:
+    """
+    A python source that the work moves and changes is held to the comment rule under its new
+    name
+    """
+    # in a scratch directory
+    with tempfile.TemporaryDirectory() as root:
+        # lay out the repository
+        scaffold(root=root)
+        # work on a branch
+        git("switch", "--quiet", "-c", "work", cwd=root)
+        # move the python source
+        git("mv", "good.py", "moved.py", cwd=root)
+        # and give it a statement without a comment above it
+        write(
+            root=root,
+            name="moved.py",
+            text=preamble(comment="#", language="python")
+            + '\n\ndef answer():\n    """\n    The answer\n    """\n'
+            + "    value = 42\n    # hand it off\n    return value\n"
+            + "\n\n# end of file\n",
+        )
+        # stage it
+        git("add", "moved.py", cwd=root)
+        # and commit the move
+        git("commit", "--quiet", "-m", "moved: the answer, under a new name", cwd=root)
+        # check
+        status, report = check(root=root, base="main")
+        # the gap is caught under the new name
+        expect(report=report, check="narrative", needle="moved.py:")
+    # all done
+    return
+
+
 def main() -> int:
     """
     Run the self tests
@@ -554,6 +588,8 @@ def main() -> int:
         layouts()
         # one with gaps in the narrative of a python source
         narratives()
+        # one whose python source moves and changes
+        renames()
         # one with commits by a bot
         bots()
         # and one with files the spell check skips
