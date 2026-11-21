@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+import operator
+
 # access to the pyre package
 import pyre
 
@@ -27,8 +30,6 @@ class SQL(LineMill, Expression):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # access the {operator} module
-        import operator
 
         # adjust the symbol table: exponentiation is a function
         self._symbols[operator.pow] = "POWER"
@@ -36,6 +37,8 @@ class SQL(LineMill, Expression):
         self._symbols[operator.mod] = "MOD"
         # and the absolute value
         self._symbols[operator.abs] = "ABS"
+        # there is no floor division, so it takes the floor of the quotient
+        self._symbols[operator.floordiv] = "FLOOR"
         # equality
         self._symbols[operator.eq] = "="
         # inequality
@@ -51,6 +54,8 @@ class SQL(LineMill, Expression):
         self._renderers[operator.mod] = self._functionRenderer
         # and the absolute value
         self._renderers[operator.abs] = self._functionRenderer
+        # floor division has a renderer of its own
+        self._renderers[operator.floordiv] = self._floorDivisionRenderer
         # all done
         return
 
@@ -67,6 +72,24 @@ class SQL(LineMill, Expression):
         function = self._symbols[node.evaluator]
         # and put it all together
         return f"{function}({', '.join(arguments)})"
+
+    def _floorDivisionRenderer(self, node, **kwds):
+        """
+        Render {node} as the floor of the quotient of its operands; the division of two integers
+        truncates toward zero before the floor is taken
+        """
+        # extract the operands
+        dividend, divisor = node.operands
+        # render the dividend
+        numerator = self._renderers[type(dividend)](node=dividend, **kwds)
+        # and the divisor
+        denominator = self._renderers[type(divisor)](node=divisor, **kwds)
+        # look up the name of the function that takes the floor
+        floor = self._symbols[node.evaluator]
+        # and the symbol of the division
+        quotient = self._symbols[operator.truediv]
+        # put it all together
+        return f"{floor}(({numerator}) {quotient} ({denominator}))"
 
     # overrides
     def _literalRenderer(self, node, **kwds):
