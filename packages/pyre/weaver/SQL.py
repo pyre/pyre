@@ -30,15 +30,43 @@ class SQL(LineMill, Expression):
         # access the {operator} module
         import operator
 
-        # adjust the symbol table
-        self._symbols[operator.pow] = "^"
+        # adjust the symbol table: exponentiation is a function
+        self._symbols[operator.pow] = "POWER"
+        # and so are the remainder
+        self._symbols[operator.mod] = "MOD"
+        # and the absolute value
+        self._symbols[operator.abs] = "ABS"
+        # equality
         self._symbols[operator.eq] = "="
+        # inequality
         self._symbols[operator.ne] = "<>"
-        self._symbols[operator.abs] = "@"
+        # the logical operators are spelled out
         self._symbols[operator.and_] = "AND"
+        # all of them
         self._symbols[operator.or_] = "OR"
+
+        # the functions render as calls: exponentiation
+        self._renderers[operator.pow] = self._functionRenderer
+        # the remainder
+        self._renderers[operator.mod] = self._functionRenderer
+        # and the absolute value
+        self._renderers[operator.abs] = self._functionRenderer
         # all done
         return
+
+    # implementation details
+    def _functionRenderer(self, node, **kwds):
+        """
+        Render {node} as a call to the function its operator stands for
+        """
+        # render the arguments
+        arguments = (
+            self._renderers[type(operand)](node=operand, **kwds) for operand in node.operands
+        )
+        # look up the name of the function
+        function = self._symbols[node.evaluator]
+        # and put it all together
+        return f"{function}({', '.join(arguments)})"
 
     # overrides
     def _literalRenderer(self, node, **kwds):
@@ -50,7 +78,9 @@ class SQL(LineMill, Expression):
         # if it is already a string
         if isinstance(value, str):
             # just escape the single quotes
-            return "'{}'".format(value.replace("'", "''"))
+            escaped = value.replace("'", "''")
+            # and quote it
+            return f"'{escaped}'"
 
         # check whether
         try:
