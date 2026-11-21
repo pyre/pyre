@@ -19,8 +19,9 @@ class Backup(Server, family="pyre.db.servers.backup"):
     """
 
     # public state
-    database = pyre.properties.str(default="what?")
-    database.doc = "the name of the database to connect to"
+    # the name of the database, unset unless configured
+    database = pyre.properties.str(default=None)
+    database.doc = "the name of the database the statements are meant for"
 
     # where the statements go
     stream = pyre.properties.ostream(default="stdout")
