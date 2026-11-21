@@ -11,12 +11,12 @@
 <config>
 
   <!-- some global settings -->
-  <component family="pyre.db.server.sqlite">
+  <component family="pyre.db.servers.sqlite">
     <bind property="database">:memory:</bind>
   </component>
 
   <!--  settings for particular test cases -->
-  <component name="test" family="pyre.db.server.sqlite">
+  <component name="test" family="pyre.db.servers.sqlite">
     <bind property="database">pyre.sql</bind>
   </component>
 
