@@ -1128,6 +1128,7 @@ pyre_test_python_cleanup(backup_transaction.sql tests/pyre.pkg/db/backup_transac
 pyre_test_python_testcase(tests/pyre.pkg/db/table_types_declarations.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/table_types_literals.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/table_array_entries.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/families.py)
 
 
 #
