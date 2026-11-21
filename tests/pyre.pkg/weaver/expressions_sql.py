@@ -12,6 +12,9 @@ Exercise an SQL expression weaver
 
 
 def test():
+    """
+    Check how the SQL mill renders literals and the operators of expressions
+    """
     # get the package
     import pyre
 
@@ -43,12 +46,12 @@ def test():
     # division
     assert mill.expression(one / zero) == "(1) / (0)"
     # exponentiation
-    assert mill.expression(one**zero) == "(1) ^ (0)"
+    assert mill.expression(one**zero) == "POWER(1, 0)"
     # remainder
-    assert mill.expression(one % zero) == "(1) % (0)"
+    assert mill.expression(one % zero) == "MOD(1, 0)"
 
     # absolute value
-    assert mill.expression(abs(one)) == "@(1)"
+    assert mill.expression(abs(one)) == "ABS(1)"
     # negation
     assert mill.expression(-one) == "-(1)"
     # equality
@@ -75,7 +78,7 @@ def test():
 
 # main
 if __name__ == "__main__":
-    # do...
+    # run the test
     test()
 
 
