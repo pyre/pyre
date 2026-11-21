@@ -23,17 +23,19 @@ class Expression:
     # interface
     def expression(self, root, **kwds):
         """
-        Build a representation of {node}, assumed to be an instance of a {pyre.calc.Node}
+        Build a representation of {root}, assumed to be an instance of a {pyre.calc.Node}
         subclass
         """
+        # hand the node to the renderer of its type
         return self._renderers[type(root)](root, **kwds)
 
     # meta methods
     def __init__(self, nodeType=None, **kwds):
         # chain up
         super().__init__(**kwds)
-        # fall back to {calc} nodes
+        # if the caller did not supply a node type
         if nodeType is None:
+            # fall back to {calc} nodes
             from ..calc.Node import Node as nodeType
         # build the symbol table
         self._symbols = self._newSymbolTable()
@@ -81,11 +83,13 @@ class Expression:
         """
         Build a table that maps {pyre.calc} operators to rendering strategies
         """
-        # grab the types that handles literal values and operations
+        # grab the type of literal values
         literal = nodeType.literal
+        # of variables
         variable = nodeType.variable
+        # and of operations
         operation = nodeType.operator
-        # build the symbol table
+        # build the table
         handlers = {
             # nodes
             literal: self._literalRenderer,
@@ -122,7 +126,7 @@ class Expression:
         Render {node} as a literal
         """
         # return the literal representation
-        return repr(node._value, **kwds)
+        return repr(node._value)
 
     def _operatorRenderer(self, node, **kwds):
         """
@@ -148,7 +152,7 @@ class Expression:
         # look up the operator symbol
         symbol = self._symbols[node.evaluator]
         # put it all together
-        return "({}) {} ({})".format(op1, symbol, op2)
+        return f"({op1}) {symbol} ({op2})"
 
     def _unaryOperatorRenderer(self, node, **kwds):
         """
@@ -161,18 +165,18 @@ class Expression:
         # look up the operator symbol
         symbol = self._symbols[node.evaluator]
         # put it all together
-        return "{}({})".format(symbol, op)
+        return f"{symbol}({op})"
 
     def _oppositeRenderer(self, node, **kwds):
         """
-        Render the absolute value of {node}
+        Render the negation of {node}
         """
         # get the operand: unpack as a tuple to catch mistakes
         (operand,) = node.operands
         # render it
         op = self._renderers[type(operand)](node=operand, **kwds)
         # decorate and return
-        return "-({})".format(op)
+        return f"-({op})"
 
 
 # end of file
