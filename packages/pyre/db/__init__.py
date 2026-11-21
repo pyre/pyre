@@ -52,14 +52,18 @@ from ..records import field
 # the local measure class
 from .Measure import Measure as measure
 
-# the typed measures
-bool = measure.bool
-date = measure.date
-decimal = measure.decimal
-float = measure.float
-int = measure.int
-str = measure.str
-time = measure.time
+# the typed measures, one for each type a column can hold
+array = measure.array  # arrays of the values of another column type
+bool = measure.bool  # truth values
+bytes = measure.bytes  # strings of octets
+date = measure.date  # dates
+decimal = measure.decimal  # fixed point numbers
+float = measure.float  # floating point numbers
+int = measure.int  # integers
+str = measure.str  # text
+time = measure.time  # times of day
+timestamp = measure.timestamp  # moments in time
+uuid = measure.uuid  # universally unique identifiers
 # references to external keys
 from .Reference import Reference as reference
 

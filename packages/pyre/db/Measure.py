@@ -5,8 +5,7 @@
 # (c) 1998-2026 all rights reserved
 
 
-# externals
-import time
+# the special values {NULL} and {DEFAULT}
 from . import literals
 
 # superclass
@@ -103,29 +102,37 @@ class Measure(records.measure):
             # easy enough
             return "true" if value else "false"
 
+    class bytes(measure):
+        """
+        Mixin for strings of octets
+        """
+
+        # public data
+        decl = "BYTEA"  # SQL rendering of my type name
+
+        # interface
+        def sql(self, value):
+            """
+            SQL rendering of {value}
+            """
+            # the octets, as the hexadecimal digits the server reads them from
+            return f"'\\x{self.coerce(value=value).hex()}'"
+
     class date(measure):
-        """Mixin for dates"""
+        """
+        Mixin for dates
+        """
 
         # public data
         decl = "DATE"  # SQL rendering of my type name
 
         # interface
         def sql(self, value):
-            """SQL rendering of {value}"""
-            # if {value} is a time struct
-            if isinstance(value, time.struct_time):
-                # use my format to convert it a string
-                value = time.strftime(self.format, value)
-            # other types of values just get passed along, for now; firewall this later
-            # make sure the result is quoted in an SQL compliant way
-            return "'{}'".format(value)
-
-        # meta-methods
-        def __init__(self, default=None, **kwds):
-            # chain up
-            super().__init__(default=default, **kwds)
-            # all done
-            return
+            """
+            SQL rendering of {value}
+            """
+            # the text of the date, quoted
+            return f"'{self.string(self.coerce(value=value))}'"
 
     class decimal(measure):
         """Mixin for fixed point numbers"""
@@ -209,34 +216,118 @@ class Measure(records.measure):
             return
 
     class time(measure):
-        """Mixin for timestamps"""
+        """
+        Mixin for times of day
+        """
 
         # public data
         @property
         def decl(self):
-            """SQL rendering of my type name"""
-            # with or without timezone
-            return "TIMESTAMP WITH{} TIME ZONE".format("" if self.timezone else "OUT")
+            """
+            SQL rendering of my type name
+            """
+            # a time of day carries its offset only when i insist that it has one
+            return "TIME WITH TIME ZONE" if self.timezone is True else "TIME"
 
         # interface
         def sql(self, value):
-            """SQL rendering of {value}"""
-            # if {value} is a time struct
-            if isinstance(value, time.struct_time):
-                # use my format to convert it a string
-                value = time.strftime(self.format, value)
-            # other types of values just get passed along, for now; firewall this later
-            # make sure the result is quoted in an SQL compliant way
-            return "'{}'".format(value)
+            """
+            SQL rendering of {value}
+            """
+            # the text of the time, quoted
+            return f"'{self.string(self.coerce(value=value))}'"
+
+    class timestamp(measure):
+        """
+        Mixin for moments in time
+        """
+
+        # public data
+        @property
+        def decl(self):
+            """
+            SQL rendering of my type name
+            """
+            # a moment carries its time zone only when i insist that it has one
+            return "TIMESTAMP WITH TIME ZONE" if self.timezone is True else "TIMESTAMP"
+
+        # interface
+        def sql(self, value):
+            """
+            SQL rendering of {value}
+            """
+            # the text of the moment, quoted
+            return f"'{self.string(self.coerce(value=value))}'"
+
+    class uuid(measure):
+        """
+        Mixin for universally unique identifiers
+        """
+
+        # public data
+        decl = "UUID"  # SQL rendering of my type name
+
+        # interface
+        def sql(self, value):
+            """
+            SQL rendering of {value}
+            """
+            # the canonical text of the identifier, quoted
+            return f"'{self.string(self.coerce(value=value))}'"
+
+    class array(measure):
+        """
+        Mixin for arrays, whose entries are values of another column type
+        """
+
+        # public data
+        @property
+        def decl(self):
+            """
+            SQL rendering of my type name
+            """
+            # the type of my entries, marked as an array; the server ignores the rank
+            return f"{self.schema.decl}[]"
+
+        # interface
+        def sql(self, value):
+            """
+            SQL rendering of {value}
+            """
+            # build the array, whole or not at all, and render it level by level
+            return self._level(level=self.coerce(value=value))
 
         # meta-methods
-        def __init__(self, default=None, timezone=False, **kwds):
+        def __init__(self, **kwds):
             # chain up
-            super().__init__(default=default, **kwds)
-            # timezone support
-            self.timezone = timezone
+            super().__init__(**kwds)
+            # my entries are rendered and declared by their own column type
+            if not isinstance(self.schema, Measure):
+                # so anything else is a mistake in the declaration
+                self._firewall(
+                    message=(
+                        "the entries of an array column must be a column type, "
+                        f"not {self.schema!r}"
+                    )
+                )
             # all done
             return
+
+        # implementation details
+        def _level(self, level):
+            """
+            Render {level}, an entry or a level of the array
+            """
+            # a level is a tuple of entries or of deeper levels
+            if isinstance(level, tuple):
+                # an empty one
+                if not level:
+                    # is the empty array, which takes the type of its column
+                    return "'{}'"
+                # the others list what they hold
+                return "ARRAY[" + ", ".join(self._level(level=entry) for entry in level) + "]"
+            # anything else is an entry, which its column type renders
+            return self.schema.sql(value=level)
 
     # sql rendering
     def decldefault(self):
