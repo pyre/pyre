@@ -17,6 +17,7 @@ def test():
     """
     # support
     import threading
+    import time
 
     # access the bindings
     from pyre.extensions import libpq
@@ -50,18 +51,26 @@ def test():
             except exceptions.FrameworkError as error:
                 # counts
                 problems.append(f"thread {number}: {error}")
+        # all done
+        return
 
-    # make a few threads
-    threads = [threading.Thread(target=worker, args=(number,)) for number in range(8)]
+    # make a few threads, which must not keep the interpreter alive if they get stuck
+    threads = [threading.Thread(target=worker, args=(number,), daemon=True) for number in range(8)]
     # go through them
     for thread in threads:
         # and start each one
         thread.start()
-    # go through them again
+    # the statements take about a second even one at a time, so give them far longer
+    deadline = time.monotonic() + 30
+    # go through the threads again
     for thread in threads:
-        # and wait for each one to finish
-        thread.join()
-    # none of them should have had trouble
+        # and wait for each one to finish, until the deadline
+        thread.join(timeout=max(0, deadline - time.monotonic()))
+    # the threads still running are stuck waiting for an answer
+    stuck = [thread.name for thread in threads if thread.is_alive()]
+    # none of them should be
+    assert not stuck, f"stuck waiting for the server: {', '.join(stuck)}"
+    # and none of them should have had trouble
     assert not problems, "\n".join(problems[:10])
     # all done
     return
