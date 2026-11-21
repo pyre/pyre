@@ -13,7 +13,7 @@ from .DataStore import DataStore
 
 
 # declaration
-class Client(pyre.component, family="pyre.db.client"):
+class Client(pyre.component, family="pyre.db.clients"):
     """
     The base class for components that connect to data stores
     """

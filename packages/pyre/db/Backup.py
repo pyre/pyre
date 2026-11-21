@@ -13,15 +13,16 @@ from .Server import Server
 
 
 # declaration
-class Backup(Server, family="pyre.db.server.backup"):
+class Backup(Server, family="pyre.db.servers.backup"):
     """
-    Component that saves SQL statement in a stream
+    Component that saves SQL statements in a stream
     """
 
     # public state
     database = pyre.properties.str(default="what?")
     database.doc = "the name of the database to connect to"
 
+    # where the statements go
     stream = pyre.properties.ostream(default="stdout")
     stream.doc = "the stream in which to place SQL statements"
 
