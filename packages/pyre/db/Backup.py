@@ -56,21 +56,5 @@ class Backup(Server, family="pyre.db.servers.backup"):
         # all done
         return
 
-    # meta methods
-    # context manager interface
-    def __enter__(self):
-        """
-        Hook invoked when the context manager is entered
-        """
-        # nothing to do
-        return self
-
-    def __exit__(self, exc_type, exc_instance, exc_traceback):
-        """
-        Hook invoked when the context manager's block exits
-        """
-        # nothing to do
-        return
-
 
 # end of file
