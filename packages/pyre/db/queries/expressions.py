@@ -5,6 +5,10 @@
 # (c) 1998-2026 all rights reserved
 
 
+# the nodes of the algebra of the fields
+from ... import descriptors
+
+
 # unary expressions
 class UnaryPostfix:
     """
@@ -53,10 +57,22 @@ class IsNotNull(UnaryPostfix):
 
 
 # some built-in functions
-class Cast:
+class Cast(descriptors.stem.operator):
     """
     The conversion of the value of a field to another type
+
+    A cast is a node of the algebra of the fields: its one operand is the field, its evaluator
+    converts a value to the target type, and it takes part in projections and comparisons like
+    any other expression
     """
+
+    # interface
+    def coerce(self, value, **kwds):
+        """
+        Convert {value} to my target type
+        """
+        # my target type knows
+        return self.targetType.coerce(value=value, **kwds)
 
     # visiting
     def _pyre_identify(self, authority, **kwds):
@@ -68,11 +84,9 @@ class Cast:
 
     # meta-methods
     def __init__(self, field, targetType, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # save my field reference
-        self.field = field
-        # and the target type
+        # chain up, with the field as my one operand and the conversion as my evaluator
+        super().__init__(evaluator=targetType.coerce, operands=(field,), **kwds)
+        # save the target type
         self.targetType = targetType
         # all done
         return
