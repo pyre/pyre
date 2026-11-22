@@ -7,11 +7,14 @@
 
 
 """
-Exercise table declaration
+Exercise the declaration of a table with a reference to another
 """
 
 
 def test():
+    """
+    Declare a table that refers to another, and check the statement that creates it
+    """
     # access to the package
     import pyre.db
 
@@ -21,9 +24,11 @@ def test():
         A table of cities
         """
 
-        # the fields
+        # the key
         id = pyre.db.int().primary()
+        # the name of the city
         name = pyre.db.str()
+        # and its state
         state = pyre.db.str(maxlen=2)
 
     # declare a simple table
@@ -32,20 +37,23 @@ def test():
         The sample table from the postgres tutorial
         """
 
-        # the fields
+        # the city
         city = pyre.db.reference(key=City.id)
-
+        # the day
         date = pyre.db.date()
+        # its lowest temperature
         low = pyre.db.int()
+        # its highest
         high = pyre.db.int()
+        # and how much it rained
         precipitation = pyre.db.float()
 
     # get a server
     server = pyre.db.server(name="test")
     # to build the SQL statement
-    stmt = tuple(server.sql.createTable(table=Weather))
-    # print('\n'.join(stmt))
-    assert stmt == (
+    statement = tuple(server.sql.createTable(table=Weather))
+    # and check it
+    assert statement == (
         "CREATE TABLE weather",
         "  --",
         "  -- The sample table from the postgres tutorial",
@@ -54,17 +62,19 @@ def test():
         "  city INTEGER",
         "    REFERENCES cities (id),",
         "  date DATE,",
-        "  low INTEGER DEFAULT 0,",
-        "  high INTEGER DEFAULT 0,",
-        "  precipitation DOUBLE PRECISION DEFAULT 0.0",
+        "  low INTEGER,",
+        "  high INTEGER,",
+        "  precipitation DOUBLE PRECISION",
         ");",
-    )
+    ), statement
+
     # all done
     return Weather, City
 
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

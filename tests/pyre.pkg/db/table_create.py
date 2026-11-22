@@ -63,12 +63,12 @@ def test():
         "(",
         "  city CLOB -- a string of arbitrary length",
         "    PRIMARY KEY,",
-        "  state VARCHAR(2) DEFAULT '' -- a string with maximum length 2",
+        "  state VARCHAR(2) -- a string with maximum length 2",
         "    NOT NULL,",
         "  when DATE -- a date",
         "    UNIQUE,",
-        "  price DECIMAL(6, 2) DEFAULT 0, -- a decimal",
-        "  pi DOUBLE PRECISION DEFAULT 0.0 -- a floating point number",
+        "  price DECIMAL(6, 2), -- a decimal",
+        "  pi DOUBLE PRECISION -- a floating point number",
         ");",
     )
 
