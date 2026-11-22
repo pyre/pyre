@@ -33,8 +33,8 @@ class Backup(Server, family="pyre.db.servers.backup"):
         """
         Connect to the database
         """
-        # nothing to do
-        return
+        # there is no connection to make, so hand me back
+        return self
 
     @pyre.export
     def detach(self):
@@ -53,8 +53,8 @@ class Backup(Server, family="pyre.db.servers.backup"):
         statements = "\n".join(sql)
         # place them in my stream
         print(statements, file=self.stream)
-        # all done
-        return
+        # a backup only writes, so there are no rows to hand back
+        return ()
 
 
 # end of file
