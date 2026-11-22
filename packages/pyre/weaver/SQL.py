@@ -110,17 +110,8 @@ class SQL(LineMill, Expression):
         if isinstance(value, str):
             # quote it
             return self.quote(text=value)
-
-        # check whether
-        try:
-            # it knows how to render itself
-            rendering = value.sql()
-        # otherwise
-        except AttributeError:
-            # last resort: render the value as a string
-            rendering = str(value)
-        # either way, return the {rendering}
-        return rendering
+        # anything else is rendered as its text
+        return str(value)
 
     # private data
     comment = "--"
