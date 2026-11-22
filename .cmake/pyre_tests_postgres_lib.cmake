@@ -41,6 +41,8 @@ pyre_test_driver_postgres(tests/postgres.lib/codecs.cc)
 pyre_test_driver_postgres(tests/postgres.lib/codecs_locale.cc)
 pyre_test_driver_postgres(tests/postgres.lib/errors.cc)
 pyre_test_driver_postgres(tests/postgres.lib/transaction.cc)
+pyre_test_driver_postgres(tests/postgres.lib/transaction_aborted.cc)
+pyre_test_driver_postgres(tests/postgres.lib/threads.cc)
 pyre_test_driver_postgres(tests/postgres.lib/async.cc)
 
 
