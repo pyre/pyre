@@ -75,9 +75,7 @@ class SQL(LineMill, Expression):
         Render {node} as a call to the function its operator stands for
         """
         # render the arguments
-        arguments = (
-            self._renderers[type(operand)](node=operand, **kwds) for operand in node.operands
-        )
+        arguments = (self._render(node=operand, **kwds) for operand in node.operands)
         # look up the name of the function
         function = self._symbols[node.evaluator]
         # and put it all together
@@ -91,9 +89,9 @@ class SQL(LineMill, Expression):
         # extract the operands
         dividend, divisor = node.operands
         # render the dividend
-        numerator = self._renderers[type(dividend)](node=dividend, **kwds)
+        numerator = self._render(node=dividend, **kwds)
         # and the divisor
-        denominator = self._renderers[type(divisor)](node=divisor, **kwds)
+        denominator = self._render(node=divisor, **kwds)
         # look up the name of the function that takes the floor
         floor = self._symbols[node.evaluator]
         # and the symbol of the division

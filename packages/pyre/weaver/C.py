@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+import operator
+
 # access to the pyre package
 import pyre
 
@@ -27,12 +30,11 @@ class C(BlockMill, Expression):
     def __init__(self, **kwds):
         # chain up
         super().__init__(**kwds)
-        # access the {operator} module
-        import operator
-
-        # adjust the symbol table
+        # adjust the symbol table: integer division is the division of integers
         self._symbols[operator.floordiv] = "/"
+        # conjunction
         self._symbols[operator.and_] = "&&"
+        # and disjunction use the operators of the language
         self._symbols[operator.or_] = "||"
         # and the rendering strategy table
         self._renderers[operator.pow] = self._powerRenderer
@@ -40,22 +42,23 @@ class C(BlockMill, Expression):
         return
 
     # implementation details
-    def _powerRenderer(self, node):
+    def _powerRenderer(self, node, **kwds):
         """
-        Render {node.op1} raised to the {node.op2} power
+        Render the base of {node} raised to the power of its exponent
         """
         # get the base and the exponent
         base, exponent = node.operands
-        # render my operands
-        op1 = self._renderers[type(base)](base)
-        op2 = self._renderers[type(exponent)](exponent)
-        # and return my string
-        return "pow({},{})".format(op1, op2)
+        # render the base
+        op1 = self._render(node=base, **kwds)
+        # and the exponent
+        op2 = self._render(node=exponent, **kwds)
+        # and hand them to the library function
+        return f"pow({op1},{op2})"
 
     # private data
-    startBlock = "/*"
-    commentMarker = " *"
-    endBlock = "*/"
+    startBlock = "/*"  # the opening of a comment block
+    commentMarker = " *"  # the marker of each line inside it
+    endBlock = "*/"  # and its closing
 
 
 # end of file
