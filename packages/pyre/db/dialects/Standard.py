@@ -54,6 +54,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         """
         Generate the SELECT statement described by {query}
         """
+        # every statement starts at the margin
+        self.margin()
         # start
         yield "SELECT"
         # prepare to render the field projection
@@ -167,6 +169,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         """
         Generate the SQL statement that initiates a transaction block
         """
+        # every statement starts at the margin
+        self.margin()
         # simple enough
         yield self.place("START TRANSACTION;")
         # all done
@@ -176,6 +180,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         """
         Generate the SQL statement that closes a transaction block
         """
+        # every statement starts at the margin
+        self.margin()
         # simple enough
         yield self.place("COMMIT;")
         # all done
@@ -185,6 +191,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         """
         Generate the SQL statement that rolls back a transaction
         """
+        # every statement starts at the margin
+        self.margin()
         # simple enough
         yield self.place("ROLLBACK;")
         # all done
@@ -217,6 +225,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         The {table} specification is expected to be a {Table} subclass, with the necessary
         column information provided by the decorated field descriptors
         """
+        # every statement starts at the margin
+        self.margin()
         # if the table has no fields
         if not table.pyre_fields:
             # it's a bug
@@ -356,6 +366,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         """
         Build the statement to drop the given {table}
         """
+        # every statement starts at the margin
+        self.margin()
         # this is easy enough
         yield "DROP TABLE {};".format(table.pyre_name)
         # all done
@@ -366,6 +378,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         """
         Insert {records}, an iterable of table records, into their corresponding table
         """
+        # every statement starts at the margin
+        self.margin()
         # the values of the previous record, held back until we know whether more follow, so
         # that {records} can be a generator
         dangling = ""
@@ -409,6 +423,10 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
             # render them
             dangling = "({})".format(", ".join(values))
 
+        # if there were no records
+        if table is None:
+            # there is no statement
+            return
         # render any left overs
         yield self.place(dangling + ";")
         # bounce out to top level
@@ -422,6 +440,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
 
         If condition is {None}, this routine will remove all records from the given {table}
         """
+        # every statement starts at the margin
+        self.margin()
         # if no condition was specified
         if condition is None:
             # delete all records
@@ -450,6 +470,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         affected. Without a {condition}, every row is updated, and a {template} that sets no
         field builds no statement
         """
+        # every statement starts at the margin
+        self.margin()
         # get the table
         table = template.pyre_layout
         # the assignments, one for each field that {template} sets
