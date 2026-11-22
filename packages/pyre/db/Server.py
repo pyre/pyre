@@ -195,6 +195,16 @@ class Server(pyre.component, implements=DataStore):
         # the target type knows what it is
         return node.targetType._pyre_identify(authority=self, value=value, **kwds)
 
+    # implementation details
+    def _commit(self):
+        """
+        Make the work of the transaction of a transaction block permanent
+        """
+        # tell the back end
+        self.execute(*self.sql.commit())
+        # all done
+        return
+
     # meta methods
     # context manager support
     def __enter__(self):
@@ -214,7 +224,7 @@ class Server(pyre.component, implements=DataStore):
         # if the block ended normally
         if exc_type is None:
             # commit the transaction
-            self.execute(*self.sql.commit())
+            self._commit()
         # otherwise
         else:
             # roll it back

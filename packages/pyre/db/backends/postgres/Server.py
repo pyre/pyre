@@ -207,6 +207,25 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         return
 
     # implementation details
+    def _commit(self):
+        """
+        Make the work of the transaction of a transaction block permanent, and say so when the
+        server had abandoned the transaction instead
+        """
+        # tell the server
+        result = self.execute(*self.sql.commit())
+        # a transaction the server had already abandoned answers its commit with a rollback, and
+        # with no error of its own
+        if result.command == "ROLLBACK":
+            # so say that nothing was kept
+            raise exceptions.OperationalError(
+                diagnostic="the transaction was rolled back, so none of its work was kept",
+                command="COMMIT",
+            )
+        # all done
+        return
+
+    # private data
     connection = None  # my session with the back end
 
 
