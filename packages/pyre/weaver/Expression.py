@@ -26,8 +26,8 @@ class Expression:
         Build a representation of {root}, assumed to be an instance of a {pyre.calc.Node}
         subclass
         """
-        # hand the node to the renderer of its type
-        return self._renderers[type(root)](root, **kwds)
+        # render the root of the tree
+        return self._render(node=root, **kwds)
 
     # meta methods
     def __init__(self, nodeType=None, **kwds):
@@ -45,6 +45,32 @@ class Expression:
         return
 
     # implementation details
+    def _render(self, node, **kwds):
+        """
+        Render {node}, a node of an expression tree
+        """
+        # look up the renderer of its type
+        renderer = self._renderers.get(type(node))
+        # the nodes of the algebra have one
+        if renderer is not None:
+            # so use it
+            return renderer(node=node, **kwds)
+        # the others identify themselves
+        try:
+            # by asking for their handler
+            identify = node._pyre_identify
+        # a node that can do neither
+        except AttributeError:
+            # is a bug
+            import journal
+
+            # so complain
+            raise journal.firewall("pyre.weaver").log(
+                f"cannot render a node of type '{type(node).__module__}.{type(node).__qualname__}'"
+            ) from None
+        # let the node say what it is
+        return identify(authority=self, **kwds)
+
     def _newSymbolTable(self):
         """
         Build a table mapping all {pyre.calc} operators to their 'default' symbols
@@ -146,9 +172,9 @@ class Expression:
         # extract the operands
         left, right = node.operands
         # render the left operand
-        op1 = self._renderers[type(left)](node=left, **kwds)
+        op1 = self._render(node=left, **kwds)
         # render the right operand
-        op2 = self._renderers[type(right)](node=right, **kwds)
+        op2 = self._render(node=right, **kwds)
         # look up the operator symbol
         symbol = self._symbols[node.evaluator]
         # put it all together
@@ -161,7 +187,7 @@ class Expression:
         # get the operand: unpack as a tuple to catch mistakes
         (operand,) = node.operands
         # render it
-        op = self._renderers[type(operand)](node=operand, **kwds)
+        op = self._render(node=operand, **kwds)
         # look up the operator symbol
         symbol = self._symbols[node.evaluator]
         # put it all together
@@ -174,7 +200,7 @@ class Expression:
         # get the operand: unpack as a tuple to catch mistakes
         (operand,) = node.operands
         # render it
-        op = self._renderers[type(operand)](node=operand, **kwds)
+        op = self._render(node=operand, **kwds)
         # decorate and return
         return f"-({op})"
 
