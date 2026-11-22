@@ -32,38 +32,35 @@ class Schemer(records.templater):
             # get added to the global schema
             table.pyre_schema.tables.add(table)
 
-        # now that the class record is built, we can hunt down inherited attributes: the
-        # fields of the primary key
-        primary = set()
-        # the fields whose values are unique
-        unique = set()
+        # now that the class record is built, collect what my bases declared: the fields of
+        # the primary key
+        primary = []
+        # the groups of fields whose values are unique
+        unique = []
         # the foreign keys
         foreign = []
-        # and the constraints
+        # and the checks
         constraints = []
-        # traverse the mro
-        for base in reversed(table.__mro__):
-            # restrict the search to {Table} subclasses
+        # go through my ancestors, the most distant first
+        for base in reversed(table.__mro__[1:]):
+            # restrict the search to tables
             if not isinstance(base, cls):
                 # by moving on
                 continue
-            # iterate over the fields declared locally in this ancestor
-            for field in base.pyre_localFields:
-                # if this field is a primary key for its table
-                if field in base._pyre_primaryKeys:
-                    # then it is a primary key for mine too
-                    primary.add(field)
-                # if it is unique over its table
-                if field in base._pyre_uniqueFields:
-                    # then it is unique for mine too
-                    unique.add(field)
-                # NYI: foreign keys
-                # NYI: constraints
+            # each one carries what its own bases declared, so merge, leaving out what is there
+            # already: the fields of the primary key
+            cls._pyre_merge(target=primary, entries=base._pyre_primaryKeys)
+            # the unique groups
+            cls._pyre_merge(target=unique, entries=base._pyre_uniqueKeys)
+            # the foreign keys
+            cls._pyre_merge(target=foreign, entries=base._pyre_foreignKeys)
+            # and the checks
+            cls._pyre_merge(target=constraints, entries=base._pyre_constraints)
 
         # save my primary keys
         table._pyre_primaryKeys = primary
         # save my unique fields
-        table._pyre_uniqueFields = unique
+        table._pyre_uniqueKeys = unique
         # save my foreign key specs
         table._pyre_foreignKeys = foreign
         # save my constraints
@@ -71,6 +68,22 @@ class Schemer(records.templater):
 
         # and return the table record
         return table
+
+    @staticmethod
+    def _pyre_merge(target, entries):
+        """
+        Add to {target} the {entries} it does not hold already, in their order
+        """
+        # go through the entries
+        for entry in entries:
+            # the ones {target} holds already, which are the same objects
+            if any(existing is entry for existing in target):
+                # are left alone
+                continue
+            # the others are added at the end
+            target.append(entry)
+        # all done
+        return target
 
     def __init__(self, name, bases, attributes, **kwds):
         # chain up, which builds the generators of my rows
