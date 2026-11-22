@@ -57,5 +57,20 @@ class Literals(standard.Literals):
         # as its canonical text, quoted
         return self.mill.quote(text=str(value))
 
+    # implementation details
+    def _notANumber(self, **kwds):
+        """
+        Render a value that is not a number
+        """
+        # postgres has a literal for it
+        return "'NaN'"
+
+    def _infinity(self, positive, **kwds):
+        """
+        Render an infinity, {positive} or not
+        """
+        # postgres has a literal for each of them
+        return "'Infinity'" if positive else "'-Infinity'"
+
 
 # end of file
