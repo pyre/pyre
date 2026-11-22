@@ -24,7 +24,7 @@ class StandardColumns:
     # interface
     def declare(self, table, column):
         """
-        Spell the type of {column}, a column of {table}
+        Build the type declarator of {column}, a column of {table}
         """
         # let the column say what it is
         return column._pyre_identify(authority=self, table=table, column=column)
@@ -40,7 +40,7 @@ class StandardColumns:
     # truth values
     def _pyre_onBoolean(self, schema, **kwds):
         """
-        Spell the type of a column of truth values
+        Build the type declarator of a column of truth values
         """
         # easy enough
         return "BOOLEAN"
@@ -48,21 +48,21 @@ class StandardColumns:
     # numbers
     def _pyre_onInteger(self, schema, **kwds):
         """
-        Spell the type of a column of integers
+        Build the type declarator of a column of integers
         """
         # easy enough
         return "INTEGER"
 
     def _pyre_onFloat(self, schema, **kwds):
         """
-        Spell the type of a column of floating point numbers
+        Build the type declarator of a column of floating point numbers
         """
         # easy enough
         return "DOUBLE PRECISION"
 
     def _pyre_onDecimal(self, schema, **kwds):
         """
-        Spell the type of a column of fixed point numbers
+        Build the type declarator of a column of fixed point numbers
         """
         # with the number of their digits, and how many of them follow the point
         return f"DECIMAL({schema.precision}, {schema.scale})"
@@ -70,7 +70,7 @@ class StandardColumns:
     # text
     def _pyre_onString(self, schema, **kwds):
         """
-        Spell the type of a column of text
+        Build the type declarator of a column of text
         """
         # text of unbounded length
         if schema.maxlen is None:
@@ -82,7 +82,7 @@ class StandardColumns:
     # strings of octets
     def _pyre_onBytes(self, schema, **kwds):
         """
-        Spell the type of a column of strings of octets
+        Build the type declarator of a column of strings of octets
         """
         # they are large objects of octets
         return "BLOB"
@@ -90,21 +90,21 @@ class StandardColumns:
     # dates and times
     def _pyre_onDate(self, schema, **kwds):
         """
-        Spell the type of a column of dates
+        Build the type declarator of a column of dates
         """
         # easy enough
         return "DATE"
 
     def _pyre_onTime(self, schema, **kwds):
         """
-        Spell the type of a column of times of day
+        Build the type declarator of a column of times of day
         """
         # a time of day carries its offset only when the column insists that it has one
         return "TIME WITH TIME ZONE" if schema.timezone is True else "TIME"
 
     def _pyre_onTimestamp(self, schema, **kwds):
         """
-        Spell the type of a column of moments in time
+        Build the type declarator of a column of moments in time
         """
         # a moment carries its time zone only when the column insists that it has one
         return "TIMESTAMP WITH TIME ZONE" if schema.timezone is True else "TIMESTAMP"
@@ -120,7 +120,7 @@ class StandardColumns:
     # arrays
     def _pyre_onArray(self, schema, table, column, **kwds):
         """
-        Spell the type of a column of arrays
+        Build the type declarator of a column of arrays
         """
         # the type of the entries
         entries = schema.schema._pyre_identify(authority=self, table=table, column=column)

@@ -8,18 +8,18 @@
 # my superclass
 from .Standard import Standard
 
-# the spellings of the types of my columns
+# the type declarators of my columns
 from .PostgresColumns import PostgresColumns
 
 
 # declaration
 class Postgres(Standard, family="pyre.db.dialects.postgres"):
     """
-    Generate SQL statements in the dialect of postgres: standard SQL, except where postgres spells
-    things differently
+    Generate SQL statements in the dialect of postgres: standard SQL, except where postgres departs
+    from it
     """
 
-    # the visitor that spells the types of my columns
+    # the visitor that builds the type declarators of my columns
     columns = PostgresColumns
 
 
