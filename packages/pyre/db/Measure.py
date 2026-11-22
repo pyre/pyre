@@ -329,6 +329,13 @@ class Measure(records.measure):
             # anything else is an entry, which its column type renders
             return self.schema.sql(value=level)
 
+    # meta-methods
+    def __init__(self, default=None, **kwds):
+        # chain up; a column has a default only when it is given one
+        super().__init__(default=default, **kwds)
+        # all done
+        return
+
     # sql rendering
     def decldefault(self):
         """
