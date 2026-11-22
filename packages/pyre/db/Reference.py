@@ -15,22 +15,6 @@ class Reference(Measure):
     Representation of foreign keys
     """
 
-    @property
-    def decl(self):
-        """
-        SQL rendering of my type name
-        """
-        # my referent knows
-        return self.referent.decl
-
-    # interface
-    def sql(self, value):
-        """
-        SQL rendering of {value}
-        """
-        # my referent knows
-        return self.referent.sql(value=value)
-
     # visiting
     def _pyre_identify(self, authority, **kwds):
         """
