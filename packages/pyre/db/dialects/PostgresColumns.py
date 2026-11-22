@@ -21,19 +21,19 @@ class PostgresColumns(StandardColumns):
     # text
     def _pyre_onString(self, schema, **kwds):
         """
-        Spell the type of a column of text
+        Build the type declarator of a column of text
         """
         # text of unbounded length
         if schema.maxlen is None:
             # has a type of its own
             return "TEXT"
-        # the rest is spelled as standard SQL spells it
+        # the rest are declared as standard SQL declares them
         return super()._pyre_onString(schema=schema, **kwds)
 
     # strings of octets
     def _pyre_onBytes(self, schema, **kwds):
         """
-        Spell the type of a column of strings of octets
+        Build the type declarator of a column of strings of octets
         """
         # postgres has a type of its own for them
         return "BYTEA"
@@ -41,7 +41,7 @@ class PostgresColumns(StandardColumns):
     # identifiers
     def _pyre_onUUID(self, schema, **kwds):
         """
-        Spell the type of a column of universally unique identifiers
+        Build the type declarator of a column of universally unique identifiers
         """
         # postgres has a type for them
         return "UUID"
@@ -49,7 +49,7 @@ class PostgresColumns(StandardColumns):
     # arrays
     def _pyre_onArray(self, schema, table, column, **kwds):
         """
-        Spell the type of a column of arrays
+        Build the type declarator of a column of arrays
         """
         # the type of the entries
         entries = schema.schema._pyre_identify(authority=self, table=table, column=column)

@@ -21,13 +21,13 @@ class SQLiteColumns(StandardColumns):
     # text
     def _pyre_onString(self, schema, **kwds):
         """
-        Spell the type of a column of text
+        Build the type declarator of a column of text
         """
         # text of unbounded length
         if schema.maxlen is None:
             # has a type of its own
             return "TEXT"
-        # the rest is spelled as standard SQL spells it
+        # the rest are declared as standard SQL declares them
         return super()._pyre_onString(schema=schema, **kwds)
 
     # arrays

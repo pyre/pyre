@@ -8,18 +8,18 @@
 # my superclass
 from .Standard import Standard
 
-# the spellings of the types of my columns
+# the type declarators of my columns
 from .SQLiteColumns import SQLiteColumns
 
 
 # declaration
 class SQLite(Standard, family="pyre.db.dialects.sqlite"):
     """
-    Generate SQL statements in the dialect of sqlite: standard SQL, except where sqlite spells
-    things differently
+    Generate SQL statements in the dialect of sqlite: standard SQL, except where sqlite departs
+    from it
     """
 
-    # the visitor that spells the types of my columns
+    # the visitor that builds the type declarators of my columns
     columns = SQLiteColumns
 
 

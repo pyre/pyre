@@ -12,7 +12,7 @@ import collections.abc
 # my base class
 from pyre.weaver.SQL import SQL as Mill
 
-# the spellings of the types of my columns
+# the type declarators of my columns
 from .StandardColumns import StandardColumns
 
 
@@ -25,7 +25,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
     # constants
     INDENTER = " " * 2
 
-    # the visitor that spells the types of my columns, which each dialect replaces with its own
+    # the visitor that builds the type declarators of my columns, which each dialect replaces
+    # with its own
     columns = StandardColumns
 
     # types
@@ -230,7 +231,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
             )
         )
 
-        # spell the type of each column before rendering anything, so that a column the
+        # build the type declarator of each column before rendering anything, so that a column the
         # language has no type for leaves no part of the statement behind
         declarations = tuple(
             self._columns.declare(table=table, column=field) for field in table.pyre_fields
@@ -499,7 +500,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         # chain up
         super().__init__(nodeType=field, **kwds)
 
-        # build the visitor that spells the types of my columns
+        # build the visitor of the type declarators of my columns
         self._columns = self.columns()
 
         # local expressions
@@ -570,7 +571,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
     # declarations
     def _fieldDeclaration(self, field, declaration, comma):
         """
-        Build the declaration lines for a given table field, whose type is spelled {declaration}
+        Build the declaration lines for a given table field, whose type declarator is {declaration}
         """
         # the field name
         name = field.name
