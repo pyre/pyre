@@ -91,126 +91,56 @@ class Measure(records.measure):
 
     # mixins for the various supported types
     class bool(measure):
-        """Mixin for booleans"""
-
-        # public data
-        decl = "BOOLEAN"  # SQL rendering of my type name
-
-        # interface
-        def sql(self, value):
-            """SQL rendering of {value}"""
-            # easy enough
-            return "true" if value else "false"
+        """
+        Mixin for truth values
+        """
 
     class bytes(measure):
         """
         Mixin for strings of octets
         """
 
-        # public data
-        decl = "BYTEA"  # SQL rendering of my type name
-
-        # interface
-        def sql(self, value):
-            """
-            SQL rendering of {value}
-            """
-            # the octets, as the hexadecimal digits the server reads them from
-            return f"'\\x{self.coerce(value=value).hex()}'"
-
     class date(measure):
         """
         Mixin for dates
         """
 
-        # public data
-        decl = "DATE"  # SQL rendering of my type name
-
-        # interface
-        def sql(self, value):
-            """
-            SQL rendering of {value}
-            """
-            # the text of the date, quoted
-            return f"'{self.string(self.coerce(value=value))}'"
-
     class decimal(measure):
-        """Mixin for fixed point numbers"""
-
-        # public data
-        @property
-        def decl(self):
-            """SQL rendering of my type name"""
-            # easy enough
-            return "DECIMAL({}, {})".format(self.precision, self.scale)
-
-        # interface
-        def sql(self, value):
-            """SQL rendering of {value}"""
-            # convert the decimal into a string
-            return str(value)
+        """
+        Mixin for fixed point numbers
+        """
 
         # meta-methods
         def __init__(self, precision, scale, **kwds):
             # chain up
             super().__init__(**kwds)
-            # save my parts
-            self.scale = scale
+            # the number of my digits
             self.precision = precision
+            # and how many of them follow the point
+            self.scale = scale
             # all done
             return
 
     class float(measure):
-        """Mixin for floating point numbers"""
-
-        # public data
-        decl = "DOUBLE PRECISION"  # SQL rendering of my type name
-
-        # interface
-        def sql(self, value):
-            """SQL rendering of my value"""
-            # easy enough
-            return str(value)
+        """
+        Mixin for floating point numbers
+        """
 
     class int(measure):
-        """Mixin for integers"""
-
-        # public data
-        decl = "INTEGER"  # SQL rendering of my type name
-
-        # interface
-        def sql(self, value):
-            """SQL rendering of my value"""
-            # easy enough
-            return str(value)
+        """
+        Mixin for integers
+        """
 
     class str(measure):
-        """Mixin for strings"""
-
-        # public data
-        @property
-        def decl(self):
-            """SQL rendering of my type name"""
-            # get my size
-            size = self.maxlen
-            # build a size dependent representation
-            return "TEXT" if size is None else "VARCHAR({})".format(size)
-
-        # interface
-        def sql(self, value):
-            """SQL rendering of my value"""
-            # if the value is None
-            if value is None:
-                # convert it
-                return "'None'"
-            # otherwise, escape any embedded single quotes
-            return "'{}'".format(value.replace("'", "''"))
+        """
+        Mixin for strings
+        """
 
         # meta-methods
         def __init__(self, maxlen=None, **kwds):
             # chain up
             super().__init__(**kwds)
-            # save my size
+            # my maximum length; {None} for text of any length
             self.maxlen = maxlen
             # all done
             return
@@ -220,88 +150,26 @@ class Measure(records.measure):
         Mixin for times of day
         """
 
-        # public data
-        @property
-        def decl(self):
-            """
-            SQL rendering of my type name
-            """
-            # a time of day carries its offset only when i insist that it has one
-            return "TIME WITH TIME ZONE" if self.timezone is True else "TIME"
-
-        # interface
-        def sql(self, value):
-            """
-            SQL rendering of {value}
-            """
-            # the text of the time, quoted
-            return f"'{self.string(self.coerce(value=value))}'"
-
     class timestamp(measure):
         """
         Mixin for moments in time
         """
-
-        # public data
-        @property
-        def decl(self):
-            """
-            SQL rendering of my type name
-            """
-            # a moment carries its time zone only when i insist that it has one
-            return "TIMESTAMP WITH TIME ZONE" if self.timezone is True else "TIMESTAMP"
-
-        # interface
-        def sql(self, value):
-            """
-            SQL rendering of {value}
-            """
-            # the text of the moment, quoted
-            return f"'{self.string(self.coerce(value=value))}'"
 
     class uuid(measure):
         """
         Mixin for universally unique identifiers
         """
 
-        # public data
-        decl = "UUID"  # SQL rendering of my type name
-
-        # interface
-        def sql(self, value):
-            """
-            SQL rendering of {value}
-            """
-            # the canonical text of the identifier, quoted
-            return f"'{self.string(self.coerce(value=value))}'"
-
     class array(measure):
         """
         Mixin for arrays, whose entries are values of another column type
         """
 
-        # public data
-        @property
-        def decl(self):
-            """
-            SQL rendering of my type name
-            """
-            # the type of my entries, marked as an array; the server ignores the rank
-            return f"{self.schema.decl}[]"
-
-        # interface
-        def sql(self, value):
-            """
-            SQL rendering of {value}
-            """
-            # build the array, whole or not at all, and render it level by level
-            return self._level(level=self.coerce(value=value))
-
         # meta-methods
         def __init__(self, **kwds):
             # chain up
             super().__init__(**kwds)
-            # my entries are rendered and declared by their own column type
+            # my entries are values of a column type of their own
             if not isinstance(self.schema, Measure):
                 # so anything else is a mistake in the declaration
                 self._firewall(
@@ -313,44 +181,12 @@ class Measure(records.measure):
             # all done
             return
 
-        # implementation details
-        def _level(self, level):
-            """
-            Render {level}, an entry or a level of the array
-            """
-            # a level is a tuple of entries or of deeper levels
-            if isinstance(level, tuple):
-                # an empty one
-                if not level:
-                    # is the empty array, which takes the type of its column
-                    return "'{}'"
-                # the others list what they hold
-                return "ARRAY[" + ", ".join(self._level(level=entry) for entry in level) + "]"
-            # anything else is an entry, which its column type renders
-            return self.schema.sql(value=level)
-
     # meta-methods
     def __init__(self, default=None, **kwds):
         # chain up; a column has a default only when it is given one
         super().__init__(default=default, **kwds)
         # all done
         return
-
-    # sql rendering
-    def decldefault(self):
-        """
-        Invoked by the SQL mill to create the declaration of the default value
-        """
-        # get my default value
-        value = self.default
-        # if one was not specified
-        if value is None:
-            # return an empty string
-            return ""
-        # build an SQL representation for the default value
-        value = "NULL" if value is literals.null else self.sql(value)
-        # render
-        return " DEFAULT {}".format(value)
 
     # private data
     # the following markers interpret {None} as 'unspecified'
