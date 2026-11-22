@@ -20,6 +20,11 @@ class Selector(records.templater):
     from ..schema.Schemer import Schemer as pyre_schemer
     from ..schema.FieldReference import FieldReference as fieldReference
 
+    # the strategy that builds the rows of a query, which take their values from the columns
+    # the server sent, derivations included; it replaces both strategies of the records
+    from .Verbatim import Verbatim as pyre_extractor
+    from .Verbatim import Verbatim as pyre_evaluator
+
     # data
     pyre_reserved = {"where", "group", "order"}  # SQL keywords that can't be used as field names
 
