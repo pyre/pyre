@@ -20,6 +20,7 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_where_date.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_update_nothing.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_transaction.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_insert_defaults.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_cast.py)
 # cleanup
 add_test(NAME tests.sqlite.clean
   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/sqlite.pkg"
