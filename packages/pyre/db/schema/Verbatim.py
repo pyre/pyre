@@ -8,11 +8,10 @@
 # declaration
 class Verbatim:
     """
-    The strategy that builds a row of a query from the columns the server sent
+    The strategy that builds a row out of the columns a server sent
 
-    Every field of a query, derived or not, is a column of the selection, so the row takes one
-    value per field, as it is: the server computed the derivations, and turned each value into
-    its type
+    Every field of a selection, derived or not, is one of its columns, so the row takes one value
+    per field, as it is: the server computed the derivations, and turned each value into its type
     """
 
     # meta-methods

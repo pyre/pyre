@@ -146,13 +146,54 @@ class Server(pyre.component, implements=DataStore):
         # build the sql statements
         sql = self.sql.select(query=query)
 
+        # the columns of the selection, one for each field of the query
+        columns = query.pyre_fields
         # walk the rows the back end sent, which are data rows and nothing else
         for row in self.execute(*sql):
-            # build a named tuple, whose field order matches the column order by construction
-            yield query.pyre_immutable(data=row)
+            # turn each value into the type of its column
+            values = (
+                self.interpret(column=column, value=value) for column, value in zip(columns, row)
+            )
+            # and build the row out of them, as they are
+            yield query.pyre_storedTuple(record=query, data=values)
 
         # all done
         return
+
+    # reading
+    def interpret(self, column, value):
+        """
+        Turn {value}, which the back end sent for {column}, into the type of the column
+        """
+        # {NULL} is {None}, whatever the column
+        if value is None:
+            # so leave it alone
+            return None
+        # otherwise, let the column say what it is
+        return column._pyre_identify(authority=self, value=value)
+
+    # the handlers of the columns, which take a value as it is, unless a back end sends it in
+    # another form
+    def _pyre_onSchema(self, schema, value, **kwds):
+        """
+        Take {value} as it is
+        """
+        # easy enough
+        return value
+
+    def _pyre_onFieldReference(self, node, value, **kwds):
+        """
+        Turn {value} into the type of the field {node} refers to
+        """
+        # the field knows what it is
+        return node.field._pyre_identify(authority=self, value=value, **kwds)
+
+    def _pyre_onCast(self, node, value, **kwds):
+        """
+        Turn {value} into the target type of the conversion {node}
+        """
+        # the target type knows what it is
+        return node.targetType._pyre_identify(authority=self, value=value, **kwds)
 
     # meta methods
     # context manager support
