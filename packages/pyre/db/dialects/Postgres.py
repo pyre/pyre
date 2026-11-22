@@ -11,6 +11,9 @@ from .Standard import Standard
 # the type declarators of my columns
 from .PostgresColumns import PostgresColumns
 
+# and the literals of their values
+from .PostgresLiterals import PostgresLiterals
+
 
 # declaration
 class Postgres(Standard, family="pyre.db.dialects.postgres"):
@@ -21,6 +24,8 @@ class Postgres(Standard, family="pyre.db.dialects.postgres"):
 
     # the visitor that builds the type declarators of my columns
     columns = PostgresColumns
+    # and the one that renders the literals of their values
+    literals = PostgresLiterals
 
 
 # end of file

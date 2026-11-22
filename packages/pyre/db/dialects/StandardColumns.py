@@ -5,12 +5,12 @@
 # (c) 1998-2026 all rights reserved
 
 
-# the local exceptions
-from .. import exceptions
+# superclass
+from .Visitor import Visitor
 
 
 # declaration
-class StandardColumns:
+class StandardColumns(Visitor):
     """
     A visitor over table columns that generates type declarators in standard SQL.
 
@@ -128,22 +128,6 @@ class StandardColumns:
         levels = 1 if schema.rank is None else schema.rank
         # mark the type of the entries as an array once for each level
         return entries + " ARRAY" * levels
-
-    # implementation details
-    def _refusal(self, table, column, contents):
-        """
-        Build the exception that refuses {column} of {table}, whose {contents} the language has
-        no type for
-        """
-        # say what is wrong, and name the table and the column
-        return exceptions.NotSupportedError(
-            diagnostic=(
-                f"the column {table.pyre_name}.{column.name} holds {contents}, "
-                f"which {self.dialect} has no type for"
-            ),
-            table=table.pyre_name,
-            column=column.name,
-        )
 
 
 # end of file

@@ -15,6 +15,9 @@ from pyre.weaver.SQL import SQL as Mill
 # the type declarators of my columns
 from .StandardColumns import StandardColumns
 
+# and the literals of their values
+from .StandardLiterals import StandardLiterals
+
 
 # declaration
 class Standard(Mill, family="pyre.db.dialects.standard"):
@@ -28,6 +31,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
     columns = StandardColumns
+    # and the one that renders the literals of their values
+    literals = StandardLiterals
 
     # types
     # the metaclasses for tables and queries
@@ -236,6 +241,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         declarations = tuple(
             self._columns.declare(table=table, column=field) for field in table.pyre_fields
         )
+        # and the declaration of the default of each column
+        defaults = tuple(self._default(table=table, column=field) for field in table.pyre_fields)
 
         # if there is a docstring
         if table.__doc__:
@@ -259,11 +266,15 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         # how many?
         nFields = len(table.pyre_fields)
         # go through the fields
-        for index, (field, declaration) in enumerate(zip(table.pyre_fields, declarations)):
+        for index, (field, declaration, default) in enumerate(
+            zip(table.pyre_fields, declarations, defaults)
+        ):
             # do we need a comma
             comma = (annotations > 0) or (index + 1 < nFields)
             # some declarations span multiple lines
-            yield from self._fieldDeclaration(field=field, declaration=declaration, comma=comma)
+            yield from self._fieldDeclaration(
+                field=field, declaration=declaration, default=default, comma=comma
+            )
 
         # if there are any table annotations
         if annotations:
@@ -386,11 +397,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
                 yield self.place(dangling + ",")  # add a comma since we know there are more...
             # collect the values
             values = (
-                (
-                    value.value
-                    if value is table.default or value is table.null
-                    else field.sql(value=value)
-                )
+                self._insertValue(table=table, field=field, value=value)
                 for field, value in zip(table.pyre_fields, record)
             )
             # render them
@@ -502,6 +509,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
 
         # build the visitor of the type declarators of my columns
         self._columns = self.columns()
+        # and the one of the literals of their values, which quotes text as i do
+        self._literals = self.literals(mill=self)
 
         # local expressions
         from ..Collation import Collation as collation
@@ -569,14 +578,41 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # declarations
-    def _fieldDeclaration(self, field, declaration, comma):
+    def _insertValue(self, table, field, value):
         """
-        Build the declaration lines for a given table field, whose type declarator is {declaration}
+        Render {value}, the value of {field} in a record of {table}, for the {VALUES} of an insert
+        """
+        # a missing value
+        if value is None:
+            # is {NULL}
+            return "NULL"
+        # the special values {DEFAULT} and {NULL}
+        if value is table.default or value is table.null:
+            # render as themselves
+            return value.value
+        # everything else is rendered by its field
+        return field.sql(value=value)
+
+    def _default(self, table, column):
+        """
+        Build the declaration of the default of {column} of {table}, if it has one
+        """
+        # a column without a default
+        if column.default is None:
+            # declares none
+            return ""
+        # the others declare the literal of theirs
+        return " DEFAULT " + self._literals.literal(
+            table=table, column=column, value=column.default
+        )
+
+    def _fieldDeclaration(self, field, declaration, default, comma):
+        """
+        Build the declaration lines for a given table field, whose type declarator is
+        {declaration} and whose default is declared by {default}
         """
         # the field name
         name = field.name
-        # default value if any
-        default = field.decldefault()
         # compute the annotations
         annotations = []
         # if the field is a primary key
