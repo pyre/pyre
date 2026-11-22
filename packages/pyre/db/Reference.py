@@ -47,8 +47,8 @@ class Reference(Measure):
         """
         # mark
         self._foreign.delete = action
-        # and return
-        return
+        # enable chaining
+        return self
 
     def onUpdate(self, action):
         """
@@ -57,16 +57,16 @@ class Reference(Measure):
         """
         # mark
         self._foreign.update = action
-        # and return
-        return
+        # enable chaining
+        return self
 
     # meta-methods
-    def __init__(self, **kwds):
-        # chain up; my settings describe my foreign key, so they stay with me
-        super().__init__()
+    def __init__(self, key=None, onDelete=None, onUpdate=None, **kwds):
+        # chain up with the settings i share with every column
+        super().__init__(**kwds)
 
-        # set up my foreign key
-        self._foreign = self.foreign(**kwds)
+        # set up my foreign key with the rest
+        self._foreign = self.foreign(key=key, onDelete=onDelete, onUpdate=onUpdate)
 
         # get the field reference recorded by the foreign key
         reference = self._foreign.reference
