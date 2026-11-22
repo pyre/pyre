@@ -22,10 +22,32 @@ class Postgres(Standard, family="pyre.db.dialects.postgres"):
     from it
     """
 
+    # the name of my language, for the explanations of refusals
+    dialect = "postgres"
+
     # the visitor that builds the type declarators of my columns
     columns = PostgresColumns
     # and the one that renders the literals of their values
     literals = PostgresLiterals
+
+    # database management
+    def createDatabase(self, name):
+        """
+        Generate the SQL statement to create the database {name}
+        """
+        # simple enough
+        yield self.place(f"CREATE DATABASE {name};")
+        # all done
+        return
+
+    def dropDatabase(self, name):
+        """
+        Generate the SQL statement to drop the database {name}
+        """
+        # simple enough
+        yield self.place(f"DROP DATABASE {name};")
+        # all done
+        return
 
 
 # end of file

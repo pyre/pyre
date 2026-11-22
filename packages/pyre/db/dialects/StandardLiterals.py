@@ -23,7 +23,6 @@ class StandardLiterals(Visitor):
     """
 
     # public data
-    dialect = "standard SQL"  # the name of the language, for the explanations of refusals
     emptyArray = "ARRAY[]"  # the literal of an array without entries
 
     # interface
@@ -151,15 +150,6 @@ class StandardLiterals(Visitor):
             + ", ".join(self._level(schema=schema, level=entry, **kwds) for entry in level)
             + "]"
         )
-
-    # meta-methods
-    def __init__(self, mill, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # the mill whose language quotes my text
-        self.mill = mill
-        # all done
-        return
 
 
 # end of file

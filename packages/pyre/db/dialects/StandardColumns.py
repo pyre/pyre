@@ -18,9 +18,6 @@ class StandardColumns(Visitor):
     non-standard types should provide subclasses that override the type relevant handlers.
     """
 
-    # public data
-    dialect = "standard SQL"  # the name of the language, for the explanations of refusals
-
     # interface
     def declare(self, table, column):
         """

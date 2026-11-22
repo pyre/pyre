@@ -15,9 +15,6 @@ class SQLiteLiterals(StandardLiterals):
     Literals in the sqlite dialect that are different from standard SQL
     """
 
-    # public data
-    dialect = "sqlite"  # the name of the language, for the explanations of refusals
-
     # dates and times
     def _pyre_onDate(self, schema, value, **kwds):
         """
