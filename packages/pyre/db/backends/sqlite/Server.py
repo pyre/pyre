@@ -10,21 +10,21 @@ import pyre
 import sqlite3
 
 # superclass
-from .Server import Server
+from ... import Server as base
 
-# the dialects of SQL
-from . import dialects
+# the mill that speaks my dialect
+from .Mill import Mill
 
 
 # declaration
-class SQLite(Server, family="pyre.db.servers.sqlite"):
+class Server(base.Server, family="pyre.db.servers.sqlite"):
     """
     Component that manages the connection to a sqlite database
     """
 
     # the generator of my statements speaks the dialect of sqlite
     sql = pyre.weaver.language()
-    sql.default = dialects.sqlite
+    sql.default = Mill
     sql.doc = "the generator of the SQL statements"
 
     # public state

@@ -6,7 +6,7 @@
 
 
 # superclass
-from .. import records
+from ... import records
 
 
 # declaration
@@ -17,8 +17,8 @@ class Selector(records.templater):
     """
 
     # types
-    from .Schemer import Schemer as pyre_schemer
-    from .FieldReference import FieldReference as fieldReference
+    from ..schema.Schemer import Schemer as pyre_schemer
+    from ..schema.FieldReference import FieldReference as fieldReference
 
     # data
     pyre_reserved = {"where", "group", "order"}  # SQL keywords that can't be used as field names
@@ -31,8 +31,9 @@ class Selector(records.templater):
         """
         # chain up
         attributes = super().__prepare__(name, bases, **kwds)
-        # if this is an internal class, do no more
+        # if this is an internal class
         if hidden:
+            # do no more
             return attributes
 
         # storage for the table aliases
@@ -55,6 +56,7 @@ class Selector(records.templater):
         for base in bases:
             # skip bases that are not queries
             if not isinstance(base, cls):
+                # by moving on
                 continue
             # queries contribute their aliased tables to my attributes
             attributes.update(base.pyre_tables)
@@ -68,8 +70,9 @@ class Selector(records.templater):
     def __new__(cls, name, bases, attributes, hidden=False, **kwds):
         # chain up
         query = super().__new__(cls, name, bases, attributes, **kwds)
-        # if this is an internal class, do no more
+        # if this is an internal class
         if hidden:
+            # do no more
             return query
 
         # pile of tables referenced by this query
@@ -79,6 +82,7 @@ class Selector(records.templater):
         for base in reversed(query.__mro__):
             # narrow the search down to queries
             if not isinstance(base, cls):
+                # by moving on
                 continue
             # collect the table references
             tables.update(base.pyre_tables)

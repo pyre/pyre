@@ -9,27 +9,27 @@
 import pyre
 
 # superclass
-from .Server import Server
+from ... import Server as base
 
 # my exceptions
-from . import exceptions
+from ... import exceptions
 
-# the dialects of SQL
-from . import dialects
+# the mill that speaks my dialect
+from .Mill import Mill
 
 
 # declaration
-class Postgres(Server, family="pyre.db.servers.postgres"):
+class Server(base.Server, family="pyre.db.servers.postgres"):
     """
     Component that manages the connection to a Postgres database
     """
 
     # exceptions
-    from .exceptions import OperationalError
+    from ...exceptions import OperationalError
 
     # the generator of my statements speaks the dialect of postgres
     sql = pyre.weaver.language()
-    sql.default = dialects.postgres
+    sql.default = Mill
     sql.doc = "the generator of the SQL statements"
 
     # public state

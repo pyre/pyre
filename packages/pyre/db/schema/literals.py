@@ -6,7 +6,7 @@
 
 
 # get the nodes
-from ..calc.Node import Node as node
+from ...calc.Node import Node as node
 
 
 # the rich literals

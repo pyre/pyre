@@ -6,11 +6,11 @@
 
 
 # superclass
-from .StandardColumns import StandardColumns
+from ..standard import Columns as standard
 
 
 # declaration
-class SQLiteColumns(StandardColumns):
+class Columns(standard.Columns):
     """
     Type declarators in the sqlite dialect that are different from standard SQL
     """

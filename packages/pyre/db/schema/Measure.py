@@ -9,8 +9,8 @@
 from . import literals
 
 # superclass
-from .. import records
-from .. import schemata
+from ... import records
+from ... import schemata
 
 
 # declaration

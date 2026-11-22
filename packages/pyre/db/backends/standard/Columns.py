@@ -10,7 +10,7 @@ from .Visitor import Visitor
 
 
 # declaration
-class StandardColumns(Visitor):
+class Columns(Visitor):
     """
     A visitor over table columns that generates type declarators in standard SQL.
 

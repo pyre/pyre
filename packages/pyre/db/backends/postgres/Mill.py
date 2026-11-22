@@ -6,17 +6,17 @@
 
 
 # my superclass
-from .Standard import Standard
+from ..standard import Mill as standard
 
 # the type declarators of my columns
-from .PostgresColumns import PostgresColumns
+from .Columns import Columns
 
 # and the literals of their values
-from .PostgresLiterals import PostgresLiterals
+from .Literals import Literals
 
 
 # declaration
-class Postgres(Standard, family="pyre.db.dialects.postgres"):
+class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
     """
     Generate SQL statements in the dialect of postgres: standard SQL, except where postgres departs
     from it
@@ -26,9 +26,9 @@ class Postgres(Standard, family="pyre.db.dialects.postgres"):
     dialect = "postgres"
 
     # the visitor that builds the type declarators of my columns
-    columns = PostgresColumns
+    columns = Columns
     # and the one that renders the literals of their values
-    literals = PostgresLiterals
+    literals = Literals
 
     # database management
     def createDatabase(self, name):

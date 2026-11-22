@@ -9,7 +9,7 @@
 import weakref
 
 # superclass
-from ..patterns.AttributeClassifier import AttributeClassifier
+from ...patterns.AttributeClassifier import AttributeClassifier
 
 
 # class declaration
