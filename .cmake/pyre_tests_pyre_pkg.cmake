@@ -1130,11 +1130,16 @@ pyre_test_python_testcase(tests/pyre.pkg/db/backup_transaction.py)
 pyre_test_python_cleanup(backup_transaction.sql tests/pyre.pkg/db/backup_transaction.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/backup_database_default.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/backup_context.py)
-pyre_test_python_testcase(tests/pyre.pkg/db/table_types_declarations.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/table_types_literals.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/table_array_entries.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/families.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/dialects_servers.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/columns_standard.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/columns_standard_uuid.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/columns_postgres.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/columns_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/columns_sqlite_uuid.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/columns_sqlite_arrays.py)
 
 
 #
