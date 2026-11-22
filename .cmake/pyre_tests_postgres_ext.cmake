@@ -65,6 +65,7 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_where_like_escape.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_defaults.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_values.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_nonfinite.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_cast.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
