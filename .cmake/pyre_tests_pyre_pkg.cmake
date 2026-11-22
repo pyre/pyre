@@ -1155,6 +1155,16 @@ pyre_test_python_testcase(tests/pyre.pkg/db/expressions_not_null.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/expressions_cast_standard.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/expressions_cast_postgres.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/expressions_cast_refused.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_values_standard.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_values_postgres.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_values_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_set.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_where_standard.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_where_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_where_null.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_where_refused.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_zones_standard.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/literals_zones_postgres.py)
 
 
 #
