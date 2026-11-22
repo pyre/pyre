@@ -5,10 +5,14 @@
 # (c) 1998-2026 all rights reserved
 
 
+# the drivers that start threads need the thread library, which older linux systems keep apart
+find_package(Threads REQUIRED)
+
+
 # register a postgres library test driver
 #
 # the plain {pyre_test_driver} links against {pyre} and {journal} only; these drivers also need
-# the header-only {pyre::postgres} library, which drags in libpq
+# the header-only {pyre::postgres} library, which drags in libpq, and the thread library
 function(pyre_test_driver_postgres testfile)
   # generate the name of the testcase
   pyre_test_testcase(testname ${testfile})
@@ -21,8 +25,8 @@ function(pyre_test_driver_postgres testfile)
   target_compile_definitions(${target} PRIVATE PYRE_CORE)
   # that keep their checks in every configuration
   pyre_test_checks(${target})
-  # link against the postgres layer, which brings pyre, journal and libpq along
-  target_link_libraries(${target} PUBLIC pyre::postgres)
+  # link against the postgres layer, which brings pyre, journal and libpq along, and the threads
+  target_link_libraries(${target} PUBLIC pyre::postgres Threads::Threads)
 
   # make it a test case
   add_test(NAME ${testname} COMMAND ${target})
