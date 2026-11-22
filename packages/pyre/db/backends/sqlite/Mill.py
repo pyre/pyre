@@ -30,5 +30,33 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
     # and the one that renders the literals of their values
     literals = Literals
 
+    # transactions
+    def transaction(self):
+        """
+        Generate the SQL statement that initiates a transaction block
+        """
+        # every statement starts at the margin
+        self.margin()
+        # sqlite begins its transactions its own way
+        yield self.place("BEGIN TRANSACTION;")
+        # all done
+        return
+
+    # implementation details
+    def _insertColumns(self, table, record):
+        """
+        Generate the columns of {table} that {record} names in an insert, with their values
+        """
+        # sqlite has no {DEFAULT} among the values of an insert
+        for field, value in zip(table.pyre_fields, record):
+            # so the columns left to their defaults
+            if value is table.default:
+                # are left out
+                continue
+            # and the others are named
+            yield field, value
+        # all done
+        return
+
 
 # end of file
