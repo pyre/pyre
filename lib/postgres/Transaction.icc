@@ -84,7 +84,14 @@ pyre::postgres::Transaction::commit() -> void
     // over, and my destructor must not go on to try a rollback that would fail just as loudly
     _live = false;
     // tell the server
-    _connection.exec("COMMIT");
+    const auto result = _connection.exec("COMMIT");
+    // a transaction the server had already abandoned answers its commit with a rollback, and
+    // with no error of its own
+    if (result.command() == "ROLLBACK") {
+        // so say that nothing was kept
+        throw OperationalError(
+            Diagnostic("the transaction was rolled back, so none of its work was kept", "COMMIT"));
+    }
 
     // all done
     return;
