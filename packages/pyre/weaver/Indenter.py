@@ -36,6 +36,17 @@ class Indenter:
         # all done
         return self
 
+    def margin(self):
+        """
+        Return to the indentation level i started at
+        """
+        # restore the level
+        self._level = self._margin
+        # and adjust the margin filler
+        self.leader = self._indenter * self._level
+        # all done
+        return self
+
     def place(self, line):
         """
         Indent {line} and return it
@@ -47,9 +58,13 @@ class Indenter:
     def __init__(self, indenter=None, level=0, **kwds):
         # chain up
         super().__init__(**kwds)
-        # initialize my markers
+        # the level i start at, and return to
+        self._margin = level
+        # the level i am at
         self._level = level
+        # the filler of one level
         self._indenter = self.INDENTER if indenter is None else indenter
+        # and the filler of the margin
         self.leader = self._indenter * level
         # all done
         return
@@ -58,8 +73,9 @@ class Indenter:
     INDENTER = " " * 4
 
     # private data
-    _level = 0
-    _indenter = None
+    _margin = 0  # the level i return to
+    _level = 0  # the level i am at
+    _indenter = None  # the filler of one level
 
 
 # end of file
