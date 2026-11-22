@@ -32,11 +32,9 @@ class Typed(Schema):
         """
         Walk {value} through the steps from raw to validated
         """
-        # {None} is special; leave it alone
-        if value is None:
-            return None
-        # so are string representations of {None}
-        if isinstance(value, str) and value.strip().lower() == "none":
+        # values that stand for the absence of a value
+        if self.isNone(value=value):
+            # are {None}
             return None
 
         # otherwise, convert
@@ -58,6 +56,18 @@ class Typed(Schema):
 
         # and return the new value
         return value
+
+    def isNone(self, value):
+        """
+        Decide whether {value} stands for the absence of a value: {None} itself, or text that
+        reads "none", as a setting would spell it
+        """
+        # {None} does
+        if value is None:
+            # by definition
+            return True
+        # and so does text that reads "none"
+        return isinstance(value, str) and value.strip().lower() == "none"
 
     def deposit(self, value, **kwds):
         """
@@ -103,6 +113,7 @@ class Typed(Schema):
         """
         # handle anything empty
         if not processors:
+            # by starting with no processors
             return []
         # if i have an iterable
         if isinstance(processors, collections.abc.Iterable):
