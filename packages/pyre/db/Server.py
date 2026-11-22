@@ -199,16 +199,27 @@ class Server(pyre.component, implements=DataStore):
     # context manager support
     def __enter__(self):
         """
-        Hook invoked when the context manager is entered
+        Hook invoked when the context manager is entered: the block is a transaction
         """
-        # the server itself is the managed resource
+        # begin the transaction
+        self.execute(*self.sql.transaction())
+        # and hand me back to the caller
         return self
 
     def __exit__(self, exc_type, exc_instance, exc_traceback):
         """
-        Hook invoked when the context manager's block exits
+        Hook invoked when the context manager's block exits: a block that ends normally commits
+        its transaction, and one that raises rolls it back
         """
-        # re-raise any exception that occurred while executing the body of the with statement
+        # if the block ended normally
+        if exc_type is None:
+            # commit the transaction
+            self.execute(*self.sql.commit())
+        # otherwise
+        else:
+            # roll it back
+            self.execute(*self.sql.rollback())
+        # and re-raise any exception that occurred in the block
         return False
 
 

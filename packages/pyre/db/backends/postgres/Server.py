@@ -206,33 +206,6 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # all done
         return
 
-    # context manager interface
-    def __enter__(self):
-        """
-        Hook invoked when the context manager is entered
-        """
-        # mark the beginning of a transaction
-        self.execute(*self.sql.transaction())
-        # and hand me back to the caller
-        return self
-
-    def __exit__(self, exc_type, exc_instance, exc_traceback):
-        """
-        Hook invoked when the context manager's block exits
-        """
-        # if there were no errors detected
-        if exc_type is None:
-            # commit the transaction to the datastore
-            self.execute(*self.sql.commit())
-        # otherwise
-        else:
-            # roll back
-            self.execute(*self.sql.rollback())
-
-        # indicate that we want to re-raise any exceptions that occurred while executing the
-        # body of the {with} statement
-        return False
-
     # implementation details
     connection = None  # my session with the back end
 
