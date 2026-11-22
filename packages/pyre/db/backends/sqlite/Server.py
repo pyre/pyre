@@ -6,6 +6,8 @@
 
 
 # externals
+import datetime
+import decimal
 import pyre
 import sqlite3
 
@@ -39,10 +41,11 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         """
         # if i have an existing connection to the database
         if self.connection is not None:
-            # there is nothing to do
-            return
-        # otherwise, make a connection
-        self.connection = sqlite3.connect(self.database)
+            # there is nothing to do but hand me back
+            return self
+        # otherwise, make a connection in autocommit mode, so that each statement commits unless
+        # a transaction was begun, as it does in postgres
+        self.connection = sqlite3.connect(self.database, isolation_level=None)
         # and a cursor
         self.cursor = self.connection.cursor()
         # and return
@@ -70,12 +73,65 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
     @pyre.export
     def execute(self, *sql):
         """
-        Execute the sequence of SQL statements in {sql} as a single command
+        Execute the lines in {sql}, one statement at a time, since sqlite takes only one
+        statement per call; the cursor holds the rows of the last one
         """
-        # splice the statements together and hand them to my cursor
-        self.cursor.execute("\n".join(sql))
+        # the lines of the statement being collected
+        statement = []
+        # go through the lines
+        for line in sql:
+            # add each one to the statement
+            statement.append(line)
+            # put it together
+            text = "\n".join(statement)
+            # and once sqlite says the statement is whole
+            if sqlite3.complete_statement(text):
+                # execute it
+                self.cursor.execute(text)
+                # and start the next one
+                statement = []
+        # lines that do not make a whole statement, such as a query without its terminator
+        if statement:
+            # are handed over as they are, so sqlite can say what it thinks of them
+            self.cursor.execute("\n".join(statement))
         # return the cursor
         return self.cursor
+
+    # the handlers of the columns whose values sqlite keeps in a form of its own
+    def _pyre_onBoolean(self, schema, value, **kwds):
+        """
+        Turn {value}, the integer sqlite keeps for a truth value, into one
+        """
+        # easy enough
+        return bool(value)
+
+    def _pyre_onDecimal(self, schema, value, **kwds):
+        """
+        Turn {value}, the number sqlite keeps for a fixed point one, into one
+        """
+        # through its text, so the conversion adds no digits of its own
+        return decimal.Decimal(str(value))
+
+    def _pyre_onDate(self, schema, value, **kwds):
+        """
+        Turn {value}, the text sqlite keeps for a date, into one
+        """
+        # the text is the ISO form the dialect writes
+        return datetime.date.fromisoformat(value)
+
+    def _pyre_onTime(self, schema, value, **kwds):
+        """
+        Turn {value}, the text sqlite keeps for a time of day, into one
+        """
+        # the text is the ISO form the dialect writes
+        return datetime.time.fromisoformat(value)
+
+    def _pyre_onTimestamp(self, schema, value, **kwds):
+        """
+        Turn {value}, the text sqlite keeps for a moment, into one
+        """
+        # the text is the ISO form the dialect writes
+        return datetime.datetime.fromisoformat(value)
 
     # implementation details
     cursor = None  # the cursor that executes my statements
