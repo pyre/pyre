@@ -12,7 +12,7 @@ from .StandardColumns import StandardColumns
 # declaration
 class SQLiteColumns(StandardColumns):
     """
-    Type declarations in the sqlite dialect that are different from standard SQL
+    Type declarators in the sqlite dialect that are different from standard SQL
     """
 
     # public data
