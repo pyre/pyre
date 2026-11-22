@@ -11,6 +11,9 @@ from .Standard import Standard
 # the type declarators of my columns
 from .SQLiteColumns import SQLiteColumns
 
+# and the literals of their values
+from .SQLiteLiterals import SQLiteLiterals
+
 
 # declaration
 class SQLite(Standard, family="pyre.db.dialects.sqlite"):
@@ -21,6 +24,8 @@ class SQLite(Standard, family="pyre.db.dialects.sqlite"):
 
     # the visitor that builds the type declarators of my columns
     columns = SQLiteColumns
+    # and the one that renders the literals of their values
+    literals = SQLiteLiterals
 
 
 # end of file
