@@ -12,12 +12,20 @@ import sqlite3
 # superclass
 from .Server import Server
 
+# the dialects of SQL
+from . import dialects
+
 
 # declaration
 class SQLite(Server, family="pyre.db.servers.sqlite"):
     """
     Component that manages the connection to a sqlite database
     """
+
+    # the generator of my statements speaks the dialect of sqlite
+    sql = pyre.weaver.language()
+    sql.default = dialects.sqlite
+    sql.doc = "the generator of the SQL statements"
 
     # public state
     database = pyre.properties.str(default=":memory:")

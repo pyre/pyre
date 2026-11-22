@@ -14,6 +14,9 @@ from .Server import Server
 # my exceptions
 from . import exceptions
 
+# the dialects of SQL
+from . import dialects
+
 
 # declaration
 class Postgres(Server, family="pyre.db.servers.postgres"):
@@ -23,6 +26,11 @@ class Postgres(Server, family="pyre.db.servers.postgres"):
 
     # exceptions
     from .exceptions import OperationalError
+
+    # the generator of my statements speaks the dialect of postgres
+    sql = pyre.weaver.language()
+    sql.default = dialects.postgres
+    sql.doc = "the generator of the SQL statements"
 
     # public state
     # the database
