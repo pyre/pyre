@@ -8,6 +8,9 @@
 # superclass
 from ... import records
 
+# the strategy that builds the rows read from a server
+from .Verbatim import Verbatim
+
 
 # declaration
 class Schemer(records.templater):
@@ -68,6 +71,17 @@ class Schemer(records.templater):
 
         # and return the table record
         return table
+
+    def __init__(self, name, bases, attributes, **kwds):
+        # chain up, which builds the generators of my rows
+        super().__init__(name, bases, attributes, **kwds)
+        # the rows read from a server take their values as they are, since the server turned
+        # each one into its type
+        self.pyre_storedTuple = type(
+            "stored", (self.pyre_immutableTuple,), {"__slots__": (), "pyre_extract": Verbatim()}
+        )
+        # all done
+        return
 
 
 # end of file

@@ -185,6 +185,18 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # build one on my session
         return pyre.extensions.libpq.Transaction(self.connection)
 
+    # the handlers of the columns whose values my bindings send in another form
+    def _pyre_onArray(self, schema, value, **kwds):
+        """
+        Turn {value}, the list my bindings send for an array, into a tuple, level by level
+        """
+        # a level
+        if isinstance(value, list):
+            # becomes a tuple of its entries, each turned the same way
+            return tuple(self._pyre_onArray(schema=schema, value=entry) for entry in value)
+        # an entry is left alone
+        return value
+
     # meta methods
     def __init__(self, **kwds):
         # chain up

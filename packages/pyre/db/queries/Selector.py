@@ -22,8 +22,8 @@ class Selector(records.templater):
 
     # the strategy that builds the rows of a query, which take their values from the columns
     # the server sent, derivations included; it replaces both strategies of the records
-    from .Verbatim import Verbatim as pyre_extractor
-    from .Verbatim import Verbatim as pyre_evaluator
+    from ..schema.Verbatim import Verbatim as pyre_extractor
+    from ..schema.Verbatim import Verbatim as pyre_evaluator
 
     # data
     pyre_reserved = {"where", "group", "order"}  # SQL keywords that can't be used as field names
@@ -97,6 +97,14 @@ class Selector(records.templater):
 
         # all done
         return query
+
+    def __init__(self, name, bases, attributes, **kwds):
+        # chain up, which builds the generators of my rows
+        super().__init__(name, bases, attributes, **kwds)
+        # my rows take their values as they are, so the rows read from a server are like the rest
+        self.pyre_storedTuple = self.pyre_immutableTuple
+        # all done
+        return
 
 
 # end of file
