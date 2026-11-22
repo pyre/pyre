@@ -6,7 +6,7 @@
 
 
 # my superclass
-from ..framework.Dashboard import Dashboard
+from ...framework.Dashboard import Dashboard
 
 # my metaclass
 from .Persistent import Persistent

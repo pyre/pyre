@@ -11,7 +11,7 @@ class Collation:
     """
 
     # types
-    from .FieldReference import FieldReference as fieldReference
+    from ..schema.FieldReference import FieldReference as fieldReference
 
     # public data
     fieldref = None  # the reference to the field whose values are sorted

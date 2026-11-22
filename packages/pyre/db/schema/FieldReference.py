@@ -6,7 +6,7 @@
 
 
 # superclass
-from .. import descriptors
+from ... import descriptors
 
 
 # declaration

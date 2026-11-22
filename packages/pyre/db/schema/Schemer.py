@@ -6,7 +6,7 @@
 
 
 # superclass
-from .. import records
+from ... import records
 
 
 # declaration
@@ -29,15 +29,20 @@ class Schemer(records.templater):
             # get added to the global schema
             table.pyre_schema.tables.add(table)
 
-        # now that the class record is built, we can hunt down inherited attributes
+        # now that the class record is built, we can hunt down inherited attributes: the
+        # fields of the primary key
         primary = set()
+        # the fields whose values are unique
         unique = set()
+        # the foreign keys
         foreign = []
+        # and the constraints
         constraints = []
         # traverse the mro
         for base in reversed(table.__mro__):
             # restrict the search to {Table} subclasses
             if not isinstance(base, cls):
+                # by moving on
                 continue
             # iterate over the fields declared locally in this ancestor
             for field in base.pyre_localFields:

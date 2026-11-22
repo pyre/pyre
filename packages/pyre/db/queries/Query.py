@@ -6,7 +6,7 @@
 
 
 # superclass
-from .. import records
+from ... import records
 
 # metaclass
 from .Selector import Selector

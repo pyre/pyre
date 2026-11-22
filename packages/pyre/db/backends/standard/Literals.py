@@ -11,17 +11,17 @@ import decimal
 import uuid
 
 # the special value {NULL}
-from .. import literals
+from ...schema import literals
 
 # the local exceptions
-from .. import exceptions
+from ... import exceptions
 
 # superclass
 from .Visitor import Visitor
 
 
 # declaration
-class StandardLiterals(Visitor):
+class Literals(Visitor):
     """
     A visitor over table columns that renders their values as literals of standard SQL
 

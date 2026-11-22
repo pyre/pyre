@@ -6,7 +6,7 @@
 
 
 # the local exceptions
-from .. import exceptions
+from ... import exceptions
 
 
 # declaration

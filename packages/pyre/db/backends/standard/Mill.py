@@ -10,20 +10,20 @@ import inspect
 import collections.abc
 
 # my base class
-from pyre.weaver.SQL import SQL as Mill
+from pyre.weaver.SQL import SQL
 
 # the local exceptions
-from .. import exceptions
+from ... import exceptions
 
 # the type declarators of my columns
-from .StandardColumns import StandardColumns
+from .Columns import Columns
 
 # and the literals of their values
-from .StandardLiterals import StandardLiterals
+from .Literals import Literals
 
 
 # declaration
-class Standard(Mill, family="pyre.db.dialects.standard"):
+class Mill(SQL, family="pyre.db.dialects.standard"):
     """
     Generate SQL statements in standard SQL
     """
@@ -36,18 +36,18 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
 
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
-    columns = StandardColumns
+    columns = Columns
     # and the one that renders the literals of their values
-    literals = StandardLiterals
+    literals = Literals
 
     # types
     # the metaclasses for tables and queries
-    from ..Schemer import Schemer as schemer
-    from ..Selector import Selector as selector
+    from ...schema.Schemer import Schemer as schemer
+    from ...queries.Selector import Selector as selector
 
     # the base classes for tables and queries
-    from ..Table import Table as table
-    from ..Query import Query as query
+    from ...schema.Table import Table as table
+    from ...queries.Query import Query as query
 
     # queries
     def select(self, query):
@@ -523,7 +523,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
     # meta-methods
     def __init__(self, **kwds):
         # get the field definition
-        from .. import field
+        from ... import field
 
         # chain up
         super().__init__(nodeType=field, **kwds)

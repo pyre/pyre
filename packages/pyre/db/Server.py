@@ -7,11 +7,16 @@
 
 # packages
 import pyre
-from . import datastore, sql
+
+# the protocol i implement
+from .DataStore import DataStore
+
+# and the mill that speaks standard SQL, which is the default of every server
+from .backends.standard.Mill import Mill
 
 
 # declaration
-class Server(pyre.component, implements=datastore):
+class Server(pyre.component, implements=DataStore):
     """
     Abstract component that encapsulates the connection to a database back end
 
@@ -25,7 +30,7 @@ class Server(pyre.component, implements=datastore):
     from . import exceptions
 
     # traits
-    sql = pyre.weaver.language(default=sql)
+    sql = pyre.weaver.language(default=Mill)
     sql.doc = "the generator of the SQL statements"
 
     # required interface

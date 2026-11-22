@@ -6,17 +6,17 @@
 
 
 # my superclass
-from .Standard import Standard
+from ..standard import Mill as standard
 
 # the type declarators of my columns
-from .SQLiteColumns import SQLiteColumns
+from .Columns import Columns
 
 # and the literals of their values
-from .SQLiteLiterals import SQLiteLiterals
+from .Literals import Literals
 
 
 # declaration
-class SQLite(Standard, family="pyre.db.dialects.sqlite"):
+class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
     """
     Generate SQL statements in the dialect of sqlite: standard SQL, except where sqlite departs
     from it
@@ -26,9 +26,9 @@ class SQLite(Standard, family="pyre.db.dialects.sqlite"):
     dialect = "sqlite"
 
     # the visitor that builds the type declarators of my columns
-    columns = SQLiteColumns
+    columns = Columns
     # and the one that renders the literals of their values
-    literals = SQLiteLiterals
+    literals = Literals
 
 
 # end of file

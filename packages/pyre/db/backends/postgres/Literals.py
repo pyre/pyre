@@ -6,11 +6,11 @@
 
 
 # superclass
-from .StandardLiterals import StandardLiterals
+from ..standard import Literals as standard
 
 
 # declaration
-class PostgresLiterals(StandardLiterals):
+class Literals(standard.Literals):
     """
     Literals in the postgres dialect that are different from standard SQL
     """

@@ -6,11 +6,11 @@
 
 
 # superclass
-from .StandardLiterals import StandardLiterals
+from ..standard import Literals as standard
 
 
 # declaration
-class SQLiteLiterals(StandardLiterals):
+class Literals(standard.Literals):
     """
     Literals in the sqlite dialect that are different from standard SQL
     """

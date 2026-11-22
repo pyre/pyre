@@ -9,7 +9,7 @@
 from .Schemer import Schemer
 
 # superclass
-from .. import records
+from ... import records
 
 
 # declaration
@@ -20,7 +20,7 @@ class Table(records.record, metaclass=Schemer):
 
     # constants
     from .literals import default, null
-    from .expressions import IsNull as isNull, IsNotNull as isNotNull
+    from ..queries.expressions import IsNull as isNull, IsNotNull as isNotNull
 
     # interface
     # declaration decorators
@@ -67,10 +67,10 @@ class Table(records.record, metaclass=Schemer):
     # implementation details
     # table attributes that generate the table wide declaration statements; initialized by my
     # metaclass at compile time
-    _pyre_primaryKeys = None
-    _pyre_uniqueFields = None
-    _pyre_foreignKeys = None
-    _pyre_constraints = None
+    _pyre_primaryKeys = None  # the fields of my primary key
+    _pyre_uniqueFields = None  # the fields whose values are unique across my rows
+    _pyre_foreignKeys = None  # my references to other tables
+    _pyre_constraints = None  # and the checks my rows must pass
 
 
 # end of file

@@ -10,13 +10,13 @@ Machinery for building connections to database back ends
 """
 
 # the literals
-from .literals import null, default
+from .schema import null, default
 
 # cascade action markers for foreign keys
-from .actions import noAction, restrict, cascade, setNull, setDefault
+from .schema import noAction, restrict, cascade, setNull, setDefault
 
 # orderings
-from .Collation import Collation as collation
+from .queries import collation
 
 
 # for convenience
@@ -39,18 +39,13 @@ def descending(fieldref):
 
 
 # primitive SQL expressions
-from .expressions import (
-    IsNull as isNull,
-    IsNotNull as isNotNull,
-    Cast as cast,
-    Like as like,
-)
+from .queries import isNull, isNotNull, cast, like
 
 # field declarations
 from ..records import field
 
 # the local measure class
-from .Measure import Measure as measure
+from .schema import measure
 
 # the typed measures, one for each type a column can hold
 array = measure.array  # arrays of the values of another column type
@@ -65,32 +60,34 @@ time = measure.time  # times of day
 timestamp = measure.timestamp  # moments in time
 uuid = measure.uuid  # universally unique identifiers
 # references to external keys
-from .Reference import Reference as reference
+from .schema import reference
 
 # tables
-from .Table import Table as table
+from .schema import table
 
 # queries
-from .Query import Query as query
+from .queries import query
 
 # persistent object
-from .Object import Object as object
+from .objects import object
 
 # protocols
 from .DataStore import DataStore as datastore
 
-# the mills: the dialects of SQL
-from . import dialects
-
-# components
-from .dialects import standard as sql
+# components: the base of the servers, which brings in the mill of standard SQL
 from .Server import Server as server
 from .Client import Client as client
 
+# the back ends
+from . import backends
+
+# the mill that speaks standard SQL
+from .backends.standard import mill as sql
+
 # supported servers
 from .Backup import Backup as backup
-from .SQLite import SQLite as sqlite
-from .Postgres import Postgres as postgres
+from .backends.sqlite import server as sqlite
+from .backends.postgres import server as postgres
 
 
 # templates: table rows with all fields set to None; used to update table entries
