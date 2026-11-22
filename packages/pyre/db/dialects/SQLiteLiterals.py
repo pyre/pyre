@@ -38,12 +38,12 @@ class SQLiteLiterals(StandardLiterals):
         return self.mill.quote(text=value.isoformat(sep=" "))
 
     # arrays
-    def _pyre_onArray(self, schema, table, column, **kwds):
+    def _pyre_onArray(self, schema, **kwds):
         """
         Refuse an array, which sqlite has no type for
         """
         # complain
-        raise self._refusal(table=table, column=column, contents="arrays")
+        raise self._refusal(contents="arrays", **kwds)
 
 
 # end of file

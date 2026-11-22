@@ -40,12 +40,12 @@ class StandardLiterals(Visitor):
         return column._pyre_identify(authority=self, table=table, column=column, value=value)
 
     # the columns whose values have no type in the language
-    def _pyre_onSchema(self, schema, table, column, **kwds):
+    def _pyre_onSchema(self, schema, **kwds):
         """
         Refuse a value of {column}, whose values the language has no type for
         """
         # complain
-        raise self._refusal(table=table, column=column, contents="values")
+        raise self._refusal(contents="values", **kwds)
 
     # truth values
     def _pyre_onBoolean(self, schema, value, **kwds):
@@ -116,12 +116,12 @@ class StandardLiterals(Visitor):
         return f"TIMESTAMP '{value.isoformat(sep=' ')}'"
 
     # identifiers
-    def _pyre_onUUID(self, schema, table, column, **kwds):
+    def _pyre_onUUID(self, schema, **kwds):
         """
         Refuse a universally unique identifier, which the language has no type for
         """
         # complain
-        raise self._refusal(table=table, column=column, contents="identifiers")
+        raise self._refusal(contents="identifiers", **kwds)
 
     # arrays
     def _pyre_onArray(self, schema, value, **kwds):
