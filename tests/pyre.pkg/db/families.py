@@ -29,8 +29,11 @@ def test():
         (pyre.db.backup, "pyre.db.servers.backup"),
         # the clients of the data stores
         (pyre.db.client, "pyre.db.clients"),
-        # and the mill that speaks standard SQL
+        # the mill that speaks standard SQL
         (pyre.db.sql, "pyre.db.dialects.standard"),
+        # and the dialects of the back ends
+        (pyre.db.dialects.postgres, "pyre.db.dialects.postgres"),
+        (pyre.db.dialects.sqlite, "pyre.db.dialects.sqlite"),
     ]
     # go through them
     for entity, family in families:
