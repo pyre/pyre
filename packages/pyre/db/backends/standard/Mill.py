@@ -86,10 +86,21 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # push out
             self.outdent()
 
+            # the clauses that follow the {FROM} section, in the order the language puts them,
+            # each with the method that renders it
+            clauses = [
+                (keyword, renderer)
+                for keyword, spec, renderer in (
+                    ("WHERE", query.where, self._whereClause),
+                    ("GROUP BY", query.group, self._groupClause),
+                    ("ORDER BY", query.order, self._orderClause),
+                )
+                # leaving out the ones the query does not have
+                if spec is not None
+            ]
+
             # render the {FROM} section
             yield self.place("FROM")
-            # do we have other clauses following the {FROM} section
-            otherClauses = query.where or query.order or query.group
             # push in
             self.indent()
             # figure out how many table references there are
@@ -104,7 +115,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                     # make it a comma
                     terminator = ","
                 # if there are no other clauses in the query
-                elif not otherClauses:
+                elif not clauses:
                     # wrap up
                     terminator = ";"
                 # otherwise
@@ -120,41 +131,18 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                     # build a local alias for the table name
                     yield self.place("{} AS {}{}".format(table.pyre_name, tableName, terminator))
 
-            # render the {WHERE} clause
-            if query.where is not None:
-                # do we have other clauses following the {FROM} section
-                otherClauses = query.order or query.group
-                # build a terminator
-                terminator = "" if otherClauses else ";"
+            # render the clauses
+            for index, (keyword, renderer) in enumerate(clauses):
+                # the last one ends the statement
+                terminator = ";" if index + 1 == len(clauses) else ""
                 # push out
                 self.outdent()
-                # build the filtering expression
-                predicate = self.expression(root=query.where, context=query)
-                # render the {WHERE} marker
-                yield self.place("WHERE")
+                # render the marker of the clause
+                yield self.place(keyword)
                 # push in
                 self.indent()
-                # and render the expression
-                yield self.place("({}){}".format(predicate, terminator))
-
-            # render the {ORDER BY} clause
-            order = query.order
-            # if it exists
-            if order is not None:
-                # if it is not an iterable
-                if not isinstance(order, collections.abc.Iterable):
-                    # make it one
-                    order = (order,)
-                # push out
-                self.outdent()
-                # render the {ORDER BY} marker
-                yield self.place("ORDER BY")
-                # push in
-                self.indent()
-                # build the collation expression
-                collation = (self.expression(root=spec, context=query) for spec in order)
-                # and render it
-                yield self.place("{};".format(", ".join(collation)))
+                # and render its body
+                yield self.place(renderer(query=query) + terminator)
 
             # push out
             self.outdent(decrement=2)
@@ -163,6 +151,41 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
         # all done
         return
+
+    # the clauses of a selection
+    def _whereClause(self, query):
+        """
+        Render the restriction of {query}
+        """
+        # build the filtering expression
+        predicate = self.expression(root=query.where, context=query)
+        # and put it in parentheses
+        return f"({predicate})"
+
+    def _groupClause(self, query):
+        """
+        Render the fields {query} groups its rows by
+        """
+        # render each of them
+        return self._fieldList(query=query, spec=query.group)
+
+    def _orderClause(self, query):
+        """
+        Render the order of the rows of {query}
+        """
+        # render each of its collations
+        return self._fieldList(query=query, spec=query.order)
+
+    def _fieldList(self, query, spec):
+        """
+        Render {spec}, one expression or several, in the context of {query}
+        """
+        # a single expression
+        if not isinstance(spec, collections.abc.Iterable):
+            # is a list of one
+            spec = (spec,)
+        # render each one, separated by commas
+        return ", ".join(self.expression(root=entry, context=query) for entry in spec)
 
     # transaction support
     def transaction(self):
