@@ -181,6 +181,15 @@ class Measure(records.measure):
             # all done
             return
 
+    # value processing
+    def isNone(self, value):
+        """
+        Decide whether {value} stands for the absence of a value: in a column, only {None} does,
+        and text is text, whatever it says
+        """
+        # easy enough
+        return value is None
+
     # meta-methods
     def __init__(self, default=None, **kwds):
         # chain up; a column has a default only when it is given one
