@@ -1147,6 +1147,9 @@ pyre_test_python_testcase(tests/pyre.pkg/db/defaults_rows.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/defaults_standard.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/defaults_postgres.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/defaults_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/databases_standard.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/databases_postgres.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/databases_sqlite.py)
 
 
 #
