@@ -28,7 +28,7 @@ def test():
         tag = pyre.db.uuid(default=None)
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="columns_standard_uuid")
+    mill = pyre.db.backends.standard.mill(name="columns_standard_uuid")
     # attempt to
     try:
         # build the statement that creates the table

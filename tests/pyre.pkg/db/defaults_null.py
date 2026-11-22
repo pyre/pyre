@@ -24,7 +24,7 @@ def test():
         name = pyre.db.str(maxlen=16).setDefault(pyre.db.null)
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="defaults_null")
+    mill = pyre.db.backends.standard.mill(name="defaults_null")
     # build the statement that creates the table
     statement = tuple(mill.createTable(table=Things))
     # and check it

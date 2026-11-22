@@ -39,7 +39,7 @@ def test():
         where = pyre.db.isNull(street.name)
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="expressions_null")
+    mill = pyre.db.backends.standard.mill(name="expressions_null")
     # generate the statement
     statement = tuple(mill.select(Streets))
     # the restriction is the last line

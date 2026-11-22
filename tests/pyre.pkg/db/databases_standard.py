@@ -23,7 +23,7 @@ def test():
     from pyre.db import exceptions
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="databases_standard")
+    mill = pyre.db.backends.standard.mill(name="databases_standard")
 
     # go through the requests
     for request in (mill.createDatabase, mill.dropDatabase):

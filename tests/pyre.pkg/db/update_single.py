@@ -33,7 +33,7 @@ def test():
     template.phone = "555 1212"
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="update_single")
+    mill = pyre.db.backends.standard.mill(name="update_single")
     # build the statement
     statement = tuple(mill.updateRecords(template=template, condition=(Person.id == 1)))
     # and check it

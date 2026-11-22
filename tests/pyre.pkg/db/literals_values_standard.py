@@ -62,7 +62,7 @@ def test():
     )
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="literals_values_standard")
+    mill = pyre.db.backends.standard.mill(name="literals_values_standard")
     # build the statement that inserts the row
     statement = tuple(mill.insertRecords(thing))
     # and check it

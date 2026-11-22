@@ -42,7 +42,7 @@ def test():
     eva.birthday = datetime.date(1930, 10, 28)
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="literals_set")
+    mill = pyre.db.backends.standard.mill(name="literals_set")
     # build the statement that updates her row
     statement = tuple(mill.updateRecords(template=eva, condition=(Person.id == 1)))
     # and check it

@@ -31,7 +31,7 @@ def test():
     label = pyre.db.cast(House.number, pyre.db.str())
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="expressions_cast_standard")
+    mill = pyre.db.backends.standard.mill(name="expressions_cast_standard")
     # render the cast in the context of its table
     expression = mill.expression(root=label, context=House)
     # it names the type of its target as standard SQL declares it

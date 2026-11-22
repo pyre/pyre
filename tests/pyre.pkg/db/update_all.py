@@ -35,7 +35,7 @@ def test():
     template.phone = pyre.db.null
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="update_all")
+    mill = pyre.db.backends.standard.mill(name="update_all")
     # build the statement, with no condition
     statement = tuple(mill.updateRecords(template=template, condition=None))
     # and check that it has no restriction

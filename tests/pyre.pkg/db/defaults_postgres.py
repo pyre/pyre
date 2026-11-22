@@ -54,7 +54,7 @@ def test():
         empty = pyre.db.array(schema=pyre.db.int(), default=())
 
     # make a mill that speaks the dialect of postgres
-    mill = pyre.db.dialects.postgres(name="defaults_postgres")
+    mill = pyre.db.backends.postgres.mill(name="defaults_postgres")
     # build the statement that creates the table
     statement = tuple(mill.createTable(table=Defaults))
     # and check it

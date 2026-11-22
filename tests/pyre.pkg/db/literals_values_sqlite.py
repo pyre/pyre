@@ -59,7 +59,7 @@ def test():
     )
 
     # make a mill that speaks the dialect of sqlite
-    mill = pyre.db.dialects.sqlite(name="literals_values_sqlite")
+    mill = pyre.db.backends.sqlite.mill(name="literals_values_sqlite")
     # build the statement that inserts the row
     statement = tuple(mill.insertRecords(thing))
     # and check it

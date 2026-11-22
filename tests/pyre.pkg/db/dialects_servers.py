@@ -21,11 +21,11 @@ def test():
     # each server, and the mill it speaks
     expectations = [
         # postgres speaks its own dialect
-        (pyre.db.postgres, pyre.db.dialects.postgres),
+        (pyre.db.postgres, pyre.db.backends.postgres.mill),
         # and so does sqlite
-        (pyre.db.sqlite, pyre.db.dialects.sqlite),
+        (pyre.db.sqlite, pyre.db.backends.sqlite.mill),
         # the backup server records statements for any back end, so it speaks the standard
-        (pyre.db.backup, pyre.db.dialects.standard),
+        (pyre.db.backup, pyre.db.backends.standard.mill),
     ]
     # go through them
     for server, mill in expectations:

@@ -35,7 +35,7 @@ def test():
     tag = pyre.db.cast(Thing.code, pyre.db.uuid())
 
     # make a mill that speaks the dialect of sqlite
-    mill = pyre.db.dialects.sqlite(name="expressions_cast_refused")
+    mill = pyre.db.backends.sqlite.mill(name="expressions_cast_refused")
     # attempt to
     try:
         # render the cast in the context of its table

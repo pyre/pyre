@@ -28,7 +28,7 @@ def test():
         tag = pyre.db.uuid(default=None)
 
     # make a mill that speaks the dialect of sqlite
-    mill = pyre.db.dialects.sqlite(name="columns_sqlite_uuid")
+    mill = pyre.db.backends.sqlite.mill(name="columns_sqlite_uuid")
     # attempt to
     try:
         # build the statement that creates the table

@@ -28,7 +28,7 @@ def test():
         readings = pyre.db.array(schema=pyre.db.int(), default=None)
 
     # make a mill that speaks the dialect of sqlite
-    mill = pyre.db.dialects.sqlite(name="columns_sqlite_arrays")
+    mill = pyre.db.backends.sqlite.mill(name="columns_sqlite_arrays")
     # attempt to
     try:
         # build the statement that creates the table

@@ -66,7 +66,7 @@ def test():
     )
 
     # make a mill that speaks the dialect of postgres
-    mill = pyre.db.dialects.postgres(name="literals_values_postgres")
+    mill = pyre.db.backends.postgres.mill(name="literals_values_postgres")
     # build the statement that inserts the row
     statement = tuple(mill.insertRecords(thing))
     # and check it
