@@ -49,7 +49,9 @@ def test():
     assert statement == (
         "UPDATE persons",
         "  SET",
-        "    (active, nickname, birthday) = (TRUE, NULL, DATE '1930-10-28')",
+        "    active = TRUE,",
+        "    nickname = NULL,",
+        "    birthday = DATE '1930-10-28'",
         "  WHERE ((id) = (1));",
     ), statement
 

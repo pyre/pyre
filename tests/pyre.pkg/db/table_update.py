@@ -12,40 +12,52 @@ Exercise updating rows in tables
 
 
 def test():
+    """
+    Update the phone number and birthday of one person, and check the statement
+    """
     # access the package
     import pyre.db
 
     # declare the person table
     class Person(pyre.db.table, id="persons"):
-
+        # the key
         id = pyre.db.int().primary()
+        # the name, which is required
         name = pyre.db.str().notNull()
+        # the phone number, which is required too
         phone = pyre.db.str().notNull()
+        # and the birthday
         birthday = pyre.db.str()
 
     # initialize a person template
     eva = pyre.db.template(Person)
-    # record some assignments
+    # record some assignments: her phone number
     eva.phone = "1 800 555 7687"
+    # and her birthday
     eva.birthday = "1930/10/28"
 
     # get a server
     server = pyre.db.server(name="test")
     # generate the SQL statement that updates the customer table
-    stmt = tuple(server.sql.updateRecords(template=eva, condition=(Person.name == "Eva Lu Ator")))
-    # print('\n'.join(stmt))
-    assert stmt == (
+    statement = tuple(
+        server.sql.updateRecords(template=eva, condition=(Person.name == "Eva Lu Ator"))
+    )
+    # and check it
+    assert statement == (
         "UPDATE persons",
         "  SET",
-        "    (phone, birthday) = ('1 800 555 7687', '1930/10/28')",
+        "    phone = '1 800 555 7687',",
+        "    birthday = '1930/10/28'",
         "  WHERE ((name) = ('Eva Lu Ator'));",
-    )
+    ), statement
 
+    # all done
     return
 
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
