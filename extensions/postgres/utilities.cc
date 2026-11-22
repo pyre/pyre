@@ -11,6 +11,77 @@
 #include "forward.h"
 
 
+// the helpers of the renderer
+namespace pyre::postgres::py {
+    // check that {text} can be the value of a postgres text, which cannot hold a zero byte
+    inline auto checkText(const string_t & text) -> const string_t &
+    {
+        // a zero byte
+        if (text.find('\0') != string_t::npos) {
+            // has no place in it; refuse before anything is sent, rather than let libpq cut the
+            // text short at the zero
+            throw DataError(Diagnostic("text cannot hold a zero byte"));
+        }
+        // the rest is fine as it is
+        return text;
+    }
+
+    // render {sequence}, a list or a tuple, as the literal of an array: every entry is quoted,
+    // with its backslashes and double quotes escaped, a {None} is {NULL}, and an entry that is a
+    // sequence itself is a level of the array
+    inline auto renderArray(py::handle sequence) -> string_t
+    {
+        // the literal opens with a brace
+        string_t literal = "{";
+        // the entries, separated by commas
+        bool first = true;
+        // go through them
+        for (const auto & entry : sequence) {
+            // every entry after the first
+            if (!first) {
+                // is set apart from the one before it
+                literal += ",";
+            }
+            // and none is the first any more
+            first = false;
+            // a missing entry
+            if (entry.is_none()) {
+                // is spelled as such
+                literal += "NULL";
+                // and that is all
+                continue;
+            }
+            // an entry that is a sequence itself
+            if (py::isinstance<py::list>(entry) || py::isinstance<py::tuple>(entry)) {
+                // is a level of the array
+                literal += renderArray(entry);
+                // and that is all
+                continue;
+            }
+            // any other entry is rendered as an argument would be
+            const auto text = *render(entry);
+            // and quoted
+            literal += "\"";
+            // with its backslashes and double quotes escaped
+            for (const auto character : text) {
+                // each of which gets a backslash in front of it
+                if (character == '\\' || character == '"') {
+                    literal += '\\';
+                }
+                // before the character itself
+                literal += character;
+            }
+            // close the quote
+            literal += "\"";
+        }
+        // and the literal closes with a brace
+        literal += "}";
+        // all done
+        return literal;
+    }
+} // namespace pyre::postgres::py
+
+
 // turn a python object into the text that fills one placeholder of a statement
 //
 // this is the python end of the {Codec} machinery. it cannot be the c++ one, because the type of
@@ -46,9 +117,24 @@ pyre::postgres::py::render(py::handle value) -> argument_t
         return postgres::encode(value.cast<double>());
     }
 
-    // text, which goes as it is
+    // text, which goes as it is, as long as postgres can hold it
     if (py::isinstance<py::str>(value)) {
-        return value.cast<string_t>();
+        return checkText(value.cast<string_t>());
+    }
+
+    // lists and tuples, which become arrays
+    if (py::isinstance<py::list>(value) || py::isinstance<py::tuple>(value)) {
+        return renderArray(value);
+    }
+
+    // dictionaries, which become json documents, in the spelling python's own encoder gives them
+    if (py::isinstance<py::dict>(value)) {
+        return checkText(py::module_::import("json").attr("dumps")(value).cast<string_t>());
+    }
+
+    // the byte buffers other than {bytes}, which go as the octets they hold
+    if (py::isinstance<py::bytearray>(value) || py::isinstance<py::memoryview>(value)) {
+        return render(py::module_::import("builtins").attr("bytes")(value));
     }
 
     // raw octets, which go as the hex escaping every server since 9.0 understands
@@ -66,7 +152,7 @@ pyre::postgres::py::render(py::handle value) -> argument_t
     // and everything else, on the strength of its own rendering. this is what carries a
     // {Decimal}, a {date}, a {datetime} and a {UUID} across, and it does so exactly: python
     // spells each of them the way postgres reads it
-    return py::str(value).cast<string_t>();
+    return checkText(py::str(value).cast<string_t>());
 }
 
 
