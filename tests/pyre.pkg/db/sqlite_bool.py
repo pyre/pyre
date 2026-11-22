@@ -37,8 +37,8 @@ def test():
     db.insert(Flag.pyre_immutable(id=1, up=True), Flag.pyre_immutable(id=2, up=False))
     # read them back
     flags = {row.id: row.up for row in db.select(Flag)}
-    # they are the same
-    assert flags == {1: True, 2: False}, flags
+    # they are truth values, not the numbers sqlite keeps them as
+    assert flags[1] is True and flags[2] is False, flags
     # let go
     db.detach()
     # all done
