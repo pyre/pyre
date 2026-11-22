@@ -6,11 +6,14 @@
 
 
 # support
-import sys
+import inspect
 import collections.abc
 
 # my base class
 from pyre.weaver.SQL import SQL as Mill
+
+# the spellings of the types of my columns
+from .StandardColumns import StandardColumns
 
 
 # declaration
@@ -21,6 +24,9 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
 
     # constants
     INDENTER = " " * 2
+
+    # the visitor that spells the types of my columns, which each dialect replaces with its own
+    columns = StandardColumns
 
     # types
     # the metaclasses for tables and queries
@@ -224,18 +230,20 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
             )
         )
 
+        # spell the type of each column before rendering anything, so that a column the
+        # language has no type for leaves no part of the statement behind
+        declarations = tuple(
+            self._columns.declare(table=table, column=field) for field in table.pyre_fields
+        )
+
         # if there is a docstring
         if table.__doc__:
             # place the header
             yield self.place("CREATE TABLE " + table.pyre_name)
             # push in
             self.indent()
-            # convert the docstring into a comment block
-            yield from self.commentBlock(line.strip() for line in table.__doc__.splitlines())
-            # python 3.13 and later strip the indentation of docstrings, and with it their last line
-            if sys.version_info >= (3, 13):
-                # so put it back, to render the same block on every version
-                yield from self.commentBlock([""])
+            # convert the docstring into a comment block, framed by blank lines
+            yield from self.commentBlock(["", *inspect.cleandoc(table.__doc__).splitlines(), ""])
             # push out
             self.outdent()
             # start the declaration body
@@ -250,11 +258,11 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         # how many?
         nFields = len(table.pyre_fields)
         # go through the fields
-        for index, field in enumerate(table.pyre_fields):
+        for index, (field, declaration) in enumerate(zip(table.pyre_fields, declarations)):
             # do we need a comma
             comma = (annotations > 0) or (index + 1 < nFields)
             # some declarations span multiple lines
-            yield from self._fieldDeclaration(field, comma)
+            yield from self._fieldDeclaration(field=field, declaration=declaration, comma=comma)
 
         # if there are any table annotations
         if annotations:
@@ -491,6 +499,9 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         # chain up
         super().__init__(nodeType=field, **kwds)
 
+        # build the visitor that spells the types of my columns
+        self._columns = self.columns()
+
         # local expressions
         from ..Collation import Collation as collation
         from ..FieldReference import FieldReference as fieldReference
@@ -557,14 +568,12 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # declarations
-    def _fieldDeclaration(self, field, comma):
+    def _fieldDeclaration(self, field, declaration, comma):
         """
-        Build the declaration lines for a given table field
+        Build the declaration lines for a given table field, whose type is spelled {declaration}
         """
         # the field name
         name = field.name
-        # the field type
-        typedecl = field.decl
         # default value if any
         default = field.decldefault()
         # compute the annotations
@@ -598,7 +607,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
             comment = ""
 
         # build the declaration line
-        yield self.place("{} {}{}{}{}".format(name, typedecl, default, separator, comment))
+        yield self.place(f"{name} {declaration}{default}{separator}{comment}")
         # indent
         self.indent()
 

@@ -31,6 +31,14 @@ class Reference(Measure):
         # my referent knows
         return self.referent.sql(value=value)
 
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know what i am: a column that holds the values of my referent
+        """
+        # my referent knows
+        return self.referent._pyre_identify(authority=authority, **kwds)
+
     # markers
     def onDelete(self, action):
         """
@@ -54,19 +62,21 @@ class Reference(Measure):
 
     # meta-methods
     def __init__(self, **kwds):
+        # chain up; my settings describe my foreign key, so they stay with me
         super().__init__()
 
         # set up my foreign key
         self._foreign = self.foreign(**kwds)
 
         # get the field reference recorded by the foreign key
-        ref = self._foreign.reference
+        reference = self._foreign.reference
         # if the reference mentions a field explicitly
-        if ref.field is not None:
+        if reference.field is not None:
             # save it
-            field = ref.field
-        # otherwise
+            field = reference.field
+        # otherwise, it refers to the primary key of its table
         else:
+            # which i cannot follow
             raise NotImplementedError("NYI!")
 
         # store my referent
