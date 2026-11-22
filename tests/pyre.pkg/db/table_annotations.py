@@ -12,6 +12,9 @@ Exercise attaching constraints to tables
 
 
 def test():
+    """
+    Declare two tables with keys, a uniqueness constraint and checks, and render them
+    """
     # access the package
     import pyre.db
 
@@ -21,18 +24,23 @@ def test():
         Simple customer table
         """
 
+        # the identifier of the customer
         cid = pyre.db.int(default=None)
         cid.doc = "the customer id"
+        # their name, which is required
         name = pyre.db.str().notNull()
+        # their phone number
         phone = pyre.db.str(maxlen=10)
+        # and how much they owe
         balance = pyre.db.decimal(precision=7, scale=2)
 
-    # mark {cid} as a  primary key
+    # mark {cid} as a primary key
     Customer.pyre_primaryKey(Customer.cid)
-    # and {phone} as unique
+    # and {name} as unique
     Customer.pyre_unique(Customer.name)
-    # finally, attach some nameless constraints
+    # finally, attach some nameless constraints: the balance is never negative
     Customer.pyre_check(Customer.balance >= 0)
+    # and stays below a limit
     Customer.pyre_check(Customer.balance < 10000)
 
     # declare the order table
@@ -41,7 +49,9 @@ def test():
         Trivial order table
         """
 
+        # the identifier of the order
         oid = pyre.db.int().primary()
+        # and of the customer who placed it
         cid = pyre.db.int(default=None)
 
     # mark {cid} as a foreign key
@@ -51,16 +61,16 @@ def test():
     server = pyre.db.server(name="test")
 
     # generate the SQL statement that creates the customer table
-    stmt = tuple(server.sql.createTable(table=Customer))
-    # print('\n'.join(stmt))
-    assert stmt == (
+    statement = tuple(server.sql.createTable(table=Customer))
+    # and check it
+    assert statement == (
         "CREATE TABLE customers",
         "  --",
         "  -- Simple customer table",
         "  --",
         "(",
         "  cid INTEGER, -- the customer id",
-        "  name TEXT DEFAULT ''",
+        "  name CLOB DEFAULT ''",
         "    NOT NULL,",
         "  phone VARCHAR(10) DEFAULT '',",
         "  balance DECIMAL(7, 2) DEFAULT 0,",
@@ -73,9 +83,9 @@ def test():
     )
 
     # and the SQL statement that creates the order table
-    stmt = tuple(server.sql.createTable(table=Order))
-    # print('\n'.join(stmt))
-    assert stmt == (
+    statement = tuple(server.sql.createTable(table=Order))
+    # and check it
+    assert statement == (
         "CREATE TABLE orders",
         "  --",
         "  -- Trivial order table",
@@ -89,11 +99,13 @@ def test():
         ");",
     )
 
+    # all done
     return
 
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
