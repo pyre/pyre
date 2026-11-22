@@ -79,6 +79,9 @@ from .Object import Object as object
 # protocols
 from .DataStore import DataStore as datastore
 
+# the mills: the dialects of SQL
+from . import dialects
+
 # components
 from .dialects import standard as sql
 from .Server import Server as server

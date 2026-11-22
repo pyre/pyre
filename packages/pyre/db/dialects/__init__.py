@@ -8,4 +8,8 @@
 # the mill that speaks standard SQL
 from .Standard import Standard as standard
 
+# and the dialects of the back ends
+from .Postgres import Postgres as postgres
+from .SQLite import SQLite as sqlite
+
 # end of file
