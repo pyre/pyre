@@ -376,56 +376,68 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     # record management
     def insertRecords(self, *records):
         """
-        Insert {records}, an iterable of table records, into their corresponding table
+        Insert {records}, an iterable of table records, into their corresponding table; the
+        consecutive records of a table that name the same columns share a statement
         """
         # every statement starts at the margin
         self.margin()
         # the values of the previous record, held back until we know whether more follow, so
         # that {records} can be a generator
         dangling = ""
-        # the table whose records are being inserted
-        table = None
+        # the shape of the statement in progress, if any: its table and its columns
+        shape = None
         # iterate over the records
         for record in records:
-            # check whether this record is from the table we are processing, if any
-            if record.pyre_layout is not table:
-                # if we are in the middle of a statement
-                if table is not None:
-                    # terminate the statement
+            # get the table of the record
+            table = record.pyre_layout
+            # the columns it names, with their values
+            columns = tuple(self._insertColumns(table=table, record=record))
+            # and its shape
+            recordShape = (table, tuple(field.name for field, _ in columns))
+            # a record of the same shape as the statement in progress
+            if recordShape == shape:
+                # joins it, so render the dangling values, followed by a comma
+                yield self.place(dangling + ",")
+            # the others
+            else:
+                # end the statement in progress, if there is one
+                if shape is not None:
+                    # by terminating it
                     yield self.place(dangling + ";")
-                    # outdent
-                    self.outdent().outdent()
-                # in any case, save the target table
-                table = record.pyre_layout
-                # initiate the statement
-                yield self.place("INSERT INTO {}".format(table.pyre_name))
+                    # and bouncing out to the margin
+                    self.outdent(decrement=2)
+                # a record that names no column
+                if not columns:
+                    # is inserted by a statement of its own
+                    yield self.place(f"INSERT INTO {table.pyre_name} DEFAULT VALUES;")
+                    # which leaves no statement in progress
+                    shape = None
+                    # so move on
+                    continue
+                # the others start a statement of their shape
+                shape = recordShape
+                # initiate it
+                yield self.place(f"INSERT INTO {table.pyre_name}")
                 # indent
                 self.indent(increment=2)
-                # the field names in declaration order
-                yield self.place(
-                    "({})".format(", ".join(field.name for field in table.pyre_fields))
-                )
+                # the names of the columns
+                yield self.place("(" + ", ".join(recordShape[1]) + ")")
                 # push out
                 self.outdent()
                 # start the section with the record values
                 yield self.place("VALUES")
                 # further in
                 self.indent()
-            # otherwise
-            else:
-                # render any dangling values
-                yield self.place(dangling + ",")  # add a comma since we know there are more...
             # collect the values
             values = (
-                self._recordValue(table=table, field=field, value=value)
-                for field, value in zip(table.pyre_fields, record)
+                self._recordValue(table=table, field=field, value=value) for field, value in columns
             )
             # render them
-            dangling = "({})".format(", ".join(values))
+            dangling = "(" + ", ".join(values) + ")"
 
-        # if there were no records
-        if table is None:
-            # there is no statement
+        # if there is no statement in progress
+        if shape is None:
+            # there is nothing left to render
             return
         # render any left overs
         yield self.place(dangling + ";")
@@ -616,6 +628,15 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         """
         # the literal of its value depends only on the type of the value
         return self._literals.value(value=node._value)
+
+    def _insertColumns(self, table, record):
+        """
+        Generate the columns of {table} that {record} names in an insert, with their values
+        """
+        # every column, in declaration order
+        yield from zip(table.pyre_fields, record)
+        # all done
+        return
 
     def _recordValue(self, table, field, value):
         """
