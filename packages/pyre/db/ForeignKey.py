@@ -5,6 +5,7 @@
 # (c) 1998-2026 all rights reserved
 
 
+# declaration
 class ForeignKey:
     """
     A field decorator that encapsulates references to table fields
@@ -18,6 +19,7 @@ class ForeignKey:
     delete = None  # the specified action to take when the referenced field is deleted
     reference = None  # the table/field i refer to
 
+    # interface
     @property
     def field(self):
         """
@@ -49,7 +51,7 @@ class ForeignKey:
             reference = self.fieldReference(table=key, field=None)
 
         # record the field reference
-        self.reference = key
+        self.reference = reference
         # and the actions
         self.delete = onDelete
         self.update = onUpdate
