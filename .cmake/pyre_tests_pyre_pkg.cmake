@@ -1171,6 +1171,9 @@ pyre_test_python_testcase(tests/pyre.pkg/db/update_single.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/update_all.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/update_nothing.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/insert_nothing.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/insert_defaults_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/insert_defaults_all_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/transaction_sqlite.py)
 
 
 #
