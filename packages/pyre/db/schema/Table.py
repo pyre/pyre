@@ -27,20 +27,27 @@ class Table(records.record, metaclass=Schemer):
     @classmethod
     def pyre_primaryKey(cls, reference):
         """
-        Add {reference} to the tuple of fields that must be marked as primary keys
+        Add the field of {reference} to my primary key, after the ones added before it
         """
-        # add it to the pile
-        cls._pyre_primaryKeys.add(reference.field)
+        # get the field
+        field = reference.field
+        # a field already in the key
+        if any(key is field for key in cls._pyre_primaryKeys):
+            # stays where it is
+            return cls
+        # the others are added at the end
+        cls._pyre_primaryKeys.append(field)
         # and return
         return cls
 
     @classmethod
-    def pyre_unique(cls, reference):
+    def pyre_unique(cls, *references):
         """
-        Add {reference} to the tuple of fields that must be marked as unique
+        Require that the fields of {references} be unique together across my rows; each call
+        makes a constraint of its own
         """
-        # add it to the pile
-        cls._pyre_uniqueFields.add(reference.field)
+        # record the fields, as one constraint
+        cls._pyre_uniqueKeys.append(tuple(reference.field for reference in references))
         # and return
         return cls
 
@@ -67,8 +74,8 @@ class Table(records.record, metaclass=Schemer):
     # implementation details
     # table attributes that generate the table wide declaration statements; initialized by my
     # metaclass at compile time
-    _pyre_primaryKeys = None  # the fields of my primary key
-    _pyre_uniqueFields = None  # the fields whose values are unique across my rows
+    _pyre_primaryKeys = None  # the fields of my primary key, in order
+    _pyre_uniqueKeys = None  # the groups of fields whose values are unique across my rows
     _pyre_foreignKeys = None  # my references to other tables
     _pyre_constraints = None  # and the checks my rows must pass
 

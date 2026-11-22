@@ -260,21 +260,6 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 "table {.pyre_name!r} has no field information".format(table)
             )
 
-        # count the kinds of table annotations that follow the field declarations
-        annotations = len(
-            tuple(
-                filter(
-                    None,
-                    [
-                        len(table._pyre_primaryKeys),
-                        len(table._pyre_foreignKeys),
-                        len(table._pyre_uniqueFields),
-                        len(table._pyre_constraints),
-                    ],
-                )
-            )
-        )
-
         # build the type declarator of each column before rendering anything, so that a column the
         # language has no type for leaves no part of the statement behind
         declarations = tuple(
@@ -282,6 +267,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         )
         # and the declaration of the default of each column
         defaults = tuple(self._default(table=table, column=field) for field in table.pyre_fields)
+        # and the declarations that follow the columns
+        annotations = tuple(self._tableAnnotations(table=table))
 
         # if there is a docstring
         if table.__doc__:
@@ -308,8 +295,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         for index, (field, declaration, default) in enumerate(
             zip(table.pyre_fields, declarations, defaults)
         ):
-            # do we need a comma
-            comma = (annotations > 0) or (index + 1 < nFields)
+            # a comma, unless this is the last of the declarations
+            comma = bool(annotations) or (index + 1 < nFields)
             # some declarations span multiple lines
             yield from self._fieldDeclaration(
                 field=field, declaration=declaration, default=default, comma=comma
@@ -317,71 +304,43 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
         # if there are any table annotations
         if annotations:
-            # separate the annotations with a blank line
+            # separate them from the columns with a blank line
             yield ""
-            # the primary keys
-            if len(table._pyre_primaryKeys):
-                # update the annotation count
-                annotations -= 1
-                # build the declaration, with a comma if more annotations follow
-                yield self.place(
-                    "PRIMARY KEY ({}){}".format(
-                        ",".join(field.name for field in table._pyre_primaryKeys),
-                        "," if annotations else "",
-                    )
-                )
-            # the unique constraints
-            if len(table._pyre_uniqueFields):
-                # update the annotation count
-                annotations -= 1
-                # build the declaration, with a comma if more annotations follow
-                yield self.place(
-                    "UNIQUE ({}){}".format(
-                        ",".join(field.name for field in table._pyre_uniqueFields),
-                        "," if annotations else "",
-                    )
-                )
-            # the foreign keys
-            fkeys = len(table._pyre_foreignKeys)
-            # if there are any
-            if fkeys:
-                # update the annotation count
-                annotations -= 1
-                # go through each foreign key declaration
-                for local, foreign in table._pyre_foreignKeys:
-                    # update the key count
-                    fkeys -= 1
-                    # build the declaration
-                    yield self.place(
-                        "FOREIGN KEY ({}) REFERENCES {} ({}){}".format(
-                            local.field.name,
-                            foreign.table.pyre_name,
-                            foreign.field.name,
-                            "," if fkeys or annotations else "",
-                        )
-                    )
-
-            # the constraints
-            constraints = len(table._pyre_constraints)
-            # if there are any
-            if constraints:
-                # update the annotation count
-                annotations -= 1
-                # go through each constraint
-                for constraint in table._pyre_constraints:
-                    # update the constraint count
-                    constraints -= 1
-                    # build the declaration
-                    yield self.place(
-                        "CHECK ({}){}".format(
-                            self.expression(root=constraint, context=table),
-                            "," if constraints or annotations else "",
-                        )
-                    )
+            # and render each one
+            for index, annotation in enumerate(annotations):
+                # followed by a comma, unless it is the last one
+                yield self.place(annotation + ("," if index + 1 < len(annotations) else ""))
         # push out
         self.outdent()
         # the table declaration terminator
         yield self.place(");")
+        # all done
+        return
+
+    def _tableAnnotations(self, table):
+        """
+        Generate the declarations that follow the columns of {table}: its keys, its references to
+        other tables, and its checks
+        """
+        # the primary key, if there is one
+        if table._pyre_primaryKeys:
+            # names its fields, in order
+            yield f"PRIMARY KEY ({','.join(field.name for field in table._pyre_primaryKeys)})"
+        # each group of fields whose values are unique together
+        for fields in table._pyre_uniqueKeys:
+            # is a constraint of its own
+            yield f"UNIQUE ({','.join(field.name for field in fields)})"
+        # each reference to another table
+        for local, foreign in table._pyre_foreignKeys:
+            # names the field, the table, and the field of the other table
+            yield (
+                f"FOREIGN KEY ({local.field.name}) "
+                f"REFERENCES {foreign.table.pyre_name} ({foreign.field.name})"
+            )
+        # and each check
+        for constraint in table._pyre_constraints:
+            # renders its expression in the context of the table
+            yield f"CHECK ({self.expression(root=constraint, context=table)})"
         # all done
         return
 
@@ -580,8 +539,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         if node.field is None:
             # refers to the whole table
             return node.table.pyre_name
-        # a field of no table in particular, or of the table in context
-        if not node.table or context is node.table:
+        # a field of no table in particular, or of the table in context or one of its bases
+        if not node.table or (isinstance(context, type) and issubclass(context, node.table)):
             # is named by itself
             return node.field.name
         # any other is qualified by the name of its table
