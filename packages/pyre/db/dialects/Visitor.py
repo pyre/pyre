@@ -34,19 +34,28 @@ class Visitor:
         return
 
     # implementation details
-    def _refusal(self, table, column, contents):
+    def _refusal(self, contents, table=None, column=None, **kwds):
         """
-        Build the exception that refuses {column} of {table}, whose {contents} the language has
-        no type for
+        Build the exception that refuses {column} of {table}, or a conversion when there is no
+        column, whose {contents} the language has no type for
         """
-        # say what is wrong, and name the table and the column
+        # a column of a table
+        if column is not None:
+            # is named, along with its table
+            subject = f"the column {table.pyre_name}.{column.name} holds {contents}"
+            # and so are the objects at fault
+            tableName, columnName = table.pyre_name, column.name
+        # otherwise
+        else:
+            # it is a conversion
+            subject = f"a cast to {contents}"
+            # which is about no table or column
+            tableName, columnName = "", ""
+        # say what is wrong
         return exceptions.NotSupportedError(
-            diagnostic=(
-                f"the column {table.pyre_name}.{column.name} holds {contents}, "
-                f"which {self.dialect} has no type for"
-            ),
-            table=table.pyre_name,
-            column=column.name,
+            diagnostic=f"{subject}, which {self.dialect} has no type for",
+            table=tableName,
+            column=columnName,
         )
 
 

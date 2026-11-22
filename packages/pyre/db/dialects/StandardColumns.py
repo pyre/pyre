@@ -26,13 +26,20 @@ class StandardColumns(Visitor):
         # let the column say what it is
         return column._pyre_identify(authority=self, table=table, column=column)
 
+    def cast(self, schema):
+        """
+        Build the type declarator of {schema}, the target type of a conversion
+        """
+        # let the type say what it is
+        return schema._pyre_identify(authority=self)
+
     # the columns whose values have no type in the language
-    def _pyre_onSchema(self, schema, table, column, **kwds):
+    def _pyre_onSchema(self, schema, **kwds):
         """
         Refuse {column}, whose values the language has no type for
         """
         # complain
-        raise self._refusal(table=table, column=column, contents="values")
+        raise self._refusal(contents="values", **kwds)
 
     # truth values
     def _pyre_onBoolean(self, schema, **kwds):
@@ -107,20 +114,20 @@ class StandardColumns(Visitor):
         return "TIMESTAMP WITH TIME ZONE" if schema.timezone is True else "TIMESTAMP"
 
     # identifiers
-    def _pyre_onUUID(self, schema, table, column, **kwds):
+    def _pyre_onUUID(self, schema, **kwds):
         """
         Refuse a column of universally unique identifiers, which the language has no type for
         """
         # complain
-        raise self._refusal(table=table, column=column, contents="identifiers")
+        raise self._refusal(contents="identifiers", **kwds)
 
     # arrays
-    def _pyre_onArray(self, schema, table, column, **kwds):
+    def _pyre_onArray(self, schema, **kwds):
         """
         Build the type declarator of a column of arrays
         """
         # the type of the entries
-        entries = schema.schema._pyre_identify(authority=self, table=table, column=column)
+        entries = schema.schema._pyre_identify(authority=self, **kwds)
         # the number of levels, which is one when the rank of the array is unknown
         levels = 1 if schema.rank is None else schema.rank
         # mark the type of the entries as an array once for each level

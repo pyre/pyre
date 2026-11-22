@@ -14,21 +14,16 @@ class Collation:
     from .FieldReference import FieldReference as fieldReference
 
     # public data
-    fieldref = None
-    collation = "ASC"
+    fieldref = None  # the reference to the field whose values are sorted
+    collation = "ASC"  # and the order of the sort
 
-    # interface
-    def sql(self, context=None):
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
         """
-        Render me as an SQL expression
+        Let {authority} know i am a collation
         """
-        # NYI: i would like to be able to trim the fully qualified table reference for fields
-        # that are locally aliased in the current query; see the test
-        # {query_collation_explicit} for an example: the {ORDER BY} expression should just
-        # mention {date}, rather {weather.date}
-
-        # get the {mill} to render my field reference and append my collation order
-        return "{} {}".format(self.fieldref.sql(context=context), self.collation)
+        # ask for my handler
+        return authority._pyre_onCollation(node=self, **kwds)
 
     # meta methods
     def __init__(self, fieldref, collation=collation, **kwds):

@@ -38,21 +38,13 @@ class FieldReference(descriptors.stem.variable):
         # easy enough
         return type(self)(table=table, field=self.field)
 
-    # rendering
-    def sql(self, context=None):
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
         """
-        Convert me into an SQL expression
+        Let {authority} know i am a reference to a field
         """
-        # if I am not bound to a specific field
-        if self.field is None:
-            # reference just the table
-            return self.table.pyre_name
-        # if my rendering context matches my table
-        if not self.table or context is self.table:
-            # just render my name
-            return self.field.name
-        # otherwise, build a fully qualified reference expression
-        return "{0.table.pyre_name}.{0.field.name}".format(self)
+        # ask for my handler
+        return authority._pyre_onFieldReference(node=self, **kwds)
 
     # meta-methods
     def __init__(self, table, field, **kwds):

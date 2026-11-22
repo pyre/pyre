@@ -8,20 +8,11 @@
 # unary expressions
 class UnaryPostfix:
     """
-    The base class for postfix unary expression factories
+    The base class of the expressions that apply an operator to the operand that precedes it
     """
 
     # public data
     operand = None  # the expression the operator applies to
-    operator = None  # and the operator, supplied by my subclasses
-
-    # interface
-    def sql(self):
-        """
-        SQL rendering of the expression I represent
-        """
-        # straightforward
-        return "{} {.operator}".format(self.operand.sql(), self)
 
     # meta-methods
     def __init__(self, operand, **kwds):
@@ -35,35 +26,45 @@ class UnaryPostfix:
 
 class IsNull(UnaryPostfix):
     """
-    A node factory that takes a field reference {op} and builds the expression {op IS NULL}
+    The test of whether the field reference {operand} is {NULL}
     """
 
-    # public data
-    operator = "IS NULL"
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a test of whether my operand is {NULL}
+        """
+        # ask for my handler
+        return authority._pyre_onIsNull(node=self, **kwds)
 
 
 class IsNotNull(UnaryPostfix):
     """
-    A node factory that takes a field reference {op} and builds the expression {op IS NOT NULL}
+    The test of whether the field reference {operand} is anything but {NULL}
     """
 
-    # public data
-    operator = "IS NOT NULL"
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a test of whether my operand is anything but {NULL}
+        """
+        # ask for my handler
+        return authority._pyre_onIsNotNull(node=self, **kwds)
 
 
 # some built-in functions
 class Cast:
     """
-    Implementation of the {CAST} expression
+    The conversion of the value of a field to another type
     """
 
-    # interface
-    def sql(self, **kwds):
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
         """
-        SQL rendering of the expression I represent
+        Let {authority} know i am a conversion
         """
-        # easy enough
-        return "CAST({} AS {})".format(self.field.sql(**kwds), self.targetType.decl)
+        # ask for my handler
+        return authority._pyre_onCast(node=self, **kwds)
 
     # meta-methods
     def __init__(self, field, targetType, **kwds):
@@ -85,6 +86,14 @@ class Like:
 
     # public data
     escape = "\\"  # the character that escapes the wildcards in my pattern
+
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am the match of a field against a pattern
+        """
+        # ask for my handler
+        return authority._pyre_onLike(node=self, **kwds)
 
     # meta-methods
     def __init__(self, field, pattern, **kwds):

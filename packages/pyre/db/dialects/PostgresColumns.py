@@ -44,12 +44,12 @@ class PostgresColumns(StandardColumns):
         return "UUID"
 
     # arrays
-    def _pyre_onArray(self, schema, table, column, **kwds):
+    def _pyre_onArray(self, schema, **kwds):
         """
         Build the type declarator of a column of arrays
         """
         # the type of the entries
-        entries = schema.schema._pyre_identify(authority=self, table=table, column=column)
+        entries = schema.schema._pyre_identify(authority=self, **kwds)
         # marked as an array once, since postgres declares arrays of every rank alike
         return entries + " ARRAY"
 

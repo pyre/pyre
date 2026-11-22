@@ -28,12 +28,12 @@ class SQLiteColumns(StandardColumns):
         return super()._pyre_onString(schema=schema, **kwds)
 
     # arrays
-    def _pyre_onArray(self, schema, table, column, **kwds):
+    def _pyre_onArray(self, schema, **kwds):
         """
         Refuse a column of arrays, which sqlite has no type for
         """
         # complain
-        raise self._refusal(table=table, column=column, contents="arrays")
+        raise self._refusal(contents="arrays", **kwds)
 
 
 # end of file

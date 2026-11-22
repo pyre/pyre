@@ -518,64 +518,75 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         # and the one of the literals of their values, which quotes text as i do
         self._literals = self.literals(mill=self)
 
-        # local expressions
-        from ..Collation import Collation as collation
-        from ..FieldReference import FieldReference as fieldReference
-
-        # add them to the rendering strategy: collations
-        self._renderers[collation] = self._collationRenderer
-        # and references to fields
-        self._renderers[fieldReference] = self._fieldReferenceRenderer
-
-        # the SQL primitives
-        from ..expressions import (
-            IsNull as isNull,
-            IsNotNull as isNotNull,
-            Cast as cast,
-            Like as like,
-        )
-
-        # add them to the rendering strategy: the tests for {NULL}
-        self._renderers[isNull] = self._primitiveSQLExpressionRenderer
-        # and their negations
-        self._renderers[isNotNull] = self._primitiveSQLExpressionRenderer
-        # type conversions
-        self._renderers[cast] = self._primitiveSQLExpressionRenderer
-        # and pattern matching, which has a renderer of its own
-        self._renderers[like] = self._likeRenderer
-
         # all done
         return
 
-    # implementation details
-    def _collationRenderer(self, order, context=None, **kwds):
+    # expressions
+    def _pyre_onFieldReference(self, node, context=None, **kwds):
         """
-        Render the collation order specification
+        Render {node}, a reference to a field
         """
-        # get the column reference and decorate it
-        return order.sql(context=context, **kwds)
+        # a reference that names no field
+        if node.field is None:
+            # refers to the whole table
+            return node.table.pyre_name
+        # a field of no table in particular, or of the table in context
+        if not node.table or context is node.table:
+            # is named by itself
+            return node.field.name
+        # any other is qualified by the name of its table
+        return f"{node.table.pyre_name}.{node.field.name}"
 
-    def _fieldReferenceRenderer(self, node, context=None, **kwds):
+    def _pyre_onCollation(self, node, context=None, **kwds):
         """
-        Render {node} as reference to a field
+        Render {node}, the order in which the values of a field are sorted
         """
-        # get the reference to render itself
-        return node.sql(context=context, **kwds)
+        # NYI: i would like to be able to trim the fully qualified table reference for fields
+        # that are locally aliased in the current query; see the test
+        # {query_collation_explicit} for an example: the {ORDER BY} expression should just
+        # mention {date}, rather {weather.date}
 
-    def _primitiveSQLExpressionRenderer(self, node, context=None, **kwds):
-        """
-        Render {node}, one of the SQL primitives
-        """
-        # get the primitive to render itself
-        return node.sql(context=context, **kwds)
+        # render the field
+        field = self.expression(root=node.fieldref, context=context, **kwds)
+        # and mark it with its order
+        return f"{field} {node.collation}"
 
-    def _likeRenderer(self, node, context=None, **kwds):
+    def _pyre_onIsNull(self, node, **kwds):
+        """
+        Render {node}, the test of whether a field is {NULL}
+        """
+        # render the operand
+        operand = self.expression(root=node.operand, **kwds)
+        # and test it
+        return f"{operand} IS NULL"
+
+    def _pyre_onIsNotNull(self, node, **kwds):
+        """
+        Render {node}, the test of whether a field is anything but {NULL}
+        """
+        # render the operand
+        operand = self.expression(root=node.operand, **kwds)
+        # and test it
+        return f"{operand} IS NOT NULL"
+
+    def _pyre_onCast(self, node, **kwds):
+        """
+        Render {node}, the conversion of the value of a field to another type
+        """
+        # render the field
+        field = self.expression(root=node.field, **kwds)
+        # build the declarator of the target type
+        target = self._columns.cast(schema=node.targetType)
+        # and convert
+        return f"CAST({field} AS {target})"
+
+    def _pyre_onLike(self, node, **kwds):
         """
         Render {node}, the match of a field against a pattern, naming the character that escapes
         its wildcards, since the back ends disagree on what it is when it is left out
         """
         # render the field
-        field = self.expression(root=node.field, context=context, **kwds)
+        field = self.expression(root=node.field, **kwds)
         # quote the pattern
         pattern = self.quote(text=node.pattern)
         # and the escape character
@@ -583,7 +594,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         # put it all together
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
-    # declarations
+    # implementation details
     def _insertValue(self, table, field, value):
         """
         Render {value}, the value of {field} in a record of {table}, for the {VALUES} of an insert
