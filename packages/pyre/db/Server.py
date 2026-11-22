@@ -115,8 +115,12 @@ class Server(pyre.component, implements=datastore):
         # go through the {specifications}
         for template, condition in specifications:
             # build the sql statement for this update
-            sql = self.sql.updateRecords(template=template, condition=condition)
-            # and execute it
+            sql = tuple(self.sql.updateRecords(template=template, condition=condition))
+            # a template that sets nothing builds no statement
+            if not sql:
+                # so there is nothing to execute
+                continue
+            # otherwise, execute it
             self.execute(*sql)
         # all done
         return

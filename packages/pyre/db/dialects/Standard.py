@@ -447,51 +447,52 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         Update all table rows that match {condition} using information from {template}, a
         prototype row of a table. The update operation sets the fields in these rows to their
         corresponding values in {template}; fields set to {None} in {template} are not
-        affected.
+        affected. Without a {condition}, every row is updated, and a {template} that sets no
+        field builds no statement
         """
         # get the table
         table = template.pyre_layout
-        # the names of the affected fields
-        names = []
-        # and their values
-        values = []
-        # iterate over all the fields
+        # the assignments, one for each field that {template} sets
+        assignments = []
+        # go through the fields
         for field in table.pyre_fields:
-            # get the corresponding name from {template}
-            name = field.name
-            # and the value
-            value = getattr(template, name)
+            # get the value in {template}
+            value = getattr(template, field.name)
             # fields set to {None} are not affected
             if value is None:
                 # so skip them
                 continue
-
-            # this field needs an update, so record its name
-            names.append(name)
-            # and its value
-            values.append(self._recordValue(table=table, field=field, value=value))
-
-        # render the names
-        names = "(" + ", ".join(names) + ")"
-        # and the values
-        values = "(" + ", ".join(values) + ")"
+            # the others are assigned their value
+            assignments.append(
+                f"{field.name} = {self._recordValue(table=table, field=field, value=value)}"
+            )
+        # if there is nothing to set
+        if not assignments:
+            # there is no statement
+            return
 
         # initiate the statement
-        yield self.place("UPDATE {}".format(table.pyre_name))
+        yield self.place(f"UPDATE {table.pyre_name}")
         # indent
         self.indent()
         # the data section
         yield self.place("SET")
         # indent
         self.indent()
-        # render the assignments
-        yield self.place("{} = {}".format(names, values))
+        # render all assignments but the last, each followed by a comma
+        for assignment in assignments[:-1]:
+            # place it
+            yield self.place(assignment + ",")
+        # the last one ends the statement, unless a restriction follows
+        yield self.place(assignments[-1] + ("" if condition is not None else ";"))
         # outdent
         self.outdent()
-        # build the filtering expression
-        predicate = self.expression(root=condition, context=table)
-        # and render it
-        yield self.place("WHERE ({});".format(predicate))
+        # if there is a restriction
+        if condition is not None:
+            # build the filtering expression
+            predicate = self.expression(root=condition, context=table)
+            # and render it
+            yield self.place(f"WHERE ({predicate});")
         # outdent
         self.outdent()
         # and return
