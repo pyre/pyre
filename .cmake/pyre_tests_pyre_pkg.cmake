@@ -1141,6 +1141,12 @@ pyre_test_python_testcase(tests/pyre.pkg/db/columns_postgres.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/columns_sqlite.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/columns_sqlite_uuid.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/columns_sqlite_arrays.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/defaults_none.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/defaults_null.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/defaults_rows.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/defaults_standard.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/defaults_postgres.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/defaults_sqlite.py)
 
 
 #
