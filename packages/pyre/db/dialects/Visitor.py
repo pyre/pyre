@@ -34,10 +34,10 @@ class Visitor:
         return
 
     # implementation details
-    def _refusal(self, contents, table=None, column=None, **kwds):
+    def _refusal(self, contents, table=None, column=None, usage=None, **kwds):
         """
-        Build the exception that refuses {column} of {table}, or a conversion when there is no
-        column, whose {contents} the language has no type for
+        Build the exception that refuses {column} of {table}, whose {contents} the language has
+        no type for; without a column, {usage} says what the {contents} were meant for
         """
         # a column of a table
         if column is not None:
@@ -47,8 +47,8 @@ class Visitor:
             tableName, columnName = table.pyre_name, column.name
         # otherwise
         else:
-            # it is a conversion
-            subject = f"a cast to {contents}"
+            # say what they were meant for
+            subject = f"{usage} {contents}"
             # which is about no table or column
             tableName, columnName = "", ""
         # say what is wrong

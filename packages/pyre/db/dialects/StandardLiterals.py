@@ -5,8 +5,16 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+import datetime
+import decimal
+import uuid
+
 # the special value {NULL}
 from .. import literals
+
+# the local exceptions
+from .. import exceptions
 
 # superclass
 from .Visitor import Visitor
@@ -38,6 +46,29 @@ class StandardLiterals(Visitor):
         value = column.coerce(value=value)
         # and let the column say what it is
         return column._pyre_identify(authority=self, table=table, column=column, value=value)
+
+    def value(self, value):
+        """
+        Render {value}, a value that belongs to no column, as a literal
+        """
+        # {NULL} is the same whatever its type
+        if value is None or value is literals.null:
+            # so render it directly
+            return "NULL"
+        # look up the handler of the type of the value
+        try:
+            # among the types that have literals
+            handler = self._handlers[type(value)]
+        # a value of any other type has no literal
+        except KeyError:
+            # so get the name of its type
+            name = type(value).__name__
+            # and say what the language cannot write
+            raise exceptions.NotSupportedError(
+                diagnostic=f"{self.dialect} has no literal for values of type {name}"
+            ) from None
+        # let the handler render it
+        return handler(schema=None, value=value, usage="a literal of")
 
     # the columns whose values have no type in the language
     def _pyre_onSchema(self, schema, **kwds):
@@ -126,20 +157,33 @@ class StandardLiterals(Visitor):
     # arrays
     def _pyre_onArray(self, schema, value, **kwds):
         """
-        Render an array
+        Render an array, a value of a column
         """
-        # level by level
-        return self._level(schema=schema, level=value, **kwds)
+
+        # its entries are values of the column type of the entries
+        def entry(value):
+            # so let that type say what each one is
+            return schema.schema._pyre_identify(authority=self, value=value, **kwds)
+
+        # render it level by level
+        return self._array(level=value, entry=entry, **kwds)
+
+    def _valueArray(self, schema, value, **kwds):
+        """
+        Render a tuple, a value that belongs to no column, as an array
+        """
+        # its entries belong to no column either, so render it level by level
+        return self._array(level=value, entry=self.value, **kwds)
 
     # implementation details
-    def _level(self, schema, level, **kwds):
+    def _array(self, level, entry, **kwds):
         """
-        Render {level}, an entry or a level of an array of {schema}
+        Render {level}, an entry or a level of an array whose entries are rendered by {entry}
         """
         # an entry
         if not isinstance(level, tuple):
-            # is rendered by the column type of the entries
-            return schema.schema._pyre_identify(authority=self, value=level, **kwds)
+            # is rendered as such
+            return entry(value=level)
         # a level without entries
         if not level:
             # has a literal of its own
@@ -147,9 +191,30 @@ class StandardLiterals(Visitor):
         # the others list what they hold
         return (
             "ARRAY["
-            + ", ".join(self._level(schema=schema, level=entry, **kwds) for entry in level)
+            + ", ".join(self._array(level=item, entry=entry, **kwds) for item in level)
             + "]"
         )
+
+    # meta-methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the handlers of the values that belong to no column, by the type of the value
+        self._handlers = {
+            bool: self._pyre_onBoolean,
+            int: self._pyre_onInteger,
+            float: self._pyre_onFloat,
+            decimal.Decimal: self._pyre_onDecimal,
+            str: self._pyre_onString,
+            bytes: self._pyre_onBytes,
+            datetime.date: self._pyre_onDate,
+            datetime.time: self._pyre_onTime,
+            datetime.datetime: self._pyre_onTimestamp,
+            uuid.UUID: self._pyre_onUUID,
+            tuple: self._valueArray,
+        }
+        # all done
+        return
 
 
 # end of file
