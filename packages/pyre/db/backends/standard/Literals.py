@@ -8,6 +8,7 @@
 # support
 import datetime
 import decimal
+import math
 import uuid
 
 # the special value {NULL}
@@ -98,14 +99,30 @@ class Literals(Visitor):
         """
         Render a floating point number
         """
-        # by its digits
+        # a value that is not a number
+        if math.isnan(value):
+            # has a literal only in some dialects
+            return self._notANumber(**kwds)
+        # and so do the infinities
+        if math.isinf(value):
+            # which have a sign
+            return self._infinity(positive=value > 0, **kwds)
+        # the others are written by their digits
         return str(value)
 
     def _pyre_onDecimal(self, schema, value, **kwds):
         """
         Render a fixed point number
         """
-        # by its digits
+        # a value that is not a number
+        if value.is_nan():
+            # has a literal only in some dialects
+            return self._notANumber(**kwds)
+        # and so do the infinities
+        if value.is_infinite():
+            # which have a sign
+            return self._infinity(positive=value > 0, **kwds)
+        # the others are written by their digits
         return str(value)
 
     # text
@@ -176,6 +193,36 @@ class Literals(Visitor):
         return self._array(level=value, entry=self.value, **kwds)
 
     # implementation details
+    def _notANumber(self, **kwds):
+        """
+        Refuse a value that is not a number, which the language has no literal for
+        """
+        # complain
+        raise self._unwritable(name="not a number", **kwds)
+
+    def _infinity(self, positive, **kwds):
+        """
+        Refuse an infinity, {positive} or not, which the language has no literal for
+        """
+        # complain
+        raise self._unwritable(name="infinity", **kwds)
+
+    def _unwritable(self, name, table=None, column=None, **kwds):
+        """
+        Build the exception that refuses a value the language has no literal for, as {name}
+        describes it
+        """
+        # the table the value belongs to, when it belongs to one
+        tableName = "" if table is None else table.pyre_name
+        # and its column
+        columnName = "" if column is None else column.name
+        # say what the language cannot write
+        return exceptions.NotSupportedError(
+            diagnostic=f"{self.dialect} has no literal for {name}",
+            table=tableName,
+            column=columnName,
+        )
+
     def _array(self, level, entry, **kwds):
         """
         Render {level}, an entry or a level of an array whose entries are rendered by {entry}
