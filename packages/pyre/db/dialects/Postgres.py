@@ -35,6 +35,8 @@ class Postgres(Standard, family="pyre.db.dialects.postgres"):
         """
         Generate the SQL statement to create the database {name}
         """
+        # every statement starts at the margin
+        self.margin()
         # simple enough
         yield self.place(f"CREATE DATABASE {name};")
         # all done
@@ -44,6 +46,8 @@ class Postgres(Standard, family="pyre.db.dialects.postgres"):
         """
         Generate the SQL statement to drop the database {name}
         """
+        # every statement starts at the margin
+        self.margin()
         # simple enough
         yield self.place(f"DROP DATABASE {name};")
         # all done
