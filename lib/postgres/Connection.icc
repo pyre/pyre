@@ -15,12 +15,16 @@
 // metamethods
 // open a session described by {parameters}
 pyre::postgres::Connection::Connection(const parameters_type & parameters) :
-    _connection(_connect(parameters))
+    _connection(_connect(parameters)),
+    _lock(std::make_shared<lock_type>())
 {}
 
 
 // open a session described by a conninfo string or a postgres uri
-pyre::postgres::Connection::Connection(view_t conninfo) : _connection(_connect(conninfo)) {}
+pyre::postgres::Connection::Connection(view_t conninfo) :
+    _connection(_connect(conninfo)),
+    _lock(std::make_shared<lock_type>())
+{}
 
 
 // structure
@@ -38,6 +42,8 @@ pyre::postgres::Connection::handle() const -> handle_type
 auto
 pyre::postgres::Connection::status() const -> ConnectionStatus
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // a session that has been closed is not up, and there is nothing left to ask
     if (!_connection.valid()) {
         return ConnectionStatus::bad;
@@ -51,6 +57,8 @@ pyre::postgres::Connection::status() const -> ConnectionStatus
 auto
 pyre::postgres::Connection::ok() const -> bool
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // a session is usable when it is there and libpq is willing to talk to it
     return _connection.valid() && status() == ConnectionStatus::ok;
 }
@@ -69,6 +77,8 @@ operator bool() const
 auto
 pyre::postgres::Connection::message() const -> view_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // a session that has been closed has libpq's memory of it freed along with it
     if (!_connection.valid()) {
         // and this is the only thing that could have gone wrong with it
@@ -84,6 +94,8 @@ pyre::postgres::Connection::message() const -> view_t
 auto
 pyre::postgres::Connection::database() const -> view_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq
     return view_t(PQdb(_handle()));
 }
@@ -93,6 +105,8 @@ pyre::postgres::Connection::database() const -> view_t
 auto
 pyre::postgres::Connection::user() const -> view_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq
     return view_t(PQuser(_handle()));
 }
@@ -102,6 +116,8 @@ pyre::postgres::Connection::user() const -> view_t
 auto
 pyre::postgres::Connection::host() const -> view_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq
     const char * where = PQhost(_handle());
     // a session over a unix socket answers with the directory the socket lives in, and one
@@ -113,6 +129,8 @@ pyre::postgres::Connection::host() const -> view_t
 auto
 pyre::postgres::Connection::port() const -> view_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq
     const char * which = PQport(_handle());
     // as above
@@ -124,6 +142,8 @@ pyre::postgres::Connection::port() const -> view_t
 auto
 pyre::postgres::Connection::backend() const -> int
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq
     return PQbackendPID(_handle());
 }
@@ -133,6 +153,8 @@ pyre::postgres::Connection::backend() const -> int
 auto
 pyre::postgres::Connection::socket() const -> int
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq; a session with no socket answers with {-1}
     return PQsocket(_handle());
 }
@@ -142,6 +164,8 @@ pyre::postgres::Connection::socket() const -> int
 auto
 pyre::postgres::Connection::protocol() const -> int
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq
     return PQprotocolVersion(_handle());
 }
@@ -151,6 +175,8 @@ pyre::postgres::Connection::protocol() const -> int
 auto
 pyre::postgres::Connection::server() const -> int
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq; a session that never came up answers with zero
     return PQserverVersion(_handle());
 }
@@ -160,6 +186,8 @@ pyre::postgres::Connection::server() const -> int
 auto
 pyre::postgres::Connection::transaction() const -> TransactionStatus
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq, and give its answer a name
     return transactionStatus(PQtransactionStatus(_handle()));
 }
@@ -169,6 +197,8 @@ pyre::postgres::Connection::transaction() const -> TransactionStatus
 auto
 pyre::postgres::Connection::setting(view_t name) const -> view_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // {PQparameterStatus} wants a terminated string
     const string_t label(name);
     // ask libpq
@@ -183,6 +213,8 @@ pyre::postgres::Connection::setting(view_t name) const -> view_t
 auto
 pyre::postgres::Connection::exec(view_t statement) const -> Result
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // {PQexec} wants a terminated string
     const string_t text(statement);
     // send it, and wait for the whole answer. note that this is the simple protocol: the
@@ -198,6 +230,8 @@ auto
 pyre::postgres::Connection::execParams(view_t statement, const arguments_type & arguments) const
     -> Result
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // hand the pieces to libpq
     PGresult * result = _exec(statement, arguments, false);
     // adopt what came back, and raise unless the server ran it
@@ -223,6 +257,8 @@ pyre::postgres::Connection::execute(view_t statement, const argsT &... arguments
 auto
 pyre::postgres::Connection::prepare(view_t name, view_t statement) const -> void
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // both want terminated strings
     const string_t label(name);
     const string_t text(statement);
@@ -242,6 +278,8 @@ auto
 pyre::postgres::Connection::execPrepared(view_t name, const arguments_type & arguments) const
     -> Result
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // hand the pieces to libpq
     PGresult * result = _exec(name, arguments, true);
     // adopt what came back, and raise unless the server ran it; the statement we can name here
@@ -255,6 +293,8 @@ pyre::postgres::Connection::execPrepared(view_t name, const arguments_type & arg
 auto
 pyre::postgres::Connection::send(view_t statement) const -> void
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // {PQsendQuery} wants a terminated string
     const string_t text(statement);
     // push it at the server; a zero here means it never went
@@ -273,6 +313,8 @@ auto
 pyre::postgres::Connection::sendParams(view_t statement, const arguments_type & arguments) const
     -> void
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // both libpq calls want a terminated string
     const string_t text(statement);
     // and the values as an array of pointers, with a null standing for each {NULL}
@@ -302,6 +344,8 @@ pyre::postgres::Connection::sendParams(view_t statement, const arguments_type & 
 auto
 pyre::postgres::Connection::consume() const -> void
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // pull whatever has arrived on the socket into libpq's buffer. the answer is what tells a
     // socket that has gone quiet from one that has gone away; without it, a loop over {busy}
     // would spin forever on a broken connection
@@ -319,6 +363,8 @@ pyre::postgres::Connection::consume() const -> void
 auto
 pyre::postgres::Connection::busy() const -> bool
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq. note that this reports on what libpq has already buffered, and never touches
     // the socket; a caller that does not call {consume} first is asking the same question over
     // and over about the same buffer
@@ -330,6 +376,8 @@ pyre::postgres::Connection::busy() const -> bool
 auto
 pyre::postgres::Connection::result() const -> std::optional<Result>
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq for the next one
     PGresult * result = PQgetResult(_handle());
     // a null pointer means the server is done answering the statement in flight, and that the
@@ -379,6 +427,8 @@ pyre::postgres::Connection::cancel() const -> void
 auto
 pyre::postgres::Connection::nonblocking(bool state) const -> void
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // tell libpq
     if (PQsetnonblocking(_handle(), state ? 1 : 0) != 0) {
         // a nonzero answer means it could not
@@ -394,6 +444,8 @@ pyre::postgres::Connection::nonblocking(bool state) const -> void
 auto
 pyre::postgres::Connection::flush() const -> int
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq to write
     const int status = PQflush(_handle());
     // a negative answer means the socket is broken
@@ -411,6 +463,8 @@ pyre::postgres::Connection::flush() const -> int
 auto
 pyre::postgres::Connection::notification() const -> std::optional<Notification>
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq for the next one; this reads from its buffer and never from the socket, so a
     // session that is only listening must call {consume} before it asks
     PGnotify * note = PQnotifies(_handle());
@@ -437,6 +491,8 @@ pyre::postgres::Connection::notification() const -> std::optional<Notification>
 auto
 pyre::postgres::Connection::escapeLiteral(view_t text) const -> string_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq, which knows the encoding this session negotiated and whether this server reads
     // a backslash as an escape. it takes the length, so the text need not be terminated
     char * escaped = PQescapeLiteral(_handle(), text.data(), text.size());
@@ -458,6 +514,8 @@ pyre::postgres::Connection::escapeLiteral(view_t text) const -> string_t
 auto
 pyre::postgres::Connection::escapeIdentifier(view_t name) const -> string_t
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // as above
     char * escaped = PQescapeIdentifier(_handle(), name.data(), name.size());
     // a null answer means it could not
@@ -479,6 +537,8 @@ pyre::postgres::Connection::escapeIdentifier(view_t name) const -> string_t
 auto
 pyre::postgres::Connection::reset() const -> void
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // ask libpq to start over. every result set taken off this session before the reset stays
     // valid: they are copies of what the server sent, and owe it nothing
     PQreset(_handle());
@@ -500,6 +560,8 @@ pyre::postgres::Connection::reset() const -> void
 auto
 pyre::postgres::Connection::close() -> void
 {
+    // take turns with the other users of the session
+    const auto guard = _guard();
     // let go of it. the box that holds the pointer is shared with every copy of me, and this
     // nulls it, so a statement sent through any of them from here on raises an {InterfaceError}
     // rather than handing libpq an address it has already freed
@@ -511,6 +573,15 @@ pyre::postgres::Connection::close() -> void
 
 
 // implementation details
+// hold my lock for the length of a call
+auto
+pyre::postgres::Connection::_guard() const -> guard_type
+{
+    // lock it; the lock is recursive, so a call that makes other calls does not wait on itself
+    return guard_type(*_lock);
+}
+
+
 // the raw pointer, checked
 auto
 pyre::postgres::Connection::_handle() const -> handle_type

@@ -17,6 +17,7 @@
 #include <exception>
 #include <iterator>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <string>
 #include <string_view>

@@ -33,6 +33,10 @@
 // that has been closed raises an {InterfaceError}, rather than handing libpq a pointer to memory
 // it has already freed
 //
+// threads may share a session: every call that talks to the server holds a lock that the copies
+// of a connection share, as they share the session, so the calls take turns, and {close} waits
+// for the one in progress. {cancel} is the exception, since it interrupts the call in progress
+//
 // every session writes its dates and times the ISO way and its text in utf-8, whatever the server's
 // configuration or the caller's parameters ask for, so that the values it sends always read the
 // same way
@@ -45,6 +49,10 @@ public:
     using handle_type = PGconn *;
     // the shared owner of that pointer
     using storage_type = Handle<ConnectionHandle>;
+    // the lock that keeps two threads from talking to the server through one session at once
+    using lock_type = std::recursive_mutex;
+    // and the guard that holds it for the length of a call
+    using guard_type = std::unique_lock<lock_type>;
     // how a session is specified
     using parameters_type = parameters_t;
     // how the placeholders of a statement are filled in
@@ -192,6 +200,9 @@ public:
 private:
     // the raw pointer, checked; everything that talks to libpq goes through here
     inline auto _handle() const -> handle_type;
+    // hold my lock for the length of a call; every call that talks to libpq starts here, except
+    // {cancel}, whose whole purpose is to interrupt a call that holds it
+    inline auto _guard() const -> guard_type;
     // adopt the result libpq produced for {statement}, and raise unless the server ran it
     inline auto _harvest(PGresult * result, view_t statement) const -> Result;
     // build the arrays libpq wants and hand them to whichever of its calls the caller meant
@@ -212,6 +223,8 @@ private:
 private:
     // the session, and my share of it
     storage_type _connection;
+    // the lock, shared by every copy of me, as the session is
+    std::shared_ptr<lock_type> _lock;
 };
 
 
