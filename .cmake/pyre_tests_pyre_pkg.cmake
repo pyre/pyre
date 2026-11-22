@@ -1150,6 +1150,11 @@ pyre_test_python_testcase(tests/pyre.pkg/db/defaults_sqlite.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/databases_standard.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/databases_postgres.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/databases_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/expressions_null.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/expressions_not_null.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/expressions_cast_standard.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/expressions_cast_postgres.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/expressions_cast_refused.py)
 
 
 #
