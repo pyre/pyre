@@ -16,7 +16,22 @@ class Visitor:
     """
 
     # public data
-    dialect = None  # the name of the language, for the explanations of refusals
+    @property
+    def dialect(self):
+        """
+        The name of the language, for the explanations of refusals
+        """
+        # my mill knows
+        return self.mill.dialect
+
+    # meta-methods
+    def __init__(self, mill, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the mill i work for
+        self.mill = mill
+        # all done
+        return
 
     # implementation details
     def _refusal(self, table, column, contents):

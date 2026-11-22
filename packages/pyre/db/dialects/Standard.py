@@ -12,6 +12,9 @@ import collections.abc
 # my base class
 from pyre.weaver.SQL import SQL as Mill
 
+# the local exceptions
+from .. import exceptions
+
 # the type declarators of my columns
 from .StandardColumns import StandardColumns
 
@@ -27,6 +30,9 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
 
     # constants
     INDENTER = " " * 2
+
+    # the name of my language, for the explanations of refusals
+    dialect = "standard SQL"
 
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
@@ -187,21 +193,21 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
     # database management
     def createDatabase(self, name):
         """
-        Generate the SQL statement to create the database {name}
+        Refuse to create the database {name}, since the language has no statement for it
         """
-        # simple enough
-        yield self.place("CREATE DATABASE {};".format(name))
-        # all done
-        return
+        # complain
+        raise exceptions.NotSupportedError(
+            diagnostic=f"{self.dialect} has no statement that creates the database {name}"
+        )
 
     def dropDatabase(self, name):
         """
-        Generate the SQL statement to drop the database {name}
+        Refuse to drop the database {name}, since the language has no statement for it
         """
-        # simple enough
-        yield self.place("DROP DATABASE {};".format(name))
-        # all done
-        return
+        # complain
+        raise exceptions.NotSupportedError(
+            diagnostic=f"{self.dialect} has no statement that drops the database {name}"
+        )
 
     # table management
     def createTable(self, table):
@@ -508,7 +514,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         super().__init__(nodeType=field, **kwds)
 
         # build the visitor of the type declarators of my columns
-        self._columns = self.columns()
+        self._columns = self.columns(mill=self)
         # and the one of the literals of their values, which quotes text as i do
         self._literals = self.literals(mill=self)
 

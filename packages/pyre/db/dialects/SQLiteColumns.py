@@ -15,9 +15,6 @@ class SQLiteColumns(StandardColumns):
     Type declarators in the sqlite dialect that are different from standard SQL
     """
 
-    # public data
-    dialect = "sqlite"  # the name of the language, for the explanations of refusals
-
     # text
     def _pyre_onString(self, schema, **kwds):
         """

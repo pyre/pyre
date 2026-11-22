@@ -22,6 +22,9 @@ class SQLite(Standard, family="pyre.db.dialects.sqlite"):
     from it
     """
 
+    # the name of my language, for the explanations of refusals
+    dialect = "sqlite"
+
     # the visitor that builds the type declarators of my columns
     columns = SQLiteColumns
     # and the one that renders the literals of their values

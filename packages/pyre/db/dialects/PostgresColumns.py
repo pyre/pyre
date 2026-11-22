@@ -15,9 +15,6 @@ class PostgresColumns(StandardColumns):
     Type declarators in the postgres dialect that are different from standard SQL
     """
 
-    # public data
-    dialect = "postgres"  # the name of the language, for the explanations of refusals
-
     # text
     def _pyre_onString(self, schema, **kwds):
         """

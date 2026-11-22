@@ -16,7 +16,6 @@ class PostgresLiterals(StandardLiterals):
     """
 
     # public data
-    dialect = "postgres"  # the name of the language, for the explanations of refusals
     emptyArray = "'{}'"  # the literal of an empty array, which takes the type of its column
 
     # strings of octets
