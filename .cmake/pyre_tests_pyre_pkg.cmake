@@ -1078,6 +1078,7 @@ pyre_test_python_testcase(tests/pyre.pkg/weaver/expressions_cxx.py)
 pyre_test_python_testcase(tests/pyre.pkg/weaver/expressions_python.py)
 pyre_test_python_testcase(tests/pyre.pkg/weaver/expressions_sql.py)
 pyre_test_python_testcase(tests/pyre.pkg/weaver/expressions_keywords.py)
+pyre_test_python_testcase(tests/pyre.pkg/weaver/indenter_margin.py)
 pyre_test_python_testcase(tests/pyre.pkg/weaver/json_scalars.py)
 pyre_test_python_testcase(tests/pyre.pkg/weaver/json_text.py)
 pyre_test_python_testcase(tests/pyre.pkg/weaver/json_sequences.py)
@@ -1168,6 +1169,7 @@ pyre_test_python_testcase(tests/pyre.pkg/db/literals_zones_postgres.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/update_single.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/update_all.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/update_nothing.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/insert_nothing.py)
 
 
 #
