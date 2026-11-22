@@ -25,7 +25,7 @@ def test():
         """
 
         # the identifier of the customer
-        cid = pyre.db.int(default=None)
+        cid = pyre.db.int()
         cid.doc = "the customer id"
         # their name, which is required
         name = pyre.db.str().notNull()
@@ -52,7 +52,7 @@ def test():
         # the identifier of the order
         oid = pyre.db.int().primary()
         # and of the customer who placed it
-        cid = pyre.db.int(default=None)
+        cid = pyre.db.int()
 
     # mark {cid} as a foreign key
     Order.pyre_foreignKey(field=Order.cid, foreign=Customer.cid)
@@ -70,10 +70,10 @@ def test():
         "  --",
         "(",
         "  cid INTEGER, -- the customer id",
-        "  name CLOB DEFAULT ''",
+        "  name CLOB",
         "    NOT NULL,",
-        "  phone VARCHAR(10) DEFAULT '',",
-        "  balance DECIMAL(7, 2) DEFAULT 0,",
+        "  phone VARCHAR(10),",
+        "  balance DECIMAL(7, 2),",
         "",
         "  PRIMARY KEY (cid),",
         "  UNIQUE (name),",
