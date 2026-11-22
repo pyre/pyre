@@ -31,7 +31,7 @@ class StandardColumns(Visitor):
         Build the type declarator of {schema}, the target type of a conversion
         """
         # let the type say what it is
-        return schema._pyre_identify(authority=self)
+        return schema._pyre_identify(authority=self, usage="a cast to")
 
     # the columns whose values have no type in the language
     def _pyre_onSchema(self, schema, **kwds):

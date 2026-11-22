@@ -403,7 +403,7 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
                 yield self.place(dangling + ",")  # add a comma since we know there are more...
             # collect the values
             values = (
-                self._insertValue(table=table, field=field, value=value)
+                self._recordValue(table=table, field=field, value=value)
                 for field, value in zip(table.pyre_fields, record)
             )
             # render them
@@ -466,18 +466,10 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
                 # so skip them
                 continue
 
-            # if the field is to be cleared
-            if value is table.null:
-                # use the {NULL} keyword
-                value = "NULL"
-            # if it is to be reset
-            elif value is table.default:
-                # use the {DEFAULT} keyword
-                value = "DEFAULT"
             # this field needs an update, so record its name
             names.append(name)
             # and its value
-            values.append(field.sql(value))
+            values.append(self._recordValue(table=table, field=field, value=value))
 
         # render the names
         names = "(" + ", ".join(names) + ")"
@@ -595,9 +587,16 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # implementation details
-    def _insertValue(self, table, field, value):
+    def _literalRenderer(self, node, **kwds):
         """
-        Render {value}, the value of {field} in a record of {table}, for the {VALUES} of an insert
+        Render {node}, a literal in an expression, whose value belongs to no column
+        """
+        # the literal of its value depends only on the type of the value
+        return self._literals.value(value=node._value)
+
+    def _recordValue(self, table, field, value):
+        """
+        Render {value}, the value of {field} in a record of {table}, for an insert or an update
         """
         # a missing value
         if value is None:
@@ -607,8 +606,8 @@ class Standard(Mill, family="pyre.db.dialects.standard"):
         if value is table.default or value is table.null:
             # render as themselves
             return value.value
-        # everything else is rendered by its field
-        return field.sql(value=value)
+        # everything else is a literal of its column
+        return self._literals.literal(table=table, column=field, value=value)
 
     def _default(self, table, column):
         """

@@ -37,8 +37,8 @@ class SQLiteLiterals(StandardLiterals):
         # sqlite keeps moments as text
         return self.mill.quote(text=value.isoformat(sep=" "))
 
-    # arrays
-    def _pyre_onArray(self, schema, **kwds):
+    # implementation details
+    def _array(self, level, entry, **kwds):
         """
         Refuse an array, which sqlite has no type for
         """
