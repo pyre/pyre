@@ -42,7 +42,7 @@ def test():
         where = reading.value == 1j
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="literals_where_refused")
+    mill = pyre.db.backends.standard.mill(name="literals_where_refused")
     # attempt to
     try:
         # generate the statement

@@ -50,7 +50,7 @@ def test():
         grid = pyre.db.array(schema=pyre.db.int(), rank=2, default=None)
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="columns_standard")
+    mill = pyre.db.backends.standard.mill(name="columns_standard")
     # build the statement that creates the table
     statement = tuple(mill.createTable(table=Columns))
     # and check it

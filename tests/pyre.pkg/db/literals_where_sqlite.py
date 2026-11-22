@@ -44,7 +44,7 @@ def test():
         where = reading.day == datetime.date(2026, 11, 19)
 
     # make a mill
-    mill = pyre.db.dialects.sqlite(name="literals_where_sqlite")
+    mill = pyre.db.backends.sqlite.mill(name="literals_where_sqlite")
     # generate the statement
     statement = tuple(mill.select(Selected))
     # the restriction is the last line

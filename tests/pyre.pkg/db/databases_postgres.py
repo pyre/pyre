@@ -19,7 +19,7 @@ def test():
     import pyre.db
 
     # make a mill that speaks the dialect of postgres
-    mill = pyre.db.dialects.postgres(name="databases_postgres")
+    mill = pyre.db.backends.postgres.mill(name="databases_postgres")
 
     # build the statement that creates a database
     statement = tuple(mill.createDatabase(name="inventory"))

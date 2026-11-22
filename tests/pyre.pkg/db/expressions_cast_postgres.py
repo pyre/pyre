@@ -31,7 +31,7 @@ def test():
     label = pyre.db.cast(House.number, pyre.db.str())
 
     # make a mill that speaks the dialect of postgres
-    mill = pyre.db.dialects.postgres(name="expressions_cast_postgres")
+    mill = pyre.db.backends.postgres.mill(name="expressions_cast_postgres")
     # render the cast in the context of its table
     expression = mill.expression(root=label, context=House)
     # it names the type of its target as the dialect of postgres declares it

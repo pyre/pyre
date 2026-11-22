@@ -19,7 +19,7 @@ def test():
     import pyre.db
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="insert_nothing")
+    mill = pyre.db.backends.standard.mill(name="insert_nothing")
     # build the statement
     statement = tuple(mill.insertRecords())
     # and check that there is none

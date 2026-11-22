@@ -23,7 +23,7 @@ def test():
     from pyre.db import exceptions
 
     # make a mill that speaks the dialect of sqlite
-    mill = pyre.db.dialects.sqlite(name="databases_sqlite")
+    mill = pyre.db.backends.sqlite.mill(name="databases_sqlite")
 
     # go through the requests
     for request in (mill.createDatabase, mill.dropDatabase):

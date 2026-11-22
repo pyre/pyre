@@ -25,7 +25,7 @@ def test():
     india = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="literals_zones_standard")
+    mill = pyre.db.backends.standard.mill(name="literals_zones_standard")
     # get its renderer of literals
     literals = mill.literals(mill=mill)
 

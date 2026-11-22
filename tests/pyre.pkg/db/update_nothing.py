@@ -31,7 +31,7 @@ def test():
     template = pyre.db.template(Person)
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="update_nothing")
+    mill = pyre.db.backends.standard.mill(name="update_nothing")
     # build the statement
     statement = tuple(mill.updateRecords(template=template, condition=(Person.id == 1)))
     # and check that there is none

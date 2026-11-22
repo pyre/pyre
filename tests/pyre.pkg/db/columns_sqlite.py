@@ -46,7 +46,7 @@ def test():
         instant = pyre.db.timestamp(timezone=True, default=None)
 
     # make a mill that speaks the dialect of sqlite
-    mill = pyre.db.dialects.sqlite(name="columns_sqlite")
+    mill = pyre.db.backends.sqlite.mill(name="columns_sqlite")
     # build the statement that creates the table
     statement = tuple(mill.createTable(table=Columns))
     # and check it

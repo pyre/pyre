@@ -51,7 +51,7 @@ def test():
         empty = pyre.db.array(schema=pyre.db.int(), default=())
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.dialects.standard(name="defaults_standard")
+    mill = pyre.db.backends.standard.mill(name="defaults_standard")
     # build the statement that creates the table
     statement = tuple(mill.createTable(table=Defaults))
     # and check it

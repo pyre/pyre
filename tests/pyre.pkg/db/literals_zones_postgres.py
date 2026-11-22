@@ -7,7 +7,8 @@
 
 
 """
-Check the literals the dialect of postgres writes for times of day and moments that carry their offsets
+Check the literals the dialect of postgres writes for times of day and moments that carry their
+offsets
 """
 
 
@@ -25,7 +26,7 @@ def test():
     india = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
 
     # make a mill that speaks the dialect of postgres
-    mill = pyre.db.dialects.postgres(name="literals_zones_postgres")
+    mill = pyre.db.backends.postgres.mill(name="literals_zones_postgres")
     # get its renderer of literals
     literals = mill.literals(mill=mill)
 

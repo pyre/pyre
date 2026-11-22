@@ -45,7 +45,7 @@ def test():
         moment = pyre.db.timestamp(default=datetime.datetime(2026, 11, 22, 8, 30))
 
     # make a mill that speaks the dialect of sqlite
-    mill = pyre.db.dialects.sqlite(name="defaults_sqlite")
+    mill = pyre.db.backends.sqlite.mill(name="defaults_sqlite")
     # build the statement that creates the table
     statement = tuple(mill.createTable(table=Defaults))
     # and check it
