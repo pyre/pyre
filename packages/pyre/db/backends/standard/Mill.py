@@ -600,8 +600,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         """
         Render {node}, the conversion of the value of a field to another type
         """
-        # render the field
-        field = self.expression(root=node.field, **kwds)
+        # get the field, which is the one operand of the conversion
+        (operand,) = node.operands
+        # render it
+        field = self.expression(root=operand, **kwds)
         # build the declarator of the target type
         target = self._columns.cast(schema=node.targetType)
         # and convert
