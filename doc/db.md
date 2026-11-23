@@ -67,7 +67,7 @@ Each decoration returns the column, so they chain:
 - for json columns, `verbatim()` keeps the text of the documents as written (postgres `JSON`
   rather than `JSONB`), and `asText()` reads them back as their text (see *Reading values*).
 
-### Keys and checks of the whole table
+### Keys, checks and indexes of the whole table
 
 ```python
 # the primary key, one field per call, in the order of the calls
@@ -79,9 +79,21 @@ Person.pyre_unique(Person.name, Person.phone)
 Reading.pyre_foreignKey(field=Reading.city, foreign=City.id)
 # a check
 Reading.pyre_check(Reading.low <= Reading.high)
+# an index over the fields of one call, in order; each call is an index of its own
+Granule.pyre_index(Granule.start, Granule.stop)
+# a unique index
+Granule.pyre_index(Granule.name, unique=True)
+# an index over the rows that pass a predicate, with a name of its own
+Granule.pyre_index(Granule.track, where=pyre.db.isNotNull(Granule.track), name="tracks")
 ```
 
-A table derived from another includes its columns, keys, foreign keys and checks.
+A table derived from another includes its columns, keys, foreign keys, checks and indexes.
+
+An index without a name of its own is named after its table and its fields:
+`granules_start_stop_index`. `createTable` creates the indexes of the table right after it;
+with `indexes=False` it leaves them out, so that a bulk load can fill the table first and build
+them afterwards with `createIndexes(table)`. `createIndex(table, name)` and
+`dropIndex(table, name)` create and drop one of them by its name.
 
 ## Queries
 
@@ -132,7 +144,8 @@ Creating and dropping make it so: after `createTable(table)` the table exists, a
 `dropTable(table)` it is gone. By default, finding it that way already is an error; with
 `existOk=True` on a creation, finding it there already is fine, and with `missingOk=True` on a
 removal, so is finding it gone already. `existOk` looks only at the name: a table that exists
-with other columns is accepted as it is. Databases take the same flags. The dialects write them as
+with other columns is accepted as it is. Databases and indexes take the same flags. The dialects
+write them as
 `IF NOT EXISTS` and `IF EXISTS`; postgres has no such clause for `CREATE DATABASE`, so its server
 keeps the promise itself. Standard SQL has neither clause, so its mill refuses both flags.
 
@@ -162,6 +175,7 @@ another mill writes in it, and the back end refuses what it does not understand.
 | infinities, not a number | refused | `'Infinity'`, `'-Infinity'`, `'NaN'` | refused |
 | databases | refused | `CREATE DATABASE`, `DROP DATABASE` | refused: a database is its file |
 | a transaction | `START TRANSACTION` | the same | `BEGIN TRANSACTION` |
+| indexes | refused: the language has none | `CREATE INDEX`, `DROP INDEX` | the same |
 | `existOk`, `missingOk` | refused | `IF NOT EXISTS`, `IF EXISTS`; the server keeps the promise for `CREATE DATABASE` | `IF NOT EXISTS`, `IF EXISTS` |
 | a column left to its default | `DEFAULT` | the same | left out of the insert |
 
