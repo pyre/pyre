@@ -299,7 +299,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         defaults = tuple(self._default(table=table, column=field) for field in table.pyre_fields)
         # and the declarations that follow the columns
         annotations = tuple(self._tableAnnotations(table=table))
-        # the statements that create the indexes of the table, when they are wanted
+        # the statements that record the documentation of the table in the catalog of the server
+        notes = tuple(self._documentation(table=table))
+        # and those that create its indexes, when they are wanted
         followers = tuple(self.createIndexes(table=table, existOk=existOk)) if indexes else ()
         # and the opening of the statement, which says whether the table may exist already
         header = (
@@ -352,7 +354,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         self.outdent()
         # the table declaration terminator
         yield self.place(");")
-        # followed by the statements that create its indexes
+        # followed by the statements that record its documentation
+        yield from notes
+        # and those that create its indexes
         yield from followers
         # all done
         return
@@ -703,6 +707,15 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # implementation details
+    def _documentation(self, table):
+        """
+        Build the statements that record the documentation of {table} and its columns in the
+        catalog of the server; the language has none, so the documentation stays in the comments
+        of the statement that creates the table
+        """
+        # nothing to record
+        return ()
+
     def _constraint(self, name, rule):
         """
         Build the declaration of a constraint of a table that enforces {rule}, under {name} when

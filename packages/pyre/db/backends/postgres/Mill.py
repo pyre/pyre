@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import inspect
+
 # my superclass
 from ..standard import Mill as standard
 
@@ -42,6 +45,29 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
     columns = Columns
     # and the one that renders the literals of their values
     literals = Literals
+
+    # the documentation of tables
+    def _documentation(self, table):
+        """
+        Build the statements that record the documentation of {table} and its columns in the
+        catalog of the server, where tools such as psql show it
+        """
+        # a documented table
+        if table.__doc__:
+            # records the whole of its docstring
+            note = self.quote(text=inspect.cleandoc(table.__doc__))
+            # as the comment of the table
+            yield self.place(f"COMMENT ON TABLE {table.pyre_name} IS {note};")
+        # go through its columns
+        for field in table.pyre_fields:
+            # and each documented one
+            if field.doc:
+                # records its documentation
+                note = self.quote(text=field.doc)
+                # as its comment
+                yield self.place(f"COMMENT ON COLUMN {table.pyre_name}.{field.name} IS {note};")
+        # all done
+        return
 
     # the reading of the columns of a selection
     def _read(self, column, text):
