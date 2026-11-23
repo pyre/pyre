@@ -18,6 +18,11 @@ class Columns(Visitor):
     non-standard types should provide subclasses that override the type relevant handlers.
     """
 
+    # the types of integers, by their width in bits
+    integers = {16: "SMALLINT", 32: "INTEGER", 64: "BIGINT"}
+    # and of floating point numbers
+    reals = {32: "REAL", 64: "DOUBLE PRECISION"}
+
     # interface
     def declare(self, table, column):
         """
@@ -54,15 +59,35 @@ class Columns(Visitor):
         """
         Build the type declarator of a column of integers
         """
-        # easy enough
-        return "INTEGER"
+        # integers of no particular width
+        if schema.bits is None:
+            # are what the language calls integers
+            return "INTEGER"
+        # the others are declared by their width
+        try:
+            # if the language has a type for it
+            return self.integers[schema.bits]
+        # and if it doesn't
+        except KeyError:
+            # complain
+            raise self._refusal(contents=f"{schema.bits} bit integers", **kwds)
 
     def _pyre_onFloat(self, schema, **kwds):
         """
         Build the type declarator of a column of floating point numbers
         """
-        # easy enough
-        return "DOUBLE PRECISION"
+        # numbers of no particular width
+        if schema.bits is None:
+            # get the full width
+            return "DOUBLE PRECISION"
+        # the others are declared by their width
+        try:
+            # if the language has a type for it
+            return self.reals[schema.bits]
+        # and if it doesn't
+        except KeyError:
+            # complain
+            raise self._refusal(contents=f"{schema.bits} bit floating point numbers", **kwds)
 
     def _pyre_onDecimal(self, schema, **kwds):
         """
