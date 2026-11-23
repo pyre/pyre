@@ -70,6 +70,10 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_select_arrays.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_with_aborted.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_json.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_bigint.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_table_exist_ok.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_table_missing_ok.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_database_exist_ok.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_database_missing_ok.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
