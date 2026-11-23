@@ -173,12 +173,13 @@ class Server(pyre.component, implements=DataStore):
         # and execute
         return self.execute(*sql)
 
-    def select(self, query):
+    def select(self, query, limit=None, offset=None):
         """
-        Execute the given {query} and return the retrieved data
+        Execute the given {query} and return the retrieved data; {offset} skips that many of
+        the first rows, and {limit} keeps at most that many of the rest
         """
         # build the sql statements
-        sql = self.sql.select(query=query)
+        sql = self.sql.select(query=query, limit=limit, offset=offset)
 
         # the columns of the selection, one for each field of the query
         columns = query.pyre_fields

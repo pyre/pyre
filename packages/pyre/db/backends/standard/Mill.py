@@ -6,8 +6,9 @@
 
 
 # support
-import inspect
 import collections.abc
+import inspect
+import operator
 
 # my base class
 from pyre.weaver.SQL import SQL
@@ -58,18 +59,39 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     from ...queries.Query import Query as query
 
     # queries
-    def select(self, query):
+    def select(self, query, limit=None, offset=None):
         """
-        Generate the SELECT statement described by {query}
+        Generate the SELECT statement described by {query}; {offset} skips that many of the
+        first rows, and {limit} keeps at most that many of the rest
         """
+        # only integers may reach the statement as the bounds of the selection: the limit
+        limit = None if limit is None else operator.index(limit)
+        # and the offset
+        offset = None if offset is None else operator.index(offset)
         # every statement starts at the margin
         self.margin()
-        # start
-        yield "SELECT"
-        # prepare to render the field projection
-        self.indent(increment=2)
+        # the clauses that page through the rows, as the dialect writes them
+        paging = self._paging(limit=limit, offset=offset)
+        # build the statement
+        lines = list(self._selection(query=query, paging=paging))
+        # end its last line
+        lines[-1] += ";"
+        # and hand it over
+        yield from lines
+        # all done
+        return
+
+    def _selection(self, query, paging):
+        """
+        Generate the lines of the selection described by {query}, followed by the clauses in
+        {paging}, without the terminator of the statement
+        """
         # if the query is a table specification
         if isinstance(query, self.schemer):
+            # start
+            yield "SELECT"
+            # prepare to render the columns
+            self.indent(increment=2)
             # its columns
             fields = query.pyre_fields
             # name each of them
@@ -85,92 +107,112 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # push out
             self.outdent()
             # render the table name
-            yield self.place("FROM {};".format(query.pyre_name))
+            yield self.place(f"FROM {query.pyre_name}")
+            # followed by the paging
+            for line in paging:
+                # one clause at a time
+                yield self.place(line)
             # push out
             self.outdent()
             # all done
             return
 
-        # native queries
-        if isinstance(query, self.selector) or isinstance(query, self.query):
-            # figure out how many field references there are
-            fields = len(query.pyre_fields)
-            # build the projection
-            for index, entry in enumerate(query.pyre_fields):
-                # do we need a comma?
-                comma = "," if index + 1 < fields else ""
-                # read the field as the dialect reads it
-                reading = self._read(column=entry, text=self.expression(entry))
-                # and render it
-                yield self.place(f"{reading} AS {entry.name}{comma}")
+        # anything else must be a native query
+        if not (isinstance(query, self.selector) or isinstance(query, self.query)):
+            # which is a mistake in the code that asked
+            import journal
+
+            # so complain
+            raise journal.firewall("pyre.db").log(f"{query!r} is neither a table nor a query")
+
+        # start, asking for distinct rows when the query wants them
+        yield "SELECT DISTINCT" if query.distinct else "SELECT"
+        # prepare to render the field projection
+        self.indent(increment=2)
+        # figure out how many field references there are
+        fields = len(query.pyre_fields)
+        # build the projection
+        for index, entry in enumerate(query.pyre_fields):
+            # do we need a comma?
+            comma = "," if index + 1 < fields else ""
+            # read the field as the dialect reads it
+            reading = self._read(column=entry, text=self.expression(entry))
+            # and render it
+            yield self.place(f"{reading} AS {entry.name}{comma}")
+        # push out
+        self.outdent()
+
+        # render the {FROM} section
+        yield self.place("FROM")
+        # push in
+        self.indent()
+        # figure out how many table references there are
+        tables = len(query.pyre_tables)
+        # render the tables
+        for index, tableName in enumerate(sorted(query.pyre_tables.keys())):
+            # get the table
+            table = query.pyre_tables[tableName]
+            # separate it from the next one, if there is one
+            comma = "," if index + 1 < tables else ""
+            # a table under its own name
+            if tableName == table.pyre_name:
+                # is named as it is
+                yield self.place(f"{table.pyre_name}{comma}")
+            # otherwise
+            else:
+                # it gets a local alias
+                yield self.place(f"{table.pyre_name} AS {tableName}{comma}")
+
+        # the clauses that follow the {FROM} section, in the order the language puts them, each
+        # with the method that renders it
+        clauses = (
+            ("WHERE", query.where, self._whereClause),
+            ("GROUP BY", query.group, self._groupClause),
+            ("ORDER BY", query.order, self._orderClause),
+        )
+        # go through them
+        for keyword, spec, renderer in clauses:
+            # leaving out the ones the query does not have
+            if spec is None:
+                # by moving on
+                continue
             # push out
             self.outdent()
-
-            # the clauses that follow the {FROM} section, in the order the language puts them,
-            # each with the method that renders it
-            clauses = [
-                (keyword, renderer)
-                for keyword, spec, renderer in (
-                    ("WHERE", query.where, self._whereClause),
-                    ("GROUP BY", query.group, self._groupClause),
-                    ("ORDER BY", query.order, self._orderClause),
-                )
-                # leaving out the ones the query does not have
-                if spec is not None
-            ]
-
-            # render the {FROM} section
-            yield self.place("FROM")
+            # render the marker of the clause
+            yield self.place(keyword)
             # push in
             self.indent()
-            # figure out how many table references there are
-            tables = len(query.pyre_tables)
-            # render the tables
-            for index, tableName in enumerate(sorted(query.pyre_tables.keys())):
-                # get the table
-                table = query.pyre_tables[tableName]
-                # do we need a terminator?
-                # if we have more tables
-                if index + 1 < tables:
-                    # make it a comma
-                    terminator = ","
-                # if there are no other clauses in the query
-                elif not clauses:
-                    # wrap up
-                    terminator = ";"
-                # otherwise
-                else:
-                    # leave blank
-                    terminator = ""
-                # do we need to rename the table?
-                if tableName == table.pyre_name:
-                    # no
-                    yield self.place("{}{}".format(table.pyre_name, terminator))
-                # otherwise
-                else:
-                    # build a local alias for the table name
-                    yield self.place("{} AS {}{}".format(table.pyre_name, tableName, terminator))
+            # and render its body
+            yield self.place(renderer(query=query))
 
-            # render the clauses
-            for index, (keyword, renderer) in enumerate(clauses):
-                # the last one ends the statement
-                terminator = ";" if index + 1 == len(clauses) else ""
-                # push out
-                self.outdent()
-                # render the marker of the clause
-                yield self.place(keyword)
-                # push in
-                self.indent()
-                # and render its body
-                yield self.place(renderer(query=query) + terminator)
-
-            # push out
-            self.outdent(decrement=2)
-            # all done
-            return
-
+        # back out to the level of the clauses
+        self.outdent()
+        # where the paging goes
+        for line in paging:
+            # one clause at a time
+            yield self.place(line)
+        # push out
+        self.outdent()
         # all done
         return
+
+    def _paging(self, limit, offset):
+        """
+        Build the clauses that skip the first {offset} rows of a selection and keep at most
+        {limit} of the rest, as the language writes them
+        """
+        # the clauses, in the order the language puts them
+        clauses = []
+        # skipping rows
+        if offset is not None:
+            # says how many
+            clauses.append(f"OFFSET {offset} ROWS")
+        # and keeping some
+        if limit is not None:
+            # says how many
+            clauses.append(f"FETCH FIRST {limit} ROWS ONLY")
+        # hand them over
+        return clauses
 
     # the reading of the columns of a selection
     def _read(self, column, text):

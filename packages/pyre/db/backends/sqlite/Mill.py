@@ -79,6 +79,24 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
         # the others are declared as standard SQL declares them
         return super()._default(table=table, column=column)
 
+    def _paging(self, limit, offset):
+        """
+        Build the clause that skips the first {offset} rows of a selection and keeps at most
+        {limit} of the rest; sqlite knows only {LIMIT} and {OFFSET}
+        """
+        # a selection without bounds
+        if limit is None and offset is None:
+            # needs no clause
+            return []
+        # sqlite has no offset without a limit, and takes a negative one for no limit at all
+        clause = f"LIMIT {-1 if limit is None else limit}"
+        # skipping rows
+        if offset is not None:
+            # says how many
+            clause += f" OFFSET {offset}"
+        # hand it over
+        return [clause]
+
     def _insertColumns(self, table, record):
         """
         Generate the columns of {table} that {record} names in an insert, with their values
