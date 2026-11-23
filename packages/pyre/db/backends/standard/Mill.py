@@ -42,6 +42,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     ifPresent = None
     # whether the language has indexes, which it does not
     hasIndexes = False
+    # and whether a statement may return the rows it changes, which it may not either
+    hasReturning = False
 
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
@@ -207,6 +209,42 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             yield self.place(line)
         # push out
         self.outdent()
+        # all done
+        return
+
+    def _returning(self, returning):
+        """
+        Build the clause that returns the columns of {returning}, a table or a query, from the
+        rows a statement changes
+        """
+        # a language without the clause
+        if not self.hasReturning:
+            # cannot say it
+            raise exceptions.NotSupportedError(
+                diagnostic=f"{self.dialect} has no syntax that returns the rows a statement changes"
+            )
+        # the others name the columns
+        return "RETURNING " + ", ".join(field.name for field in returning.pyre_fields)
+
+    def _insertEnd(self, values, clause):
+        """
+        End an insert whose last row of {values} is held back, returning the rows it adds with
+        {clause} when there is one
+        """
+        # without a clause
+        if clause is None:
+            # the values end the statement
+            yield self.place(values + ";")
+            # and that's all
+            return
+        # otherwise, the values are followed
+        yield self.place(values)
+        # by the clause, at the level of the others
+        self.outdent()
+        # which ends the statement
+        yield self.place(clause + ";")
+        # and back in, where the caller expects to be
+        self.indent()
         # all done
         return
 
@@ -577,11 +615,14 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return
 
     # record management
-    def insertRecords(self, *records):
+    def insertRecords(self, *records, returning=None):
         """
         Insert {records}, an iterable of table records, into their corresponding table; the
-        consecutive records of a table that name the same columns share a statement
+        consecutive records of a table that name the same columns share a statement; each
+        statement returns the columns of {returning}, a table or a query, when it is given
         """
+        # the clause that returns the rows, built before anything is rendered
+        clause = None if returning is None else self._returning(returning=returning)
         # every statement starts at the margin
         self.margin()
         # the values of the previous record, held back until we know whether more follow, so
@@ -606,7 +647,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # end the statement in progress, if there is one
                 if shape is not None:
                     # by terminating it
-                    yield self.place(dangling + ";")
+                    yield from self._insertEnd(values=dangling, clause=clause)
                     # and bouncing out to the margin
                     self.outdent(decrement=2)
                 # a record that names no column
@@ -643,48 +684,57 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # there is nothing left to render
             return
         # render any left overs
-        yield self.place(dangling + ";")
+        yield from self._insertEnd(values=dangling, clause=clause)
         # bounce out to top level
         self.outdent(decrement=2)
         # all done
         return
 
-    def deleteRecords(self, table, condition):
+    def deleteRecords(self, table, condition, returning=None):
         """
-        Remove all {table} records that match {condition}
+        Remove all {table} records that match {condition}, and return the columns of
+        {returning}, a table or a query, when it is given
 
         If condition is {None}, this routine will remove all records from the given {table}
         """
+        # the clause that returns the rows, built before anything is rendered
+        clause = None if returning is None else self._returning(returning=returning)
         # every statement starts at the margin
         self.margin()
-        # if no condition was specified
-        if condition is None:
-            # delete all records
-            yield self.place("DELETE FROM {};".format(table.pyre_name))
-            # all done
-            return
-
-        # otherwise, initiate the statement
-        yield self.place("DELETE FROM {}".format(table.pyre_name))
+        # the lines of the statement: the table
+        lines = [self.place(f"DELETE FROM {table.pyre_name}")]
         # indent
         self.indent()
-        # build the filtering expression
-        predicate = self.expression(root=condition, context=table)
-        # and render it
-        yield self.place("WHERE ({});".format(predicate))
+        # if a condition was specified
+        if condition is not None:
+            # build the filtering expression
+            predicate = self.expression(root=condition, context=table)
+            # and render it
+            lines.append(self.place(f"WHERE ({predicate})"))
+        # if the rows are wanted back
+        if clause is not None:
+            # ask for them
+            lines.append(self.place(clause))
         # outdent
         self.outdent()
-        # and return
+        # end the statement
+        lines[-1] += ";"
+        # and hand it over
+        yield from lines
+        # all done
         return
 
-    def updateRecords(self, template, condition):
+    def updateRecords(self, template, condition, returning=None):
         """
         Update all table rows that match {condition} using information from {template}, a
         prototype row of a table. The update operation sets the fields in these rows to their
         corresponding values in {template}; fields set to {None} in {template} are not
         affected. Without a {condition}, every row is updated, and a {template} that sets no
-        field builds no statement
+        field builds no statement. The statement returns the columns of {returning}, a table or
+        a query, when it is given
         """
+        # the clause that returns the rows, built before anything is rendered
+        clause = None if returning is None else self._returning(returning=returning)
         # every statement starts at the margin
         self.margin()
         # get the table
@@ -707,21 +757,18 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         if not assignments:
             # there is no statement
             return
-
-        # initiate the statement
-        yield self.place(f"UPDATE {table.pyre_name}")
+        # the lines of the statement: the table
+        lines = [self.place(f"UPDATE {table.pyre_name}")]
         # indent
         self.indent()
         # the data section
-        yield self.place("SET")
+        lines.append(self.place("SET"))
         # indent
         self.indent()
-        # render all assignments but the last, each followed by a comma
-        for assignment in assignments[:-1]:
+        # render the assignments, each but the last followed by a comma
+        for index, assignment in enumerate(assignments):
             # place it
-            yield self.place(assignment + ",")
-        # the last one ends the statement, unless a restriction follows
-        yield self.place(assignments[-1] + ("" if condition is not None else ";"))
+            lines.append(self.place(assignment + ("," if index + 1 < len(assignments) else "")))
         # outdent
         self.outdent()
         # if there is a restriction
@@ -729,10 +776,18 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # build the filtering expression
             predicate = self.expression(root=condition, context=table)
             # and render it
-            yield self.place(f"WHERE ({predicate});")
+            lines.append(self.place(f"WHERE ({predicate})"))
+        # if the rows are wanted back
+        if clause is not None:
+            # ask for them
+            lines.append(self.place(clause))
         # outdent
         self.outdent()
-        # and return
+        # end the statement
+        lines[-1] += ";"
+        # and hand it over
+        yield from lines
+        # all done
         return
 
     # meta-methods
