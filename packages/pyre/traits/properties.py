@@ -42,6 +42,8 @@ str = property.str
 date = property.date
 # quantities with units
 dimensional = property.dimensional
+# json documents
+json = property.json
 # filesystem paths
 path = property.path
 # times of day
