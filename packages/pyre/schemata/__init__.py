@@ -24,6 +24,7 @@ from .String import String as str
 # more complex types
 from .Date import Date as date
 from .Dimensional import Dimensional as dimensional
+from .JSON import JSON as json
 from .Path import Path as path
 from .Time import Time as time
 from .Timestamp import Timestamp as timestamp
@@ -52,7 +53,7 @@ from .Channel import Channel as channel
 # since the property that holds a map is {pyre.traits.Dict}, whose entries live in the store
 basic = (identity, bool, bytes, cell, complex, decimal, enum, float, fraction, inet, int, str)
 # the ones whose values have structure
-composite = (date, dimensional, path, time, timestamp, uri, uuid)
+composite = (date, dimensional, json, path, time, timestamp, uri, uuid)
 # the ones whose values hold others
 containers = (sequence, array, list, set, tuple)
 # and the ones whose values are resources of the process
