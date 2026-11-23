@@ -47,10 +47,10 @@ class Templater(AttributeClassifier):
         The builder of a new record class.
 
         Scans through the attributes of the class record being built and harvests the meta-data
-        descriptors. These descriptors are removed for the attribute dictionary and replaced
+        descriptors. These descriptors are removed from the attribute dictionary and replaced
         later with accessors appropriate for each type of record.
         """
-        # make a pile foe the meta-data descriptors
+        # make a pile for the field descriptors
         localFields = []
         # harvest them
         for fieldName, field in cls.pyre_harvest(attributes, cls.pyre_field):
@@ -59,12 +59,14 @@ class Templater(AttributeClassifier):
             # and add them to the pile
             localFields.append(field)
 
-        # build an attribute to hold the locally declared fields
+        # record my name, which {id} replaces when it is given
         attributes["pyre_name"] = name if id is None else id
+        # and the fields declared locally
         attributes["pyre_localFields"] = tuple(localFields)
 
         # remove the field descriptors; we replace them in {__init__} with selectors
         for field in localFields:
+            # one at a time
             del attributes[field.name]
 
         # build the class record
@@ -76,14 +78,17 @@ class Templater(AttributeClassifier):
         # derivations are expressions involving any of the fields accessible at the point of
         # their declaration, so all of them must have been populated already
 
-        # initialize the three piles
+        # initialize the three piles: the fields, in order
         fields = []
+        # the measures among them
         measures = []
+        # and the derivations
         derivations = []
         # for each base class
         for base in reversed(record.__mro__):
             # skip the ones that are not records themselves
             if not isinstance(base, cls):
+                # by moving on
                 continue
             # get all of the locally declared record fields
             for field in base.pyre_localFields:
@@ -103,9 +108,7 @@ class Templater(AttributeClassifier):
                     import journal
 
                     # and complain
-                    raise journal.firewall("pyre.records").log(
-                        "unknown field type: {}".format(field)
-                    )
+                    raise journal.firewall("pyre.records").log(f"unknown field type: {field}")
 
         # attach them to the class record
         record.pyre_fields = tuple(fields)
@@ -113,18 +116,6 @@ class Templater(AttributeClassifier):
         record.pyre_measures = tuple(measures)
         # and the derivations
         record.pyre_derivations = tuple(derivations)
-
-        # finally, some clients need a map from fields to their index in our underlying tuple
-        record.pyre_index = dict((field, index) for index, field in enumerate(fields))
-
-        # show me
-        # print("{}:".format(name))
-        # print("  fields: {}".format(tuple(field.name for field in record.pyre_fields)))
-        # print("  measures: {}".format(tuple(field.name for field in record.pyre_measures)))
-        # print("  derivations: {}".format(tuple(field.name for field in record.pyre_derivations)))
-        # print("  index:")
-        # for field, index in record.pyre_index.items():
-        # print("    {.name} -> {}".format(field, index))
 
         # all done
         return record
@@ -134,7 +125,7 @@ class Templater(AttributeClassifier):
         Decorate a newly minted record
 
         Now that the class record is built and all the meta-data have been harvested, we can
-        build the generators of my instances. The are two of them: one for immutable instances,
+        build the generators of my instances. There are two of them: one for immutable instances,
         built using a named tuple whose fields are the actual values of the various fields;
         and one for mutable instances, built from a named tuple whose fields are {pyre.calc}
         nodes.
@@ -142,6 +133,7 @@ class Templater(AttributeClassifier):
         # chain up
         super().__init__(name, bases, attributes, **kwds)
 
+        # the map from my fields to their positions in the tuples of my instances
         columns = {}
         # add selectors for all my fields we removed in {__new__}
         for index, field in enumerate(self.pyre_fields):
@@ -162,26 +154,32 @@ class Templater(AttributeClassifier):
             for index, field in enumerate(self.pyre_fields)
         )
 
-        # build the helper classes that generate my instances
+        # build the helper classes that generate my instances: the mutable ones
         mutable = type("mutable", (self.pyre_mutableTupleType,), attributes)
+        # and the immutable ones
         immutable = type("immutable", (self.pyre_immutableTupleType,), attributes)
 
         # if i have derivations
         if self.pyre_derivations:
-            # attach the value extraction strategies that are aware of derivations
+            # attach the value extraction strategies that are aware of derivations: one that
+            # builds the nodes of mutable instances
             mutable.pyre_extract = self.pyre_compiler()
+            # and one that evaluates the values of immutable ones
             immutable.pyre_extract = self.pyre_evaluator()
         # otherwise
         else:
-            # attach the fast value extraction strategies
+            # attach the fast value extraction strategies: one for mutable instances
             mutable.pyre_extract = self.pyre_calculator()
+            # and one for immutable ones
             immutable.pyre_extract = self.pyre_extractor()
 
-        # mark them as mine
+        # mark them as mine: the mutable instances
         mutable.pyre_layout = self
+        # and the immutable ones
         immutable.pyre_layout = self
-        # and attach them
+        # and attach them: the mutable helper
         self.pyre_mutableTuple = mutable
+        # and the immutable one
         self.pyre_immutableTuple = immutable
 
         # all done
