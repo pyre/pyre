@@ -41,8 +41,8 @@ statement that creates the table.
 | type | holds |
 |---|---|
 | `pyre.db.bool()` | truth values |
-| `pyre.db.int()` | integers |
-| `pyre.db.float()` | floating point numbers |
+| `pyre.db.int(bits=None)` | integers; `bits` of 16, 32 or 64 declares `SMALLINT`, `INTEGER` or `BIGINT`, and none `INTEGER` |
+| `pyre.db.float(bits=None)` | floating point numbers; `bits` of 32 or 64 declares `REAL` or `DOUBLE PRECISION`, and none `DOUBLE PRECISION` |
 | `pyre.db.decimal(precision, scale)` | fixed point numbers |
 | `pyre.db.str(maxlen=None)` | text; unbounded unless `maxlen` is given |
 | `pyre.db.bytes()` | strings of octets |
