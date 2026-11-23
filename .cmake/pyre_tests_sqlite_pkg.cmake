@@ -27,6 +27,7 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_types.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_rollback.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_table_exist_ok.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_table_missing_ok.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_index.py)
 # cleanup
 add_test(NAME tests.sqlite.clean
   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/sqlite.pkg"
