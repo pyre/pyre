@@ -44,13 +44,13 @@ class Table(records.record, metaclass=Schemer):
         return cls
 
     @classmethod
-    def pyre_unique(cls, *references):
+    def pyre_unique(cls, *references, name=None):
         """
         Require that the fields of {references} be unique together across my rows; each call
-        makes a constraint of its own
+        makes a constraint of its own, which goes by {name} when it is given one
         """
-        # record the fields, as one constraint
-        cls._pyre_uniqueKeys.append(tuple(reference.field for reference in references))
+        # record the fields, as one constraint, along with its name
+        cls._pyre_uniqueKeys.append((tuple(reference.field for reference in references), name))
         # and return
         return cls
 
@@ -74,22 +74,23 @@ class Table(records.record, metaclass=Schemer):
         return cls
 
     @classmethod
-    def pyre_foreignKey(cls, field, foreign):
+    def pyre_foreignKey(cls, field, foreign, name=None):
         """
-        Mark {field} as a reference to {foreign}
+        Mark {field} as a reference to {foreign}; the constraint goes by {name} when it is given
+        one
         """
-        # add an entry to the foreign key list
-        cls._pyre_foreignKeys.append((field, foreign))
+        # add an entry to the foreign key list, along with its name
+        cls._pyre_foreignKeys.append((field, foreign, name))
         # and return
         return cls
 
     @classmethod
-    def pyre_check(cls, expression):
+    def pyre_check(cls, expression, name=None):
         """
-        Add {expression} to the list of my nameless constraints
+        Require my rows to pass {expression}; the constraint goes by {name} when it is given one
         """
-        # add {expression} to my pile of constraints
-        cls._pyre_constraints.append(expression)
+        # add {expression} to my pile of constraints, along with its name
+        cls._pyre_constraints.append((expression, name))
         # and return
         return cls
 
@@ -97,9 +98,9 @@ class Table(records.record, metaclass=Schemer):
     # table attributes that generate the table wide declaration statements; initialized by my
     # metaclass at compile time
     _pyre_primaryKeys = None  # the fields of my primary key, in order
-    _pyre_uniqueKeys = None  # the groups of fields whose values are unique across my rows
-    _pyre_foreignKeys = None  # my references to other tables
-    _pyre_constraints = None  # the checks my rows must pass
+    _pyre_uniqueKeys = None  # the groups of fields whose values are unique across my rows, named
+    _pyre_foreignKeys = None  # my references to other tables, named
+    _pyre_constraints = None  # the checks my rows must pass, named
     _pyre_indexes = None  # and the indexes over my fields
 
 

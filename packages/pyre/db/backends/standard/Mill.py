@@ -367,20 +367,27 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # names its fields, in order
             yield f"PRIMARY KEY ({','.join(field.name for field in table._pyre_primaryKeys)})"
         # each group of fields whose values are unique together
-        for fields in table._pyre_uniqueKeys:
+        for fields, name in table._pyre_uniqueKeys:
             # is a constraint of its own
-            yield f"UNIQUE ({','.join(field.name for field in fields)})"
+            yield self._constraint(
+                name=name, rule=f"UNIQUE ({','.join(field.name for field in fields)})"
+            )
         # each reference to another table
-        for local, foreign in table._pyre_foreignKeys:
+        for local, foreign, name in table._pyre_foreignKeys:
             # names the field, the table, and the field of the other table
-            yield (
-                f"FOREIGN KEY ({local.field.name}) "
-                f"REFERENCES {foreign.table.pyre_name} ({foreign.field.name})"
+            yield self._constraint(
+                name=name,
+                rule=(
+                    f"FOREIGN KEY ({local.field.name}) "
+                    f"REFERENCES {foreign.table.pyre_name} ({foreign.field.name})"
+                ),
             )
         # and each check
-        for constraint in table._pyre_constraints:
+        for constraint, name in table._pyre_constraints:
             # renders its expression in the context of the table
-            yield f"CHECK ({self.expression(root=constraint, context=table)})"
+            yield self._constraint(
+                name=name, rule=f"CHECK ({self.expression(root=constraint, context=table)})"
+            )
         # all done
         return
 
@@ -696,6 +703,18 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # implementation details
+    def _constraint(self, name, rule):
+        """
+        Build the declaration of a constraint of a table that enforces {rule}, under {name} when
+        it has one
+        """
+        # a constraint without a name
+        if name is None:
+            # leaves its name to the server
+            return rule
+        # the others are declared by name
+        return f"CONSTRAINT {name} {rule}"
+
     def _index(self, table, name):
         """
         Find the index of {table} whose name is {name}
