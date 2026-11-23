@@ -62,8 +62,18 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         self.indent(increment=2)
         # if the query is a table specification
         if isinstance(query, self.schemer):
-            # no projection
-            yield self.place("*")
+            # its columns
+            fields = query.pyre_fields
+            # name each of them
+            for index, field in enumerate(fields):
+                # do we need a comma?
+                comma = "," if index + 1 < len(fields) else ""
+                # read the column as the dialect reads it
+                reading = self._read(column=field, text=field.name)
+                # a reading other than the bare name of the column gets the name back
+                alias = "" if reading == field.name else f" AS {field.name}"
+                # render it
+                yield self.place(f"{reading}{alias}{comma}")
             # push out
             self.outdent()
             # render the table name
@@ -81,8 +91,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             for index, entry in enumerate(query.pyre_fields):
                 # do we need a comma?
                 comma = "," if index + 1 < fields else ""
-                # render this field
-                yield self.place("{} AS {}{}".format(self.expression(entry), entry.name, comma))
+                # read the field as the dialect reads it
+                reading = self._read(column=entry, text=self.expression(entry))
+                # and render it
+                yield self.place(f"{reading} AS {entry.name}{comma}")
             # push out
             self.outdent()
 
@@ -151,6 +163,14 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
         # all done
         return
+
+    # the reading of the columns of a selection
+    def _read(self, column, text):
+        """
+        Render the reading of {column}, whose expression is {text}, in the projection of a selection
+        """
+        # the language reads every column as it is
+        return text
 
     # the clauses of a selection
     def _whereClause(self, query):
