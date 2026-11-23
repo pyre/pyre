@@ -39,8 +39,10 @@ class Schemer(records.templater):
         unique = []
         # the foreign keys
         foreign = []
-        # and the checks
+        # the checks
         constraints = []
+        # and the indexes
+        indexes = []
         # go through my ancestors, the most distant first
         for base in reversed(table.__mro__[1:]):
             # restrict the search to tables
@@ -54,8 +56,10 @@ class Schemer(records.templater):
             cls._pyre_merge(target=unique, entries=base._pyre_uniqueKeys)
             # the foreign keys
             cls._pyre_merge(target=foreign, entries=base._pyre_foreignKeys)
-            # and the checks
+            # the checks
             cls._pyre_merge(target=constraints, entries=base._pyre_constraints)
+            # and the indexes
+            cls._pyre_merge(target=indexes, entries=base._pyre_indexes)
 
         # save my primary keys
         table._pyre_primaryKeys = primary
@@ -65,6 +69,8 @@ class Schemer(records.templater):
         table._pyre_foreignKeys = foreign
         # save my constraints
         table._pyre_constraints = constraints
+        # and my indexes
+        table._pyre_indexes = indexes
 
         # and return the table record
         return table

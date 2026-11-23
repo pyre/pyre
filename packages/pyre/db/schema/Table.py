@@ -11,6 +11,9 @@ from .Schemer import Schemer
 # superclass
 from ... import records
 
+# the indexes over my fields
+from .Index import Index
+
 
 # declaration
 class Table(records.record, metaclass=Schemer):
@@ -52,6 +55,25 @@ class Table(records.record, metaclass=Schemer):
         return cls
 
     @classmethod
+    def pyre_index(cls, *references, unique=False, where=None, name=None):
+        """
+        Index my rows by the fields of {references}, in order; {unique} forbids two rows to share
+        their values, {where} restricts the index to the rows that pass it, and {name} replaces
+        the one made of my name and those of the fields; each call makes an index of its own
+        """
+        # record the index
+        cls._pyre_indexes.append(
+            Index(
+                fields=tuple(reference.field for reference in references),
+                unique=unique,
+                where=where,
+                name=name,
+            )
+        )
+        # and return
+        return cls
+
+    @classmethod
     def pyre_foreignKey(cls, field, foreign):
         """
         Mark {field} as a reference to {foreign}
@@ -77,7 +99,8 @@ class Table(records.record, metaclass=Schemer):
     _pyre_primaryKeys = None  # the fields of my primary key, in order
     _pyre_uniqueKeys = None  # the groups of fields whose values are unique across my rows
     _pyre_foreignKeys = None  # my references to other tables
-    _pyre_constraints = None  # and the checks my rows must pass
+    _pyre_constraints = None  # the checks my rows must pass
+    _pyre_indexes = None  # and the indexes over my fields
 
 
 # end of file

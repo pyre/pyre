@@ -79,13 +79,43 @@ class Server(pyre.component, implements=DataStore):
         # and execute it
         return self.execute(*sql)
 
-    def createTable(self, table, existOk=False):
+    def createTable(self, table, existOk=False, indexes=True):
         """
-        Build and execute the SQL statement necessary to create {table}; with {existOk}, finding
-        it there already is fine
+        Build and execute the SQL statements necessary to create {table}, and its indexes unless
+        {indexes} is off; with {existOk}, finding them there already is fine
+        """
+        # build the sql statements
+        sql = self.sql.createTable(table=table, existOk=existOk, indexes=indexes)
+        # and execute them
+        return self.execute(*sql)
+
+    def createIndexes(self, table, existOk=False):
+        """
+        Build and execute the SQL statements that create the indexes of {table}; with {existOk},
+        finding them there already is fine
+        """
+        # build the sql statements
+        sql = self.sql.createIndexes(table=table, existOk=existOk)
+        # and execute them
+        return self.execute(*sql)
+
+    def createIndex(self, table, name, existOk=False):
+        """
+        Build and execute the SQL statement that creates the index {name} of {table}; with
+        {existOk}, finding it there already is fine
         """
         # build the sql statement
-        sql = self.sql.createTable(table=table, existOk=existOk)
+        sql = self.sql.createIndex(table=table, name=name, existOk=existOk)
+        # and execute it
+        return self.execute(*sql)
+
+    def dropIndex(self, table, name, missingOk=False):
+        """
+        Build and execute the SQL statement that drops the index {name} of {table}; with
+        {missingOk}, finding it gone already is fine
+        """
+        # build the sql statement
+        sql = self.sql.dropIndex(table=table, name=name, missingOk=missingOk)
         # and execute it
         return self.execute(*sql)
 

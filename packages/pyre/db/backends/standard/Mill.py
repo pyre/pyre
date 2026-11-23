@@ -39,6 +39,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     # and the words that make a removal conditional on the presence of what it removes, which it
     # does not have either
     ifPresent = None
+    # whether the language has indexes, which it does not
+    hasIndexes = False
 
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
@@ -267,10 +269,11 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         )
 
     # table management
-    def createTable(self, table, existOk=False):
+    def createTable(self, table, existOk=False, indexes=True):
         """
-        Generate the SQL statement to create a database table given its description; with
-        {existOk}, finding the table there already is fine
+        Generate the SQL statement to create a database table given its description, followed
+        by those that create its indexes unless {indexes} is off; with {existOk}, finding the
+        table and its indexes there already is fine
 
         The {table} specification is expected to be a {Table} subclass, with the necessary
         column information provided by the decorated field descriptors
@@ -296,6 +299,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         defaults = tuple(self._default(table=table, column=field) for field in table.pyre_fields)
         # and the declarations that follow the columns
         annotations = tuple(self._tableAnnotations(table=table))
+        # the statements that create the indexes of the table, when they are wanted
+        followers = tuple(self.createIndexes(table=table, existOk=existOk)) if indexes else ()
         # and the opening of the statement, which says whether the table may exist already
         header = (
             "CREATE TABLE"
@@ -347,6 +352,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         self.outdent()
         # the table declaration terminator
         yield self.place(");")
+        # followed by the statements that create its indexes
+        yield from followers
         # all done
         return
 
@@ -388,6 +395,53 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         self.margin()
         # build the statement
         yield self.place(f"DROP TABLE{clause} {table.pyre_name};")
+        # all done
+        return
+
+    # index management
+    def createIndexes(self, table, existOk=False):
+        """
+        Build the statements that create the indexes of {table}; with {existOk}, finding them
+        there already is fine
+        """
+        # each index
+        for index in table._pyre_indexes:
+            # gets a statement of its own
+            yield from self._createIndex(table=table, index=index, existOk=existOk)
+        # all done
+        return
+
+    def createIndex(self, table, name, existOk=False):
+        """
+        Build the statement that creates the index {name} of {table}; with {existOk}, finding it
+        there already is fine
+        """
+        # find the index
+        index = self._index(table=table, name=name)
+        # and build its statement
+        yield from self._createIndex(table=table, index=index, existOk=existOk)
+        # all done
+        return
+
+    def dropIndex(self, table, name, missingOk=False):
+        """
+        Build the statement that drops the index {name} of {table}; with {missingOk}, finding it
+        gone already is fine
+        """
+        # make sure {table} declares the index
+        self._index(table=table, name=name)
+        # a language without indexes
+        if not self.hasIndexes:
+            # cannot drop one
+            raise exceptions.NotSupportedError(
+                diagnostic=f"{self.dialect} has no statement that drops the index {name}"
+            )
+        # say whether the index may be gone already
+        clause = self._ifPresent(missingOk=missingOk, subject=f"the index {name}")
+        # every statement starts at the margin
+        self.margin()
+        # build the statement
+        yield self.place(f"DROP INDEX{clause} {name};")
         # all done
         return
 
@@ -642,6 +696,58 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # implementation details
+    def _index(self, table, name):
+        """
+        Find the index of {table} whose name is {name}
+        """
+        # go through the indexes of the table
+        for index in table._pyre_indexes:
+            # and when one goes by {name}
+            if index.identifier(table=table) == name:
+                # hand it over
+                return index
+        # a name the table does not declare is a mistake in the code that asked for it
+        import journal
+
+        # so complain
+        raise journal.firewall("pyre.db").log(
+            f"table {table.pyre_name!r} declares no index {name!r}"
+        )
+
+    def _createIndex(self, table, index, existOk):
+        """
+        Build the statement that creates {index} of {table}; with {existOk}, finding it there
+        already is fine
+        """
+        # the name of the index
+        name = index.identifier(table=table)
+        # a language without indexes
+        if not self.hasIndexes:
+            # cannot create one
+            raise exceptions.NotSupportedError(
+                diagnostic=f"{self.dialect} has no statement that creates the index {name}"
+            )
+        # say whether the index may exist already
+        clause = self._ifMissing(existOk=existOk, subject=f"the index {name}")
+        # whether no two rows may share their values
+        unique = "UNIQUE " if index.unique else ""
+        # the fields, in order
+        fields = ", ".join(field.name for field in index.fields)
+        # and the predicate a row must pass to be covered, if there is one
+        where = (
+            ""
+            if index.where is None
+            else f" WHERE ({self.expression(root=index.where, context=table)})"
+        )
+        # every statement starts at the margin
+        self.margin()
+        # build the statement
+        yield self.place(
+            f"CREATE {unique}INDEX{clause} {name} ON {table.pyre_name} ({fields}){where};"
+        )
+        # all done
+        return
+
     def _ifMissing(self, existOk, subject):
         """
         Build the clause that lets the creation of {subject} find it there already, when {existOk}
