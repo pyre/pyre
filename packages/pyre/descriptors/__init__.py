@@ -51,6 +51,8 @@ str = descriptor.str
 date = descriptor.date
 # quantities with units
 dimensional = descriptor.dimensional
+# json documents
+json = descriptor.json
 # filesystem paths
 path = descriptor.path
 # times of day
