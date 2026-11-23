@@ -210,6 +210,26 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
+    def _subquery(self, query):
+        """
+        Render the selection of {query}, a query of one column, on a single line, to stand for a
+        list of values
+        """
+        # a query of several columns
+        if len(query.pyre_fields) != 1:
+            # cannot stand for a list of values, which is a mistake in the code that asked
+            import journal
+
+            # so complain
+            raise journal.firewall("pyre.db").log(
+                f"query {query.pyre_name!r} selects {len(query.pyre_fields)} columns,"
+                " so it cannot stand for a list of values"
+            )
+        # render its selection, without paging
+        lines = self._selection(query=query, paging=())
+        # and put it on one line
+        return " ".join(line.strip() for line in lines)
+
     def _joins(self, query):
         """
         Collect the joins of {query}, making sure each joins one of its tables
@@ -803,18 +823,25 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
     def _pyre_onIsIn(self, node, **kwds):
         """
-        Render {node}, the test of whether a field holds one of a list of values
+        Render {node}, the test of whether a field holds one of a list of values, or one of the
+        rows of a query
         """
-        # no field holds one of no values, and the language has no empty list to say it with
-        if not node.values:
-            # so say what it means
-            return "FALSE"
         # render the field
         field = self.expression(root=node.field, **kwds)
-        # and the literals of the values
-        values = ", ".join(self._literals.value(value=value) for value in node.values)
-        # put it all together
-        return f"{field} IN ({values})"
+        # values drawn from the rows of a query
+        if isinstance(node.values, self.selector):
+            # come from its selection
+            return f"{field} IN ({self._subquery(query=node.values)})"
+        # the others are a list
+        values = tuple(node.values)
+        # no field holds one of no values, and the language has no empty list to say it with
+        if not values:
+            # so say what it means
+            return "FALSE"
+        # render the literals of the values
+        literals = ", ".join(self._literals.value(value=value) for value in values)
+        # and put it all together
+        return f"{field} IN ({literals})"
 
     def _pyre_onLike(self, node, **kwds):
         """
