@@ -56,6 +56,56 @@ class IsNotNull(UnaryPostfix):
         return authority._pyre_onIsNotNull(node=self, **kwds)
 
 
+# the negation of a predicate
+class Negation:
+    """
+    The negation of the predicate {predicate}
+    """
+
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am the negation of a predicate
+        """
+        # ask for my handler
+        return authority._pyre_onNegation(node=self, **kwds)
+
+    # meta-methods
+    def __init__(self, predicate, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save the predicate i negate
+        self.predicate = predicate
+        # all done
+        return
+
+
+# membership
+class IsIn:
+    """
+    The test of whether the field reference {field} holds one of {values}
+    """
+
+    # visiting
+    def _pyre_identify(self, authority, **kwds):
+        """
+        Let {authority} know i am a test of membership
+        """
+        # ask for my handler
+        return authority._pyre_onIsIn(node=self, **kwds)
+
+    # meta-methods
+    def __init__(self, field, values, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # save my field reference
+        self.field = field
+        # and the values, in their order
+        self.values = tuple(values)
+        # all done
+        return
+
+
 # some built-in functions
 class Cast(descriptors.stem.operator):
     """
