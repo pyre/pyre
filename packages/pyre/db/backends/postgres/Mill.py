@@ -35,6 +35,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
     ifMissing = "IF NOT EXISTS"
     # and a removal conditional on the presence of what it removes
     ifPresent = "IF EXISTS"
+    # postgres has indexes
+    hasIndexes = True
 
     # the visitor that builds the type declarators of my columns
     columns = Columns
