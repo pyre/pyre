@@ -39,7 +39,7 @@ def descending(fieldref):
 
 
 # primitive SQL expressions
-from .queries import isNull, isNotNull, cast, like
+from .queries import isNull, isNotNull, cast, like, negation, isIn
 
 # field declarations
 from ..records import field

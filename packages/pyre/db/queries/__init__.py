@@ -18,6 +18,8 @@ from .expressions import (
     IsNotNull as isNotNull,
     Cast as cast,
     Like as like,
+    Negation as negation,
+    IsIn as isIn,
 )
 
 # queries

@@ -692,6 +692,30 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # and convert
         return f"CAST({field} AS {target})"
 
+    def _pyre_onNegation(self, node, **kwds):
+        """
+        Render {node}, the negation of a predicate
+        """
+        # render the predicate
+        predicate = self.expression(root=node.predicate, **kwds)
+        # and negate it
+        return f"NOT ({predicate})"
+
+    def _pyre_onIsIn(self, node, **kwds):
+        """
+        Render {node}, the test of whether a field holds one of a list of values
+        """
+        # no field holds one of no values, and the language has no empty list to say it with
+        if not node.values:
+            # so say what it means
+            return "FALSE"
+        # render the field
+        field = self.expression(root=node.field, **kwds)
+        # and the literals of the values
+        values = ", ".join(self._literals.value(value=value) for value in node.values)
+        # put it all together
+        return f"{field} IN ({values})"
+
     def _pyre_onLike(self, node, **kwds):
         """
         Render {node}, the match of a field against a pattern, naming the character that escapes
