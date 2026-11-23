@@ -12,74 +12,74 @@ Verify record building in the presence of inheritance, with a derivation in the 
 
 
 def test():
+    """
+    Derive a record with a derivation from one of measures, check both, and build an instance
+    """
+    # access the package
     import pyre.records
 
+    # the base record
     class item(pyre.records.record):
         """
         A sample record
         """
 
+        # the stock keeping unit
         sku = pyre.records.measure()
+        # what the item is
         description = pyre.records.measure()
+        # and what it costs
         cost = pyre.records.measure()
 
+    # a record derived from it
     class pricing(item):
+        """
+        The prices of the items
+        """
+
+        # what the item sells for, computed from its cost
         price = 2 * item.cost
 
-    # explore the item record
-    assert isinstance(item.sku, pyre.records.measure)
-    assert isinstance(item.description, pyre.records.measure)
-    assert isinstance(item.cost, pyre.records.measure)
-
-    assert identical(item.pyre_localFields, (item.sku, item.description, item.cost))
-    assert identical(item.pyre_fields, (item.sku, item.description, item.cost))
-    assert identical(item.pyre_measures, (item.sku, item.description, item.cost))
+    # the fields of the base
+    fields = (item.sku, item.description, item.cost)
+    # are measures
+    assert all(isinstance(field, pyre.records.measure) for field in fields)
+    # declared locally
+    assert identical(item.pyre_localFields, fields)
+    # which makes them all of its fields
+    assert identical(item.pyre_fields, fields)
+    # all of its measures
+    assert identical(item.pyre_measures, fields)
+    # and leaves it without derivations
     assert identical(item.pyre_derivations, ())
+    # each field sits in the column of its position
+    assert [item.pyre_columns[field] for field in fields] == [0, 1, 2]
 
-    assert item.pyre_columns[item.sku] == 0
-    assert item.pyre_columns[item.description] == 1
-    assert item.pyre_columns[item.cost] == 2
-
-    # explore the derived class
-    assert isinstance(pricing.sku, pyre.records.measure)
-    assert isinstance(pricing.description, pyre.records.measure)
-    assert isinstance(pricing.cost, pyre.records.measure)
+    # the inherited fields of the derived record
+    measures = (pricing.sku, pricing.description, pricing.cost)
+    # are measures
+    assert all(isinstance(field, pyre.records.measure) for field in measures)
+    # and its own field is a derivation
     assert isinstance(pricing.price, pyre.records.derivation)
-
+    # the only one declared locally
     assert identical(pricing.pyre_localFields, (pricing.price,))
-    assert identical(
-        pricing.pyre_fields,
-        (
-            pricing.sku,
-            pricing.description,
-            pricing.cost,
-            pricing.price,
-        ),
-    )
-    assert identical(
-        pricing.pyre_measures,
-        (
-            pricing.sku,
-            pricing.description,
-            pricing.cost,
-        ),
-    )
+    # placed after the inherited ones among its fields
+    assert identical(pricing.pyre_fields, measures + (pricing.price,))
+    # its measures are the inherited fields
+    assert identical(pricing.pyre_measures, measures)
+    # and its derivations its own
     assert identical(pricing.pyre_derivations, (pricing.price,))
+    # each field sits in the column of its position
+    assert [pricing.pyre_columns[field] for field in pricing.pyre_fields] == [0, 1, 2, 3]
 
-    assert pricing.pyre_columns[pricing.sku] == 0
-    assert pricing.pyre_columns[pricing.description] == 1
-    assert pricing.pyre_columns[pricing.cost] == 2
-    assert pricing.pyre_columns[pricing.price] == 3
-
-    # now instantiate one
-    cost = 1.0
-    p = pricing.pyre_mutable(sku="4013", description="kiwi", cost=cost)
-    # check
-    assert p.sku == "4013"
-    assert p.description == "kiwi"
-    assert p.cost == 1.0
+    # build an instance
+    p = pricing.pyre_mutable(sku="4013", description="kiwi", cost=1.0)
+    # its measures hold the values it was given
+    assert (p.sku, p.description, p.cost) == ("4013", "kiwi", 1.0)
+    # and its price is computed from them
     assert p.price == 2 * p.cost
 
+    # all done
     return p
 
 
@@ -88,8 +88,9 @@ def identical(s1, s2):
     Verify that {s1} and {s2} hold the same nodes, in the same order, and as many of them; the
     nodes are compared by identity, since their {__eq__} builds expressions
     """
-    # realize both of them
+    # realize both of them: the first
     s1 = tuple(s1)
+    # and the second
     s2 = tuple(s2)
     # sequences of different lengths are not identical
     if len(s1) != len(s2):
@@ -109,7 +110,7 @@ def identical(s1, s2):
 if __name__ == "__main__":
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
-    # do...
+    # run the test
     test()
 
 
