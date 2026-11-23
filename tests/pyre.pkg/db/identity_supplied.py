@@ -45,6 +45,7 @@ def test():
         "    PRIMARY KEY,",
         "  name TEXT",
         ");",
+        "COMMENT ON TABLE granules IS 'Granules';",
     ), statement
     # all done
     return
