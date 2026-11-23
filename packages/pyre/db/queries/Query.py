@@ -23,6 +23,7 @@ class Query(records.record, hidden=True, metaclass=Selector):
     order = None  # control over the sorting order of the results
     group = None  # aggregate the results using the distinct values of this column
     distinct = False  # retrieve each distinct row once
+    joins = None  # the tables joined to the others, and how
 
     # metaclass decorations; treat as read-only
     pyre_tables = {}  # a map of local names to referenced tables

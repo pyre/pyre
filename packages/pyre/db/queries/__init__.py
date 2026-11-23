@@ -22,6 +22,10 @@ from .expressions import (
     IsIn as isIn,
 )
 
+# joins
+from .Join import Join as join
+from .LeftJoin import LeftJoin as leftJoin
+
 # queries
 from .Query import Query as query
 

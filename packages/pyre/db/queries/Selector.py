@@ -26,7 +26,7 @@ class Selector(records.templater):
     from ..schema.Verbatim import Verbatim as pyre_evaluator
 
     # data
-    pyre_reserved = {"where", "group", "order"}  # SQL keywords that can't be used as field names
+    pyre_reserved = {"where", "group", "order", "joins"}  # clauses that can't be used as fields
 
     # meta-methods
     @classmethod
