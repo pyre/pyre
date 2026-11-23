@@ -42,8 +42,13 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     ifPresent = None
     # whether the language has indexes, which it does not
     hasIndexes = False
-    # and whether a statement may return the rows it changes, which it may not either
+    # whether a statement may return the rows it changes, which it may not either
     hasReturning = False
+    # and whether an insert may meet the rows that are there already, which it may not, so the
+    # language merges them instead
+    hasConflict = False
+    # what may happen to the rows that are there already
+    existingRows = ("keep", "replace")
 
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
@@ -62,6 +67,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
     # and for the joins of queries
     from ...queries.Join import Join as join
+
+    # the references to the fields of tables
+    from ...schema.FieldReference import FieldReference as fieldReference
 
     # queries
     def select(self, query, limit=None, offset=None):
@@ -226,25 +234,235 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # the others name the columns
         return "RETURNING " + ", ".join(field.name for field in returning.pyre_fields)
 
-    def _insertEnd(self, values, clause):
+    def _insertEnd(self, values, tail):
         """
-        End an insert whose last row of {values} is held back, returning the rows it adds with
-        {clause} when there is one
+        End an insert whose last row of {values} is held back, followed by the clauses in
+        {tail}, pairs of a depth below the level of the clauses and a line
         """
-        # without a clause
-        if clause is None:
+        # without clauses
+        if not tail:
             # the values end the statement
             yield self.place(values + ";")
             # and that's all
             return
         # otherwise, the values are followed
         yield self.place(values)
-        # by the clause, at the level of the others
+        # by the clauses, at the level of the others
         self.outdent()
-        # which ends the statement
-        yield self.place(clause + ";")
+        # each one
+        for index, (depth, line) in enumerate(tail):
+            # the last of which ends the statement
+            terminator = ";" if index + 1 == len(tail) else ""
+            # at its depth
+            self.indent(increment=depth)
+            # placed
+            yield self.place(line + terminator)
+            # and back
+            self.outdent(decrement=depth)
         # and back in, where the caller expects to be
         self.indent()
+        # all done
+        return
+
+    def _insertTail(self, shape, existing, key, clause):
+        """
+        Build the clauses that follow the values of an insert of {shape}, a table and the names
+        of its columns: what happens to the rows that are there already, and what the
+        statement returns
+        """
+        # the clauses, as pairs of a depth and a line
+        tail = []
+        # an insert that may meet the rows that are there already
+        if existing is not None:
+            # unpack the shape
+            table, names = shape
+            # find the key that detects them
+            keys = self._conflictKey(table=table, key=key)
+            # the columns to write over the row that is there
+            assignments = (
+                [name for name in names if name not in keys] if existing == "replace" else []
+            )
+            # the clause that detects the row
+            conflict = f"ON CONFLICT ({', '.join(keys)})"
+            # with nothing to write over it
+            if not assignments:
+                # the row is left alone
+                tail.append((0, f"{conflict} DO NOTHING"))
+            # otherwise
+            else:
+                # the row is updated
+                tail.append((0, f"{conflict} DO UPDATE SET"))
+                # with the value of each column
+                for index, name in enumerate(assignments):
+                    # each but the last followed by a comma
+                    comma = "," if index + 1 < len(assignments) else ""
+                    # taken from the row that was refused
+                    tail.append((1, f"{name} = EXCLUDED.{name}{comma}"))
+        # the rows the statement returns
+        if clause is not None:
+            # come last
+            tail.append((0, clause))
+        # hand them over
+        return tail
+
+    def _conflictKey(self, table, key):
+        """
+        Find the names of the fields of {table} that detect the rows that are there already:
+        those of {key}, a field or a sequence of them, or those of the primary key
+        """
+        # without a key
+        if key is None:
+            # the fields of the primary key of the table
+            fields = list(table._pyre_primaryKeys) or [
+                field for field in table.pyre_fields if field._primary
+            ]
+            # are the key
+            names = [field.name for field in fields]
+        # otherwise
+        else:
+            # take the fields of the key, in order
+            references = (key,) if isinstance(key, self.fieldReference) else tuple(key)
+            # and their names
+            names = [reference.field.name for reference in references]
+            # of the table of the records
+            if any(not issubclass(table, reference.table) for reference in references):
+                # or the key is a mistake in the code that asked
+                names = []
+        # a table without a key
+        if not names:
+            # cannot tell which rows are there already, which is a mistake in the code that asked
+            import journal
+
+            # so complain
+            raise journal.firewall("pyre.db").log(
+                f"there is no key of table {table.pyre_name!r} that finds the rows that are there"
+            )
+        # hand them over
+        return names
+
+    def _merge(self, records, existing, key):
+        """
+        Merge {records} into their tables, keeping or replacing the rows that are there already,
+        as {existing} asks; the consecutive records of a table that give the same columns share a
+        statement
+        """
+        # the groups of records of the same shape
+        groups = []
+        # go through the records
+        for record in records:
+            # get the table of the record
+            table = record.pyre_layout
+            # the columns it gives values for, with their values
+            columns = tuple(self._givenColumns(table=table, record=record))
+            # and its shape
+            shape = (table, tuple(field for field, _ in columns))
+            # a record of the same shape as the last group
+            if groups and groups[-1][0] == shape:
+                # joins it
+                groups[-1][1].append(columns)
+            # otherwise
+            else:
+                # it starts a group of its own
+                groups.append((shape, [columns]))
+        # each group
+        for (table, fields), rows in groups:
+            # is merged by a statement of its own
+            yield from self._mergeStatement(
+                table=table, fields=fields, rows=rows, existing=existing, key=key
+            )
+        # all done
+        return
+
+    def _mergeStatement(self, table, fields, rows, existing, key):
+        """
+        Build the statement that merges {rows} into {table}, each giving values for {fields}
+        """
+        # the names of the columns
+        names = [field.name for field in fields]
+        # the key that detects the rows that are there already
+        keys = self._conflictKey(table=table, key=key)
+        # must be among the columns the rows give
+        if any(name not in names for name in keys):
+            # or the rows cannot be matched, which is a mistake in the code that asked
+            import journal
+
+            # so complain
+            raise journal.firewall("pyre.db").log(
+                f"the rows merged into table {table.pyre_name!r} give no value for its key"
+            )
+        # every statement starts at the margin
+        self.margin()
+        # the target
+        yield self.place(f"MERGE INTO {table.pyre_name}")
+        # indent
+        self.indent()
+        # the source
+        yield self.place("USING (")
+        # indent
+        self.indent()
+        # is a list of rows
+        yield self.place("VALUES")
+        # indent
+        self.indent()
+        # each one
+        for index, columns in enumerate(rows):
+            # with its values
+            values = ", ".join(
+                self._recordValue(table=table, field=field, value=value) for field, value in columns
+            )
+            # each but the last followed by a comma
+            yield self.place(f"({values})" + ("," if index + 1 < len(rows) else ""))
+        # back out
+        self.outdent(decrement=2)
+        # name the source and its columns
+        yield self.place(f") AS incoming ({', '.join(names)})")
+        # match the rows on the key
+        match = " AND ".join(f"{table.pyre_name}.{name} = incoming.{name}" for name in keys)
+        # and say so
+        yield self.place(f"ON ({match})")
+        # the columns to write over the rows that are there
+        assignments = [name for name in names if name not in keys] if existing == "replace" else []
+        # when there are any
+        if assignments:
+            # the matched rows are updated
+            yield self.place("WHEN MATCHED THEN UPDATE SET")
+            # indent
+            self.indent()
+            # with the value of each column
+            for index, name in enumerate(assignments):
+                # each but the last followed by a comma
+                comma = "," if index + 1 < len(assignments) else ""
+                # taken from the incoming row
+                yield self.place(f"{name} = incoming.{name}{comma}")
+            # back out
+            self.outdent()
+        # the others are inserted
+        yield self.place(f"WHEN NOT MATCHED THEN INSERT ({', '.join(names)})")
+        # indent
+        self.indent()
+        # with the values of the incoming row
+        sources = ", ".join(f"incoming.{name}" for name in names)
+        # which ends the statement
+        yield self.place(f"VALUES ({sources});")
+        # back out to the margin
+        self.outdent(decrement=2)
+        # all done
+        return
+
+    def _givenColumns(self, table, record):
+        """
+        Generate the columns of {table} that {record} gives values for, with their values,
+        leaving out those it leaves to the server
+        """
+        # go through the columns, in declaration order
+        for field, value in zip(table.pyre_fields, record):
+            # the columns left to their defaults, and those whose values the server assigns
+            # that have none
+            if value is table.default or (field._autogenerated and value is None):
+                # are left out
+                continue
+            # and the others are given
+            yield field, value
         # all done
         return
 
@@ -615,14 +833,33 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return
 
     # record management
-    def insertRecords(self, *records, returning=None):
+    def insertRecords(self, *records, returning=None, existing=None, key=None):
         """
         Insert {records}, an iterable of table records, into their corresponding table; the
         consecutive records of a table that name the same columns share a statement; each
         statement returns the columns of {returning}, a table or a query, when it is given
+
+        With {existing}, a row whose {key} matches one that is there already is either left
+        alone, when {existing} is "keep", or written over it, when it is "replace"; the key is
+        the primary key of the table, unless {key} names the fields of another
         """
         # the clause that returns the rows, built before anything is rendered
         clause = None if returning is None else self._returning(returning=returning)
+        # a request about the rows that are there already
+        if existing is not None and existing not in self.existingRows:
+            # that is neither of the two is a mistake in the code that made it
+            import journal
+
+            # so complain
+            raise journal.firewall("pyre.db").log(
+                f"existing rows may be kept or replaced, not {existing!r}"
+            )
+        # a language whose inserts cannot meet the rows that are there already
+        if existing is not None and not self.hasConflict:
+            # merges the records instead
+            yield from self._merge(records=records, existing=existing, key=key)
+            # and that's all
+            return
         # every statement starts at the margin
         self.margin()
         # the values of the previous record, held back until we know whether more follow, so
@@ -647,13 +884,22 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # end the statement in progress, if there is one
                 if shape is not None:
                     # by terminating it
-                    yield from self._insertEnd(values=dangling, clause=clause)
+                    yield from self._insertEnd(
+                        values=dangling,
+                        tail=self._insertTail(
+                            shape=shape, existing=existing, key=key, clause=clause
+                        ),
+                    )
                     # and bouncing out to the margin
                     self.outdent(decrement=2)
                 # a record that names no column
                 if not columns:
-                    # is inserted by a statement of its own
-                    yield self.place(f"INSERT INTO {table.pyre_name} DEFAULT VALUES;")
+                    # is inserted by a statement of its own, which returns its row when asked
+                    yield self.place(
+                        f"INSERT INTO {table.pyre_name} DEFAULT VALUES"
+                        + ("" if clause is None else f" {clause}")
+                        + ";"
+                    )
                     # which leaves no statement in progress
                     shape = None
                     # so move on
@@ -684,7 +930,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # there is nothing left to render
             return
         # render any left overs
-        yield from self._insertEnd(values=dangling, clause=clause)
+        yield from self._insertEnd(
+            values=dangling,
+            tail=self._insertTail(shape=shape, existing=existing, key=key, clause=clause),
+        )
         # bounce out to top level
         self.outdent(decrement=2)
         # all done

@@ -138,10 +138,14 @@ class Server(pyre.component, implements=DataStore):
         # and execute it
         return self.execute(*sql)
 
-    def insert(self, *records, returning=None):
+    def insert(self, *records, returning=None, existing=None, key=None):
         """
         Insert {records} into the database; with {returning}, a table, one of its fields or a
         sequence of them, hand back the rows the inserts add, as records
+
+        With {existing}, a record whose {key} matches a row that is there already leaves it
+        alone, when {existing} is "keep", or writes over it, when it is "replace"; the key is
+        the primary key of the table, unless {key} names the fields of another
         """
         # if there are no records to insert, bail
         if not records:
@@ -150,7 +154,7 @@ class Server(pyre.component, implements=DataStore):
         # without rows to hand back
         if returning is None:
             # build the sql statements
-            sql = self.sql.insertRecords(*records)
+            sql = self.sql.insertRecords(*records, existing=existing, key=key)
             # and execute them
             return self.execute(*sql)
         # otherwise, build the selection of the rows the inserts add
@@ -158,7 +162,7 @@ class Server(pyre.component, implements=DataStore):
             returning=returning, tables={record.pyre_layout for record in records}
         )
         # build the statements
-        sql = self.sql.insertRecords(*records, returning=selection)
+        sql = self.sql.insertRecords(*records, returning=selection, existing=existing, key=key)
         # and run them, gathering their rows
         return self._gather(lines=sql, selection=selection)
 
