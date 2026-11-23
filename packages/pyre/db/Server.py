@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import types
+
 # packages
 import pyre
 
@@ -13,6 +16,12 @@ from .DataStore import DataStore
 
 # and the mill that speaks standard SQL, which is the default of every server
 from .backends.standard.Mill import Mill
+
+# the references to the fields of tables
+from .schema.FieldReference import FieldReference
+
+# and the base of queries, for those over the rows a statement hands back
+from .queries.Query import Query
 
 
 # declaration
@@ -129,49 +138,89 @@ class Server(pyre.component, implements=DataStore):
         # and execute it
         return self.execute(*sql)
 
-    def insert(self, *records):
+    def insert(self, *records, returning=None):
         """
-        Insert {records} into the database
+        Insert {records} into the database; with {returning}, a table, one of its fields or a
+        sequence of them, hand back the rows the inserts add, as records
         """
         # if there are no records to insert, bail
         if not records:
             # with nothing to show for it
-            return
-        # build the sql statements
-        sql = self.sql.insertRecords(*records)
-        # and execute
-        return self.execute(*sql)
+            return None if returning is None else []
+        # without rows to hand back
+        if returning is None:
+            # build the sql statements
+            sql = self.sql.insertRecords(*records)
+            # and execute them
+            return self.execute(*sql)
+        # otherwise, build the selection of the rows the inserts add
+        selection = self._returned(
+            returning=returning, tables={record.pyre_layout for record in records}
+        )
+        # build the statements
+        sql = self.sql.insertRecords(*records, returning=selection)
+        # and run them, gathering their rows
+        return self._gather(lines=sql, selection=selection)
 
-    def update(self, *specifications):
+    def update(self, *specifications, returning=None):
         """
-        Use {specifications} to update the database
+        Use {specifications} to update the database; with {returning}, a table, one of its
+        fields or a sequence of them, hand back the rows the updates change, as records
 
         Each item in {specifications} is a pair of a {template} and a {condition}. The
         {template} is an instance of a table row with all fields that require update having
         values that are not {None}. The {condition} is an expression that identifies the
         portion of the table that will be affected
         """
+        # the selection of the rows the updates change, when they are wanted back
+        selection = (
+            None
+            if returning is None
+            else self._returned(
+                returning=returning,
+                tables={template.pyre_layout for template, _ in specifications},
+            )
+        )
+        # the rows the updates hand back
+        rows = []
         # go through the {specifications}
         for template, condition in specifications:
             # build the sql statement for this update
-            sql = tuple(self.sql.updateRecords(template=template, condition=condition))
+            sql = tuple(
+                self.sql.updateRecords(template=template, condition=condition, returning=selection)
+            )
             # a template that sets nothing builds no statement
             if not sql:
                 # so there is nothing to execute
                 continue
-            # otherwise, execute it
-            self.execute(*sql)
+            # a statement whose rows are not wanted
+            if selection is None:
+                # is just executed
+                self.execute(*sql)
+                # and that's all
+                continue
+            # the others hand their rows back
+            rows.extend(self._gather(lines=sql, selection=selection))
         # all done
-        return
+        return None if returning is None else rows
 
-    def delete(self, table, condition):
+    def delete(self, table, condition, returning=None):
         """
-        Delete all {table} records that match {condition}
+        Delete all {table} records that match {condition}; with {returning}, the table, one of
+        its fields or a sequence of them, hand back the rows the deletion removes, as records
         """
-        # build the sql statements
-        sql = self.sql.deleteRecords(table=table, condition=condition)
-        # and execute
-        return self.execute(*sql)
+        # without rows to hand back
+        if returning is None:
+            # build the sql statements
+            sql = self.sql.deleteRecords(table=table, condition=condition)
+            # and execute
+            return self.execute(*sql)
+        # otherwise, build the selection of the rows the deletion removes
+        selection = self._returned(returning=returning, tables={table})
+        # build the statement
+        sql = self.sql.deleteRecords(table=table, condition=condition, returning=selection)
+        # and run it, gathering its rows
+        return self._gather(lines=sql, selection=selection)
 
     def select(self, query, limit=None, offset=None):
         """
@@ -236,6 +285,116 @@ class Server(pyre.component, implements=DataStore):
         return node.targetType._pyre_identify(authority=self, value=value, **kwds)
 
     # implementation details
+    def _returned(self, returning, tables):
+        """
+        Build the selection of the rows a statement on {tables} hands back: {returning} is a
+        table, whose records are the rows, or one of its fields or a sequence of them, whose rows
+        are the records of a query over them
+        """
+        # a whole table
+        if isinstance(returning, self.sql.schemer):
+            # is its own selection
+            table, selection = returning, returning
+        # anything else is fields
+        else:
+            # one field
+            if isinstance(returning, FieldReference):
+                # makes a sequence of one
+                fields = (returning,)
+            # and the rest are sequences already
+            else:
+                # so take them in their order
+                fields = tuple(returning)
+            # the tables of the fields
+            owners = {field.table for field in fields}
+            # must be one table
+            (table,) = owners if len(owners) == 1 else (None,)
+            # whose query over the fields is built once
+            selection = self._returnedQuery(table=table, fields=fields) if table else None
+        # the statements must change the rows of that table
+        if table is None or any(not issubclass(target, table) for target in tables):
+            # or the request is a mistake in the code that made it
+            import journal
+
+            # the tables of the rows
+            targets = ", ".join(repr(target.pyre_name) for target in tables)
+            # and the table of the fields
+            owner = repr(table.pyre_name) if table else "several tables"
+            # say what is wrong
+            raise journal.firewall("pyre.db").log(
+                f"the rows of {targets} cannot return the fields of {owner}"
+            )
+        # hand over the selection
+        return selection
+
+    def _returnedQuery(self, table, fields):
+        """
+        Build, once, the query over {fields} of {table} whose records hold the rows a statement
+        hands back
+        """
+        # the key of the query: the table and the names of its fields
+        key = (table, tuple(field.field.name for field in fields))
+        # look it up
+        query = self._returnedQueries.get(key)
+        # if it was built already
+        if query is not None:
+            # hand it over
+            return query
+
+        # otherwise, the body of its declaration
+        def declare(namespace):
+            """
+            Declare a field of the query for each field of the table that is returned
+            """
+            # the table, as the query sees it
+            alias = namespace["row"]
+            # go through the fields
+            for field in fields:
+                # and declare each one under its own name
+                namespace[field.field.name] = getattr(alias, field.field.name)
+            # all done
+            return
+
+        # build the query
+        query = types.new_class(
+            f"{table.pyre_name}_returned", (Query,), {"row": table}, exec_body=declare
+        )
+        # remember it
+        self._returnedQueries[key] = query
+        # and hand it over
+        return query
+
+    def _gather(self, lines, selection):
+        """
+        Run the statements in {lines} one at a time, and gather the rows they hand back as
+        records of {selection}
+        """
+        # the rows
+        rows = []
+        # the lines of the statement in progress
+        statement = []
+        # go through the lines
+        for line in lines:
+            # add each one to the statement
+            statement.append(line)
+            # until the line that ends it
+            if not line.endswith(";"):
+                # keep going
+                continue
+            # run the statement, and go through the rows it hands back
+            for row in self.execute(*statement):
+                # turn each value into the type of its column
+                values = (
+                    self.interpret(column=column, value=value, selection=selection)
+                    for column, value in zip(selection.pyre_fields, row)
+                )
+                # and build the record
+                rows.append(selection.pyre_storedTuple(record=selection, data=values))
+            # and start the next statement
+            statement = []
+        # hand the rows over
+        return rows
+
     def _commit(self):
         """
         Make the work of the transaction of a transaction block permanent
@@ -271,6 +430,11 @@ class Server(pyre.component, implements=DataStore):
             self.execute(*self.sql.rollback())
         # and re-raise any exception that occurred in the block
         return False
+
+    # private data
+    # the queries over the rows statements hand back, by table and fields; shared by every
+    # server, since they depend only on the tables
+    _returnedQueries = {}
 
 
 # end of file

@@ -40,6 +40,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
     ifPresent = "IF EXISTS"
     # postgres has indexes
     hasIndexes = True
+    # and statements that return the rows they change
+    hasReturning = True
 
     # the visitor that builds the type declarators of my columns
     columns = Columns
