@@ -83,7 +83,8 @@ class Negation:
 # membership
 class IsIn:
     """
-    The test of whether the field reference {field} holds one of {values}
+    The test of whether the field reference {field} holds one of {values}: a sequence of values,
+    or a query of one column, whose rows supply them
     """
 
     # visiting
@@ -100,8 +101,8 @@ class IsIn:
         super().__init__(**kwds)
         # save my field reference
         self.field = field
-        # and the values, in their order
-        self.values = tuple(values)
+        # and the values, as they were given
+        self.values = values
         # all done
         return
 
