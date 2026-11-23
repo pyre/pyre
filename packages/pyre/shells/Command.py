@@ -74,7 +74,9 @@ class Command(pyre.component, implements=Action):
         # and render it
         yield spec
 
-        # my summary
+        # set my summary apart
+        yield ""
+        # and show it
         yield from self.pyre_showSummary(indent=indent, **kwds)
         # my behaviors
         yield from self.pyre_showBehaviors(spec=spec, indent=indent, **kwds)

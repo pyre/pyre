@@ -28,16 +28,19 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
     # types
     from .Action import Action as pyre_action
 
-    # configurable state
+    # configurable state: the manager of the build products
     builder = merlin.protocols.flow.builder()
     builder.doc = "the component that manages the various build products"
 
+    # the compilers
     compilers = merlin.protocols.external.compilers()
     compilers.doc = "the table of compilers for each supported language"
 
+    # the projects
     projects = merlin.properties.tuple(schema=merlin.protocols.assets.project())
     projects.doc = "the list of projects in the current workspace"
 
+    # and the source control system
     scs = merlin.protocols.external.scs()
     scs.doc = "the source control system"
 
@@ -120,10 +123,13 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
             except prefix.NotFoundError:
                 # grab a channel
                 channel = self.warning
-                # complain
-                channel.line(f"while looking for UX support:")
+                # complain: say what i was doing
+                channel.line("while looking for UX support:")
+                # what went wrong
                 channel.line(f"directory '{docroot.uri}/{name}' not found")
-                channel.line(f"disabling the web shell")
+                # what happens next
+                channel.line("disabling the web shell")
+                # and flush
                 channel.log()
                 # mark the UX as unavailable
                 self._ux = None
@@ -149,7 +155,7 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
         # grab my namespace
         namespace = self.pyre_namespace
         # and my metadata folder
-        meta = f"pfs:/workspace"
+        meta = "pfs:/workspace"
         # and ask the executive
         executive = self.pyre_executive
         # to load any global configuration files from the workspace metadata folder
@@ -180,7 +186,9 @@ class Merlin(merlin.plexus, family="merlin.shells.plexus"):
         """
         # the project header
         yield from textwrap.dedent(merlin.meta.banner).splitlines()
-        # the doc string
+        # set the doc string apart
+        yield ""
+        # and show it
         yield from self.pyre_showSummary(indent="")
         # the authors
         yield from textwrap.dedent(merlin.meta.authors).splitlines()

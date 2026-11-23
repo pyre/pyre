@@ -44,9 +44,12 @@ class Application(pyre.component, metaclass=Director):
     shell = Shell()
     shell.doc = "my hosting strategy"
 
+    # the configuration of my journal
     journal = Journal()
 
-    DEBUG = pyre.properties.bool(default=False)
+    # whether i run in debugging mode
+    DEBUG = pyre.properties.bool()
+    DEBUG.default = False
     DEBUG.doc = "debugging mode"
 
     # per-instance public data
@@ -57,11 +60,15 @@ class Application(pyre.component, metaclass=Director):
     pfs = None  # the root of my private filesystem
     layout = None  # my configuration options
 
-    # journal channels
+    # journal channels: informational
     info = None
+    # warnings
     warning = None
+    # errors
     error = None
+    # debugging
     debug = None
+    # and firewalls
     firewall = None
 
     # public data
@@ -71,6 +78,7 @@ class Application(pyre.component, metaclass=Director):
         """
         Provide access to the pyre executive
         """
+        # hand it out
         return self.pyre_executive
 
     @property
@@ -78,6 +86,7 @@ class Application(pyre.component, metaclass=Director):
         """
         Easy access to the executive file server
         """
+        # hand it out
         return self.pyre_fileserver
 
     @property
@@ -85,6 +94,7 @@ class Application(pyre.component, metaclass=Director):
         """
         Easy access to the executive name server
         """
+        # hand it out
         return self.pyre_nameserver
 
     @property
@@ -165,10 +175,12 @@ class Application(pyre.component, metaclass=Director):
         # check whether there is already an app registered with the dashboard
         if dashboard.pyre_application is not None:
             # make a channel
-            channel = journal.warning(f"{nickname}")
-            # complain
+            channel = journal.warning(nickname)
+            # complain: say what i was doing
             channel.line(f"while registering {self}:")
+            # what went wrong
             channel.line(f"another app, {dashboard.pyre_application}, is already registered")
+            # and flush
             channel.log()
         # in any case, attach me to the dashboard
         dashboard.pyre_application = self
@@ -532,12 +544,17 @@ class Application(pyre.component, metaclass=Director):
         """
         # make a mark
         yield from self.pyre_banner()
-        # my summary
-        yield from self.pyre_showSummary(indent=indent, **kwds)
-        # usage
+        # set my summary apart
         yield ""
+        # and show it
+        yield from self.pyre_showSummary(indent=indent, **kwds)
+        # usage: set apart
+        yield ""
+        # introduced
         yield "usage:"
+        # and spelled out
         yield f"{indent}{self.pyre_name} [options]"
+        # then set apart from what follows
         yield ""
 
         # my public state
@@ -592,9 +609,12 @@ class Application(pyre.component, metaclass=Director):
         # grab my debug channel
         channel = self.debug
         # print the top line
-        channel.line(f"responding to an HTTP request:")
+        channel.line("responding to an HTTP request:")
+        # the application
         channel.line(f"  app: {self}")
+        # its nexus
         channel.line(f"  nexus: {self.nexus}")
+        # and the server
         channel.line(f"  server: {server}")
         # dump the request contents
         request.dump(channel=channel, indent="  ")
