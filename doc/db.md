@@ -82,6 +82,8 @@ Person.pyre_unique(Person.name, Person.phone)
 Reading.pyre_foreignKey(field=Reading.city, foreign=City.id)
 # a check
 Reading.pyre_check(Reading.low <= Reading.high)
+# a check with a name, which an error reports when the check fails
+Reading.pyre_check(Reading.low <= Reading.high, name="ordered")
 # an index over the fields of one call, in order; each call is an index of its own
 Granule.pyre_index(Granule.start, Granule.stop)
 # a unique index
@@ -91,6 +93,10 @@ Granule.pyre_index(Granule.track, where=pyre.db.isNotNull(Granule.track), name="
 ```
 
 A table derived from another includes its columns, keys, foreign keys, checks and indexes.
+
+Unique constraints, foreign keys and checks take a `name`, which the statement declares with
+`CONSTRAINT name`. A constraint without one is named by the server; postgres reports the name of a
+violated constraint in the `constraint` of the exception it raises.
 
 An index without a name of its own is named after its table and its fields:
 `granules_start_stop_index`. `createTable` creates the indexes of the table right after it;
