@@ -80,6 +80,7 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_constraint_named.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_documentation.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_isin.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_paging.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_join.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
