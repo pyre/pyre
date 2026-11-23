@@ -41,8 +41,8 @@ def test():
     assert identical(item.pyre_measures, (item.sku, item.description))
     assert identical(item.pyre_derivations, ())
 
-    assert item.pyre_index[item.sku] == 0
-    assert item.pyre_index[item.description] == 1
+    assert item.pyre_columns[item.sku] == 0
+    assert item.pyre_columns[item.description] == 1
 
     # explore the production record
     assert isinstance(production.cost, pyre.records.measure)
@@ -52,7 +52,7 @@ def test():
     assert identical(production.pyre_measures, (production.cost,))
     assert identical(production.pyre_derivations, ())
 
-    assert production.pyre_index[production.cost] == 0
+    assert production.pyre_columns[production.cost] == 0
 
     # explore the handling record
     assert isinstance(handling.overhead, pyre.records.measure)
@@ -63,8 +63,8 @@ def test():
     assert identical(handling.pyre_measures, (handling.overhead, handling.margin))
     assert identical(handling.pyre_derivations, ())
 
-    assert handling.pyre_index[handling.overhead] == 0
-    assert handling.pyre_index[handling.margin] == 1
+    assert handling.pyre_columns[handling.overhead] == 0
+    assert handling.pyre_columns[handling.margin] == 1
 
     # explore the derived class
     assert isinstance(pricing.sku, pyre.records.measure)
@@ -98,12 +98,12 @@ def test():
     )
     assert identical(pricing.pyre_derivations, (pricing.price,))
 
-    assert pricing.pyre_index[pricing.overhead] == 0
-    assert pricing.pyre_index[pricing.margin] == 1
-    assert pricing.pyre_index[pricing.cost] == 2
-    assert pricing.pyre_index[pricing.sku] == 3
-    assert pricing.pyre_index[pricing.description] == 4
-    assert pricing.pyre_index[pricing.price] == 5
+    assert pricing.pyre_columns[pricing.overhead] == 0
+    assert pricing.pyre_columns[pricing.margin] == 1
+    assert pricing.pyre_columns[pricing.cost] == 2
+    assert pricing.pyre_columns[pricing.sku] == 3
+    assert pricing.pyre_columns[pricing.description] == 4
+    assert pricing.pyre_columns[pricing.price] == 5
 
     # now instantiate one
     cost = 1.0

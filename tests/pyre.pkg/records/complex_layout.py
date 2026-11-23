@@ -30,8 +30,8 @@ def test():
     assert identical(item.pyre_measures, (item.cost,))
     assert identical(item.pyre_derivations, (item.price,))
 
-    assert item.pyre_index[item.cost] == 0
-    assert item.pyre_index[item.price] == 1
+    assert item.pyre_columns[item.cost] == 0
+    assert item.pyre_columns[item.price] == 1
 
     # now instantiate one
     sample = item.pyre_mutable(cost=1.0)
