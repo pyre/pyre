@@ -42,15 +42,15 @@ def test():
     assert isinstance(production.sku, measure)
     assert isinstance(production.production, measure)
     # and their indices
-    assert production.pyre_index[production.sku] == 0
-    assert production.pyre_index[production.production] == 1
+    assert production.pyre_columns[production.sku] == 0
+    assert production.pyre_columns[production.production] == 1
 
     # verify ancestry
     assert issubclass(shipping, pyre.tabular.record)
     # verify the accessors
     assert isinstance(shipping.shipping, measure)
     # and their indices
-    assert shipping.pyre_index[shipping.shipping] == 0
+    assert shipping.pyre_columns[shipping.shipping] == 0
 
     # verify ancestry
     assert issubclass(pricing, pyre.tabular.record)
@@ -65,15 +65,15 @@ def test():
     assert isinstance(pricing.msrp, derivation)
     assert isinstance(pricing.price, derivation)
     # and their indices
-    assert pricing.pyre_index[pricing.shipping] == 0
-    assert pricing.pyre_index[pricing.sku] == 1
-    assert pricing.pyre_index[pricing.production] == 2
-    assert pricing.pyre_index[pricing.margin] == 3
-    assert pricing.pyre_index[pricing.overhead] == 4
-    assert pricing.pyre_index[pricing.discount] == 5
-    assert pricing.pyre_index[pricing.cost] == 6
-    assert pricing.pyre_index[pricing.msrp] == 7
-    assert pricing.pyre_index[pricing.price] == 8
+    assert pricing.pyre_columns[pricing.shipping] == 0
+    assert pricing.pyre_columns[pricing.sku] == 1
+    assert pricing.pyre_columns[pricing.production] == 2
+    assert pricing.pyre_columns[pricing.margin] == 3
+    assert pricing.pyre_columns[pricing.overhead] == 4
+    assert pricing.pyre_columns[pricing.discount] == 5
+    assert pricing.pyre_columns[pricing.cost] == 6
+    assert pricing.pyre_columns[pricing.msrp] == 7
+    assert pricing.pyre_columns[pricing.price] == 8
 
     return pricing, shipping, production
 

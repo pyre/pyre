@@ -38,8 +38,8 @@ def test():
     assert identical(item.pyre_measures, item.pyre_fields)
     assert identical(item.pyre_derivations, ())
 
-    assert item.pyre_index[item.sku] == 0
-    assert item.pyre_index[item.description] == 1
+    assert item.pyre_columns[item.sku] == 0
+    assert item.pyre_columns[item.description] == 1
 
     # explore the production record
     assert isinstance(production.cost, pyre.records.measure)
@@ -50,8 +50,8 @@ def test():
     assert identical(production.pyre_measures, (production.cost, production.overhead))
     assert identical(production.pyre_derivations, ())
 
-    assert production.pyre_index[production.cost] == 0
-    assert production.pyre_index[production.overhead] == 1
+    assert production.pyre_columns[production.cost] == 0
+    assert production.pyre_columns[production.overhead] == 1
 
     # explore the derived class
     assert isinstance(pricing.sku, pyre.records.measure)
@@ -74,11 +74,11 @@ def test():
     assert identical(pricing.pyre_measures, pricing.pyre_fields)
     assert identical(pricing.pyre_derivations, ())
 
-    assert pricing.pyre_index[pricing.cost] == 0
-    assert pricing.pyre_index[pricing.overhead] == 1
-    assert pricing.pyre_index[pricing.sku] == 2
-    assert pricing.pyre_index[pricing.description] == 3
-    assert pricing.pyre_index[pricing.price] == 4
+    assert pricing.pyre_columns[pricing.cost] == 0
+    assert pricing.pyre_columns[pricing.overhead] == 1
+    assert pricing.pyre_columns[pricing.sku] == 2
+    assert pricing.pyre_columns[pricing.description] == 3
+    assert pricing.pyre_columns[pricing.price] == 4
 
     return item, production, pricing
 
