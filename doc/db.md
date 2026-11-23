@@ -141,7 +141,8 @@ class Spread(pyre.db.query, weather=Weather):
   `%` and `_`; the statement names the backslash as the escape character.
 - `== None` compares with the literal `NULL`, which no row matches; use `isNull` instead.
 - `pyre.db.isIn(field, values)` tests whether a field holds one of a list of values, written
-  `field IN (…)`; an empty list is `FALSE`, since SQL has no empty list to write.
+  `field IN (…)`; an empty list is `FALSE`, since SQL has no empty list to write. In place of the
+  list, a query of one column supplies the values from its rows, written `field IN (SELECT …)`.
 - `pyre.db.negation(predicate)` negates any predicate, written `NOT (…)`. As SQL has it, a list
   that holds a `NULL` makes `negation(isIn(…))` true for no row.
 
