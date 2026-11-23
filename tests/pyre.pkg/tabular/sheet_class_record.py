@@ -12,6 +12,9 @@ Verify the class record structure
 
 
 def test():
+    """
+    Declare a sheet with measures and derivations, and check its fields and their columns
+    """
     # get the package
     import pyre.tabular
 
@@ -21,47 +24,54 @@ def test():
         The sheet layout
         """
 
+        # the stock keeping unit
         sku = pyre.tabular.measure()
+        # the cost of making the item
         production = pyre.tabular.measure()
+        # the cost of shipping it
         shipping = pyre.tabular.measure()
+        # the margin
         margin = pyre.tabular.measure()
+        # the overhead
         overhead = pyre.tabular.measure()
+        # and the discount
         discount = pyre.tabular.measure()
 
+        # the total cost
         cost = production + shipping
+        # the suggested retail price
         msrp = (1 + margin + overhead) * cost
-
+        # and the price after the discount
         price = msrp * (1 - discount)
 
-    # short names for the structural parts
+    # short names for the structural parts: the measures
     measure = pyre.tabular.measure
+    # and the derivations
     derivation = pyre.tabular.derivation
 
     # access the record object
     record = pricing
     # verify pedigree
     assert issubclass(record, pyre.tabular.record)
-    # verify the accessors
-    assert isinstance(record.sku, measure)
-    assert isinstance(record.production, measure)
-    assert isinstance(record.shipping, measure)
-    assert isinstance(record.margin, measure)
-    assert isinstance(record.overhead, measure)
-    assert isinstance(record.discount, measure)
-    assert isinstance(record.cost, derivation)
-    assert isinstance(record.msrp, derivation)
-    assert isinstance(record.price, derivation)
-    # and their indices
-    assert record.pyre_columns[record.sku] == 0
-    assert record.pyre_columns[record.production] == 1
-    assert record.pyre_columns[record.shipping] == 2
-    assert record.pyre_columns[record.margin] == 3
-    assert record.pyre_columns[record.overhead] == 4
-    assert record.pyre_columns[record.discount] == 5
-    assert record.pyre_columns[record.cost] == 6
-    assert record.pyre_columns[record.msrp] == 7
-    assert record.pyre_columns[record.price] == 8
+    # the measures
+    measures = (
+        record.sku,
+        record.production,
+        record.shipping,
+        record.margin,
+        record.overhead,
+        record.discount,
+    )
+    # are measures
+    assert all(isinstance(field, measure) for field in measures)
+    # the derivations
+    derivations = (record.cost, record.msrp, record.price)
+    # are derivations
+    assert all(isinstance(field, derivation) for field in derivations)
+    # and each field sits in the column of its position
+    assert [record.pyre_columns[field] for field in measures + derivations] == list(range(9))
 
+    # all done
     return pricing
 
 
@@ -69,7 +79,7 @@ def test():
 if __name__ == "__main__":
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
-    # do...
+    # run the test
     test()
 
 
