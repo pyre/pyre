@@ -12,69 +12,93 @@ Verify the class record in the presence of multiple inheritance
 
 
 def test():
+    """
+    Derive a sheet from two others, and check the fields of all three and their columns
+    """
+    # get the package
     import pyre.tabular
 
-    # a few sheets
+    # a sheet of what making an item costs
     class production(pyre.tabular.sheet):
+        """
+        Production costs
+        """
+
+        # the stock keeping unit
         sku = pyre.tabular.measure()
+        # and the cost of making the item
         production = pyre.tabular.measure()
 
+    # a sheet of what shipping it costs
     class shipping(pyre.tabular.sheet):
+        """
+        Shipping costs
+        """
+
+        # the cost of shipping the item
         shipping = pyre.tabular.measure()
 
+    # and a sheet derived from both
     class pricing(production, shipping):
-        # measures
+        """
+        The prices of the items
+        """
+
+        # measures: the margin
         margin = pyre.tabular.measure()
+        # the overhead
         overhead = pyre.tabular.measure()
+        # and the discount
         discount = pyre.tabular.measure()
-        # derivations
+        # derivations: the total cost
         cost = production.production + shipping.shipping
+        # the suggested retail price
         msrp = (1 + margin + overhead) * cost
+        # and the price after the discount
         price = msrp * (1 - discount)
 
-    # short names for the structural parts
+    # short names for the structural parts: the measures
     measure = pyre.tabular.measure
+    # and the derivations
     derivation = pyre.tabular.derivation
 
-    # verify ancestry
+    # the first base is a record
     assert issubclass(production, pyre.tabular.record)
-    # verify the accessors
-    assert isinstance(production.sku, measure)
-    assert isinstance(production.production, measure)
-    # and their indices
-    assert production.pyre_columns[production.sku] == 0
-    assert production.pyre_columns[production.production] == 1
+    # whose fields
+    fields = (production.sku, production.production)
+    # are measures
+    assert all(isinstance(field, measure) for field in fields)
+    # each in the column of its position
+    assert [production.pyre_columns[field] for field in fields] == [0, 1]
 
-    # verify ancestry
+    # the second base is a record
     assert issubclass(shipping, pyre.tabular.record)
-    # verify the accessors
+    # whose field is a measure
     assert isinstance(shipping.shipping, measure)
-    # and their indices
+    # in the first column
     assert shipping.pyre_columns[shipping.shipping] == 0
 
-    # verify ancestry
+    # the derived sheet is a record
     assert issubclass(pricing, pyre.tabular.record)
-    # verify the accessors
-    assert isinstance(pricing.margin, measure)
-    assert isinstance(pricing.overhead, measure)
-    assert isinstance(pricing.discount, measure)
-    assert isinstance(pricing.shipping, measure)
-    assert isinstance(pricing.sku, measure)
-    assert isinstance(pricing.production, measure)
-    assert isinstance(pricing.cost, derivation)
-    assert isinstance(pricing.msrp, derivation)
-    assert isinstance(pricing.price, derivation)
-    # and their indices
-    assert pricing.pyre_columns[pricing.shipping] == 0
-    assert pricing.pyre_columns[pricing.sku] == 1
-    assert pricing.pyre_columns[pricing.production] == 2
-    assert pricing.pyre_columns[pricing.margin] == 3
-    assert pricing.pyre_columns[pricing.overhead] == 4
-    assert pricing.pyre_columns[pricing.discount] == 5
-    assert pricing.pyre_columns[pricing.cost] == 6
-    assert pricing.pyre_columns[pricing.msrp] == 7
-    assert pricing.pyre_columns[pricing.price] == 8
+    # whose measures, those of the last base first
+    measures = (
+        pricing.shipping,
+        pricing.sku,
+        pricing.production,
+        pricing.margin,
+        pricing.overhead,
+        pricing.discount,
+    )
+    # are measures
+    assert all(isinstance(field, measure) for field in measures)
+    # and whose derivations
+    derivations = (pricing.cost, pricing.msrp, pricing.price)
+    # are derivations
+    assert all(isinstance(field, derivation) for field in derivations)
+    # and each field sits in the column of its position
+    assert [pricing.pyre_columns[field] for field in measures + derivations] == list(range(9))
 
+    # all done
     return pricing, shipping, production
 
 
@@ -82,7 +106,7 @@ def test():
 if __name__ == "__main__":
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
-    # do...
+    # run the test
     test()
 
 
