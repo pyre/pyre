@@ -235,6 +235,11 @@ another mill writes in it, and the back end refuses what it does not understand.
 | `existOk`, `missingOk` | refused | `IF NOT EXISTS`, `IF EXISTS`; the server keeps the promise for `CREATE DATABASE` | `IF NOT EXISTS`, `IF EXISTS` |
 | a column left to its default | `DEFAULT` | the same | left out of the insert |
 
+pyre.db supports sqlite 3.35 and later, the first with `RETURNING`; `ON CONFLICT` came in 3.24.
+The dialect of sqlite knows the version of the library python is linked against, and on an older
+one it refuses only the features that library lacks, when they are used: "sqlite 3.31.1 has no
+syntax that returns the rows a statement changes; it needs 3.35".
+
 A refusal raises `pyre.db.exceptions.NotSupportedError`, with an explanation that names what is
 refused: "the column things.tag holds identifiers, which sqlite has no type for".
 
