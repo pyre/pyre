@@ -6,7 +6,9 @@
 
 
 # externals
-import collections.abc, itertools, textwrap
+import collections.abc
+import itertools
+import textwrap
 
 # superclass
 from ..framework.Dashboard import Dashboard
