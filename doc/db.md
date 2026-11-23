@@ -128,6 +128,14 @@ statements through `createTable`, `dropTable`, `insert(*rows)`, `update(*(templa
 `delete(table, condition)` and `select(query)`; `execute(*lines)` runs statements given as text.
 A selection of a whole table names its columns.
 
+Creating and dropping make it so: after `createTable(table)` the table exists, and after
+`dropTable(table)` it is gone. By default, finding it that way already is an error; with
+`existOk=True` on a creation, finding it there already is fine, and with `missingOk=True` on a
+removal, so is finding it gone already. `existOk` looks only at the name: a table that exists
+with other columns is accepted as it is. Databases take the same flags. The dialects write them as
+`IF NOT EXISTS` and `IF EXISTS`; postgres has no such clause for `CREATE DATABASE`, so its server
+keeps the promise itself. Standard SQL has neither clause, so its mill refuses both flags.
+
 A `with` block is a transaction: it begins when the block starts, commits when the block ends,
 and rolls back when the block raises. On postgres, a transaction the server abandoned because a
 statement in it failed is answered with a rollback when it commits; the block then raises
@@ -154,6 +162,7 @@ another mill writes in it, and the back end refuses what it does not understand.
 | infinities, not a number | refused | `'Infinity'`, `'-Infinity'`, `'NaN'` | refused |
 | databases | refused | `CREATE DATABASE`, `DROP DATABASE` | refused: a database is its file |
 | a transaction | `START TRANSACTION` | the same | `BEGIN TRANSACTION` |
+| `existOk`, `missingOk` | refused | `IF NOT EXISTS`, `IF EXISTS`; the server keeps the promise for `CREATE DATABASE` | `IF NOT EXISTS`, `IF EXISTS` |
 | a column left to its default | `DEFAULT` | the same | left out of the insert |
 
 A refusal raises `pyre.db.exceptions.NotSupportedError`, with an explanation that names what is
