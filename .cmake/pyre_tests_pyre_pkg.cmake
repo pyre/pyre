@@ -876,6 +876,7 @@ pyre_test_python_testcase(tests/pyre.pkg/components/component_validate.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_validate_twice.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/component_trait_evaluation_errors.py)
 pyre_test_python_testcase(tests/pyre.pkg/components/inventory_getslots.py)
+pyre_test_python_testcase(tests/pyre.pkg/components/component_summary.py)
 # a reference to a component that does not exist yet resolves once its evaluation is settled
 # pyre_test_python_testcase(tests/pyre.pkg/components/component_forward_reference.py)
 
