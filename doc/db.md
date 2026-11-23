@@ -1,0 +1,197 @@
+<!--
+-*- markdown -*-
+-*- coding: utf-8 -*-
+
+michael a.g. aïvázis <michael.aivazis@para-sim.com>
+(c) 1998-2026 all rights reserved
+-->
+
+# pyre.db
+
+`pyre.db` describes tables and queries as python classes, writes the SQL statements that create,
+fill, change and read them, and talks to a database through a server. The statements are written
+by a mill that speaks either standard SQL (SQL:2016) or the dialect of one back end, and the
+values a server reads back are turned into the types of their columns.
+
+## Tables
+
+A table is a class that derives from `pyre.db.table`, with one column per field:
+
+```python
+import pyre.db
+
+class Reading(pyre.db.table, id="readings"):
+    """
+    One value a day, by city
+    """
+
+    # the city
+    city = pyre.db.str(maxlen=32).notNull()
+    # the day
+    day = pyre.db.date()
+    # the value
+    value = pyre.db.float()
+```
+
+The `id` is the name of the table in the database. The docstring becomes a comment block in the
+statement that creates the table.
+
+### Column types
+
+| type | holds |
+|---|---|
+| `pyre.db.bool()` | truth values |
+| `pyre.db.int()` | integers |
+| `pyre.db.float()` | floating point numbers |
+| `pyre.db.decimal(precision, scale)` | fixed point numbers |
+| `pyre.db.str(maxlen=None)` | text; unbounded unless `maxlen` is given |
+| `pyre.db.bytes()` | strings of octets |
+| `pyre.db.date()`, `pyre.db.time()`, `pyre.db.timestamp()` | dates, times of day, moments; `time` and `timestamp` take `timezone=True` to keep their offsets |
+| `pyre.db.uuid()` | universally unique identifiers |
+| `pyre.db.array(schema=...)` | arrays of another column type; `rank` gives their number of levels |
+| `pyre.db.json()` | json documents: whatever `json.dumps` writes and `json.loads` reads |
+| `pyre.db.reference(key=...)` | a foreign key, holding the values of the column it refers to |
+
+### Decorations
+
+Each decoration returns the column, so they chain:
+
+- `primary()`: the column is the primary key;
+- `unique()`: its values are unique across the rows;
+- `notNull()`: it refuses `NULL`;
+- `setDefault(value)`: its default; a column has a default only when it is given one, so a value
+  left out of a row is `NULL`. `setDefault(pyre.db.null)` declares `DEFAULT NULL`;
+- `references(key=...)`: it refers to the column `key` of another table;
+- for references, `onDelete(action)` and `onUpdate(action)`, with the actions
+  `pyre.db.noAction`, `restrict`, `cascade`, `setNull` and `setDefault`;
+- for json columns, `verbatim()` keeps the text of the documents as written (postgres `JSON`
+  rather than `JSONB`), and `asText()` reads them back as their text (see *Reading values*).
+
+### Keys and checks of the whole table
+
+```python
+# the primary key, one field per call, in the order of the calls
+Visit.pyre_primaryKey(Visit.year)
+Visit.pyre_primaryKey(Visit.month)
+# a unique constraint over the fields of one call; each call is a constraint of its own
+Person.pyre_unique(Person.name, Person.phone)
+# a foreign key
+Reading.pyre_foreignKey(field=Reading.city, foreign=City.id)
+# a check
+Reading.pyre_check(Reading.low <= Reading.high)
+```
+
+A table derived from another includes its columns, keys, foreign keys and checks.
+
+## Queries
+
+A query is a class that derives from `pyre.db.query`, with the tables it reads as keywords, and
+one field per column of the selection:
+
+```python
+class Spread(pyre.db.query, weather=Weather):
+    """
+    How far apart the low and the high are
+    """
+
+    # a column of a table
+    city = weather.city
+    # a value computed from the columns
+    spread = weather.high - weather.low
+    # a conversion
+    label = pyre.db.cast(weather.high, pyre.db.str())
+    # the rows to keep
+    where = weather.city != "Chicago"
+    # how to group them
+    group = weather.city
+    # and in what order
+    order = pyre.db.descending(weather.high)
+```
+
+- A derived field is computed by the database, and its column is read back as it is.
+- `pyre.db.cast(field, type)` converts a field to a column type; it can be selected and compared.
+- `pyre.db.isNull(field)` and `pyre.db.isNotNull(field)` test for `NULL`.
+- `pyre.db.like(field, pattern)` matches a pattern, in which a backslash escapes the wildcards
+  `%` and `_`; the statement names the backslash as the escape character.
+- `== None` compares with the literal `NULL`, which no row matches; use `isNull` instead.
+
+## Servers
+
+| server | talks to |
+|---|---|
+| `pyre.db.postgres(name=...)` | a postgres server, through libpq |
+| `pyre.db.sqlite(name=..., database=path)` | a sqlite database, `:memory:` unless given a path |
+| `pyre.db.backup(name=..., stream=...)` | a stream, to which it writes the statements |
+
+Each server has `attach()`, which hands back the server, and `detach()`, and builds and executes
+statements through `createTable`, `dropTable`, `insert(*rows)`, `update(*(template, condition))`,
+`delete(table, condition)` and `select(query)`; `execute(*lines)` runs statements given as text.
+A selection of a whole table names its columns.
+
+A `with` block is a transaction: it begins when the block starts, commits when the block ends,
+and rolls back when the block raises. On postgres, a transaction the server abandoned because a
+statement in it failed is answered with a rollback when it commits; the block then raises
+`OperationalError`, so its work is never lost silently.
+
+A postgres session may be shared by threads: its calls take turns.
+
+## Dialects
+
+Each server writes its statements with a mill, its `sql` facility. Postgres and sqlite default
+to their own dialects; `pyre.db.server` and `pyre.db.backup` default to standard SQL, which is
+also `pyre.db.sql`. The mills are `pyre.db.backends.standard.mill`,
+`pyre.db.backends.postgres.mill` and `pyre.db.backends.sqlite.mill`. A server configured with
+another mill writes in it, and the back end refuses what it does not understand.
+
+| | standard SQL | postgres | sqlite |
+|---|---|---|---|
+| unbounded text | `CLOB` | `TEXT` | `TEXT` |
+| strings of octets | `BLOB`, `X'00FF'` | `BYTEA`, `'\x00ff'` | `BLOB`, `X'00FF'` |
+| dates and times | `DATE '…'`, `TIME '…'`, `TIMESTAMP '…'` | the same, with `WITH TIME ZONE` for values that carry an offset | quoted text |
+| identifiers | refused | `UUID` | refused |
+| arrays | `INTEGER ARRAY`, `INTEGER ARRAY ARRAY`; `ARRAY[1, 2]` | `INTEGER ARRAY` at every rank; `'{}'` when empty | refused |
+| json documents | refused | `JSONB`, or `JSON` | refused |
+| infinities, not a number | refused | `'Infinity'`, `'-Infinity'`, `'NaN'` | refused |
+| databases | refused | `CREATE DATABASE`, `DROP DATABASE` | refused: a database is its file |
+| a transaction | `START TRANSACTION` | the same | `BEGIN TRANSACTION` |
+| a column left to its default | `DEFAULT` | the same | left out of the insert |
+
+A refusal raises `pyre.db.exceptions.NotSupportedError`, with an explanation that names what is
+refused: "the column things.tag holds identifiers, which sqlite has no type for".
+
+Postgres stores an infinite fixed point number only in a column without a precision, and
+`pyre.db.decimal` always has one, so infinities fit only in floating point columns.
+
+## Arithmetic
+
+The operators of python become the functions of SQL, which do not always agree with python:
+
+| python | SQL | difference |
+|---|---|---|
+| `a ** b` | `POWER(a, b)` | |
+| `abs(a)` | `ABS(a)` | |
+| `a % b` | `MOD(a, b)` | the remainder takes the sign of the dividend: `MOD(-7, 2)` is `-1`, while python's `-7 % 2` is `1` |
+| `a // b` | `FLOOR((a) / (b))` | the division of two integers truncates toward zero before the floor, so `FLOOR(-7 / 2)` is `-3`, while python's `-7 // 2` is `-4` |
+
+Where the difference matters, do the arithmetic in python.
+
+## Reading values
+
+A server turns each value it reads into the type of its column, and the row takes it as it is:
+
+- postgres sends typed values; its arrays become tuples;
+- sqlite keeps truth values as integers, fixed point numbers as floating point ones, and dates,
+  times and moments as text; they come back as `bool`, `Decimal`, `date`, `time` and `datetime`;
+- text is text, whatever it says: the text `"None"` is not `NULL`;
+- a json document comes back parsed, as a dictionary, a list, a number, a truth value or `None`.
+  A document whose top level is a string would read as text, so it is refused with
+  `pyre.db.exceptions.DataError`, which names the column; a column declared with `asText()` is
+  read as the json text of its documents instead, and holds any document.
+
+When a postgres statement takes arguments (`run(statement, *arguments)` on a postgres server,
+with placeholders `$1`, `$2`, …), lists and tuples become arrays, dictionaries json documents,
+and `bytes`, `bytearray` and `memoryview` strings of octets; text with a zero byte is refused
+with `DataError`, since postgres text cannot hold one.
+
+
+<!-- end of file -->
