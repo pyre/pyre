@@ -7,8 +7,8 @@
 
 # externals
 import collections.abc
+import inspect
 import itertools
-import textwrap
 
 # superclass
 from ..framework.Dashboard import Dashboard
@@ -267,8 +267,8 @@ class Configurable(Dashboard):
         doc = self.__doc__
         # if i have one (and i really really should...)
         if doc:
-            # remove leading indentation from the source code formatting and split
-            for line in textwrap.dedent(doc).splitlines():
+            # clean it up: its indentation, and the blank lines around it
+            for line in inspect.cleandoc(doc).splitlines():
                 # format and return
                 yield f"{indent}{line}"
         # all done
