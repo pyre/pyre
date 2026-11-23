@@ -35,6 +35,8 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_join.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_isin_query.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_returning_insert.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_returning_foreign.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_upsert_replace.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_upsert_keep.py)
 # cleanup
 add_test(NAME tests.sqlite.clean
   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/sqlite.pkg"
