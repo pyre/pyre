@@ -126,10 +126,28 @@ class Measure(records.measure):
         Mixin for floating point numbers
         """
 
+        # meta-methods
+        def __init__(self, bits=None, **kwds):
+            # chain up
+            super().__init__(**kwds)
+            # my width in bits; {None} for the width the back end prefers
+            self.bits = bits
+            # all done
+            return
+
     class int(measure):
         """
         Mixin for integers
         """
+
+        # meta-methods
+        def __init__(self, bits=None, **kwds):
+            # chain up
+            super().__init__(**kwds)
+            # my width in bits; {None} for the width the back end prefers
+            self.bits = bits
+            # all done
+            return
 
     class json(measure):
         """
