@@ -186,6 +186,29 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         return pyre.extensions.libpq.Transaction(self.connection)
 
     # the handlers of the columns whose values my bindings send in another form
+    def _pyre_onJSON(self, schema, value, column, selection, **kwds):
+        """
+        Take {value}, a json document my bindings have read, or its text when the column is read
+        as text
+        """
+        # a column read as its text
+        if schema._asText:
+            # holds the text of its documents
+            return value
+        # a document whose top level is text reads as text, and would be taken for it
+        if isinstance(value, str):
+            # so refuse it, and name the column
+            raise exceptions.DataError(
+                diagnostic=(
+                    f"the column {selection.pyre_name}.{column.name} holds a document whose top "
+                    "level is text; read it with asText"
+                ),
+                table=selection.pyre_name,
+                column=column.name,
+            )
+        # every other document is taken as it is
+        return value
+
     def _pyre_onArray(self, schema, value, **kwds):
         """
         Turn {value}, the list my bindings send for an array, into a tuple, level by level

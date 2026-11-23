@@ -8,6 +8,10 @@
 # my superclass
 from ..standard import Mill as standard
 
+# the columns of tables, and the references to them
+from ...schema.Measure import Measure
+from ...schema.FieldReference import FieldReference
+
 # the type declarators of my columns
 from .Columns import Columns
 
@@ -29,6 +33,31 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
     columns = Columns
     # and the one that renders the literals of their values
     literals = Literals
+
+    # the reading of the columns of a selection
+    def _read(self, column, text):
+        """
+        Render the reading of {column}, whose expression is {text}, in the projection of a
+        selection: a column marked to be read as its text is cast to it
+        """
+        # a reference to a column of a table
+        if isinstance(column, FieldReference):
+            # reads that column
+            field = column.field
+        # a column of a table
+        elif isinstance(column, Measure):
+            # reads itself
+            field = column
+        # anything else, such as a derivation
+        else:
+            # is read as it is
+            return text
+        # a column marked to be read as its text
+        if field._asText:
+            # is cast to it
+            return f"{text}::text"
+        # the others are read as they are
+        return text
 
     # database management
     def createDatabase(self, name):

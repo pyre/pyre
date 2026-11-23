@@ -152,7 +152,8 @@ class Server(pyre.component, implements=DataStore):
         for row in self.execute(*sql):
             # turn each value into the type of its column
             values = (
-                self.interpret(column=column, value=value) for column, value in zip(columns, row)
+                self.interpret(column=column, value=value, selection=query)
+                for column, value in zip(columns, row)
             )
             # and build the row out of them, as they are
             yield query.pyre_storedTuple(record=query, data=values)
@@ -161,16 +162,20 @@ class Server(pyre.component, implements=DataStore):
         return
 
     # reading
-    def interpret(self, column, value):
+    def interpret(self, column, value, selection):
         """
-        Turn {value}, which the back end sent for {column}, into the type of the column
+        Turn {value}, which the back end sent for {column} of {selection}, into the type of the
+        column
         """
         # {NULL} is {None}, whatever the column
         if value is None:
             # so leave it alone
             return None
-        # otherwise, let the column say what it is
-        return column._pyre_identify(authority=self, value=value)
+        # otherwise, let the column say what it is, and pass it along, so a handler that refuses
+        # the value can name it
+        return column._pyre_identify(
+            authority=self, value=value, column=column, selection=selection
+        )
 
     # the handlers of the columns, which take a value as it is, unless a back end sends it in
     # another form

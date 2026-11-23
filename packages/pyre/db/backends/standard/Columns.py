@@ -121,6 +121,14 @@ class Columns(Visitor):
         # complain
         raise self._refusal(contents="identifiers", **kwds)
 
+    # json documents
+    def _pyre_onJSON(self, schema, **kwds):
+        """
+        Refuse a column of json documents, which the language has no type for
+        """
+        # complain
+        raise self._refusal(contents="json documents", **kwds)
+
     # arrays
     def _pyre_onArray(self, schema, **kwds):
         """

@@ -55,6 +55,7 @@ date = measure.date  # dates
 decimal = measure.decimal  # fixed point numbers
 float = measure.float  # floating point numbers
 int = measure.int  # integers
+json = measure.json  # json documents
 str = measure.str  # text
 time = measure.time  # times of day
 timestamp = measure.timestamp  # moments in time

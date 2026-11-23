@@ -131,6 +131,34 @@ class Measure(records.measure):
         Mixin for integers
         """
 
+    class json(measure):
+        """
+        Mixin for json documents
+        """
+
+        # declaration decorations
+        def verbatim(self):
+            """
+            Keep the text of my documents as it was written, rather than in the form the back end
+            prefers
+            """
+            # mark
+            self._verbatim = True
+            # and return
+            return self
+
+        def asText(self):
+            """
+            Read my documents as their text, rather than as documents
+            """
+            # mark
+            self._asText = True
+            # and return
+            return self
+
+        # private data
+        _verbatim = None  # do i keep the text of my documents as it was written?
+
     class str(measure):
         """
         Mixin for strings
@@ -203,6 +231,7 @@ class Measure(records.measure):
     _unique = None  # are my values unique across the rows of the table?
     _notNull = None  # do i refuse NULL as a value?
     _foreign = None  # foreign key: the {ForeignKey} that describes what i refer to
+    _asText = None  # am i read as my text?
 
 
 # end of file
