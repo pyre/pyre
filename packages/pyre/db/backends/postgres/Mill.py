@@ -8,6 +8,9 @@
 # my superclass
 from ..standard import Mill as standard
 
+# the local exceptions
+from ... import exceptions
+
 # the columns of tables, and the references to them
 from ...schema.Measure import Measure
 from ...schema.FieldReference import FieldReference
@@ -28,6 +31,10 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
 
     # the name of my language, for the explanations of refusals
     dialect = "postgres"
+    # the words that make a creation conditional on the absence of what it creates
+    ifMissing = "IF NOT EXISTS"
+    # and a removal conditional on the presence of what it removes
+    ifPresent = "IF EXISTS"
 
     # the visitor that builds the type declarators of my columns
     columns = Columns
@@ -60,10 +67,20 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
         return text
 
     # database management
-    def createDatabase(self, name):
+    def createDatabase(self, name, existOk=False):
         """
-        Generate the SQL statement to create the database {name}
+        Generate the SQL statement to create the database {name}; postgres has no syntax that
+        lets the statement find the database there already, so {existOk} is refused
         """
+        # a creation that may find the database there already
+        if existOk:
+            # cannot be said in one statement
+            raise exceptions.NotSupportedError(
+                diagnostic=(
+                    f"{self.dialect} has no syntax that creates the database {name}"
+                    " only when it is missing"
+                )
+            )
         # every statement starts at the margin
         self.margin()
         # simple enough
@@ -71,14 +88,17 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
         # all done
         return
 
-    def dropDatabase(self, name):
+    def dropDatabase(self, name, missingOk=False):
         """
-        Generate the SQL statement to drop the database {name}
+        Generate the SQL statement to drop the database {name}; with {missingOk}, finding it gone
+        already is fine
         """
+        # say whether the database may be gone already
+        clause = self._ifPresent(missingOk=missingOk, subject=f"the database {name}")
         # every statement starts at the margin
         self.margin()
-        # simple enough
-        yield self.place(f"DROP DATABASE {name};")
+        # build the statement
+        yield self.place(f"DROP DATABASE{clause} {name};")
         # all done
         return
 
