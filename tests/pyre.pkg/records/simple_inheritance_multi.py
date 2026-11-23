@@ -85,12 +85,23 @@ def test():
 
 def identical(s1, s2):
     """
-    Verify that the nodes in {s1} and {s2} are identical. This has to be done carefully since
-    we must avoid triggering __eq__
+    Verify that {s1} and {s2} hold the same nodes, in the same order, and as many of them; the
+    nodes are compared by identity, since their {__eq__} builds expressions
     """
+    # realize both of them
+    s1 = tuple(s1)
+    s2 = tuple(s2)
+    # sequences of different lengths are not identical
+    if len(s1) != len(s2):
+        # so say so
+        return False
+    # otherwise, compare the nodes pair by pair
     for n1, n2 in zip(s1, s2):
+        # and at the first pair that differs
         if n1 is not n2:
+            # say so
             return False
+    # all pairs match
     return True
 
 
