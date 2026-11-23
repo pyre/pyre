@@ -171,6 +171,14 @@ class Literals(Visitor):
         # complain
         raise self._refusal(contents="identifiers", **kwds)
 
+    # json documents
+    def _pyre_onJSON(self, schema, **kwds):
+        """
+        Refuse a json document, which the language has no type for
+        """
+        # complain
+        raise self._refusal(contents="json documents", **kwds)
+
     # arrays
     def _pyre_onArray(self, schema, value, **kwds):
         """
@@ -259,6 +267,7 @@ class Literals(Visitor):
             datetime.datetime: self._pyre_onTimestamp,
             uuid.UUID: self._pyre_onUUID,
             tuple: self._valueArray,
+            dict: self._pyre_onJSON,
         }
         # all done
         return

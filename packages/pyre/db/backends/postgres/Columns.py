@@ -43,6 +43,14 @@ class Columns(standard.Columns):
         # postgres has a type for them
         return "UUID"
 
+    # json documents
+    def _pyre_onJSON(self, schema, **kwds):
+        """
+        Build the type declarator of a column of json documents
+        """
+        # postgres keeps them in a binary form of its own, unless the column asks for their text
+        return "JSON" if schema._verbatim else "JSONB"
+
     # arrays
     def _pyre_onArray(self, schema, **kwds):
         """

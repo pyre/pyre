@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# support
+import json
+
 # superclass
 from ..standard import Literals as standard
 
@@ -48,6 +51,14 @@ class Literals(standard.Literals):
             return f"TIMESTAMP WITH TIME ZONE '{value.isoformat(sep=' ')}'"
         # the others are written as standard SQL writes them
         return super()._pyre_onTimestamp(schema=schema, value=value, **kwds)
+
+    # json documents
+    def _pyre_onJSON(self, schema, value, **kwds):
+        """
+        Render a json document
+        """
+        # as its json text, quoted
+        return self.mill.quote(text=json.dumps(value))
 
     # identifiers
     def _pyre_onUUID(self, schema, value, **kwds):
