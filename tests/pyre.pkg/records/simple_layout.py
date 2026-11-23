@@ -12,44 +12,45 @@ Build a simple record and verify its structure
 
 
 def test():
+    """
+    Declare a record of five measures, and check its fields and their columns
+    """
+    # access the package
     import pyre.records
 
+    # a record of five measures
     class record(pyre.records.record):
         """
         A sample record
         """
 
+        # the stock keeping unit
         sku = pyre.records.measure()
+        # what the item is
         description = pyre.records.measure()
+        # what it costs
         cost = pyre.records.measure()
+        # its overhead
         overhead = pyre.records.measure()
+        # and what it sells for
         price = pyre.records.measure()
 
-    # explore the record class
-    assert isinstance(record.sku, pyre.records.measure)
-    assert isinstance(record.description, pyre.records.measure)
-    assert isinstance(record.cost, pyre.records.measure)
-    assert isinstance(record.overhead, pyre.records.measure)
-    assert isinstance(record.price, pyre.records.measure)
-
-    assert record.pyre_localFields == (
-        record.sku,
-        record.description,
-        record.cost,
-        record.overhead,
-        record.price,
-    )
-
+    # the fields, in the order of their declaration
+    fields = (record.sku, record.description, record.cost, record.overhead, record.price)
+    # are all measures
+    assert all(isinstance(field, pyre.records.measure) for field in fields)
+    # declared locally
+    assert record.pyre_localFields == fields
+    # which makes them all the fields of the record
     assert identical(record.pyre_fields, record.pyre_localFields)
+    # all of its measures
     assert identical(record.pyre_measures, record.pyre_localFields)
+    # and leaves it without derivations
     assert identical(record.pyre_derivations, ())
+    # each field sits in the column of its position
+    assert [record.pyre_columns[field] for field in fields] == [0, 1, 2, 3, 4]
 
-    assert record.pyre_columns[record.sku] == 0
-    assert record.pyre_columns[record.description] == 1
-    assert record.pyre_columns[record.cost] == 2
-    assert record.pyre_columns[record.overhead] == 3
-    assert record.pyre_columns[record.price] == 4
-
+    # all done
     return record
 
 
@@ -58,8 +59,9 @@ def identical(s1, s2):
     Verify that {s1} and {s2} hold the same nodes, in the same order, and as many of them; the
     nodes are compared by identity, since their {__eq__} builds expressions
     """
-    # realize both of them
+    # realize both of them: the first
     s1 = tuple(s1)
+    # and the second
     s2 = tuple(s2)
     # sequences of different lengths are not identical
     if len(s1) != len(s2):
@@ -79,7 +81,7 @@ def identical(s1, s2):
 if __name__ == "__main__":
     # skip pyre initialization since we don't rely on the executive
     pyre_noboot = True
-    # do...
+    # run the test
     test()
 
 
