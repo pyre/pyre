@@ -145,6 +145,24 @@ class Spread(pyre.db.query, weather=Weather):
 - `pyre.db.negation(predicate)` negates any predicate, written `NOT (…)`. As SQL has it, a list
   that holds a `NULL` makes `negation(isIn(…))` true for no row.
 
+A query joins one of its tables to the others with a `joins` clause, one join or a sequence of
+them, in order:
+
+```python
+class Kinds(pyre.db.query, granule=Granule, product=Product):
+    # the name of each granule
+    name = granule.name
+    # and the kind of its product
+    kind = product.kind
+    # every granule, with its product when it has one
+    joins = pyre.db.leftJoin(product, on=granule.product == product.id)
+```
+
+`pyre.db.join(table, on=predicate)` keeps the rows that have a match, and
+`pyre.db.leftJoin(table, on=predicate)` also keeps those of the other tables that have none, with
+`NULL` in the columns of the joined table. The tables that are not joined come first; in a query
+with joins they are crossed with `CROSS JOIN`, so that the joins read from left to right.
+
 ## Servers
 
 | server | talks to |
