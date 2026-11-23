@@ -59,39 +59,43 @@ class Server(pyre.component, implements=DataStore):
         raise NotImplementedError(f"class '{type(self).__name__}' must override 'execute'")
 
     # convenience
-    def createDatabase(self, name):
+    def createDatabase(self, name, existOk=False):
         """
-        Build and execute the SQL statement to create the database {name}
+        Build and execute the SQL statement to create the database {name}; with {existOk},
+        finding it there already is fine
         """
         # build the sql statement
-        sql = self.sql.createDatabase(name=name)
+        sql = self.sql.createDatabase(name=name, existOk=existOk)
         # and execute it
         return self.execute(*sql)
 
-    def dropDatabase(self, name):
+    def dropDatabase(self, name, missingOk=False):
         """
-        Build and execute the SQL statement to drop the database {name}
+        Build and execute the SQL statement to drop the database {name}; with {missingOk},
+        finding it gone already is fine
         """
         # build the sql statement
-        sql = self.sql.dropDatabase(name=name)
+        sql = self.sql.dropDatabase(name=name, missingOk=missingOk)
         # and execute it
         return self.execute(*sql)
 
-    def createTable(self, table):
+    def createTable(self, table, existOk=False):
         """
-        Build and execute the SQL statement necessary to create {table}
+        Build and execute the SQL statement necessary to create {table}; with {existOk}, finding
+        it there already is fine
         """
         # build the sql statement
-        sql = self.sql.createTable(table)
+        sql = self.sql.createTable(table=table, existOk=existOk)
         # and execute it
         return self.execute(*sql)
 
-    def dropTable(self, table):
+    def dropTable(self, table, missingOk=False):
         """
-        Build and execute the SQL statement necessary to delete {table} from the datastore
+        Build and execute the SQL statement necessary to delete {table} from the datastore; with
+        {missingOk}, finding it gone already is fine
         """
         # build the sql statement
-        sql = self.sql.dropTable(table)
+        sql = self.sql.dropTable(table=table, missingOk=missingOk)
         # and execute it
         return self.execute(*sql)
 

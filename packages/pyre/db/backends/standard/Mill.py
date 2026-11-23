@@ -33,6 +33,12 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
     # the name of my language, for the explanations of refusals
     dialect = "standard SQL"
+    # the words that make a creation conditional on the absence of what it creates, which the
+    # language does not have
+    ifMissing = None
+    # and the words that make a removal conditional on the presence of what it removes, which it
+    # does not have either
+    ifPresent = None
 
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
@@ -242,7 +248,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return
 
     # database management
-    def createDatabase(self, name):
+    def createDatabase(self, name, existOk=False):
         """
         Refuse to create the database {name}, since the language has no statement for it
         """
@@ -251,7 +257,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             diagnostic=f"{self.dialect} has no statement that creates the database {name}"
         )
 
-    def dropDatabase(self, name):
+    def dropDatabase(self, name, missingOk=False):
         """
         Refuse to drop the database {name}, since the language has no statement for it
         """
@@ -261,9 +267,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         )
 
     # table management
-    def createTable(self, table):
+    def createTable(self, table, existOk=False):
         """
-        Generate the SQL statement to create a database table given its description
+        Generate the SQL statement to create a database table given its description; with
+        {existOk}, finding the table there already is fine
 
         The {table} specification is expected to be a {Table} subclass, with the necessary
         column information provided by the decorated field descriptors
@@ -277,7 +284,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
             # so complain
             raise journal.firewall("pyre.db").log(
-                "table {.pyre_name!r} has no field information".format(table)
+                f"table {table.pyre_name!r} has no field information"
             )
 
         # build the type declarator of each column before rendering anything, so that a column the
@@ -289,11 +296,17 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         defaults = tuple(self._default(table=table, column=field) for field in table.pyre_fields)
         # and the declarations that follow the columns
         annotations = tuple(self._tableAnnotations(table=table))
+        # and the opening of the statement, which says whether the table may exist already
+        header = (
+            "CREATE TABLE"
+            + self._ifMissing(existOk=existOk, subject=f"the table {table.pyre_name}")
+            + f" {table.pyre_name}"
+        )
 
         # if there is a docstring
         if table.__doc__:
             # place the header
-            yield self.place("CREATE TABLE " + table.pyre_name)
+            yield self.place(header)
             # push in
             self.indent()
             # convert the docstring into a comment block, framed by blank lines
@@ -305,7 +318,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # otherwise
         else:
             # put it all on one line
-            yield self.place("CREATE TABLE " + table.pyre_name + " (")
+            yield self.place(f"{header} (")
 
         # the field declarations
         self.indent()
@@ -364,14 +377,17 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
-    def dropTable(self, table):
+    def dropTable(self, table, missingOk=False):
         """
-        Build the statement to drop the given {table}
+        Build the statement to drop the given {table}; with {missingOk}, finding it gone already is
+        fine
         """
+        # say whether the table may be gone already
+        clause = self._ifPresent(missingOk=missingOk, subject=f"the table {table.pyre_name}")
         # every statement starts at the margin
         self.margin()
-        # this is easy enough
-        yield "DROP TABLE {};".format(table.pyre_name)
+        # build the statement
+        yield self.place(f"DROP TABLE{clause} {table.pyre_name};")
         # all done
         return
 
@@ -626,6 +642,46 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
     # implementation details
+    def _ifMissing(self, existOk, subject):
+        """
+        Build the clause that lets the creation of {subject} find it there already, when {existOk}
+        allows it
+        """
+        # a creation that insists on making {subject}
+        if not existOk:
+            # needs no clause
+            return ""
+        # a language without the words for the other kind
+        if self.ifMissing is None:
+            # cannot say it
+            raise exceptions.NotSupportedError(
+                diagnostic=(
+                    f"{self.dialect} has no syntax that creates {subject} only when it is missing"
+                )
+            )
+        # the rest have them
+        return f" {self.ifMissing}"
+
+    def _ifPresent(self, missingOk, subject):
+        """
+        Build the clause that lets the removal of {subject} find it gone already, when {missingOk}
+        allows it
+        """
+        # a removal that insists on finding {subject}
+        if not missingOk:
+            # needs no clause
+            return ""
+        # a language without the words for the other kind
+        if self.ifPresent is None:
+            # cannot say it
+            raise exceptions.NotSupportedError(
+                diagnostic=(
+                    f"{self.dialect} has no syntax that drops {subject} only when it is present"
+                )
+            )
+        # the rest have them
+        return f" {self.ifPresent}"
+
     def _literalRenderer(self, node, **kwds):
         """
         Render {node}, a literal in an expression, whose value belongs to no column

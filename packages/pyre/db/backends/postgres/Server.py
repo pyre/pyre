@@ -27,6 +27,9 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
     # exceptions
     from ...exceptions import OperationalError
 
+    # the condition postgres raises when a database it is asked to create exists already
+    duplicateDatabase = "42P04"
+
     # the generator of my statements speaks the dialect of postgres
     sql = pyre.weaver.language()
     sql.default = Mill
@@ -184,6 +187,30 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
             raise exceptions.InterfaceError(diagnostic="this server is not attached")
         # build one on my session
         return pyre.extensions.libpq.Transaction(self.connection)
+
+    # convenience
+    def createDatabase(self, name, existOk=False):
+        """
+        Create the database {name}; with {existOk}, finding it there already is fine
+
+        postgres has no syntax that creates a database only when it is missing, so i keep that
+        promise myself: postgres decides whether the database exists as it runs the statement,
+        and says so with a condition of its own
+        """
+        # build the statement that insists on making the database
+        sql = self.sql.createDatabase(name=name)
+        # attempt to
+        try:
+            # run it
+            return self.execute(*sql)
+        # if it fails
+        except exceptions.ProgrammingError as error:
+            # because the database is there already, which the caller said is fine
+            if existOk and error.sqlstate == self.duplicateDatabase:
+                # there is nothing to report
+                return ()
+            # anything else is a failure
+            raise
 
     # the handlers of the columns whose values my bindings send in another form
     def _pyre_onJSON(self, schema, value, column, selection, **kwds):

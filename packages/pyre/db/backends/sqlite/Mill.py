@@ -24,6 +24,10 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
 
     # the name of my language, for the explanations of refusals
     dialect = "sqlite"
+    # the words that make a creation conditional on the absence of what it creates
+    ifMissing = "IF NOT EXISTS"
+    # and a removal conditional on the presence of what it removes
+    ifPresent = "IF EXISTS"
 
     # the visitor that builds the type declarators of my columns
     columns = Columns
