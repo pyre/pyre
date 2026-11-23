@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import sqlite3
+
 # my superclass
 from ..standard import Mill as standard
 
@@ -33,10 +36,30 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
     ifPresent = "IF EXISTS"
     # sqlite has indexes
     hasIndexes = True
-    # statements that return the rows they change
-    hasReturning = True
+    # the version of the library python talks to, which decides what else it has
+    version = sqlite3.sqlite_version_info
+    # the versions that bring the features that came late: statements that return the rows they
+    # change
+    returningSince = (3, 35)
     # and inserts that may meet the rows that are there already
-    hasConflict = True
+    conflictSince = (3, 24)
+
+    # what my library has
+    @property
+    def hasReturning(self):
+        """
+        Whether my library lets a statement return the rows it changes
+        """
+        # it does, from the version that brought it on
+        return self.version >= self.returningSince
+
+    @property
+    def hasConflict(self):
+        """
+        Whether my library lets an insert meet the rows that are there already
+        """
+        # it does, from the version that brought it on
+        return self.version >= self.conflictSince
 
     # the visitor that builds the type declarators of my columns
     columns = Columns
@@ -100,6 +123,50 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
             clause += f" OFFSET {offset}"
         # hand it over
         return [clause]
+
+    def _returning(self, returning):
+        """
+        Build the clause that returns the columns of {returning} from the rows a statement
+        changes, which my library has only from the version that brought it
+        """
+        # a library without the clause
+        if not self.hasReturning:
+            # cannot say it, and says which version it would take
+            raise exceptions.NotSupportedError(
+                diagnostic=(
+                    f"{self._library()} has no syntax that returns the rows a statement changes;"
+                    f" it needs {self._release(self.returningSince)}"
+                )
+            )
+        # the others write it as standard SQL would
+        return super()._returning(returning=returning)
+
+    def _merge(self, records, existing, key):
+        """
+        Refuse to merge {records}: sqlite has no {MERGE}, and a library that gets here has no
+        {ON CONFLICT} either
+        """
+        # say so, and which version it would take
+        raise exceptions.NotSupportedError(
+            diagnostic=(
+                f"{self._library()} has no syntax that keeps or replaces the rows that are there"
+                f" already; it needs {self._release(self.conflictSince)}"
+            )
+        )
+
+    def _library(self):
+        """
+        Name my library and its version, for the explanations of refusals
+        """
+        # easy enough
+        return f"{self.dialect} {self._release(self.version)}"
+
+    def _release(self, version):
+        """
+        Render {version}, a tuple of numbers, the way sqlite writes it
+        """
+        # with dots between the numbers
+        return ".".join(str(number) for number in version)
 
     def _insertColumns(self, table, record):
         """
