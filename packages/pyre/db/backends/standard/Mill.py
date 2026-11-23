@@ -58,6 +58,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     from ...schema.Table import Table as table
     from ...queries.Query import Query as query
 
+    # and for the joins of queries
+    from ...queries.Join import Join as join
+
     # queries
     def select(self, query, limit=None, offset=None):
         """
@@ -142,26 +145,37 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # push out
         self.outdent()
 
+        # the joins of the query, in their order
+        joins = self._joins(query=query)
+        # the names of the tables they join
+        joined = {join.table.pyre_name for join in joins}
+        # and the names of the others, in order
+        names = [name for name in sorted(query.pyre_tables) if name not in joined]
+
         # render the {FROM} section
         yield self.place("FROM")
         # push in
         self.indent()
-        # figure out how many table references there are
-        tables = len(query.pyre_tables)
-        # render the tables
-        for index, tableName in enumerate(sorted(query.pyre_tables.keys())):
-            # get the table
-            table = query.pyre_tables[tableName]
-            # separate it from the next one, if there is one
-            comma = "," if index + 1 < tables else ""
-            # a table under its own name
-            if tableName == table.pyre_name:
-                # is named as it is
-                yield self.place(f"{table.pyre_name}{comma}")
+        # render the tables that are not joined
+        for index, name in enumerate(names):
+            # the reference to the table
+            reference = self._tableReference(query=query, name=name)
+            # in a query with joins, which read from left to right
+            if joins:
+                # the tables after the first are crossed with the ones before them
+                yield self.place(reference if index == 0 else f"CROSS JOIN {reference}")
             # otherwise
             else:
-                # it gets a local alias
-                yield self.place(f"{table.pyre_name} AS {tableName}{comma}")
+                # they are separated by commas
+                yield self.place(reference + ("," if index + 1 < len(names) else ""))
+        # followed by the joins
+        for join in joins:
+            # the reference to the table
+            reference = self._tableReference(query=query, name=join.table.pyre_name)
+            # the predicate its rows must satisfy
+            predicate = self.expression(root=join.on, context=query)
+            # put it all together
+            yield self.place(f"{join.keyword} {reference} ON ({predicate})")
 
         # the clauses that follow the {FROM} section, in the order the language puts them, each
         # with the method that renders it
@@ -195,6 +209,50 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         self.outdent()
         # all done
         return
+
+    def _joins(self, query):
+        """
+        Collect the joins of {query}, making sure each joins one of its tables
+        """
+        # the joins of the query: none
+        if query.joins is None:
+            # makes an empty pile
+            return ()
+        # one join
+        if isinstance(query.joins, self.join):
+            # makes a pile of one
+            joins = (query.joins,)
+        # and the rest are piles already
+        else:
+            # so take them in their order
+            joins = tuple(query.joins)
+        # go through them
+        for join in joins:
+            # and if one joins a table the query does not name
+            if join.table.pyre_name not in query.pyre_tables:
+                # it is a mistake in the declaration of the query
+                import journal
+
+                # so complain
+                raise journal.firewall("pyre.db").log(
+                    f"query {query.pyre_name!r} joins the table {join.table.pyre_name!r},"
+                    " which is not among its tables"
+                )
+        # hand them over
+        return joins
+
+    def _tableReference(self, query, name):
+        """
+        Render the reference to the table that {query} knows as {name}
+        """
+        # get the table
+        table = query.pyre_tables[name]
+        # a table under its own name
+        if name == table.pyre_name:
+            # is named as it is
+            return table.pyre_name
+        # the others get a local alias
+        return f"{table.pyre_name} AS {name}"
 
     def _paging(self, limit, offset):
         """
