@@ -138,6 +138,10 @@ class Spread(pyre.db.query, weather=Weather):
 - `pyre.db.like(field, pattern)` matches a pattern, in which a backslash escapes the wildcards
   `%` and `_`; the statement names the backslash as the escape character.
 - `== None` compares with the literal `NULL`, which no row matches; use `isNull` instead.
+- `pyre.db.isIn(field, values)` tests whether a field holds one of a list of values, written
+  `field IN (…)`; an empty list is `FALSE`, since SQL has no empty list to write.
+- `pyre.db.negation(predicate)` negates any predicate, written `NOT (…)`. As SQL has it, a list
+  that holds a `NULL` makes `negation(isIn(…))` true for no row.
 
 ## Servers
 
