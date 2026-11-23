@@ -16,11 +16,12 @@ class Palette:
         # chain up
         super().__init__(**kwds)
 
-        # colors
-        self.normal = terminal.ansi["normal"]
-        # generators
-        self.project = terminal.x11["steel blue"]
-        self.library = terminal.x11["steel blue"]
+        # colors: the plain one, which ends any other
+        self.normal = terminal.reset()
+        # generators: projects
+        self.project = terminal.color("steel blue")
+        # and libraries
+        self.library = terminal.color("steel blue")
         # all done
         return
 
