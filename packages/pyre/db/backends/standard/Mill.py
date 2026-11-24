@@ -9,12 +9,16 @@
 import collections.abc
 import inspect
 import operator
+import re
 
 # my base class
 from pyre.weaver.SQL import SQL
 
 # the local exceptions
 from ... import exceptions
+
+# the words the language reserves
+from . import keywords
 
 # the type declarators of my columns
 from .Columns import Columns
@@ -34,6 +38,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
 
     # the name of my language, for the explanations of refusals
     dialect = "standard SQL"
+    # the words it reserves, which a name must be quoted to use
+    reserved = keywords.reserved
+    # and the shape of the names it reads as they are
+    plain = re.compile(r"[a-z_][a-z0-9_]*")
     # the words that make a creation conditional on the absence of what it creates, which the
     # language does not have
     ifMissing = None
@@ -112,15 +120,19 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # do we need a comma?
                 comma = "," if index + 1 < len(fields) else ""
                 # read the column as the dialect reads it
-                reading = self._read(column=field, text=field.name)
+                reading = self._read(column=field, text=self.identifier(field.name))
                 # a reading other than the bare name of the column gets the name back
-                alias = "" if reading == field.name else f" AS {field.name}"
+                alias = (
+                    ""
+                    if reading == self.identifier(field.name)
+                    else f" AS {self.identifier(field.name)}"
+                )
                 # render it
                 yield self.place(f"{reading}{alias}{comma}")
             # push out
             self.outdent()
             # render the table name
-            yield self.place(f"FROM {query.pyre_name}")
+            yield self.place(f"FROM {self.identifier(query.pyre_name)}")
             # followed by the paging
             for line in paging:
                 # one clause at a time
@@ -151,7 +163,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # read the field as the dialect reads it
             reading = self._read(column=entry, text=self.expression(entry))
             # and render it
-            yield self.place(f"{reading} AS {entry.name}{comma}")
+            yield self.place(f"{reading} AS {self.identifier(entry.name)}{comma}")
         # push out
         self.outdent()
 
@@ -232,7 +244,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 diagnostic=f"{self.dialect} has no syntax that returns the rows a statement changes"
             )
         # the others name the columns
-        return "RETURNING " + ", ".join(field.name for field in returning.pyre_fields)
+        return "RETURNING " + ", ".join(
+            self.identifier(field.name) for field in returning.pyre_fields
+        )
 
     def _insertEnd(self, values, tail):
         """
@@ -283,7 +297,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 [name for name in names if name not in keys] if existing == "replace" else []
             )
             # the clause that detects the row
-            conflict = f"ON CONFLICT ({', '.join(keys)})"
+            conflict = f"ON CONFLICT ({', '.join(self.identifier(key) for key in keys)})"
             # with nothing to write over it
             if not assignments:
                 # the row is left alone
@@ -297,7 +311,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                     # each but the last followed by a comma
                     comma = "," if index + 1 < len(assignments) else ""
                     # taken from the row that was refused
-                    tail.append((1, f"{name} = EXCLUDED.{name}{comma}"))
+                    tail.append(
+                        (1, f"{self.identifier(name)} = EXCLUDED.{self.identifier(name)}{comma}")
+                    )
         # the rows the statement returns
         if clause is not None:
             # come last
@@ -393,7 +409,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # every statement starts at the margin
         self.margin()
         # the target
-        yield self.place(f"MERGE INTO {table.pyre_name}")
+        yield self.place(f"MERGE INTO {self.identifier(table.pyre_name)}")
         # indent
         self.indent()
         # the source
@@ -415,9 +431,13 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # back out
         self.outdent(decrement=2)
         # name the source and its columns
-        yield self.place(f") AS incoming ({', '.join(names)})")
+        yield self.place(f") AS incoming ({', '.join(self.identifier(name) for name in names)})")
         # match the rows on the key
-        match = " AND ".join(f"{table.pyre_name}.{name} = incoming.{name}" for name in keys)
+        match = " AND ".join(
+            f"{self.identifier(table.pyre_name)}.{self.identifier(name)}"
+            f" = incoming.{self.identifier(name)}"
+            for name in keys
+        )
         # and say so
         yield self.place(f"ON ({match})")
         # the columns to write over the rows that are there
@@ -433,15 +453,19 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # each but the last followed by a comma
                 comma = "," if index + 1 < len(assignments) else ""
                 # taken from the incoming row
-                yield self.place(f"{name} = incoming.{name}{comma}")
+                yield self.place(
+                    f"{self.identifier(name)} = incoming.{self.identifier(name)}{comma}"
+                )
             # back out
             self.outdent()
         # the others are inserted
-        yield self.place(f"WHEN NOT MATCHED THEN INSERT ({', '.join(names)})")
+        yield self.place(
+            f"WHEN NOT MATCHED THEN INSERT ({', '.join(self.identifier(name) for name in names)})"
+        )
         # indent
         self.indent()
         # with the values of the incoming row
-        sources = ", ".join(f"incoming.{name}" for name in names)
+        sources = ", ".join(f"incoming.{self.identifier(name)}" for name in names)
         # which ends the statement
         yield self.place(f"VALUES ({sources});")
         # back out to the margin
@@ -526,9 +550,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # a table under its own name
         if name == table.pyre_name:
             # is named as it is
-            return table.pyre_name
+            return self.identifier(table.pyre_name)
         # the others get a local alias
-        return f"{table.pyre_name} AS {name}"
+        return f"{self.identifier(table.pyre_name)} AS {self.identifier(name)}"
 
     def _paging(self, limit, offset):
         """
@@ -633,7 +657,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # every statement starts at the margin
         self.margin()
         # simple enough
-        yield self.place(f"SAVEPOINT {name};")
+        yield self.place(f"SAVEPOINT {self.identifier(name)};")
         # all done
         return
 
@@ -645,7 +669,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # every statement starts at the margin
         self.margin()
         # simple enough
-        yield self.place(f"RELEASE SAVEPOINT {name};")
+        yield self.place(f"RELEASE SAVEPOINT {self.identifier(name)};")
         # all done
         return
 
@@ -656,7 +680,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # every statement starts at the margin
         self.margin()
         # simple enough
-        yield self.place(f"ROLLBACK TO SAVEPOINT {name};")
+        yield self.place(f"ROLLBACK TO SAVEPOINT {self.identifier(name)};")
         # all done
         return
 
@@ -718,7 +742,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         header = (
             "CREATE TABLE"
             + self._ifMissing(existOk=existOk, subject=f"the table {table.pyre_name}")
-            + f" {table.pyre_name}"
+            + f" {self.identifier(table.pyre_name)}"
         )
 
         # if there is a docstring
@@ -779,13 +803,16 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         """
         # the primary key, if there is one
         if table._pyre_primaryKeys:
-            # names its fields, in order
-            yield f"PRIMARY KEY ({','.join(field.name for field in table._pyre_primaryKeys)})"
+            # the names of its fields, in order
+            names = ",".join(self.identifier(field.name) for field in table._pyre_primaryKeys)
+            # make up the declaration
+            yield f"PRIMARY KEY ({names})"
         # each group of fields whose values are unique together
         for fields, name in table._pyre_uniqueKeys:
             # is a constraint of its own
             yield self._constraint(
-                name=name, rule=f"UNIQUE ({','.join(field.name for field in fields)})"
+                name=name,
+                rule=f"UNIQUE ({','.join(self.identifier(field.name) for field in fields)})",
             )
         # each reference to another table
         for local, foreign, name in table._pyre_foreignKeys:
@@ -793,8 +820,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             yield self._constraint(
                 name=name,
                 rule=(
-                    f"FOREIGN KEY ({local.field.name}) "
-                    f"REFERENCES {foreign.table.pyre_name} ({foreign.field.name})"
+                    f"FOREIGN KEY ({self.identifier(local.field.name)}) "
+                    f"REFERENCES {self.identifier(foreign.table.pyre_name)}"
+                    f" ({self.identifier(foreign.field.name)})"
                 ),
             )
         # and each check
@@ -816,7 +844,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # every statement starts at the margin
         self.margin()
         # build the statement
-        yield self.place(f"DROP TABLE{clause} {table.pyre_name};")
+        yield self.place(f"DROP TABLE{clause} {self.identifier(table.pyre_name)};")
         # all done
         return
 
@@ -863,7 +891,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # every statement starts at the margin
         self.margin()
         # build the statement
-        yield self.place(f"DROP INDEX{clause} {name};")
+        yield self.place(f"DROP INDEX{clause} {self.identifier(name)};")
         # all done
         return
 
@@ -931,7 +959,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 if not columns:
                     # is inserted by a statement of its own, which returns its row when asked
                     yield self.place(
-                        f"INSERT INTO {table.pyre_name} DEFAULT VALUES"
+                        f"INSERT INTO {self.identifier(table.pyre_name)} DEFAULT VALUES"
                         + ("" if clause is None else f" {clause}")
                         + ";"
                     )
@@ -942,11 +970,13 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # the others start a statement of their shape
                 shape = recordShape
                 # initiate it
-                yield self.place(f"INSERT INTO {table.pyre_name}")
+                yield self.place(f"INSERT INTO {self.identifier(table.pyre_name)}")
                 # indent
                 self.indent(increment=2)
                 # the names of the columns
-                yield self.place("(" + ", ".join(recordShape[1]) + ")")
+                yield self.place(
+                    "(" + ", ".join(self.identifier(name) for name in recordShape[1]) + ")"
+                )
                 # push out
                 self.outdent()
                 # start the section with the record values
@@ -986,7 +1016,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # every statement starts at the margin
         self.margin()
         # the lines of the statement: the table
-        lines = [self.place(f"DELETE FROM {table.pyre_name}")]
+        lines = [self.place(f"DELETE FROM {self.identifier(table.pyre_name)}")]
         # indent
         self.indent()
         # if a condition was specified
@@ -1035,14 +1065,15 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 continue
             # the others are assigned their value
             assignments.append(
-                f"{field.name} = {self._recordValue(table=table, field=field, value=value)}"
+                f"{self.identifier(field.name)}"
+                f" = {self._recordValue(table=table, field=field, value=value)}"
             )
         # if there is nothing to set
         if not assignments:
             # there is no statement
             return
         # the lines of the statement: the table
-        lines = [self.place(f"UPDATE {table.pyre_name}")]
+        lines = [self.place(f"UPDATE {self.identifier(table.pyre_name)}")]
         # indent
         self.indent()
         # the data section
@@ -1098,13 +1129,13 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # a reference that names no field
         if node.field is None:
             # refers to the whole table
-            return node.table.pyre_name
+            return self.identifier(node.table.pyre_name)
         # a field of no table in particular, or of the table in context or one of its bases
         if not node.table or (isinstance(context, type) and issubclass(context, node.table)):
             # is named by itself
-            return node.field.name
+            return self.identifier(node.field.name)
         # any other is qualified by the name of its table
-        return f"{node.table.pyre_name}.{node.field.name}"
+        return f"{self.identifier(node.table.pyre_name)}.{self.identifier(node.field.name)}"
 
     def _pyre_onCollation(self, node, context=None, **kwds):
         """
@@ -1196,6 +1227,20 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # put it all together
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
+    # names
+    def identifier(self, name):
+        """
+        Render {name} as the language reads it: as it is, when it is made of lower case letters,
+        digits and underscores, does not start with a digit, and is not a word the language
+        reserves; quoted, with any double quotes in it doubled, otherwise
+        """
+        # a name the language reads as it is
+        if self.plain.fullmatch(name) and name not in self.reserved:
+            # stays as it is
+            return name
+        # the others are quoted
+        return '"' + name.replace('"', '""') + '"'
+
     # implementation details
     def _documentation(self, table):
         """
@@ -1216,7 +1261,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # leaves its name to the server
             return rule
         # the others are declared by name
-        return f"CONSTRAINT {name} {rule}"
+        return f"CONSTRAINT {self.identifier(name)} {rule}"
 
     def _index(self, table, name):
         """
@@ -1254,7 +1299,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # whether no two rows may share their values
         unique = "UNIQUE " if index.unique else ""
         # the fields, in order
-        fields = ", ".join(field.name for field in index.fields)
+        fields = ", ".join(self.identifier(field.name) for field in index.fields)
         # and the predicate a row must pass to be covered, if there is one
         where = (
             ""
@@ -1265,7 +1310,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         self.margin()
         # build the statement
         yield self.place(
-            f"CREATE {unique}INDEX{clause} {name} ON {table.pyre_name} ({fields}){where};"
+            f"CREATE {unique}INDEX{clause} {self.identifier(name)}"
+            f" ON {self.identifier(table.pyre_name)} ({fields}){where};"
         )
         # all done
         return
@@ -1364,7 +1410,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         {declaration} and whose default is declared by {default}
         """
         # the field name
-        name = field.name
+        name = self.identifier(field.name)
         # compute the annotations
         annotations = []
         # if the field is a primary key
@@ -1430,11 +1476,14 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # if the reference names no field, it is to the primary key of the table
         if field is None:
             # so name only the table
-            yield self.place("REFERENCES {.pyre_name}{}".format(table, separator))
+            yield self.place(f"REFERENCES {self.identifier(table.pyre_name)}{separator}")
         # otherwise
         else:
             # name the table and the field
-            yield self.place("REFERENCES {.pyre_name} ({.name}){}".format(table, field, separator))
+            yield self.place(
+                f"REFERENCES {self.identifier(table.pyre_name)}"
+                f" ({self.identifier(field.name)}){separator}"
+            )
 
         # if there is nothing further to do
         if foreign.update is None and foreign.delete is None:
