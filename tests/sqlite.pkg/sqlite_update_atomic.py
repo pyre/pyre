@@ -28,9 +28,6 @@ def test():
     # a word is never empty
     Word.pyre_check(Word.text != "")
 
-    # access the module of the library, whose exceptions sqlite raises
-    import sqlite3
-
     # connect to a database in memory
     db = pyre.db.sqlite(name="atomic").attach()
     # make the table
@@ -45,7 +42,7 @@ def test():
             (Word.pyre_immutable(text=""), Word.id == 2),
         )
     # which fails
-    except sqlite3.IntegrityError:
+    except pyre.db.exceptions.IntegrityError:
         # as it must
         pass
     # read the table back
