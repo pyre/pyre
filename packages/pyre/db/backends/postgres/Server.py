@@ -6,6 +6,8 @@
 
 
 # externals
+import contextlib
+import hashlib
 import pyre
 
 # superclass
@@ -29,6 +31,8 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
 
     # the condition postgres raises when a database it is asked to create exists already
     duplicateDatabase = "42P04"
+    # and the one it raises when a lock is not granted in time
+    lockNotAvailable = "55P03"
 
     # the generator of my statements speaks the dialect of postgres
     sql = pyre.weaver.language()
@@ -174,6 +178,29 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # hand it to the session
         return self.connection.execute(statement, *arguments)
 
+    # locks
+    @contextlib.contextmanager
+    def lock(self, name, wait=True, timeout=None):
+        """
+        Hold the advisory lock {name}, a name or an integer, from the start of a block to its
+        end, whatever the transactions inside it do; wait for it unless {wait} is off, and for no
+        longer than {timeout} seconds when it is given
+        """
+        # the key of the lock
+        key = self._lockKey(name=name)
+        # take the lock
+        self._lock(key=key, name=name, wait=wait, timeout=timeout)
+        # carefully
+        try:
+            # hand control to the block
+            yield self
+        # and however it ends
+        finally:
+            # let go of the lock
+            self.run("SELECT pg_advisory_unlock($1::bigint)", key)
+        # all done
+        return
+
     # convenience
     def createDatabase(self, name, existOk=False):
         """
@@ -197,6 +224,73 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
                 return ()
             # anything else is a failure
             raise
+
+    # the keys and the taking of locks
+    def _lockKey(self, name):
+        """
+        Build the key of the lock {name}: an integer is a key already, and a name is turned into
+        one by a hash every process computes the same way
+        """
+        # an integer
+        if isinstance(name, int):
+            # is a key already
+            return name
+        # the first eight bytes of the digest of the name
+        digest = hashlib.blake2b(name.encode("utf-8"), digest_size=8).digest()
+        # make the key, as postgres reads it
+        return int.from_bytes(digest, "big", signed=True)
+
+    def _lock(self, key, name, wait, timeout):
+        """
+        Take the lock {name}, whose key is {key}, waiting as {wait} and {timeout} allow
+        """
+        # a caller that will not wait
+        if not wait:
+            # asks for the lock
+            ((taken,),) = self.run("SELECT pg_try_advisory_lock($1::bigint)", key)
+            # and if it is held elsewhere
+            if not taken:
+                # says so
+                raise exceptions.LockError(diagnostic=f"the lock {name} is held by another session")
+            # otherwise, it holds it now
+            return
+        # a caller that waits as long as it takes
+        if timeout is None:
+            # waits
+            self.run("SELECT pg_advisory_lock($1::bigint)", key)
+            # until it holds it
+            return
+        # the others wait for no longer than the timeout, which postgres takes in milliseconds
+        limit = f"{max(1, round(timeout * 1000))}ms"
+        # the bound of the session, which the wait replaces for a moment
+        ((previous,),) = self.run("SELECT current_setting('lock_timeout')")
+        # whether the session is outside a transaction, which decides how the bound comes back
+        idle = self.connection.transaction == pyre.extensions.libpq.TransactionStatus.idle
+        # bound the wait
+        self.run("SELECT set_config('lock_timeout', $1, false)", limit)
+        # carefully
+        try:
+            # wait for the lock
+            self.run("SELECT pg_advisory_lock($1::bigint)", key)
+        # a lock not granted in time
+        except exceptions.OperationalError as error:
+            # is reported as such
+            if error.sqlstate == self.lockNotAvailable:
+                # with the name of the lock
+                raise exceptions.LockError(
+                    diagnostic=f"the lock {name} is held by another session"
+                ) from None
+            # and anything else as it is
+            raise
+        # either way
+        finally:
+            # a session outside a transaction gets its bound back now; inside one, a failed
+            # wait has abandoned the transaction, and its rollback restores the bound
+            if idle:
+                # restore it
+                self.run("SELECT set_config('lock_timeout', $1, false)", previous)
+        # all done
+        return
 
     # the handlers of the columns whose values my bindings send in another form
     def _pyre_onJSON(self, schema, value, column, selection, **kwds):

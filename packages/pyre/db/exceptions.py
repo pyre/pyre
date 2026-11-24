@@ -9,6 +9,7 @@
 Definitions for all the exceptions raised by this package
 """
 
+# the base of the exceptions the framework raises
 from ..framework.exceptions import FrameworkError
 
 # db api 2.0 compliant exception hierarchy
@@ -118,6 +119,13 @@ class OperationalError(DatabaseError):
     """
     An exception that indicates environmental problems that are generally not related to the
     program itself
+    """
+
+
+class LockError(OperationalError):
+    """
+    Exception raised when a lock is held by another session, and the session that asked for it
+    would not wait, or gave up waiting
     """
 
 

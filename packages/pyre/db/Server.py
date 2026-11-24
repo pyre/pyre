@@ -233,6 +233,16 @@ class Server(pyre.component, implements=DataStore):
         # and run it, gathering its rows
         return self._gather(lines=sql, selection=selection)
 
+    def lock(self, name, wait=True, timeout=None):
+        """
+        Hold the lock {name} from the start of a block to its end; a back end without locks of
+        the application's own refuses it
+        """
+        # say so
+        raise self.exceptions.NotSupportedError(
+            diagnostic=f"{self.sql.dialect} has no advisory locks"
+        )
+
     def select(self, query, limit=None, offset=None):
         """
         Execute the given {query} and return the retrieved data; {offset} skips that many of
