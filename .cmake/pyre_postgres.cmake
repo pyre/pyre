@@ -80,6 +80,7 @@ function(pyre_postgresModule)
       extensions/postgres/Diagnostic.cc
       extensions/postgres/Field.cc
       extensions/postgres/Notification.cc
+      extensions/postgres/Pipeline.cc
       extensions/postgres/Result.cc
       extensions/postgres/Row.cc
       extensions/postgres/Stream.cc
