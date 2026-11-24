@@ -68,6 +68,7 @@ pyre::postgres::Pipeline::Pipeline(Pipeline && other) noexcept :
 }
 
 
+// and taken on by a pipeline that is still under way, which ends its own first
 pyre::postgres::Pipeline &
 pyre::postgres::Pipeline::operator=(Pipeline && other) noexcept
 {
