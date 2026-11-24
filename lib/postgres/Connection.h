@@ -40,7 +40,7 @@
 // a session answers one statement at a time, and a copy, a stream, or a statement sent off whose
 // answer has not been collected, keeps it answering. the calls that send a statement refuse it
 // until the answer is over, with an {InterfaceError}, since libpq would otherwise throw the answer
-// away
+// away; they refuse a session in a pipeline too, which takes its statements through the pipeline
 //
 // every session writes its dates and times the ISO way and its text in utf-8, whatever the server's
 // configuration or the caller's parameters ask for, so that the values it sends always read the
@@ -224,11 +224,12 @@ public:
     // observes this, and refuses to be used afterwards
     inline auto close() -> void;
 
-    // the copies and the streams hold my lock for as long as they run, and talk to libpq
-    // through my session
+    // the copies, the streams and the pipelines hold my lock for as long as they run, and talk
+    // to libpq through my session
     friend class CopyIn;
     friend class CopyOut;
     friend class Stream;
+    friend class Pipeline;
 
     // implementation details
 private:
