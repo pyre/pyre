@@ -133,7 +133,9 @@ public:
 public:
     // classify this result and throw the matching exception; a caller that has just checked
     // {ok} and found it false uses this to turn the finding into a failure that carries the
-    // server's own name for it
+    // server's own name for it. a statement that a pipeline skipped never reached the server,
+    // and raises an {OperationalError} that says so; one that ran has nothing to raise, so
+    // asking is a mistake of the caller, and raises an {InterfaceError}
     [[noreturn]] inline auto raise(string_t statement = "") const -> void;
 
     // data
