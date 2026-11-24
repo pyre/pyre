@@ -144,6 +144,8 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_reproduce_order.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_reproduce_indexes.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_reproduce_file.py)
 pyre_test_python_cleanup(postgres_reproduce_file.sql tests/postgres.ext/postgres_reproduce_file.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_reproduce_folder.py)
+pyre_test_python_cleanup(postgres_reproduce_folder tests/postgres.ext/postgres_reproduce_folder.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
 # the drop a cleanup one, and everything in between requires it
