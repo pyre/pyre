@@ -25,6 +25,7 @@ tests.postgres.ext.postgres_database_drop.pre := tests.postgres.ext.postgres_ref
 
 # clean up
 tests.postgres.ext.postgres_reproduce_file.clean := postgres_reproduce_file.sql
+tests.postgres.ext.postgres_reproduce_folder.clean := postgres_reproduce_folder
 
 
 # end of file
