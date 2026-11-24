@@ -1284,6 +1284,15 @@ pyre_test_python_testcase(tests/pyre.pkg/db/parameters_sqlite.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/parameters_refused.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/load_backup.py)
 pyre_test_python_cleanup(load_backup.sql tests/pyre.pkg/db/load_backup.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_condition.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_column.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_reuse.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_paging.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_untyped.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_missing.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_unknown.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/backup_prepare.py)
+pyre_test_python_cleanup(backup_prepare.sql tests/pyre.pkg/db/backup_prepare.py)
 
 
 #
