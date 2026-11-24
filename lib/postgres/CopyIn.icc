@@ -16,8 +16,9 @@
 // start the copy {statement} on {connection}
 pyre::postgres::CopyIn::CopyIn(connection_type connection, view_t statement) :
     _connection(std::move(connection)),
-    // keep the other threads off the session until the copy ends
-    _guard(_connection._guard()),
+    // keep the other threads off the session until the copy ends, and start only on a session
+    // that is not in the middle of another answer
+    _guard(_connection._free(statement)),
     _statement(statement),
     // not yet; the server has to accept the statement first
     _live(false)
