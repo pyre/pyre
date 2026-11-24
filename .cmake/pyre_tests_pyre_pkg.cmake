@@ -1266,6 +1266,12 @@ pyre_test_python_testcase(tests/pyre.pkg/db/insert_nothing.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/insert_defaults_sqlite.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/insert_defaults_all_sqlite.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/transaction_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/identifier_plain.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/identifier_reserved.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/identifier_capitals.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/identifier_quote.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/identifier_dialect.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/identifier_injection.py)
 
 
 #
