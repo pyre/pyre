@@ -44,6 +44,11 @@ pyre_test_python_testcase(tests/postgres.ext/libpq_copy_exec.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_prepare.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_describe.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_release.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_stream.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_stream_arguments.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_stream_refused.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_stream_abandoned.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_stream_failed.py)
 
 # components
 pyre_test_python_testcase(tests/postgres.ext/postgres_database.py)
