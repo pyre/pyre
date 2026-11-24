@@ -312,6 +312,36 @@ pyre::postgres::py::connection(py::module & m)
 
     cls.def(
         // the name
+        "sendPrepare",
+        // the implementation
+        &Connection::sendPrepare,
+        // the signature
+        "name"_a, "statement"_a,
+        // let go of the lock while the socket drains
+        py::call_guard<py::gil_scoped_release>(),
+        // the docstring
+        "teach the server {statement} under the given {name}, and do not wait for it");
+
+    cls.def(
+        // the name
+        "sendPrepared",
+        // the implementation
+        [](const Connection & self, view_t name, const py::args & args) -> void {
+            // render the arguments while we still hold the lock
+            const auto rendered = arguments(args);
+            // and let go of it while the socket drains
+            py::gil_scoped_release release;
+            // send it off
+            self.sendPrepared(name, rendered);
+        },
+        // the signature
+        "name"_a,
+        // the docstring
+        "run the statement the server was taught under {name}, with its placeholders filled in, "
+        "and do not wait for it");
+
+    cls.def(
+        // the name
         "consume",
         // the implementation
         &Connection::consume,
@@ -470,6 +500,20 @@ pyre::postgres::py::connection(py::module & m)
         // the docstring
         "run {statement}, with its $1, $2, ... placeholders filled in from the {arguments}, and "
         "hand back an iterator over its rows, in results of {batch} rows at a time");
+
+    cls.def(
+        // the name
+        "pipeline",
+        // the implementation
+        [](const Connection & self) -> Pipeline {
+            // start a pipeline
+            return Pipeline(self);
+        },
+        // let go of the lock while the session enters it
+        py::call_guard<py::gil_scoped_release>(),
+        // the docstring
+        "start a pipeline, which sends statements without waiting for the answers to the ones "
+        "before them");
 
     // contextual conversion to {bool}, true when the session is up
     cls.def(

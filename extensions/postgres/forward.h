@@ -36,8 +36,10 @@ namespace pyre::postgres::py {
     // the copies of rows into a table and out of the database
     void copyIn(py::module & m);
     void copyOut(py::module & m);
-    // and the rows of a selection read in batches
+    // the rows of a selection read in batches
     void stream(py::module & m);
+    // and pipelines of statements
+    void pipeline(py::module & m);
 
     // loose functions: the module metadata, and the rendering of python values as the text
     // postgres reads
