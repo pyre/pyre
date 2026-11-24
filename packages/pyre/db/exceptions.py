@@ -69,7 +69,8 @@ class Diagnosed(FrameworkError):
         self.detail = detail
         self.hint = hint
         self.position = position
-        # the statement a function on the server ran, when the failure happened inside one
+        # the statement a function on the server ran, when the failure happened inside one, and
+        # where in it the server gave up
         self.internalQuery = internalQuery
         self.internalPosition = internalPosition
         # and where on the server that was: the function, the trigger, the cursor

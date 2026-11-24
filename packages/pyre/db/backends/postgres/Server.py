@@ -386,7 +386,7 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
                 results = list(pipeline)
             # go through the runs and their results
             for (values, _), result in zip(batch, results):
-                # the first that did not run is the one that failed, and undid the segment
+                # the first whose result is not ok is the one that failed, and undid its segment
                 if not result.ok:
                     # carefully
                     try:

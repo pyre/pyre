@@ -109,9 +109,9 @@ class Table(records.record, metaclass=Schemer):
         tables = {}
         # go through both
         for table in (*columns, *declared):
-            # leave me out
+            # a reference to myself
             if table is cls:
-                # since i find my own rows
+                # puts no table before me
                 continue
             # and keep the others
             tables[table] = None
