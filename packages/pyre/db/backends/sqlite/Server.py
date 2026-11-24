@@ -6,6 +6,7 @@
 
 
 # externals
+import contextlib
 import datetime
 import decimal
 import pyre
@@ -143,6 +144,43 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         # hand it to the cursor, which holds the rows it makes
         return self._send(statement=statement, arguments=arguments)
 
+    # bulk loading
+    def load(self, *records):
+        """
+        Insert {records}, many at a time and all or nothing; the records of a table that give
+        values for the same columns share one statement, which runs once for each of them
+        """
+        # the place that puts the values in the form the module takes
+        parameters = self._parameters()
+        # in a block of its own, so that the load keeps all of its records or none of them
+        with self:
+            # go through the groups of records
+            for table, fields, group in self.sql.loadGroups(*records):
+                # a group that leaves every column to the server
+                if not fields:
+                    # has no values to send, and is inserted as rows made of defaults
+                    self.insert(*group)
+                    # and that's all for it
+                    continue
+                # the statement of the group
+                statement = self.sql.loadStatement(
+                    table=table, fields=fields, parameters=parameters
+                )
+                # the values of each record, in the form the module takes
+                rows = (
+                    tuple(
+                        parameters.bound(table=table, column=field, value=value)
+                        for field, value in zip(
+                            fields, self.sql.givenValues(table=table, record=record)
+                        )
+                    )
+                    for record in group
+                )
+                # run it for each of them
+                self._sendMany(statement=statement, rows=rows)
+        # all done
+        return self
+
     # the values that travel beside my statements
     def _parameters(self):
         """
@@ -193,14 +231,39 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         Hand {statement} to my cursor, with the values in {arguments}, and report what sqlite
         thinks of it with the exceptions of the package
         """
+        # while listening for complaints
+        with self._complaints(statement=statement):
+            # execute the statement
+            self.cursor.execute(statement, arguments)
+        # the cursor holds the rows the statement makes
+        return self.cursor
+
+    def _sendMany(self, statement, rows):
+        """
+        Hand {statement} to my cursor once for each of {rows}, the values of its placeholders,
+        and report what sqlite thinks of it with the exceptions of the package
+        """
+        # while listening for complaints
+        with self._complaints(statement=statement):
+            # execute the statement for each row
+            self.cursor.executemany(statement, rows)
+        # the cursor holds what the statement did
+        return self.cursor
+
+    @contextlib.contextmanager
+    def _complaints(self, statement):
+        """
+        Run a block that hands {statement} to my cursor, and report what sqlite thinks of it with
+        the exceptions of the package
+        """
         # a statement sent through a connection that was never opened
         if self.cursor is None:
             # is worth naming
             raise exceptions.InterfaceError(diagnostic="this server is not attached")
         # attempt to
         try:
-            # execute the statement
-            self.cursor.execute(statement, arguments)
+            # run the block
+            yield
         # the module that binds sqlite complains about the use of its interface on its own, with
         # no result code, since sqlite never saw the statement
         except sqlite3.ProgrammingError as error:
@@ -214,8 +277,8 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
             raise kind(
                 diagnostic=str(error), command=statement, code=error.sqlite_errorname
             ) from None
-        # the cursor holds the rows the statement makes
-        return self.cursor
+        # all done
+        return
 
     # private data
     cursor = None  # the cursor that executes my statements

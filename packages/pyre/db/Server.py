@@ -181,6 +181,21 @@ class Server(pyre.component, implements=DataStore):
         # and run them, gathering their rows
         return self._gather(statements=sql, selection=selection, parameters=parameters)
 
+    def load(self, *records):
+        """
+        Insert {records}, many at a time and all or nothing; the records of a table that give
+        values for the same columns travel together
+
+        A load hands back no rows, and refuses a record whose key is there already; {insert}
+        offers both
+        """
+        # in a block of its own, so that the load keeps all of its records or none of them
+        with self:
+            # the standard way to put records in a table is to insert them
+            self.insert(*records)
+        # all done
+        return self
+
     def update(self, *specifications, returning=None):
         """
         Use {specifications} to update the database; with {returning}, a table, one of its

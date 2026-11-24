@@ -147,5 +147,16 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
         # all done
         return
 
+    # bulk loading
+    def copyStatement(self, table, fields):
+        """
+        Build the statement that copies rows of {table} with a value for each of {fields} from
+        the client, in the text format of a copy
+        """
+        # the names of the columns
+        names = ", ".join(self.identifier(field.name) for field in fields)
+        # put it all together
+        return f"COPY {self.identifier(table.pyre_name)} ({names}) FROM STDIN;"
+
 
 # end of file

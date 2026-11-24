@@ -183,6 +183,47 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # hand it to the session
         return self.connection.execute(statement, *arguments)
 
+    # bulk loading
+    def load(self, *records):
+        """
+        Insert {records}, many at a time and all or nothing; the records of a table that give
+        values for the same columns are copied into it together
+        """
+        # a load through a session that was never opened
+        if self.connection is None:
+            # is worth naming
+            raise exceptions.InterfaceError(diagnostic="this server is not attached")
+        # the place that puts the values in the form the bindings take
+        parameters = self._parameters()
+        # in a block of its own, so that the load keeps all of its records or none of them
+        with self:
+            # go through the groups of records
+            for table, fields, group in self.sql.loadGroups(*records):
+                # a group that leaves every column to the server
+                if not fields:
+                    # has no values to copy, and is inserted as rows made of defaults
+                    self.insert(*group)
+                    # and that's all for it
+                    continue
+                # the statement that starts the copy of the group
+                statement = self.sql.copyStatement(table=table, fields=fields)
+                # copy the group; the copy keeps its rows when the block ends, and the server
+                # refuses them then, when it must
+                with self.connection.copyIn(statement) as copy:
+                    # go through the records
+                    for record in group:
+                        # and send the values of each, in the form the bindings take
+                        copy.row(
+                            *(
+                                parameters.bound(table=table, column=field, value=value)
+                                for field, value in zip(
+                                    fields, self.sql.givenValues(table=table, record=record)
+                                )
+                            )
+                        )
+        # all done
+        return self
+
     # locks
     @contextlib.contextmanager
     def lock(self, name, wait=True, timeout=None):
