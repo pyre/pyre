@@ -252,6 +252,7 @@ if(PYRE_BUILD_TESTING)
   if(PostgreSQL_FOUND)
     include(pyre_tests_postgres_lib)
     include(pyre_tests_postgres_ext)
+    include(pyre_tests_postgres_pkg)
   endif()
 
   # if we have hdf5 support

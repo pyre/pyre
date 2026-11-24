@@ -1,0 +1,129 @@
+# -*- cmake -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+#
+# the tests of pyre.db against a postgres server
+#
+pyre_test_python_testcase(tests/postgres.pkg/database.py)
+pyre_test_python_testcase(tests/postgres.pkg/attach.py)
+pyre_test_python_testcase(tests/postgres.pkg/database_create.py)
+pyre_test_python_testcase(tests/postgres.pkg/table.py)
+pyre_test_python_testcase(tests/postgres.pkg/references.py)
+pyre_test_python_testcase(tests/postgres.pkg/database_drop.py)
+
+# pyre.db against the default database, each in a transaction it rolls back
+pyre_test_python_testcase(tests/postgres.pkg/null_insert.py)
+pyre_test_python_testcase(tests/postgres.pkg/null_text.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_time.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_timestamp.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_bytes.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_uuid.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_array.py)
+pyre_test_python_testcase(tests/postgres.pkg/update_null.py)
+pyre_test_python_testcase(tests/postgres.pkg/update_all.py)
+pyre_test_python_testcase(tests/postgres.pkg/group_by.py)
+pyre_test_python_testcase(tests/postgres.pkg/where_null.py)
+pyre_test_python_testcase(tests/postgres.pkg/where_date.py)
+pyre_test_python_testcase(tests/postgres.pkg/where_like.py)
+pyre_test_python_testcase(tests/postgres.pkg/where_like_escape.py)
+pyre_test_python_testcase(tests/postgres.pkg/defaults.py)
+pyre_test_python_testcase(tests/postgres.pkg/values.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_nonfinite.py)
+pyre_test_python_testcase(tests/postgres.pkg/cast.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_arrays.py)
+pyre_test_python_testcase(tests/postgres.pkg/with_aborted.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_json.py)
+pyre_test_python_testcase(tests/postgres.pkg/column_bigint.py)
+pyre_test_python_testcase(tests/postgres.pkg/table_exist_ok.py)
+pyre_test_python_testcase(tests/postgres.pkg/table_missing_ok.py)
+pyre_test_python_testcase(tests/postgres.pkg/database_exist_ok.py)
+pyre_test_python_testcase(tests/postgres.pkg/database_missing_ok.py)
+pyre_test_python_testcase(tests/postgres.pkg/index.py)
+pyre_test_python_testcase(tests/postgres.pkg/identity.py)
+pyre_test_python_testcase(tests/postgres.pkg/constraint_named.py)
+pyre_test_python_testcase(tests/postgres.pkg/documentation.py)
+pyre_test_python_testcase(tests/postgres.pkg/isin.py)
+pyre_test_python_testcase(tests/postgres.pkg/paging.py)
+pyre_test_python_testcase(tests/postgres.pkg/join.py)
+pyre_test_python_testcase(tests/postgres.pkg/isin_query.py)
+pyre_test_python_testcase(tests/postgres.pkg/returning_insert.py)
+pyre_test_python_testcase(tests/postgres.pkg/returning_delete.py)
+pyre_test_python_testcase(tests/postgres.pkg/returning_update.py)
+pyre_test_python_testcase(tests/postgres.pkg/upsert_replace.py)
+pyre_test_python_testcase(tests/postgres.pkg/upsert_keep.py)
+pyre_test_python_testcase(tests/postgres.pkg/merge.py)
+pyre_test_python_testcase(tests/postgres.pkg/nested_rollback.py)
+pyre_test_python_testcase(tests/postgres.pkg/nested_recovery.py)
+pyre_test_python_testcase(tests/postgres.pkg/update_atomic.py)
+pyre_test_python_testcase(tests/postgres.pkg/lock_taken.py)
+pyre_test_python_testcase(tests/postgres.pkg/lock_released.py)
+pyre_test_python_testcase(tests/postgres.pkg/lock_raised.py)
+pyre_test_python_testcase(tests/postgres.pkg/lock_timeout.py)
+pyre_test_python_testcase(tests/postgres.pkg/lock_key.py)
+pyre_test_python_testcase(tests/postgres.pkg/reserved.py)
+pyre_test_python_testcase(tests/postgres.pkg/reserved_names.py)
+pyre_test_python_testcase(tests/postgres.pkg/keywords.py)
+pyre_test_python_testcase(tests/postgres.pkg/conforming_strings.py)
+pyre_test_python_testcase(tests/postgres.pkg/literal_backslash.py)
+pyre_test_python_testcase(tests/postgres.pkg/parameters_backslash.py)
+pyre_test_python_testcase(tests/postgres.pkg/parameters_decimal.py)
+pyre_test_python_testcase(tests/postgres.pkg/load.py)
+pyre_test_python_testcase(tests/postgres.pkg/load_text.py)
+pyre_test_python_testcase(tests/postgres.pkg/load_defaults.py)
+pyre_test_python_testcase(tests/postgres.pkg/load_null.py)
+pyre_test_python_testcase(tests/postgres.pkg/load_atomic.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_select.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_update.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_delete.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_paging.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_types.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_lazy.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_close.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_with.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_reattach.py)
+pyre_test_python_testcase(tests/postgres.pkg/projection_derived.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_cursor.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_nested.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_batches.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_abandoned.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_rollback.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_failed.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_detached.py)
+pyre_test_python_testcase(tests/postgres.pkg/select_failed_held.py)
+pyre_test_python_testcase(tests/postgres.pkg/load_generated_refused.py)
+pyre_test_python_testcase(tests/postgres.pkg/reproduce.py)
+pyre_test_python_testcase(tests/postgres.pkg/reproduce_identity.py)
+pyre_test_python_testcase(tests/postgres.pkg/reproduce_order.py)
+pyre_test_python_testcase(tests/postgres.pkg/reproduce_self.py)
+pyre_test_python_testcase(tests/postgres.pkg/reproduce_indexes.py)
+pyre_test_python_testcase(tests/postgres.pkg/reproduce_file.py)
+pyre_test_python_cleanup(reproduce_file.sql tests/postgres.pkg/reproduce_file.py)
+pyre_test_python_testcase(tests/postgres.pkg/reproduce_folder.py)
+pyre_test_python_cleanup(reproduce_folder tests/postgres.pkg/reproduce_folder.py)
+pyre_test_python_testcase(tests/postgres.pkg/folder_text.py)
+pyre_test_python_cleanup(folder_text tests/postgres.pkg/folder_text.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_many.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_many_failed.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_many_block.py)
+pyre_test_python_testcase(tests/postgres.pkg/prepare_many_returning.py)
+
+# the component tests pound on a database they create and drop; the create is a setup fixture,
+# the drop a cleanup one, and everything in between requires it
+set_property(TEST tests.postgres.pkg.database_create.py PROPERTY
+  FIXTURES_SETUP POSTGRES)
+set_property(TEST tests.postgres.pkg.database_drop.py PROPERTY
+  FIXTURES_CLEANUP POSTGRES)
+
+# set up the dependencies
+set_property(TEST tests.postgres.pkg.table.py PROPERTY
+  FIXTURES_REQUIRED POSTGRES)
+
+set_property(TEST tests.postgres.pkg.references.py PROPERTY
+  FIXTURES_REQUIRED POSTGRES)
+
+
+# end of file
