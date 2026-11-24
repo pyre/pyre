@@ -6,17 +6,23 @@
 
 
 # the words SQL:2016 reserves, which a name must be quoted to use, as the table of key words in
-# the appendix of the postgres 18 documentation lists them
+# the appendix of the postgres 18 documentation lists them. the web page of that table puts a
+# zero-width space after each underscore of a long word, so a browser may break it across lines;
+# the space is invisible, and a copy of the page carries it along, which is how three of the words
+# below, array_max_cardinality, current_default_transform_group and
+# current_transform_group_for_type, came to hold them. a word that holds one matches no name, so
+# a name spelled like it would go out unquoted; the words are spelled here in printable ASCII,
+# which {tests/pyre.pkg/db/identifier_reserved_spelling.py} checks
 reserved = frozenset("""
-    abs absent acos all allocate alter and any are array array_agg array_​max_​cardinality as
+    abs absent acos all allocate alter and any are array array_agg array_max_cardinality as
     asensitive asin asymmetric at atan atomic authorization avg begin begin_frame
     begin_partition between bigint binary blob boolean both by call called cardinality cascaded
     case cast ceil ceiling char char_length character character_length check classifier clob
     close coalesce collate collect column commit condition connect constraint contains convert
     copy corr corresponding cos cosh count covar_pop covar_samp create cross cube cume_dist
     current current_catalog current_date current_path current_role current_row current_schema
-    current_time current_timestamp current_user current_​default_​transform_​group
-    current_​transform_​group_​for_​type cursor cycle datalink date day deallocate dec decfloat
+    current_time current_timestamp current_user current_default_transform_group
+    current_transform_group_for_type cursor cycle datalink date day deallocate dec decfloat
     decimal declare default define delete dense_rank deref describe deterministic disconnect
     distinct dlnewcopy dlpreviouscopy dlurlcomplete dlurlcompleteonly dlurlcompletewrite
     dlurlpath dlurlpathonly dlurlpathwrite dlurlscheme dlurlserver dlvalue double drop dynamic
