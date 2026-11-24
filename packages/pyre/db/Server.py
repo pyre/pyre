@@ -307,6 +307,20 @@ class Server(pyre.component, implements=DataStore):
         # otherwise, run it, gathering its rows
         return self._gather(statements=(tuple(sql),), selection=selection, parameters=parameters)
 
+    def restartIdentity(self, table, field, start):
+        """
+        Make the server assign the values of {field}, a column of {table} whose values it
+        assigns, from {start} on
+        """
+        # build the statement; a language that has nothing to say about it builds none
+        statement = tuple(self.sql.restartIdentity(table=table, field=field, start=start))
+        # so run the one that is there
+        if statement:
+            # and only that
+            self.execute(*statement)
+        # all done
+        return self
+
     def lock(self, name, wait=True, timeout=None):
         """
         Hold the lock {name} from the start of a block to its end; a back end without locks of
@@ -763,15 +777,8 @@ class Server(pyre.component, implements=DataStore):
             if largest[field.name] is None:
                 # starts where it would have anyway
                 continue
-            # the others start after their largest value; a language that has nothing to say
-            # about it builds no statement
-            statement = tuple(
-                self.sql.restartIdentity(table=table, field=field, start=largest[field.name] + 1)
-            )
-            # so run the ones that are there
-            if statement:
-                # and only those
-                self.execute(*statement)
+            # the others start after their largest value
+            self.restartIdentity(table=table, field=field, start=largest[field.name] + 1)
         # all done
         return
 
