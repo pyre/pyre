@@ -68,6 +68,7 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_select_batches.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_reproduce.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_many.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_many_failed.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_many_block.py)
 
 # {sqlite_error_busy} keeps the database it locks
 set(sqlite_error_busy_cleanup
