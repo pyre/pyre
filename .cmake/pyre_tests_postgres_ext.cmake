@@ -136,6 +136,7 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_select_abandoned.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_select_rollback.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_select_failed.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_select_detached.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_failed_held.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
 # the drop a cleanup one, and everything in between requires it
