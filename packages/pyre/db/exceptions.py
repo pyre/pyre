@@ -42,6 +42,9 @@ class Diagnosed(FrameworkError):
         detail="",
         hint="",
         position=0,
+        internalQuery="",
+        internalPosition=0,
+        context="",
         schema="",
         table="",
         column="",
@@ -66,7 +69,12 @@ class Diagnosed(FrameworkError):
         self.detail = detail
         self.hint = hint
         self.position = position
-        # and the object the complaint is about, which is how two unique indices are told apart
+        # the statement a function on the server ran, when the failure happened inside one
+        self.internalQuery = internalQuery
+        self.internalPosition = internalPosition
+        # and where on the server that was: the function, the trigger, the cursor
+        self.context = context
+        # the object the complaint is about, which is how two unique indices are told apart
         self.schema = schema
         self.table = table
         self.column = column
