@@ -179,6 +179,7 @@ with joins they are crossed with `CROSS JOIN`, so that the joins read from left 
 | `pyre.db.postgres(name=...)` | a postgres server, through libpq |
 | `pyre.db.sqlite(name=..., database=path)` | a sqlite database, `:memory:` unless given a path |
 | `pyre.db.backup(name=..., stream=...)` | a stream, to which it writes the statements |
+| `pyre.db.folder(name=..., path=...)` | a folder, with a file of rows for each table |
 
 Each server has `attach()`, which hands back the server, and `detach()`, and builds and executes
 statements through `createTable`, `dropTable`, `insert(*rows)`, `update(*(template, condition))`,
@@ -244,6 +245,20 @@ indexes, and each of its generated columns is told to go on after its largest va
 `ALTER TABLE … ALTER COLUMN … RESTART WITH …`, which sqlite has no need of. With
 `pyre.db.backup(stream=…, sql=<mill>)` as the server, the reproduction is a file of statements in
 the dialect of the mill, which `psql -1 -f` or `sqlite3` runs as it is.
+
+`pyre.db.folder(name=…, path=…)` keeps the tables of a database as files of rows in a folder,
+which it makes when it attaches: `<table>.tsv` for each table, a line for each row, its values in
+the order the table declares its columns, in the text format of postgres's copies. Values are
+separated by tabs, a null is `\N`, a backslash escapes the characters that would break a line or a
+row, a truth value is `t` or `f`, octets are `\\x` and their hexadecimal digits, and dates and times
+take the form of the standard; postgres reads such a file with `COPY … FROM` or psql's `\copy`,
+and the folder reads every escape postgres writes. A folder makes and removes tables, loads rows and
+reads whole tables back in the order they were loaded; it keeps no indexes, assigns no values, so a
+record that leaves a value to the server is refused, has no text for arrays, and runs no statements,
+so everything else is refused with `NotSupportedError`. A transaction block that raises leaves the
+files as it found them, and a folder removes tables only outside a block. Reproducing a database
+into a folder and the folder into another database moves the database between back ends, in a form
+neither of them owns.
 
 The postgres bindings move rows in bulk. `connection.copyIn(statement)` starts a
 `COPY … FROM STDIN` and hands back a context manager, whose `row(*values)` sends one row with its
