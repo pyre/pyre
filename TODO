@@ -75,6 +75,14 @@
     exercised on three database families, the crib sheet should retire, and with it a
     whole class of silent staleness
 
+  - a narrative check for c++ (2026-11-24): {etc/ci/conventions/check.py} reads the comments
+    of python only, so nothing notices a c++ function with no comment at all, such as the one
+    {Pipeline::operator=} had on branch {db}; a rule that flags every uncommented statement, as
+    the python one does, flags too much in c++, where a comment above an {if} tells the story
+    of its branch and a heading covers a run of binding definitions; a start is a scanner over
+    the lines a branch adds that flags functions with no comment, and statements with none
+    after a statement that has one, for review rather than as a gate
+
 - tests:
 
   - move the C++ test drivers to Catch2: 242 drivers in {journal.lib}, {pyre.lib}, {h5.lib},
