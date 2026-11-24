@@ -95,10 +95,11 @@ class Server(base.Server, family="pyre.db.servers.folder"):
         raise self._statements()
 
     # tables
-    def createTable(self, table, existOk=False, indexes=True):
+    def createTable(self, table, existOk=False, indexes=True, selfReferences=True):
         """
         Make the file of the rows of {table}, empty; with {existOk}, finding it there already is
-        fine, and its rows are left alone; its rows are read whole, so {indexes} changes nothing
+        fine, and its rows are left alone; its rows are read whole and hold the values they were
+        given, so {indexes} and {selfReferences} change nothing
         """
         # the file of the table
         file = self._file(table=table)
@@ -144,6 +145,14 @@ class Server(base.Server, family="pyre.db.servers.folder"):
         # remove it
         os.unlink(file)
         # and hand me back
+        return self
+
+    def addSelfReferences(self, table):
+        """
+        Leave {table} as it is: a folder holds the values its rows were given, which no reference
+        checks
+        """
+        # so leave it alone
         return self
 
     def createIndexes(self, table, existOk=False):

@@ -46,6 +46,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
     hasIndexes = True
     # and takes the id a row brings without being told to, so it has no words for it
     hasOverriding = False
+    # a table gets its references when it is made, since sqlite cannot add one later
+    addsReferences = False
     # the version of the library python talks to, which decides what else it has
     version = sqlite3.sqlite_version_info
     # the versions that bring the features that came late: statements that return the rows they
