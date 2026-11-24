@@ -12,6 +12,9 @@ The description of tables and their columns
 # the special values {NULL} and {DEFAULT}
 from .literals import null, default
 
+# the slots for the values of prepared statements
+from .Parameter import Parameter as parameter
+
 # cascade action markers for foreign keys
 from .actions import noAction, restrict, cascade, setNull, setDefault
 

@@ -8,6 +8,9 @@
 # the special values {NULL} and {DEFAULT}
 from . import literals
 
+# the slots for the values of prepared statements
+from .Parameter import Parameter
+
 # superclass
 from ... import records
 from ... import schemata
@@ -76,14 +79,16 @@ class Measure(records.measure):
         """
         The base class of the local mixins.
 
-        Its purpose is to trap value coercion and skip it for the special values {NULL} and
-        {DEFAULT} that show up as {literals} instances
+        Its purpose is to trap value coercion and skip it for the values that stand for something
+        other than themselves: the special values {NULL} and {DEFAULT} that show up as
+        {literals} instances, and the slots of prepared statements, whose values are converted
+        when the statement runs
         """
 
         # interface
         def coerce(self, value, **kwds):
-            # the literals
-            if value is literals.null or value is literals.default:
+            # the literals, and the slots
+            if value is literals.null or value is literals.default or isinstance(value, Parameter):
                 # require no processing
                 return value
             # for the rest, chain up...

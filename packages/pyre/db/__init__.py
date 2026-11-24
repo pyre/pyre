@@ -41,6 +41,9 @@ def descending(fieldref):
 # primitive SQL expressions
 from .queries import isNull, isNotNull, cast, like, negation, isIn, join, leftJoin
 
+# the slots of prepared statements
+from .schema import parameter
+
 # field declarations
 from ..records import field
 
