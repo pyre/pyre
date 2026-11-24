@@ -211,6 +211,22 @@ the table, or the fields of another unique constraint or index named by `key=`. 
 sqlite write `INSERT … ON CONFLICT … DO NOTHING` or `DO UPDATE`; standard SQL writes `MERGE`.
 A selection of a whole table names its columns.
 
+`load(*records)` inserts many records at once, all or nothing, and hands back the server. The
+records are grouped by their table and by the columns they give values for, in the order the
+groups first appear. postgres copies each group into its table with `COPY … FROM STDIN`, sqlite
+runs one `INSERT` per group with `executemany`, and the other servers write the inserts that
+`insert` writes. A load takes neither `returning` nor `existing`, so a record whose key is there
+already raises `IntegrityError`, and the whole load is undone.
+
+The postgres bindings move rows in bulk. `connection.copyIn(statement)` starts a
+`COPY … FROM STDIN` and hands back a context manager, whose `row(*values)` sends one row with its
+values rendered as `execute` renders its arguments; the block keeps the rows when it ends and
+throws them away when it raises. `connection.copyOut(statement)` starts a `COPY … TO STDOUT` and
+hands back an iterator over the lines of text the server sends. A copy holds its session until
+it ends, so the other threads that share the session wait for it. A `COPY` that moves rows between
+the server and the client, sent through `exec`, `execute` or `send`, is refused with
+`InterfaceError`.
+
 Creating and dropping make it so: after `createTable(table)` the table exists, and after
 `dropTable(table)` it is gone. By default, finding it that way already is an error; with
 `existOk=True` on a creation, finding it there already is fine, and with `missingOk=True` on a
