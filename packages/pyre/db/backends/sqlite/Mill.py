@@ -14,6 +14,9 @@ from ..standard import Mill as standard
 # the local exceptions
 from ... import exceptions
 
+# the words my language reserves
+from . import keywords
+
 # the type declarators of my columns
 from .Columns import Columns
 
@@ -30,6 +33,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
 
     # the name of my language, for the explanations of refusals
     dialect = "sqlite"
+    # the words it reserves, which a name must be quoted to use
+    reserved = keywords.reserved
     # the words that make a creation conditional on the absence of what it creates
     ifMissing = "IF NOT EXISTS"
     # and a removal conditional on the presence of what it removes

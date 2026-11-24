@@ -18,6 +18,9 @@ from ... import exceptions
 from ...schema.Measure import Measure
 from ...schema.FieldReference import FieldReference
 
+# the words my language reserves
+from . import keywords
+
 # the type declarators of my columns
 from .Columns import Columns
 
@@ -34,6 +37,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
 
     # the name of my language, for the explanations of refusals
     dialect = "postgres"
+    # the words it reserves, which a name must be quoted to use
+    reserved = keywords.reserved
     # the words that make a creation conditional on the absence of what it creates
     ifMissing = "IF NOT EXISTS"
     # and a removal conditional on the presence of what it removes
@@ -61,7 +66,7 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
             # records the whole of its docstring
             note = self.quote(text=inspect.cleandoc(table.__doc__))
             # as the comment of the table
-            yield self.place(f"COMMENT ON TABLE {table.pyre_name} IS {note};")
+            yield self.place(f"COMMENT ON TABLE {self.identifier(table.pyre_name)} IS {note};")
         # go through its columns
         for field in table.pyre_fields:
             # and each documented one
@@ -69,7 +74,10 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
                 # records its documentation
                 note = self.quote(text=field.doc)
                 # as its comment
-                yield self.place(f"COMMENT ON COLUMN {table.pyre_name}.{field.name} IS {note};")
+                yield self.place(
+                    f"COMMENT ON COLUMN {self.identifier(table.pyre_name)}"
+                    f".{self.identifier(field.name)} IS {note};"
+                )
         # all done
         return
 
@@ -116,7 +124,7 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
         # every statement starts at the margin
         self.margin()
         # simple enough
-        yield self.place(f"CREATE DATABASE {name};")
+        yield self.place(f"CREATE DATABASE {self.identifier(name)};")
         # all done
         return
 
@@ -130,7 +138,7 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
         # every statement starts at the margin
         self.margin()
         # build the statement
-        yield self.place(f"DROP DATABASE{clause} {name};")
+        yield self.place(f"DROP DATABASE{clause} {self.identifier(name)};")
         # all done
         return
 
