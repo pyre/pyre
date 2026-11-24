@@ -63,6 +63,8 @@ namespace pyre::postgres {
     // the copies of rows into a table and out of the database
     class CopyIn;
     class CopyOut;
+    // the rows of a selection, read in batches as the server sends them
+    class Stream;
     // an asynchronous message from another session
     struct Notification;
 } // namespace pyre::postgres

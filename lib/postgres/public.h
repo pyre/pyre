@@ -41,6 +41,8 @@
 // the copies of rows into a table and out of the database
 #include "CopyIn.h"
 #include "CopyOut.h"
+// the rows of a selection, read in batches as the server sends them
+#include "Stream.h"
 
 
 // end of file
