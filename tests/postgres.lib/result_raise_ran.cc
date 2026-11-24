@@ -56,6 +56,11 @@ main()
         std::cerr << "the result raised '" << error.what() << "'" << std::endl;
         return 1;
     }
+
+    // a {raise} that returns let the mistake go unreported
+    std::cerr << "the result raised nothing" << std::endl;
+    // which is a failure
+    return 1;
 }
 
 

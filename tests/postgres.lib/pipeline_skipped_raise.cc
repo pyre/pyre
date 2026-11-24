@@ -74,6 +74,11 @@ main()
         std::cerr << "the result raised '" << error.what() << "'" << std::endl;
         return 1;
     }
+
+    // a {raise} that returns lost the skip
+    std::cerr << "the result raised nothing" << std::endl;
+    // which is a failure
+    return 1;
 }
 
 
