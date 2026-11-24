@@ -155,12 +155,9 @@ public:
     // parameters it takes, and the labels and the types of the columns of its rows, of which the
     // description carries none
     inline auto describe(view_t name) const -> Result;
-    // make the server forget the statement under {name}, which frees the name for another
-    //
-    // a libpq that can close a prepared statement does so even in a transaction that has failed,
-    // and finds nothing wrong with a name that holds nothing. an older one asks the server to
-    // {DEALLOCATE} the statement instead, which a failed transaction refuses until it ends, and
-    // which refuses a name that holds nothing
+    // make the server forget the statement under {name}, which frees the name for another; the
+    // server does so even in a transaction that has failed, and finds nothing wrong with a name
+    // that holds nothing
     inline auto release(view_t name) const -> void;
 
     // asynchronous execution

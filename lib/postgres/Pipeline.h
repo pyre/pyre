@@ -32,7 +32,7 @@
 // a pipeline holds the lock of its session from the moment it starts until it ends, and the
 // session refuses the statements sent around it. a pipeline that goes away before its answers are
 // read syncs the statements it sent, reads the answers to the end, and leaves the session as it
-// found it. pipelines arrived in libpq 14, and an older one refuses to start them
+// found it
 //
 // a pipeline may not be copied, because what it started on the server can be ended only once; it
 // may be moved, because the obligation to end it can be handed on
@@ -95,11 +95,6 @@ private:
     inline auto _pump() -> void;
     // the next part of the answers, waiting for the server but never on it
     inline auto _wait() -> PGresult *;
-    // the calls into libpq that only a libpq with pipelines has
-    inline auto _enter() -> int;
-    inline auto _exit() -> int;
-    inline auto _sync() -> int;
-    inline auto _flush() -> int;
 
     // data
 private:

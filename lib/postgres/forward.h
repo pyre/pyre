@@ -114,9 +114,9 @@ namespace pyre::postgres {
         fatalError,
         // the result set is being delivered a row at a time
         singleTuple,
-        // the result set is being delivered in chunks; libpq 17 and later
+        // the result set is being delivered in chunks
         chunk,
-        // the boundary between two pipelined batches; libpq 14 and later
+        // the boundary between two pipelined batches
         pipelineSync,
         // the statement was skipped because an earlier one in its pipeline failed
         pipelineAborted,

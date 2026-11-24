@@ -74,23 +74,15 @@ pyre::postgres::execStatus(ExecStatusType status) -> ExecStatus
         // one row of a set being delivered a row at a time
         case PGRES_SINGLE_TUPLE:
             return ExecStatus::singleTuple;
-
-// the chunked delivery of a result set arrived in libpq 17, and it announces itself
-#if defined(LIBPQ_HAS_CHUNK_MODE)
         // one batch of a set being delivered in chunks
         case PGRES_TUPLES_CHUNK:
             return ExecStatus::chunk;
-#endif
-
-// pipelining arrived in libpq 14, and it too announces itself
-#if defined(LIBPQ_HAS_PIPELINING)
         // the boundary between two batches
         case PGRES_PIPELINE_SYNC:
             return ExecStatus::pipelineSync;
         // a statement that never ran because one ahead of it in the pipeline failed
         case PGRES_PIPELINE_ABORTED:
             return ExecStatus::pipelineAborted;
-#endif
 
         // and anything else
         default:

@@ -27,6 +27,12 @@
 #include <vector>
 // the postgres client library
 #include <libpq-fe.h>
+// whose version 17 brought the interfaces the library talks to the server through: the chunked
+// delivery of rows, the release of a prepared statement, and the cancellation of a statement in
+// flight. libpq announces each of them, and all three arrived together
+#if !defined(LIBPQ_HAS_ASYNC_CANCEL)
+#error "the postgres library needs libpq 17 or later"
+#endif
 // support
 #include <pyre/journal.h>
 

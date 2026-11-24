@@ -312,7 +312,6 @@ pyre::postgres::Connection::describe(view_t name) const -> Result
 auto
 pyre::postgres::Connection::release(view_t name) const -> void
 {
-#if defined(LIBPQ_HAS_CLOSE_PREPARED)
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
     const auto held = hold(name);
@@ -322,11 +321,6 @@ pyre::postgres::Connection::release(view_t name) const -> void
     PGresult * result = PQclosePrepared(_handle(), label.c_str());
     // adopt what came back long enough to learn whether the server did it, and raise if not
     _harvest(result, name);
-#else
-    // ask the server to deallocate it, under its name quoted as an identifier; both calls take
-    // their own turns with the other users of the session
-    exec("DEALLOCATE " + escapeIdentifier(name));
-#endif
 
     // all done
     return;
@@ -483,23 +477,29 @@ pyre::postgres::Connection::result() const -> std::optional<Result>
 auto
 pyre::postgres::Connection::cancel() const -> void
 {
-    // a cancellation travels over a connection of its own, which libpq builds out of this one
-    PGcancel * request = PQgetCancel(_handle());
     // a session that never came up has nothing to cancel
-    if (request == nullptr) {
+    if (PQstatus(_handle()) != CONNECTION_OK) {
         throw InterfaceError("cannot cancel a statement on a session that is not established");
     }
+    // a cancellation travels over a connection of its own, which libpq builds out of this one,
+    // with the same settings, encryption included
+    PGcancelConn * request = PQcancelCreate(_handle());
+    // libpq fails to build it only when it runs out of memory
+    if (request == nullptr) {
+        throw OperationalError(Diagnostic(string_t("out of memory for a cancellation request")));
+    }
 
-    // room for libpq to explain a failure; its documentation asks for at least 256 octets
-    char buffer[256];
-    // ask the server to stop
-    const int status = PQcancel(request, buffer, sizeof(buffer));
-    // give the side channel back, whatever the answer, and before we look at it
-    PQfreeCancel(request);
-    // a zero means the request never reached the server
-    if (status == 0) {
-        // and {buffer} is where libpq wrote why
-        throw OperationalError(Diagnostic(string_t(buffer)));
+    // ask the server to stop, and wait until it has heard
+    const auto delivered = PQcancelBlocking(request);
+    // a zero means the request never reached the server, and the side channel knows why; read
+    // it while the side channel is still there
+    const auto explanation = delivered == 0 ? string_t(PQcancelErrorMessage(request)) : string_t();
+    // give the side channel back, whatever the answer
+    PQcancelFinish(request);
+    // and if the request did not get through
+    if (delivered == 0) {
+        // say why
+        throw OperationalError(Diagnostic(explanation));
     }
 
     // all done; note that a successful request only means the server heard it. the statement
@@ -682,14 +682,12 @@ pyre::postgres::Connection::hold(view_t statement) const -> Hold
             "the session is in the middle of the answer to another statement",
             string_t(statement)));
     }
-#if defined(LIBPQ_HAS_PIPELINING)
     // a session in a pipeline takes its statements through the pipeline, and libpq refuses the
     // ones sent around it
     if (PQpipelineStatus(_handle()) != PQ_PIPELINE_OFF) {
         // so the statement is a mistake of the caller
         throw InterfaceError(Diagnostic("the session is in a pipeline", string_t(statement)));
     }
-#endif
     // otherwise, hand over a hold on the session, which carries the guard of its lock
     return Hold(_connection, std::move(guard));
 }
