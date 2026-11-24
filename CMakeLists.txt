@@ -115,8 +115,9 @@ if(WITH_CUDA)
     endif()
 endif()
 
-# postgres
-find_package(PostgreSQL)
+# postgres; the library talks to the server through the interfaces libpq 17 introduced, and an
+# older libpq leaves it out of the build
+find_package(PostgreSQL 17)
 
 # python
 find_package(Python 3.11
