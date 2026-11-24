@@ -279,9 +279,13 @@ class Literals(Visitor):
         """
         Render {level}, an entry or a level of an array whose entries are rendered by {entry}
         """
-        # an entry
+        # a missing entry
+        if level is None:
+            # is {NULL}, whatever the type of the entries
+            return "NULL"
+        # the others
         if not isinstance(level, tuple):
-            # is rendered as such
+            # are rendered as such
             return entry(value=level)
         # a level without entries
         if not level:
