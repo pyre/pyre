@@ -26,6 +26,9 @@ from .Columns import Columns
 # and the literals of their values
 from .Literals import Literals
 
+# and the values of statements that travel beside them
+from .Parameters import Parameters
+
 
 # declaration
 class Mill(SQL, family="pyre.db.dialects.standard"):
@@ -63,6 +66,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     columns = Columns
     # and the one that renders the literals of their values
     literals = Literals
+    # and the one that keeps the values of a statement that travel beside it
+    placeholders = Parameters
 
     # types
     # the metaclasses for tables and queries
@@ -79,11 +84,21 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     # the references to the fields of tables
     from ...schema.FieldReference import FieldReference as fieldReference
 
+    # the values that travel beside a statement
+    def parameters(self):
+        """
+        Make a place for the values of a statement, which keeps them in the form the bindings of
+        the back end take, and writes a placeholder in the statement in place of each
+        """
+        # make one that works for me
+        return self.placeholders(mill=self)
+
     # queries
-    def select(self, query, limit=None, offset=None):
+    def select(self, query, limit=None, offset=None, parameters=None):
         """
         Generate the SELECT statement described by {query}; {offset} skips that many of the
-        first rows, and {limit} keeps at most that many of the rest
+        first rows, and {limit} keeps at most that many of the rest; with {parameters}, the
+        values in the statement are kept there, and placeholders take their place
         """
         # only integers may reach the statement as the bounds of the selection: the limit
         limit = None if limit is None else operator.index(limit)
@@ -94,7 +109,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # the clauses that page through the rows, as the dialect writes them
         paging = self._paging(limit=limit, offset=offset)
         # build the statement
-        lines = list(self._selection(query=query, paging=paging))
+        lines = list(self._selection(query=query, paging=paging, parameters=parameters))
         # end its last line
         lines[-1] += ";"
         # and hand it over
@@ -102,10 +117,11 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
-    def _selection(self, query, paging):
+    def _selection(self, query, paging, parameters=None):
         """
         Generate the lines of the selection described by {query}, followed by the clauses in
-        {paging}, without the terminator of the statement
+        {paging}, without the terminator of the statement; its values go to {parameters}, when
+        it is given
         """
         # if the query is a table specification
         if isinstance(query, self.schemer):
@@ -161,7 +177,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # do we need a comma?
             comma = "," if index + 1 < fields else ""
             # read the field as the dialect reads it
-            reading = self._read(column=entry, text=self.expression(entry))
+            reading = self._read(
+                column=entry, text=self.expression(root=entry, parameters=parameters)
+            )
             # and render it
             yield self.place(f"{reading} AS {self.identifier(entry.name)}{comma}")
         # push out
@@ -195,7 +213,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # the reference to the table
             reference = self._tableReference(query=query, name=join.table.pyre_name)
             # the predicate its rows must satisfy
-            predicate = self.expression(root=join.on, context=query)
+            predicate = self.expression(root=join.on, context=query, parameters=parameters)
             # put it all together
             yield self.place(f"{join.keyword} {reference} ON ({predicate})")
 
@@ -219,7 +237,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # push in
             self.indent()
             # and render its body
-            yield self.place(renderer(query=query))
+            yield self.place(renderer(query=query, parameters=parameters))
 
         # back out to the level of the clauses
         self.outdent()
@@ -356,11 +374,12 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # hand them over
         return names
 
-    def _merge(self, records, existing, key):
+    def _merge(self, records, existing, key, parameters=None):
         """
         Merge {records} into their tables, keeping or replacing the rows that are there already,
         as {existing} asks; the consecutive records of a table that give the same columns share a
-        statement
+        statement, and each statement is handed over whole; their values go to {parameters},
+        when it is given
         """
         # the groups of records of the same shape
         groups = []
@@ -383,13 +402,20 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # each group
         for (table, fields), rows in groups:
             # is merged by a statement of its own
-            yield from self._mergeStatement(
-                table=table, fields=fields, rows=rows, existing=existing, key=key
+            yield tuple(
+                self._mergeStatement(
+                    table=table,
+                    fields=fields,
+                    rows=rows,
+                    existing=existing,
+                    key=key,
+                    parameters=parameters,
+                )
             )
         # all done
         return
 
-    def _mergeStatement(self, table, fields, rows, existing, key):
+    def _mergeStatement(self, table, fields, rows, existing, key, parameters=None):
         """
         Build the statement that merges {rows} into {table}, each giving values for {fields}
         """
@@ -424,7 +450,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         for index, columns in enumerate(rows):
             # with its values
             values = ", ".join(
-                self._recordValue(table=table, field=field, value=value) for field, value in columns
+                self._recordValue(table=table, field=field, value=value, parameters=parameters)
+                for field, value in columns
             )
             # each but the last followed by a comma
             yield self.place(f"({values})" + ("," if index + 1 < len(rows) else ""))
@@ -490,10 +517,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
-    def _subquery(self, query):
+    def _subquery(self, query, parameters=None):
         """
         Render the selection of {query}, a query of one column, on a single line, to stand for a
-        list of values
+        list of values; its values go to {parameters}, when it is given
         """
         # a query of several columns
         if len(query.pyre_fields) != 1:
@@ -506,7 +533,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 " so it cannot stand for a list of values"
             )
         # render its selection, without paging
-        lines = self._selection(query=query, paging=())
+        lines = self._selection(query=query, paging=(), parameters=parameters)
         # and put it on one line
         return " ".join(line.strip() for line in lines)
 
@@ -581,39 +608,44 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return text
 
     # the clauses of a selection
-    def _whereClause(self, query):
+    def _whereClause(self, query, parameters=None):
         """
-        Render the restriction of {query}
+        Render the restriction of {query}, whose values go to {parameters}, when it is given
         """
         # build the filtering expression
-        predicate = self.expression(root=query.where, context=query)
+        predicate = self.expression(root=query.where, context=query, parameters=parameters)
         # and put it in parentheses
         return f"({predicate})"
 
-    def _groupClause(self, query):
+    def _groupClause(self, query, parameters=None):
         """
-        Render the fields {query} groups its rows by
+        Render the fields {query} groups its rows by, whose values go to {parameters}, when it
+        is given
         """
         # render each of them
-        return self._fieldList(query=query, spec=query.group)
+        return self._fieldList(query=query, spec=query.group, parameters=parameters)
 
-    def _orderClause(self, query):
+    def _orderClause(self, query, parameters=None):
         """
-        Render the order of the rows of {query}
+        Render the order of the rows of {query}, whose values go to {parameters}, when it is
+        given
         """
         # render each of its collations
-        return self._fieldList(query=query, spec=query.order)
+        return self._fieldList(query=query, spec=query.order, parameters=parameters)
 
-    def _fieldList(self, query, spec):
+    def _fieldList(self, query, spec, parameters=None):
         """
-        Render {spec}, one expression or several, in the context of {query}
+        Render {spec}, one expression or several, in the context of {query}; its values go to
+        {parameters}, when it is given
         """
         # a single expression
         if not isinstance(spec, collections.abc.Iterable):
             # is a list of one
             spec = (spec,)
         # render each one, separated by commas
-        return ", ".join(self.expression(root=entry, context=query) for entry in spec)
+        return ", ".join(
+            self.expression(root=entry, context=query, parameters=parameters) for entry in spec
+        )
 
     # transaction support
     def transaction(self):
@@ -896,7 +928,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         return
 
     # record management
-    def insertRecords(self, *records, returning=None, existing=None, key=None):
+    def insertRecords(self, *records, returning=None, existing=None, key=None, parameters=None):
         """
         Insert {records}, an iterable of table records, into their corresponding table; the
         consecutive records of a table that name the same columns share a statement; each
@@ -905,6 +937,21 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         With {existing}, a row whose {key} matches one that is there already is either left
         alone, when {existing} is "keep", or written over it, when it is "replace"; the key is
         the primary key of the table, unless {key} names the fields of another
+        """
+        # go through the statements
+        for statement in self.insertStatements(
+            *records, returning=returning, existing=existing, key=key, parameters=parameters
+        ):
+            # and hand over their lines
+            yield from statement
+        # all done
+        return
+
+    def insertStatements(self, *records, returning=None, existing=None, key=None, parameters=None):
+        """
+        Generate the statements that insert {records}, as {insertRecords} describes them, each
+        one whole, as a tuple of its lines; with {parameters}, the values of each statement are
+        kept there by the time the statement is handed over, and placeholders take their place
         """
         # the clause that returns the rows, built before anything is rendered
         clause = None if returning is None else self._returning(returning=returning)
@@ -920,11 +967,15 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # a language whose inserts cannot meet the rows that are there already
         if existing is not None and not self.hasConflict:
             # merges the records instead
-            yield from self._merge(records=records, existing=existing, key=key)
+            yield from self._merge(
+                records=records, existing=existing, key=key, parameters=parameters
+            )
             # and that's all
             return
         # every statement starts at the margin
         self.margin()
+        # the lines of the statement in progress
+        lines = []
         # the values of the previous record, held back until we know whether more follow, so
         # that {records} can be a generator
         dangling = ""
@@ -941,27 +992,35 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # a record of the same shape as the statement in progress
             if recordShape == shape:
                 # joins it, so render the dangling values, followed by a comma
-                yield self.place(dangling + ",")
+                lines.append(self.place(dangling + ","))
             # the others
             else:
                 # end the statement in progress, if there is one
                 if shape is not None:
                     # by terminating it
-                    yield from self._insertEnd(
-                        values=dangling,
-                        tail=self._insertTail(
-                            shape=shape, existing=existing, key=key, clause=clause
-                        ),
+                    lines.extend(
+                        self._insertEnd(
+                            values=dangling,
+                            tail=self._insertTail(
+                                shape=shape, existing=existing, key=key, clause=clause
+                            ),
+                        )
                     )
-                    # and bouncing out to the margin
+                    # bouncing out to the margin
                     self.outdent(decrement=2)
+                    # and handing it over
+                    yield tuple(lines)
+                    # before starting the next one
+                    lines = []
                 # a record that names no column
                 if not columns:
                     # is inserted by a statement of its own, which returns its row when asked
-                    yield self.place(
-                        f"INSERT INTO {self.identifier(table.pyre_name)} DEFAULT VALUES"
-                        + ("" if clause is None else f" {clause}")
-                        + ";"
+                    yield (
+                        self.place(
+                            f"INSERT INTO {self.identifier(table.pyre_name)} DEFAULT VALUES"
+                            + ("" if clause is None else f" {clause}")
+                            + ";"
+                        ),
                     )
                     # which leaves no statement in progress
                     shape = None
@@ -970,22 +1029,25 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # the others start a statement of their shape
                 shape = recordShape
                 # initiate it
-                yield self.place(f"INSERT INTO {self.identifier(table.pyre_name)}")
+                lines.append(self.place(f"INSERT INTO {self.identifier(table.pyre_name)}"))
                 # indent
                 self.indent(increment=2)
                 # the names of the columns
-                yield self.place(
-                    "(" + ", ".join(self.identifier(name) for name in recordShape[1]) + ")"
+                lines.append(
+                    self.place(
+                        "(" + ", ".join(self.identifier(name) for name in recordShape[1]) + ")"
+                    )
                 )
                 # push out
                 self.outdent()
                 # start the section with the record values
-                yield self.place("VALUES")
+                lines.append(self.place("VALUES"))
                 # further in
                 self.indent()
             # collect the values
             values = (
-                self._recordValue(table=table, field=field, value=value) for field, value in columns
+                self._recordValue(table=table, field=field, value=value, parameters=parameters)
+                for field, value in columns
             )
             # render them
             dangling = "(" + ", ".join(values) + ")"
@@ -995,19 +1057,24 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             # there is nothing left to render
             return
         # render any left overs
-        yield from self._insertEnd(
-            values=dangling,
-            tail=self._insertTail(shape=shape, existing=existing, key=key, clause=clause),
+        lines.extend(
+            self._insertEnd(
+                values=dangling,
+                tail=self._insertTail(shape=shape, existing=existing, key=key, clause=clause),
+            )
         )
         # bounce out to top level
         self.outdent(decrement=2)
+        # and hand the last statement over
+        yield tuple(lines)
         # all done
         return
 
-    def deleteRecords(self, table, condition, returning=None):
+    def deleteRecords(self, table, condition, returning=None, parameters=None):
         """
         Remove all {table} records that match {condition}, and return the columns of
-        {returning}, a table or a query, when it is given
+        {returning}, a table or a query, when it is given; with {parameters}, the values in the
+        statement are kept there, and placeholders take their place
 
         If condition is {None}, this routine will remove all records from the given {table}
         """
@@ -1022,7 +1089,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # if a condition was specified
         if condition is not None:
             # build the filtering expression
-            predicate = self.expression(root=condition, context=table)
+            predicate = self.expression(root=condition, context=table, parameters=parameters)
             # and render it
             lines.append(self.place(f"WHERE ({predicate})"))
         # if the rows are wanted back
@@ -1038,14 +1105,15 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
-    def updateRecords(self, template, condition, returning=None):
+    def updateRecords(self, template, condition, returning=None, parameters=None):
         """
         Update all table rows that match {condition} using information from {template}, a
         prototype row of a table. The update operation sets the fields in these rows to their
         corresponding values in {template}; fields set to {None} in {template} are not
         affected. Without a {condition}, every row is updated, and a {template} that sets no
         field builds no statement. The statement returns the columns of {returning}, a table or
-        a query, when it is given
+        a query, when it is given; with {parameters}, the values in the statement are kept
+        there, and placeholders take their place
         """
         # the clause that returns the rows, built before anything is rendered
         clause = None if returning is None else self._returning(returning=returning)
@@ -1064,10 +1132,11 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # so skip them
                 continue
             # the others are assigned their value
-            assignments.append(
-                f"{self.identifier(field.name)}"
-                f" = {self._recordValue(table=table, field=field, value=value)}"
+            rendered = self._recordValue(
+                table=table, field=field, value=value, parameters=parameters
             )
+            # by name
+            assignments.append(f"{self.identifier(field.name)} = {rendered}")
         # if there is nothing to set
         if not assignments:
             # there is no statement
@@ -1089,7 +1158,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # if there is a restriction
         if condition is not None:
             # build the filtering expression
-            predicate = self.expression(root=condition, context=table)
+            predicate = self.expression(root=condition, context=table, parameters=parameters)
             # and render it
             lines.append(self.place(f"WHERE ({predicate})"))
         # if the rows are wanted back
@@ -1191,39 +1260,53 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # and negate it
         return f"NOT ({predicate})"
 
-    def _pyre_onIsIn(self, node, **kwds):
+    def _pyre_onIsIn(self, node, parameters=None, **kwds):
         """
         Render {node}, the test of whether a field holds one of a list of values, or one of the
-        rows of a query
+        rows of a query; with {parameters}, the values are kept there, and placeholders take
+        their place
         """
         # render the field
-        field = self.expression(root=node.field, **kwds)
+        field = self.expression(root=node.field, parameters=parameters, **kwds)
         # values drawn from the rows of a query
         if isinstance(node.values, self.selector):
             # come from its selection
-            return f"{field} IN ({self._subquery(query=node.values)})"
+            return f"{field} IN ({self._subquery(query=node.values, parameters=parameters)})"
         # the others are a list
         values = tuple(node.values)
         # no field holds one of no values, and the language has no empty list to say it with
         if not values:
             # so say what it means
             return "FALSE"
-        # render the literals of the values
-        literals = ", ".join(self._literals.value(value=value) for value in values)
+        # the values travel beside the statement when there is a place for them
+        writer = self._literals if parameters is None else parameters
+        # render them
+        rendered = ", ".join(writer.value(value=value) for value in values)
         # and put it all together
-        return f"{field} IN ({literals})"
+        return f"{field} IN ({rendered})"
 
-    def _pyre_onLike(self, node, **kwds):
+    def _pyre_onLike(self, node, parameters=None, **kwds):
         """
         Render {node}, the match of a field against a pattern, naming the character that escapes
-        its wildcards, since the back ends disagree on what it is when it is left out
+        its wildcards, since the back ends disagree on what it is when it is left out; with
+        {parameters}, the pattern and the escape character are kept there, and placeholders take
+        their place
         """
         # render the field
-        field = self.expression(root=node.field, **kwds)
-        # quote the pattern
-        pattern = self.quote(text=node.pattern)
-        # and the escape character
-        escape = self.quote(text=node.escape)
+        field = self.expression(root=node.field, parameters=parameters, **kwds)
+        # the pattern and its escape character travel beside the statement when there is a place
+        # for them
+        if parameters is not None:
+            # so keep the pattern
+            pattern = parameters.value(value=node.pattern)
+            # and the escape character
+            escape = parameters.value(value=node.escape)
+        # otherwise
+        else:
+            # quote the pattern
+            pattern = self.quote(text=node.pattern)
+            # and the escape character
+            escape = self.quote(text=node.escape)
         # put it all together
         return f"({field} LIKE {pattern} ESCAPE {escape})"
 
@@ -1356,12 +1439,15 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # the rest have them
         return f" {self.ifPresent}"
 
-    def _literalRenderer(self, node, **kwds):
+    def _literalRenderer(self, node, parameters=None, **kwds):
         """
-        Render {node}, a literal in an expression, whose value belongs to no column
+        Render {node}, a literal in an expression, whose value belongs to no column; with
+        {parameters}, the value is kept there, and its placeholder takes its place
         """
-        # the literal of its value depends only on the type of the value
-        return self._literals.value(value=node._value)
+        # the value travels beside the statement when there is a place for it
+        writer = self._literals if parameters is None else parameters
+        # and its rendering depends only on its type
+        return writer.value(value=node._value)
 
     def _insertColumns(self, table, record):
         """
@@ -1372,9 +1458,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
-    def _recordValue(self, table, field, value):
+    def _recordValue(self, table, field, value, parameters=None):
         """
-        Render {value}, the value of {field} in a record of {table}, for an insert or an update
+        Render {value}, the value of {field} in a record of {table}, for an insert or an update;
+        with {parameters}, the value is kept there, and its placeholder takes its place
         """
         # a missing value
         if value is None:
@@ -1384,8 +1471,11 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         if value is table.default or value is table.null:
             # render as themselves
             return value.value
-        # everything else is a literal of its column
-        return self._literals.literal(table=table, column=field, value=value)
+        # everything else is a value of its column, which travels beside the statement when
+        # there is a place for it, and is a literal otherwise
+        writer = self._literals if parameters is None else parameters
+        # render it
+        return writer.literal(table=table, column=field, value=value)
 
     def _default(self, table, column):
         """

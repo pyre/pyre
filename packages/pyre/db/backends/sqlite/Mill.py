@@ -23,6 +23,9 @@ from .Columns import Columns
 # and the literals of their values
 from .Literals import Literals
 
+# and the values of statements that travel beside them
+from .Parameters import Parameters
+
 
 # declaration
 class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
@@ -70,6 +73,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
     columns = Columns
     # and the one that renders the literals of their values
     literals = Literals
+    # and the one that keeps the values of a statement that travel beside it
+    placeholders = Parameters
 
     # transactions
     def transaction(self):
@@ -146,7 +151,7 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
         # the others write it as standard SQL would
         return super()._returning(returning=returning)
 
-    def _merge(self, records, existing, key):
+    def _merge(self, records, existing, key, parameters=None):
         """
         Refuse to merge {records}: sqlite has no {MERGE}, and a library that gets here has no
         {ON CONFLICT} either

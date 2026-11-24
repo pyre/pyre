@@ -27,6 +27,9 @@ from .Columns import Columns
 # and the literals of their values
 from .Literals import Literals
 
+# and the values of statements that travel beside them
+from .Parameters import Parameters
+
 
 # declaration
 class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
@@ -54,6 +57,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
     columns = Columns
     # and the one that renders the literals of their values
     literals = Literals
+    # and the one that keeps the values of a statement that travel beside it
+    placeholders = Parameters
 
     # the documentation of tables
     def _documentation(self, table):
