@@ -34,8 +34,8 @@ public:
     using self_type = CopyOut;
     // the session
     using connection_type = Connection;
-    // the hold on its lock
-    using guard_type = Connection::guard_type;
+    // the hold on the session, which carries the guard of its lock
+    using hold_type = Hold;
 
     // metamethods
 public:
@@ -72,8 +72,8 @@ private:
 private:
     // the session, and my share of it
     connection_type _connection;
-    // the hold on its lock
-    guard_type _guard;
+    // the hold on the session
+    hold_type _hold;
     // the statement that started me
     string_t _statement;
     // whether the session was in a transaction when i started

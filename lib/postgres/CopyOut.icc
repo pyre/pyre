@@ -18,7 +18,7 @@ pyre::postgres::CopyOut::CopyOut(connection_type connection, view_t statement) :
     _connection(std::move(connection)),
     // keep the other threads off the session until the last row is out, and start only on a
     // session that is not in the middle of another answer
-    _guard(_connection._free(statement)),
+    _hold(_connection.hold(statement)),
     _statement(statement),
     // where the session stands decides how an abandoned copy is ended
     _transaction(_connection.transaction() != TransactionStatus::idle),
@@ -28,11 +28,11 @@ pyre::postgres::CopyOut::CopyOut(connection_type connection, view_t statement) :
     // a failure below throws, and leaves me unbuilt: my destructor will not run, but my guard
     // goes away with the rest of what was built, and lets go of the session. send the statement,
     // and wait for the server to say whether it is sending rows
-    PGresult * result = PQexec(_connection._handle(), _statement.c_str());
+    PGresult * result = PQexec(_hold.handle(), _statement.c_str());
     // libpq gives up before the server answers only when the session is in trouble
     if (result == nullptr) {
         // and the session knows why
-        _connection._fail(_statement);
+        _hold.fail(_statement);
     }
     // take ownership, so that whatever happens next the result gets freed
     const Result answer(result);
@@ -48,7 +48,7 @@ pyre::postgres::CopyOut::CopyOut(connection_type connection, view_t statement) :
     // a copy the other way
     if (status == ExecStatus::copyIn || status == ExecStatus::copyBoth) {
         // is ended, so that the session can be used again
-        _connection._abandon(status, "this copy was started as one out of the database");
+        _hold.abandon(status, "this copy was started as one out of the database");
         // and refused
         throw InterfaceError(
             Diagnostic("a copy out of the database runs a COPY ... TO STDOUT", _statement));
@@ -67,7 +67,7 @@ pyre::postgres::CopyOut::CopyOut(connection_type connection, view_t statement) :
 // the duty to end it may be passed along
 pyre::postgres::CopyOut::CopyOut(CopyOut && other) noexcept :
     _connection(std::move(other._connection)),
-    _guard(std::move(other._guard)),
+    _hold(std::move(other._hold)),
     _statement(std::move(other._statement)),
     _transaction(other._transaction),
     _live(other._live)
@@ -90,7 +90,7 @@ pyre::postgres::CopyOut::operator=(CopyOut && other) noexcept
     // take the session
     _connection = std::move(other._connection);
     // the hold on its lock
-    _guard = std::move(other._guard);
+    _hold = std::move(other._hold);
     // the statement
     _statement = std::move(other._statement);
     // where the session stood
@@ -127,7 +127,7 @@ pyre::postgres::CopyOut::next() -> std::optional<string_t>
     // room for the row
     char * buffer = nullptr;
     // wait for it
-    const int size = PQgetCopyData(_connection._handle(), &buffer, 0);
+    const int size = PQgetCopyData(_hold.handle(), &buffer, 0);
     // a row
     if (size > 0) {
         // take a copy of it
@@ -179,7 +179,7 @@ auto
 pyre::postgres::CopyOut::_finish() -> void
 {
     // the session
-    const auto handle = _connection._handle();
+    const auto handle = _hold.handle();
     // the first part of the answer says how the copy ended
     PGresult * result = PQgetResult(handle);
     // the rest, which a copy does not have, is collected so that the session can be used again
@@ -196,12 +196,12 @@ pyre::postgres::CopyOut::_finish() -> void
         }
     }
     // the other threads may use the session again
-    _guard.unlock();
+    _hold.release();
 
     // no answer at all means libpq lost the session
     if (result == nullptr) {
         // which the session explains
-        _connection._fail(_statement);
+        _hold.fail(_statement);
     }
     // take ownership, so that whatever happens next the result gets freed
     const Result answer(result);
@@ -256,9 +256,9 @@ pyre::postgres::CopyOut::_close() noexcept -> void
     }
     // read the rows already on their way, or all of them inside a transaction, and collect the
     // answer; this swallows its own failures
-    _connection._abandon(ExecStatus::copyOut, "");
+    _hold.abandon(ExecStatus::copyOut, "");
     // and let go of the session
-    _guard.unlock();
+    _hold.release();
 
     // all done
     return;

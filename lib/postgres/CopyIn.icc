@@ -18,14 +18,14 @@ pyre::postgres::CopyIn::CopyIn(connection_type connection, view_t statement) :
     _connection(std::move(connection)),
     // keep the other threads off the session until the copy ends, and start only on a session
     // that is not in the middle of another answer
-    _guard(_connection._free(statement)),
+    _hold(_connection.hold(statement)),
     _statement(statement),
     // not yet; the server has to accept the statement first
     _live(false)
 {
     // a failure below throws, and leaves me unbuilt: my destructor will not run, but my guard
     // goes away with the rest of what was built, and lets go of the session. the session
-    const auto handle = _connection._handle();
+    const auto handle = _hold.handle();
     // sends the rows of a copy one after the other, which a session that does not wait for its
     // socket cannot promise
     if (PQisnonblocking(handle) != 0) {
@@ -39,7 +39,7 @@ pyre::postgres::CopyIn::CopyIn(connection_type connection, view_t statement) :
     // libpq gives up before the server answers only when the session is in trouble
     if (result == nullptr) {
         // and the session knows why
-        _connection._fail(_statement);
+        _hold.fail(_statement);
     }
     // take ownership, so that whatever happens next the result gets freed
     const Result answer(result);
@@ -55,7 +55,7 @@ pyre::postgres::CopyIn::CopyIn(connection_type connection, view_t statement) :
     // a copy the other way
     if (status == ExecStatus::copyOut || status == ExecStatus::copyBoth) {
         // is ended, so that the session can be used again
-        _connection._abandon(status, "this copy was started as one into the database");
+        _hold.abandon(status, "this copy was started as one into the database");
         // and refused
         throw InterfaceError(
             Diagnostic("a copy into the database runs a COPY ... FROM STDIN", _statement));
@@ -74,7 +74,7 @@ pyre::postgres::CopyIn::CopyIn(connection_type connection, view_t statement) :
 // the duty to end it may be passed along
 pyre::postgres::CopyIn::CopyIn(CopyIn && other) noexcept :
     _connection(std::move(other._connection)),
-    _guard(std::move(other._guard)),
+    _hold(std::move(other._hold)),
     _statement(std::move(other._statement)),
     _live(other._live)
 {
@@ -96,7 +96,7 @@ pyre::postgres::CopyIn::operator=(CopyIn && other) noexcept
     // take the session
     _connection = std::move(other._connection);
     // the hold on its lock
-    _guard = std::move(other._guard);
+    _hold = std::move(other._hold);
     // the statement
     _statement = std::move(other._statement);
     // and the duty
@@ -133,8 +133,7 @@ pyre::postgres::CopyIn::put(view_t data) -> void
         // this one
         const auto block = data.substr(start, piece);
         // send it; in a session that waits for its socket, anything but a one is a failure
-        if (PQputCopyData(_connection._handle(), block.data(), static_cast<int>(block.size()))
-            != 1) {
+        if (PQputCopyData(_hold.handle(), block.data(), static_cast<int>(block.size())) != 1) {
             // which libpq explains before the answer of the server replaces its explanation
             const string_t explanation(_connection.message());
             // the copy is over
@@ -210,7 +209,7 @@ pyre::postgres::CopyIn::end() -> Result
     // whatever happens below, the copy is over
     _live = false;
     // tell the server that the rows are all in
-    if (PQputCopyEnd(_connection._handle(), nullptr) != 1) {
+    if (PQputCopyEnd(_hold.handle(), nullptr) != 1) {
         // which libpq explains before the answer of the server replaces its explanation
         const string_t explanation(_connection.message());
         // the server may have refused the copy already, in which case its answer says why
@@ -232,9 +231,9 @@ pyre::postgres::CopyIn::abort(view_t reason) -> void
     // the copy is over
     _live = false;
     // tell the server, and collect its answer, which reports the failure the caller asked for
-    _connection._abandon(ExecStatus::copyIn, reason);
+    _hold.abandon(ExecStatus::copyIn, reason);
     // and let go of the session
-    _guard.unlock();
+    _hold.release();
 
     // all done
     return;
@@ -315,7 +314,7 @@ auto
 pyre::postgres::CopyIn::_finish() -> Result
 {
     // the session
-    const auto handle = _connection._handle();
+    const auto handle = _hold.handle();
     // the first part of the answer says how the copy ended
     PGresult * result = PQgetResult(handle);
     // the rest, which a copy does not have, is collected so that the session can be used again
@@ -332,12 +331,12 @@ pyre::postgres::CopyIn::_finish() -> Result
         }
     }
     // the other threads may use the session again
-    _guard.unlock();
+    _hold.release();
 
     // no answer at all means libpq lost the session
     if (result == nullptr) {
         // which the session explains
-        _connection._fail(_statement);
+        _hold.fail(_statement);
     }
     // take ownership, so that whatever happens next the result gets freed
     const Result answer(result);
@@ -363,9 +362,9 @@ pyre::postgres::CopyIn::_close() noexcept -> void
     // whatever happens below, the copy is over
     _live = false;
     // tell the server, and collect its answer; this swallows its own failures
-    _connection._abandon(ExecStatus::copyIn, "the copy was abandoned before it ended");
+    _hold.abandon(ExecStatus::copyIn, "the copy was abandoned before it ended");
     // and let go of the session
-    _guard.unlock();
+    _hold.release();
 
     // all done
     return;

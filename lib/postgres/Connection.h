@@ -19,6 +19,8 @@
 #include "Result.h"
 // and messages from other sessions
 #include "Notification.h"
+// i hand out holds on the session
+#include "Hold.h"
 // i turn the arguments of a statement into text
 #include "codecs.h"
 // and i raise when the server complains
@@ -224,12 +226,13 @@ public:
     // observes this, and refuses to be used afterwards
     inline auto close() -> void;
 
-    // the copies, the streams and the pipelines hold my lock for as long as they run, and talk
-    // to libpq through my session
-    friend class CopyIn;
-    friend class CopyOut;
-    friend class Stream;
-    friend class Pipeline;
+    // holding the session for the length of an answer
+public:
+    // hold the session for {statement}: take my lock, refusing a session that is in the middle
+    // of the answer to another statement, or in a pipeline, and hand over a hold that carries the
+    // guard of the lock and talks to libpq through the session; the copies, the streams and the
+    // pipelines hold one for as long as they run, and so does every call of mine that sends
+    inline auto hold(view_t statement) const -> Hold;
 
     // implementation details
 private:
@@ -238,26 +241,13 @@ private:
     // hold my lock for the length of a call; every call that talks to libpq starts here, except
     // {cancel}, whose whole purpose is to interrupt a call that holds it
     inline auto _guard() const -> guard_type;
-    // hold my lock for the length of a call that sends {statement}, which a session in the middle
-    // of the answer to another statement refuses
-    inline auto _free(view_t statement) const -> guard_type;
     // adopt the result libpq produced for {statement}, and raise unless the server ran it
     inline auto _harvest(PGresult * result, view_t statement) const -> Result;
     // build the arrays libpq wants and hand them to whichever of its calls the caller meant
     inline auto _exec(view_t statement, const arguments_type & arguments, bool prepared) const
         -> PGresult *;
-    // the same, for the calls that send without waiting; zero means nothing went
-    inline auto _send(view_t statement, const arguments_type & arguments, bool prepared) const
-        -> int;
     // complain that libpq gave up before the server ever heard of {statement}
     [[noreturn]] inline auto _fail(view_t statement) const -> void;
-    // end the copy the server is in, as {status} says, giving {reason} for rows that will not
-    // come, and collect the rest of its answer; this cleans up after a failure, so it swallows
-    // whatever goes wrong
-    inline auto _abandon(ExecStatus status, view_t reason) const noexcept -> void;
-    // refuse {statement}, a {COPY} sent through a call that cannot move its rows, once the copy
-    // it started is ended
-    [[noreturn]] inline auto _refuse(ExecStatus status, view_t statement) const -> void;
     // open a session; a failure here has no session to hang a diagnostic off, so it is the one
     // place that must clean up after itself before it throws
     static inline auto _connect(const parameters_type & parameters) -> handle_type;

@@ -43,8 +43,8 @@ public:
     using self_type = Pipeline;
     // the session
     using connection_type = Connection;
-    // the hold on its lock
-    using guard_type = Connection::guard_type;
+    // the hold on the session, which carries the guard of its lock
+    using hold_type = Hold;
     // how the placeholders of a statement are filled in
     using arguments_type = arguments_t;
     // the answer to a statement
@@ -105,8 +105,8 @@ private:
 private:
     // the session, and my share of it
     connection_type _connection;
-    // the hold on its lock
-    guard_type _guard;
+    // the hold on the session
+    hold_type _hold;
     // the answers i expect, in order
     expected_type _expected;
     // whether statements went out since the last sync

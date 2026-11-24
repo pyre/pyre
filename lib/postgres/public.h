@@ -35,7 +35,8 @@
 #include "Result.h"
 // what other sessions have to say
 #include "Notification.h"
-// the session, and the scope of the work done over it
+// the session, the hold on it for the length of an answer, and the scope of the work done over it
+#include "Hold.h"
 #include "Connection.h"
 #include "Transaction.h"
 // the copies of rows into a table and out of the database

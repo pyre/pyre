@@ -19,7 +19,7 @@ pyre::postgres::Stream::Stream(
     _connection(std::move(connection)),
     // keep the other threads off the session until the last row is read, and start only on a
     // session that is not in the middle of another answer
-    _guard(_connection._free(statement)),
+    _hold(_connection.hold(statement)),
     _statement(statement),
     _batch(batch),
     // where the session stands decides how an abandoned stream is stopped
@@ -41,10 +41,10 @@ pyre::postgres::Stream::Stream(
     _live = true;
     // ask libpq to hand the rows over in batches
 #if defined(LIBPQ_HAS_CHUNK_MODE)
-    const auto batches = PQsetChunkedRowsMode(_connection._handle(), _batch);
+    const auto batches = PQsetChunkedRowsMode(_hold.handle(), _batch);
     // or, before libpq 17, one at a time
 #else
-    const auto batches = PQsetSingleRowMode(_connection._handle());
+    const auto batches = PQsetSingleRowMode(_hold.handle());
 #endif
     // libpq refuses only when the statement did not just go out, which cannot happen here
     if (batches == 0) {
@@ -63,7 +63,7 @@ pyre::postgres::Stream::Stream(
 // the duty to end it may be passed along
 pyre::postgres::Stream::Stream(Stream && other) noexcept :
     _connection(std::move(other._connection)),
-    _guard(std::move(other._guard)),
+    _hold(std::move(other._hold)),
     _statement(std::move(other._statement)),
     _batch(other._batch),
     _transaction(other._transaction),
@@ -88,7 +88,7 @@ pyre::postgres::Stream::operator=(Stream && other) noexcept
     // take the session
     _connection = std::move(other._connection);
     // the hold on its lock
-    _guard = std::move(other._guard);
+    _hold = std::move(other._hold);
     // the statement
     _statement = std::move(other._statement);
     // the size of the batches
@@ -125,14 +125,14 @@ pyre::postgres::Stream::next() -> std::optional<result_type>
     }
 
     // wait for the next part of the answer
-    PGresult * result = PQgetResult(_connection._handle());
+    PGresult * result = PQgetResult(_hold.handle());
     // an answer that ends before the server says how it went
     if (result == nullptr) {
         // means libpq lost the session; the session explains why, and the answer is over
         // however that goes
         try {
             // so ask it
-            _connection._fail(_statement);
+            _hold.fail(_statement);
         }
         // and let go of the session before the explanation goes on its way
         catch (...) {
@@ -158,7 +158,7 @@ pyre::postgres::Stream::next() -> std::optional<result_type>
         // is ended, and refused, which ends the answer however that goes
         try {
             // refuse it
-            _connection._refuse(status, _statement);
+            _hold.refuse(status, _statement);
         }
         // and let go of the session before the refusal goes on its way
         catch (...) {
@@ -171,7 +171,7 @@ pyre::postgres::Stream::next() -> std::optional<result_type>
 
     // anything else is the end of the answer; collect what is left of it, which a selection
     // does not have, so that the session can be used again
-    while (PGresult * extra = PQgetResult(_connection._handle())) {
+    while (PGresult * extra = PQgetResult(_hold.handle())) {
         // throw it away
         PQclear(extra);
     }
@@ -223,7 +223,7 @@ pyre::postgres::Stream::_end() -> void
     // there are no more rows
     _live = false;
     // and the other threads may use the session again
-    _guard.unlock();
+    _hold.release();
 
     // all done
     return;
@@ -240,7 +240,7 @@ pyre::postgres::Stream::_close() noexcept -> void
         return;
     }
     // a session that has been closed took the answer along
-    if (!_connection._connection.valid()) {
+    if (!_hold.open()) {
         // so all that is left is to let go of it
         _end();
         // and that's all
@@ -275,7 +275,7 @@ pyre::postgres::Stream::_close() noexcept -> void
     }
     // collect the rest of the answer, which says how the statement ended, so that the session can
     // be used again
-    const auto handle = _connection._connection.handle();
+    const auto handle = _hold.handle();
     // until there is no more of it
     while (PGresult * result = PQgetResult(handle)) {
         // throw each part away

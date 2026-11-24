@@ -58,6 +58,8 @@ namespace pyre::postgres {
 
     // a session with the back end
     class Connection;
+    // the hold on a session for the length of an answer
+    class Hold;
     // the scope of a transaction, tied to the lifetime of an object
     class Transaction;
     // the copies of rows into a table and out of the database

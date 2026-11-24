@@ -36,8 +36,10 @@ namespace pyre::postgres {
     using row_t = Row;
     using result_t = Result;
 
-    // the session, and the scope of the work done over it
+    // the session, the hold on it for the length of an answer, and the scope of the work done
+    // over it
     using connection_t = Connection;
+    using hold_t = Hold;
     using transaction_t = Transaction;
     // the copies of rows into a table and out of the database
     using copyIn_t = CopyIn;
