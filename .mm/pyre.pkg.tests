@@ -23,6 +23,7 @@ tests.pyre.pkg.db.folder_generated_missing.clean := folder_generated_missing
 tests.pyre.pkg.db.folder_load_text.clean := folder_load_text
 tests.pyre.pkg.db.folder_query_refused.clean := folder_query_refused
 tests.pyre.pkg.db.folder_reproduce.clean := folder_reproduce
+tests.pyre.pkg.db.folder_reproduce_self.clean := folder_reproduce_self
 tests.pyre.pkg.db.folder_rollback.clean := folder_rollback
 tests.pyre.pkg.db.folder_select.clean := folder_select
 tests.pyre.pkg.db.folder_select_escapes.clean := folder_select_escapes
