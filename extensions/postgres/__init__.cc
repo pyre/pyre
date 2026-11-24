@@ -42,9 +42,11 @@ PYBIND11_MODULE(postgres, m)
     pyre::postgres::py::connection(m);
     // and the scope of the work done over it, which is built out of a session
     pyre::postgres::py::transaction(m);
-    // and the copies of rows into a table and out of the database, which are too
+    // the copies of rows into a table and out of the database, which are too
     pyre::postgres::py::copyIn(m);
     pyre::postgres::py::copyOut(m);
+    // and the rows of a selection read in batches, which are as well
+    pyre::postgres::py::stream(m);
 
     // the loose functions, last
     pyre::postgres::py::utilities(m);
