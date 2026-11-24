@@ -48,6 +48,7 @@ class Diagnosed(FrameworkError):
         datatype="",
         constraint="",
         code="",
+        values=None,
         **kwds,
     ):
         # chain up
@@ -73,6 +74,9 @@ class Diagnosed(FrameworkError):
         self.constraint = constraint
         # the name the back end gives the condition in its own vocabulary, when it has one
         self.code = code
+        # and the values of the slots of the run of a prepared statement that provoked it, when
+        # it was one of many
+        self.values = values
 
         # all done
         return

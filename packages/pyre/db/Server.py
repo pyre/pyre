@@ -613,6 +613,51 @@ class Server(pyre.component, implements=DataStore):
         # write the statement with it, and execute it
         return self.execute(*prepared.build(literals))
 
+    def _runPreparedMany(self, prepared, runs):
+        """
+        Run the statement of {prepared} once for each of {runs}, pairs of the values of its slots
+        and their bound form, {batch} runs at a time, each batch in a block of its own, and hand
+        back the rows of each run, or {None} for each when the statement hands back none; a run
+        that fails is reported with its values, and the runs after it are not made
+        """
+        # the rows of each run
+        answers = []
+        # go through the runs, a batch at a time
+        for start in range(0, len(runs), self.batch):
+            # each batch is all or nothing
+            with self:
+                # go through its runs
+                for values, arguments in runs[start : start + self.batch]:
+                    # make each one
+                    answers.append(
+                        self._runOne(prepared=prepared, values=values, arguments=arguments)
+                    )
+        # hand the rows over
+        return answers
+
+    def _runOne(self, prepared, values, arguments):
+        """
+        Make one of many runs of the statement of {prepared}, with its slots filled in from
+        {values}, and hand back its rows, or {None} when the statement hands back none; a failure
+        is reported with {values}
+        """
+        # carefully
+        try:
+            # run it
+            rows = self._runPrepared(prepared=prepared, values=values, arguments=arguments)
+            # a statement that hands back no rows
+            if prepared.selection is None:
+                # has none to read
+                return None
+            # the others are read now, before the next run
+            return list(rows)
+        # a failure
+        except self.exceptions.DatabaseError as error:
+            # says which run it was
+            error.values = values
+            # and goes on its way
+            raise
+
     def _releasePrepared(self, prepared):
         """
         Release what the back end keeps on behalf of {prepared}; a server that writes its values
