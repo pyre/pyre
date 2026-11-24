@@ -174,6 +174,10 @@ public:
     inline auto send(view_t statement) const -> void;
     // the same, with placeholders
     inline auto sendParams(view_t statement, const arguments_type & arguments) const -> void;
+    // teach the server {statement} under the given {name}, without waiting
+    inline auto sendPrepare(view_t name, view_t statement) const -> void;
+    // and run what it was taught under {name}, without waiting
+    inline auto sendPrepared(view_t name, const arguments_type & arguments) const -> void;
     // read whatever the server has sent us so far; this is what makes {busy} worth asking, and
     // a loop that asks {busy} without ever calling this one never ends
     inline auto consume() const -> void;
@@ -241,6 +245,9 @@ private:
     // build the arrays libpq wants and hand them to whichever of its calls the caller meant
     inline auto _exec(view_t statement, const arguments_type & arguments, bool prepared) const
         -> PGresult *;
+    // the same, for the calls that send without waiting; zero means nothing went
+    inline auto _send(view_t statement, const arguments_type & arguments, bool prepared) const
+        -> int;
     // complain that libpq gave up before the server ever heard of {statement}
     [[noreturn]] inline auto _fail(view_t statement) const -> void;
     // end the copy the server is in, as {status} says, giving {reason} for rows that will not

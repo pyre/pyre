@@ -362,24 +362,51 @@ pyre::postgres::Connection::sendParams(view_t statement, const arguments_type & 
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
     const auto guard = _free(statement);
-    // both libpq calls want a terminated string
-    const string_t text(statement);
-    // and the values as an array of pointers, with a null standing for each {NULL}
-    std::vector<const char *> values;
-    values.reserve(arguments.size());
-    // fill it in
-    for (const auto & argument : arguments) {
-        values.push_back(argument.has_value() ? argument->c_str() : nullptr);
-    }
-
-    // push it all at the server; every value goes as text, and every answer comes back as text
-    const int status = PQsendQueryParams(
-        _handle(), text.c_str(), static_cast<int>(arguments.size()), nullptr, values.data(),
-        nullptr, nullptr, 0);
-    // a zero means it never went
-    if (status == 0) {
+    // push it at the server; a zero means it never went
+    if (_send(statement, arguments, false) == 0) {
         // and the session is the only one that knows why
         _fail(statement);
+    }
+
+    // all done
+    return;
+}
+
+
+// teach the server {statement} under the given {name}, and do not wait for it
+auto
+pyre::postgres::Connection::sendPrepare(view_t name, view_t statement) const -> void
+{
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(statement);
+    // both want terminated strings
+    const string_t label(name);
+    const string_t text(statement);
+    // push the statement at the server, letting it infer the types of its placeholders; a zero
+    // means it never went
+    if (PQsendPrepare(_handle(), label.c_str(), text.c_str(), 0, nullptr) == 0) {
+        // and the session is the only one that knows why
+        _fail(statement);
+    }
+
+    // all done
+    return;
+}
+
+
+// run what the server was taught under {name}, and do not wait for it
+auto
+pyre::postgres::Connection::sendPrepared(view_t name, const arguments_type & arguments) const
+    -> void
+{
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(name);
+    // push it at the server; a zero means it never went
+    if (_send(name, arguments, true) == 0) {
+        // and the session is the only one that knows why
+        _fail(name);
     }
 
     // all done
@@ -735,6 +762,36 @@ pyre::postgres::Connection::_exec(
     // and one it is seeing for the first time; the types are null too, which asks the server to
     // infer each of them from where its placeholder stands
     return PQexecParams(
+        _handle(), text.c_str(), count, nullptr, values.data(), nullptr, nullptr, 0);
+}
+
+
+// build the arrays libpq wants and hand them to whichever of its sending calls the caller meant
+auto
+pyre::postgres::Connection::_send(
+    view_t statement, const arguments_type & arguments, bool prepared) const -> int
+{
+    // both libpq calls want a terminated string; for a prepared statement this is its name
+    const string_t text(statement);
+    // and the values as an array of pointers, with a null standing for each {NULL}
+    std::vector<const char *> values;
+    values.reserve(arguments.size());
+    // fill it in
+    for (const auto & argument : arguments) {
+        values.push_back(argument.has_value() ? argument->c_str() : nullptr);
+    }
+    // how many there are
+    const int count = static_cast<int>(arguments.size());
+
+    // a statement the server already knows
+    if (prepared) {
+        // every value goes as text, and every answer comes back as text
+        return PQsendQueryPrepared(
+            _handle(), text.c_str(), count, values.data(), nullptr, nullptr, 0);
+    }
+
+    // and one it is seeing for the first time, whose placeholders the server gives their types
+    return PQsendQueryParams(
         _handle(), text.c_str(), count, nullptr, values.data(), nullptr, nullptr, 0);
 }
 
