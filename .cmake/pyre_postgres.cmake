@@ -82,6 +82,7 @@ function(pyre_postgresModule)
       extensions/postgres/Notification.cc
       extensions/postgres/Result.cc
       extensions/postgres/Row.cc
+      extensions/postgres/Stream.cc
       extensions/postgres/Transaction.cc
       extensions/postgres/enums.cc
       extensions/postgres/exceptions.cc
