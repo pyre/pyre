@@ -21,15 +21,15 @@ class Text:
     """
     A visitor over table columns that writes their values in the text format of postgres's copies
 
-    Each value is written as the text postgres reads for it, with the characters that would break
-    a line or a row escaped by a backslash; a null is \\N, and the values of a row are separated
-    by tabs, in the order its table declares its columns
+    Each value is written as the text postgres reads for it, with the backslash itself and the
+    characters that would break a line or a row escaped by a backslash; a null is \\N, and the
+    values of a row are separated by tabs, in the order its table declares its columns
     """
 
     # public data
     # the text of a null
     null = "\\N"
-    # the characters that would break a line or a row, and their escapes
+    # the backslash itself and the characters that would break a line or a row, and their escapes
     escapes = str.maketrans({"\\": "\\\\", "\n": "\\n", "\r": "\\r", "\t": "\\t"})
     # and the characters that put an entry of an array in quotes: the ones the form of arrays
     # uses, and white space
@@ -202,7 +202,8 @@ class Text:
     def _quoted(self, text):
         """
         Put {text}, the text of an entry of an array, in double quotes when it would be misread
-        without them: when it is empty, spells NULL, or holds a character the form of arrays uses
+        without them: when it is empty, spells NULL, or holds white space or a character the form
+        of arrays uses
         """
         # text that reads back as itself
         if text and text.upper() != "NULL" and not any(c in self.special for c in text):

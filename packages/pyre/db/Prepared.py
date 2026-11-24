@@ -39,11 +39,11 @@ class Prepared:
     def runMany(self, rows):
         """
         Run the statement once for each of {rows}, the values of its slots for each run, as
-        {run} takes them; the runs go to the server {batch} at a time, and each batch is all or
-        nothing
+        {run} takes them; the runs go to the server a batch at a time, as many as its {batch}
+        says, and each batch is all or nothing
 
-        A run that fails is reported at the end of its batch, with its values; its batch is
-        undone, the batches before it are kept, and the ones after it are not run. The runs of a
+        A run that fails is reported with its values; its batch is undone, the batches before it
+        are kept, and the ones after it are not run. The runs of a
         statement that hands back no rows hand back nothing, and the others hand back the records
         of every run, in order
         """

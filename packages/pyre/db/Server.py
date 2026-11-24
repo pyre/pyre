@@ -221,7 +221,7 @@ class Server(pyre.component, implements=DataStore):
         database of {source}; a table comes before the tables that refer to it, and all of them
         appear together or not at all
 
-        Each table is made without its indexes, filled {batch} rows at a time with the values its
+        Each table is made without its indexes, filled a batch of rows at a time with the values its
         rows have, the ones {source} assigned among them, given its indexes, and told to assign
         the values of its generated columns after the largest it was given
         """
@@ -314,9 +314,9 @@ class Server(pyre.component, implements=DataStore):
         """
         # build the statement; a language that has nothing to say about it builds none
         statement = tuple(self.sql.restartIdentity(table=table, field=field, start=start))
-        # so run the one that is there
+        # a language that has something to say
         if statement:
-            # and only that
+            # gets it said
             self.execute(*statement)
         # all done
         return self
@@ -616,7 +616,7 @@ class Server(pyre.component, implements=DataStore):
     def _runPreparedMany(self, prepared, runs):
         """
         Run the statement of {prepared} once for each of {runs}, pairs of the values of its slots
-        and their bound form, {batch} runs at a time, each batch in a block of its own, and hand
+        and their bound form, a batch of runs at a time, each in a block of its own, and hand
         back the rows of each run, or {None} for each when the statement hands back none; a run
         that fails is reported with its values, and the runs after it are not made
         """

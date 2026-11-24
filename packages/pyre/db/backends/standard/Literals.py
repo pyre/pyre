@@ -283,15 +283,15 @@ class Literals(Visitor):
         if level is None:
             # is {NULL}, whatever the type of the entries
             return "NULL"
-        # the others
+        # an entry
         if not isinstance(level, tuple):
-            # are rendered as such
+            # is rendered as its type says
             return entry(value=level)
         # a level without entries
         if not level:
             # has a literal of its own
             return self.emptyArray
-        # the others list what they hold
+        # and the other levels list what they hold
         return (
             "ARRAY["
             + ", ".join(self._array(level=item, entry=entry, **kwds) for item in level)
