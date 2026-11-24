@@ -205,6 +205,13 @@ and rolls back when the block raises. On postgres, a transaction the server aban
 statement in it failed is answered with a rollback when it commits; the block then raises
 `OperationalError`, so its work is never lost silently.
 
+A block inside a block is a savepoint, named `pyre_1`, `pyre_2`, … in the order they are set:
+when it ends, its work stays in the transaction around it, and when it raises, only its own
+work is undone and the transaction carries on, on postgres even after a statement in it failed.
+An `update` of several rows and an `insert` with `returning`, which run several statements, run
+them in a block of their own, so they keep all of their work or none of it. The postgres
+bindings' `Transaction` nests the same way.
+
 A postgres session may be shared by threads: its calls take turns.
 
 ## Dialects
