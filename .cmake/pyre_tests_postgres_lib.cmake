@@ -83,6 +83,14 @@ pyre_test_driver_postgres(tests/postgres.lib/stream_exec_refused.cc)
 pyre_test_driver_postgres(tests/postgres.lib/stream_failed.cc)
 pyre_test_driver_postgres(tests/postgres.lib/stream_copy.cc)
 pyre_test_driver_postgres(tests/postgres.lib/stream_batch_refused.cc)
+pyre_test_driver_postgres(tests/postgres.lib/send_prepared.cc)
+pyre_test_driver_postgres(tests/postgres.lib/pipeline.cc)
+pyre_test_driver_postgres(tests/postgres.lib/pipeline_prepared.cc)
+pyre_test_driver_postgres(tests/postgres.lib/pipeline_failed.cc)
+pyre_test_driver_postgres(tests/postgres.lib/pipeline_flush.cc)
+pyre_test_driver_postgres(tests/postgres.lib/pipeline_exec_refused.cc)
+pyre_test_driver_postgres(tests/postgres.lib/pipeline_abandoned.cc)
+pyre_test_driver_postgres(tests/postgres.lib/pipeline_large.cc)
 
 
 # end of file
