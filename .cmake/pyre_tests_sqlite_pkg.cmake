@@ -38,6 +38,8 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_returning_foreign.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_upsert_replace.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_upsert_keep.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_floor.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_nested_rollback.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_update_atomic.py)
 # cleanup
 add_test(NAME tests.sqlite.clean
   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/sqlite.pkg"

@@ -88,6 +88,9 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_returning_update.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_upsert_replace.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_upsert_keep.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_merge.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_nested_rollback.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_nested_recovery.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_update_atomic.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
