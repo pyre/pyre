@@ -71,6 +71,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     hasOverriding = True
     # what may happen to those values, which are refused unless they are kept
     generatedValues = ("keep",)
+    # whether the language can add a reference to a table that exists already
+    addsReferences = True
     # and the type of the bounds of a selection, which are numbers of rows; the value of a slot
     # that stands for one takes it
     rowCount = schemata.int()
@@ -838,11 +840,12 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         )
 
     # table management
-    def createTable(self, table, existOk=False, indexes=True):
+    def createTable(self, table, existOk=False, indexes=True, selfReferences=True):
         """
         Generate the SQL statement to create a database table given its description, followed
         by those that create its indexes unless {indexes} is off; with {existOk}, finding the
-        table and its indexes there already is fine
+        table and its indexes there already is fine; without {selfReferences}, the references of
+        the table to itself are left for {addSelfReferences}, in a language that can add them
 
         The {table} specification is expected to be a {Table} subclass, with the necessary
         column information provided by the decorated field descriptors
@@ -866,8 +869,13 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         )
         # and the declaration of the default of each column
         defaults = tuple(self._default(table=table, column=field) for field in table.pyre_fields)
-        # and the declarations that follow the columns
-        annotations = tuple(self._tableAnnotations(table=table))
+        # and the declarations that follow the columns, with the references of the table to itself
+        # unless they are to be added later, which a language that cannot add them never does
+        annotations = tuple(
+            self._tableAnnotations(
+                table=table, selfReferences=selfReferences or not self.addsReferences
+            )
+        )
         # the statements that record the documentation of the table in the catalog of the server
         notes = tuple(self._documentation(table=table))
         # and those that create its indexes, when they are wanted
@@ -930,10 +938,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
-    def _tableAnnotations(self, table):
+    def _tableAnnotations(self, table, selfReferences=True):
         """
         Generate the declarations that follow the columns of {table}: its keys, its references to
-        other tables, and its checks
+        other tables, and to itself unless {selfReferences} is off, and its checks
         """
         # the primary key, if there is one
         if table._pyre_primaryKeys:
@@ -948,22 +956,46 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 name=name,
                 rule=f"UNIQUE ({','.join(self.identifier(field.name) for field in fields)})",
             )
-        # each reference to another table
+        # each reference to a table, this one among them
         for local, foreign, name in table._pyre_foreignKeys:
-            # names the field, the table, and the field of the other table
-            yield self._constraint(
-                name=name,
-                rule=(
-                    f"FOREIGN KEY ({self.identifier(local.field.name)}) "
-                    f"REFERENCES {self.identifier(foreign.table.pyre_name)}"
-                    f" ({self.identifier(foreign.field.name)})"
-                ),
-            )
+            # a reference to the table itself, when it is to be added later
+            if foreign.table is table and not selfReferences:
+                # is left for then
+                continue
+            # the others name the field, the table, and the field of the other table
+            yield self._constraint(name=name, rule=self._foreignKey(local=local, foreign=foreign))
         # and each check
         for constraint, name in table._pyre_constraints:
             # renders its expression in the context of the table
             yield self._constraint(
                 name=name, rule=f"CHECK ({self.expression(root=constraint, context=table)})"
+            )
+        # all done
+        return
+
+    def addSelfReferences(self, table):
+        """
+        Generate the statements that add the references of {table} to itself, which a table made
+        without them gets once its rows are in; a language that cannot add them declared them
+        with the table, and has nothing to add
+        """
+        # a language that cannot add a reference to a table that exists
+        if not self.addsReferences:
+            # declared them already
+            return
+        # go through the references of the table
+        for local, foreign, name in table._pyre_foreignKeys:
+            # the ones to other tables were declared with it
+            if foreign.table is not table:
+                # so move on
+                continue
+            # every statement starts at the margin
+            self.margin()
+            # add each of the others in a statement of its own
+            yield self.place(
+                f"ALTER TABLE {self.identifier(table.pyre_name)} ADD "
+                + self._constraint(name=name, rule=self._foreignKey(local=local, foreign=foreign))
+                + ";"
             )
         # all done
         return
@@ -1547,6 +1579,17 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             return rule
         # the others are declared by name
         return f"CONSTRAINT {self.identifier(name)} {rule}"
+
+    def _foreignKey(self, local, foreign):
+        """
+        Build the rule of the reference of the field {local} to the field {foreign} of a table
+        """
+        # name the field, the table, and the field of the table it refers to
+        return (
+            f"FOREIGN KEY ({self.identifier(local.field.name)}) "
+            f"REFERENCES {self.identifier(foreign.table.pyre_name)}"
+            f" ({self.identifier(foreign.field.name)})"
+        )
 
     def _index(self, table, name):
         """
