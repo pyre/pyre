@@ -5,10 +5,11 @@
 # (c) 1998-2026 all rights reserved
 
 
-# check availability
-libpq.available := ${findstring libpq,$(extern.available)}
+# check availability: the library talks to the server through the interfaces libpq 17 introduced,
+# and an older libpq leaves it out of the build
+libpq.available := ${call extern.is.atLeast,libpq,17}
 
-# if {libpq} is available
+# if a recent enough {libpq} is available
 ifeq ($(libpq.available), libpq)
 
 

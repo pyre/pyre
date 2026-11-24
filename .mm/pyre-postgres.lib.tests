@@ -37,6 +37,7 @@ tests.postgres.lib.threads.pre := tests.postgres.lib.transaction_aborted
 tests.postgres.lib.threads.libraries := pthread
 tests.postgres.lib.copy_threads.libraries := pthread
 tests.postgres.lib.hold_threads.libraries := pthread
+tests.postgres.lib.cancel.libraries := pthread
 
 
 # end of file
