@@ -6,6 +6,7 @@
 
 
 # externals
+import contextlib
 import types
 
 # packages
@@ -185,26 +186,32 @@ class Server(pyre.component, implements=DataStore):
                 tables={template.pyre_layout for template, _ in specifications},
             )
         )
+        # the statements, one for each specification that sets something
+        statements = [
+            sql
+            for template, condition in specifications
+            if (
+                sql := tuple(
+                    self.sql.updateRecords(
+                        template=template, condition=condition, returning=selection
+                    )
+                )
+            )
+        ]
         # the rows the updates hand back
         rows = []
-        # go through the {specifications}
-        for template, condition in specifications:
-            # build the sql statement for this update
-            sql = tuple(
-                self.sql.updateRecords(template=template, condition=condition, returning=selection)
-            )
-            # a template that sets nothing builds no statement
-            if not sql:
-                # so there is nothing to execute
-                continue
-            # a statement whose rows are not wanted
-            if selection is None:
-                # is just executed
-                self.execute(*sql)
-                # and that's all
-                continue
-            # the others hand their rows back
-            rows.extend(self._gather(lines=sql, selection=selection))
+        # several statements are all or nothing
+        with self if len(statements) > 1 else contextlib.nullcontext():
+            # go through them
+            for sql in statements:
+                # a statement whose rows are not wanted
+                if selection is None:
+                    # is just executed
+                    self.execute(*sql)
+                    # and that's all
+                    continue
+                # the others hand their rows back
+                rows.extend(self._gather(lines=sql, selection=selection))
         # all done
         return None if returning is None else rows
 
@@ -373,29 +380,35 @@ class Server(pyre.component, implements=DataStore):
         Run the statements in {lines} one at a time, and gather the rows they hand back as
         records of {selection}
         """
-        # the rows
-        rows = []
+        # the statements, each a list of its lines
+        statements = []
         # the lines of the statement in progress
         statement = []
         # go through the lines
         for line in lines:
             # add each one to the statement
             statement.append(line)
-            # until the line that ends it
-            if not line.endswith(";"):
-                # keep going
-                continue
-            # run the statement, and go through the rows it hands back
-            for row in self.execute(*statement):
-                # turn each value into the type of its column
-                values = (
-                    self.interpret(column=column, value=value, selection=selection)
-                    for column, value in zip(selection.pyre_fields, row)
-                )
-                # and build the record
-                rows.append(selection.pyre_storedTuple(record=selection, data=values))
-            # and start the next statement
-            statement = []
+            # and at the line that ends it
+            if line.endswith(";"):
+                # put it aside
+                statements.append(statement)
+                # and start the next one
+                statement = []
+        # the rows
+        rows = []
+        # several statements are all or nothing
+        with self if len(statements) > 1 else contextlib.nullcontext():
+            # run each statement
+            for statement in statements:
+                # and go through the rows it hands back
+                for row in self.execute(*statement):
+                    # turn each value into the type of its column
+                    values = (
+                        self.interpret(column=column, value=value, selection=selection)
+                        for column, value in zip(selection.pyre_fields, row)
+                    )
+                    # and build the record
+                    rows.append(selection.pyre_storedTuple(record=selection, data=values))
         # hand the rows over
         return rows
 
@@ -409,28 +422,65 @@ class Server(pyre.component, implements=DataStore):
         return
 
     # meta methods
+    def __init__(self, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # the blocks that are open, the innermost last, each with the name of its savepoint, or
+        # {None} for the transaction itself
+        self._blocks = []
+        # the number of savepoints set so far, which names the next one
+        self._savepoints = 0
+        # all done
+        return
+
     # context manager support
     def __enter__(self):
         """
-        Hook invoked when the context manager is entered: the block is a transaction
+        Hook invoked when the context manager is entered: the outermost block is a transaction,
+        and a block inside it is a savepoint
         """
-        # begin the transaction
-        self.execute(*self.sql.transaction())
+        # a block inside another
+        if self._blocks:
+            # gets the next savepoint
+            self._savepoints += 1
+            # under its own name
+            name = f"pyre_{self._savepoints}"
+            # set it
+            self.execute(*self.sql.savepoint(name=name))
+        # the outermost block
+        else:
+            # has no savepoint
+            name = None
+            # and begins the transaction
+            self.execute(*self.sql.transaction())
+        # now that the block is open, remember it
+        self._blocks.append(name)
         # and hand me back to the caller
         return self
 
     def __exit__(self, exc_type, exc_instance, exc_traceback):
         """
-        Hook invoked when the context manager's block exits: a block that ends normally commits
-        its transaction, and one that raises rolls it back
+        Hook invoked when the context manager's block exits: a block that ends normally keeps
+        its work, and one that raises undoes it; the outermost block commits or rolls back the
+        transaction, and the others release or roll back to their savepoints
         """
-        # if the block ended normally
-        if exc_type is None:
-            # commit the transaction
+        # the block that is closing
+        name = self._blocks.pop()
+        # a block inside another
+        if name is not None:
+            # that raised
+            if exc_type is not None:
+                # undoes its work
+                self.execute(*self.sql.rollbackToSavepoint(name=name))
+            # and either way, its savepoint is no longer needed
+            self.execute(*self.sql.releaseSavepoint(name=name))
+        # the outermost block that ended normally
+        elif exc_type is None:
+            # commits the transaction
             self._commit()
-        # otherwise
+        # and the one that raised
         else:
-            # roll it back
+            # rolls it back
             self.execute(*self.sql.rollback())
         # and re-raise any exception that occurred in the block
         return False
