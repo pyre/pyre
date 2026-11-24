@@ -23,4 +23,8 @@ tests.postgres.ext.postgres_references.pre := tests.postgres.ext.postgres_table
 tests.postgres.ext.postgres_database_drop.pre := tests.postgres.ext.postgres_references
 
 
+# clean up
+tests.postgres.ext.postgres_reproduce_file.clean := postgres_reproduce_file.sql
+
+
 # end of file
