@@ -98,7 +98,8 @@ pyre::postgres::py::diagnostic(py::module & m)
         // the docstring
         "where in {command} the server gave up, counting from one; zero when it did not say");
 
-    // the statement a function on the server ran, when the failure happened inside one
+    // the statement a function on the server ran, when the failure happened inside one, and
+    // where in it the server gave up
     cls.def_property_readonly(
         // the name
         "internalQuery",
