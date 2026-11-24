@@ -237,6 +237,42 @@ def violations() -> None:
     return
 
 
+def invisibles() -> None:
+    """
+    The characters that do not show are caught wherever they are, and the controls a terminal
+    reads are left alone
+    """
+    # in a scratch directory
+    with tempfile.TemporaryDirectory() as root:
+        # lay out the repository
+        scaffold(root=root)
+        # notes with a zero-width space inside a word, and a no-break space between two; they are
+        # spelled here as escapes, so this source holds neither
+        write(root=root, name="notes.txt", text="array_\u200bmax\nthe\u00a0end\n")
+        # and colors for a terminal, which start with the escape control
+        write(root=root, name="colors.txt", text="red = \x1b[31m\n")
+        # stage them
+        git("add", "notes.txt", "colors.txt", cwd=root)
+        # and commit them
+        git("commit", "--quiet", "-m", "notes: invisible characters", cwd=root)
+        # check
+        status, report = check(root=root)
+        # the checker failed
+        if status == 0:
+            # or else it let the invisible characters through
+            raise SelfTestError(f"invisible characters passed:\n{report}")
+        # it named the zero-width space, where it is
+        expect(report=report, check="characters", needle="notes.txt:1:7: U+200B ZERO WIDTH SPACE")
+        # and the no-break space
+        expect(report=report, check="characters", needle="notes.txt:2:4: U+00A0 NO-BREAK SPACE")
+        # but not the escape
+        if "colors.txt" in report:
+            # which a terminal reads, and an editor shows
+            raise SelfTestError(f"the escape control was refused:\n{report}")
+    # all done
+    return
+
+
 def layouts() -> None:
     """
     Each departure from the standard preamble and postamble layout is caught, and the files the
@@ -584,6 +620,8 @@ def main() -> int:
         clean()
         # one full of violations
         violations()
+        # one with characters that do not show
+        invisibles()
         # one with every kind of preamble departure
         layouts()
         # one with gaps in the narrative of a python source
