@@ -11,7 +11,7 @@ sqlite.pkg.tests.prerequisites := journal.pkg pyre.pkg
 
 
 # clean up
-tests.sqlite.pkg.clean += pyre.sql
+tests.sqlite.pkg.clean += pyre.sql sqlite_error_busy.sql
 
 
 # the following tests pound on the test database; execute them in order
