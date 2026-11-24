@@ -19,8 +19,7 @@ pyre-postgres.ext.tests.drivers.exclude := \
 tests.postgres.ext.postgres_attach.pre := tests.postgres.ext.postgres_database
 tests.postgres.ext.postgres_database_create.pre := tests.postgres.ext.postgres_attach
 tests.postgres.ext.postgres_table.pre := tests.postgres.ext.postgres_database_create
-tests.postgres.ext.postgres_reserved.pre := tests.postgres.ext.postgres_table
-tests.postgres.ext.postgres_references.pre := tests.postgres.ext.postgres_reserved
+tests.postgres.ext.postgres_references.pre := tests.postgres.ext.postgres_table
 tests.postgres.ext.postgres_database_drop.pre := tests.postgres.ext.postgres_references
 
 
