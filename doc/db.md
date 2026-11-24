@@ -194,7 +194,7 @@ rows at a time. `batch` is a trait of the server, 1000 by default. Other stateme
 server while a selection is read, in a transaction or outside one, and a selection abandoned before
 its last row closes its cursor. A cursor declared in a transaction that rolls back goes with it. A
 selection abandoned while its transaction has failed leaves its cursor to the rollback, which takes
-it when it was declared in that transaction; otherwise the session keeps it until it ends. On
+it when it was declared in that transaction; otherwise the next selection closes it. On
 postgres, a prepared selection receives its whole result when it runs.
 
 postgres and sqlite receive the values of `select`, `insert`, `update` and `delete` beside the
@@ -231,25 +231,25 @@ already raises `IntegrityError`, and the whole load is undone.
 
 The postgres bindings move rows in bulk. `connection.copyIn(statement)` starts a
 `COPY … FROM STDIN` and hands back a context manager, whose `row(*values)` sends one row with its
-values rendered as `execute` renders its arguments; the block keeps the rows when it ends and
-throws them away when it raises. `connection.copyOut(statement)` starts a `COPY … TO STDOUT` and
-hands back an iterator over the lines of text the server sends. A copy holds its session until
-it ends, so the other threads that share the session wait for it. A `COPY` that moves rows between
-the server and the client, sent through `exec`, `execute` or `send`, is refused with
+values rendered as `execute` renders its arguments; the block keeps the rows when it ends and throws
+them away when it raises. `connection.copyOut(statement)` starts a `COPY … TO STDOUT` and hands
+back an iterator over the lines of text the server sends. A copy holds its session until it ends, so
+the other threads that share the session wait for it. A copy out abandoned before its last line asks
+the server to stop sending, outside a transaction; inside one, where a statement the server stops
+would fail the transaction, it reads the remaining lines and throws them away. A `COPY` that moves
+rows between the server and the client, sent through `exec`, `execute` or `send`, is refused with
 `InterfaceError`.
 
-`connection.stream(statement, *arguments, batch=1000)` runs a selection, with its arguments
-rendered as `execute` renders them, and hands back an iterator over its rows in batches, each one
-a result of at most `batch` rows: libpq 17 and later deliver them in chunks of that size, and an
-older libpq one row at a time. A failure of the server partway is raised when the iteration
-reaches it, after the rows that came before it. A stream holds its session as a copy does. One
-abandoned before its last batch stops the answer: outside a transaction, it asks the server to
-stop sending; inside one, where a statement the server stops would fail the transaction, it reads
-the remaining rows and throws them away. A session in the middle of an answer, whether a copy, a
+`connection.stream(statement, *arguments, batch=1000)` runs a selection, with its arguments rendered
+as `execute` renders them, and hands back an iterator over its rows in batches, each one a result of
+at most `batch` rows: libpq 17 and later deliver them in chunks of that size, and an older libpq one
+row at a time. A failure of the server partway is raised when the iteration reaches it, after the
+rows that came before it. A stream holds its session as a copy does. One abandoned before its last
+batch ends as an abandoned copy out does. A session in the middle of an answer, whether a copy, a
 stream, or a statement sent with `send` whose results have not been collected, refuses the
 statements its own thread sends, through `exec`, `execute`, `prepare`, `execPrepared`, `describe`,
-`release`, `send`, `sendParams`, `copyIn`, `copyOut` or `stream`, with `InterfaceError`, since libpq would throw
-the answer away to make room for them.
+`release`, `send`, `sendParams`, `copyIn`, `copyOut` or `stream`, with `InterfaceError`, since libpq
+would throw the answer away to make room for them.
 
 A prepared statement is rendered once and runs many times. `pyre.db.parameter(name, schema=None)`
 is a slot for a value given when the statement runs; it stands where a value stands, in a
