@@ -54,6 +54,13 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_load.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_load_defaults.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_load_null.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_load_atomic.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_select.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_update.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_delete.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_paging.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_returning.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_prepare_constant.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_select_slot.py)
 
 # {sqlite_error_busy} keeps the database it locks
 set(sqlite_error_busy_cleanup
