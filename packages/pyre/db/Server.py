@@ -761,13 +761,15 @@ class Server(pyre.component, implements=DataStore):
                     for other in table.pyre_referencedTables()
                 )
             ]
-            # if there are none, the rest refer to each other
+            # if there are none, each of the rest refers to a table that cannot be placed before it
             if not ready:
-                # so no order lets each of them find the rows it refers to
+                # so no order lets each of them find the rows it refers to; name a few of them,
+                # so the complaint stays short however many there are
                 raise self.exceptions.NotSupportedError(
                     diagnostic=(
-                        f"the tables {', '.join(table.pyre_name for table in pending)} refer to"
-                        " each other, so none of them can be made before the others"
+                        f"the tables {self._few(names=[table.pyre_name for table in pending])}"
+                        " refer to each other, directly or through others, so none of them can"
+                        " be made before the rest"
                     )
                 )
             # place the ones that are ready, in the order they were given
@@ -776,6 +778,18 @@ class Server(pyre.component, implements=DataStore):
             pending = [table for table in pending if table not in ready]
         # hand the order over
         return ordered
+
+    def _few(self, names, shown=3):
+        """
+        Render {names} for a complaint: all of them when there are at most {shown}, and otherwise
+        the first {shown} and a count of the rest
+        """
+        # when there are few enough
+        if len(names) <= shown:
+            # name them all
+            return ", ".join(names)
+        # otherwise, name the first few and count the others
+        return f"{', '.join(names[:shown])} and {len(names) - shown} others"
 
     def _reproduceTable(self, source, table):
         """
