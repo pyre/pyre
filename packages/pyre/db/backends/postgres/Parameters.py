@@ -38,12 +38,12 @@ class Parameters(standard.Parameters):
         return json.dumps(value)
 
     # implementation details
-    def _placeholder(self):
+    def _numbered(self, index):
         """
-        Render the placeholder of the value kept last
+        Render the placeholder of the value at {index}, counting from one
         """
         # postgres numbers its placeholders
-        return f"${len(self._values)}"
+        return f"${index}"
 
     def _cast(self, value):
         """

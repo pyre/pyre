@@ -52,16 +52,34 @@ class Parameters(Visitor):
         if value is literals.null:
             # so it is written as it is
             return "NULL"
+        # keep the value in the form the bindings take
+        self._values.append(self.bound(table=table, column=column, value=value))
+        # and leave it to the column to give its placeholder a type
+        return self._placeholder()
+
+    def bound(self, table, column, value):
+        """
+        Build the form the bindings take of {value}, a value of {column} of {table}; a missing
+        value and {NULL} are both {None}
+        """
+        # a missing value and {NULL}
+        if value is None or value is literals.null:
+            # are what the bindings take for {NULL}
+            return None
         # let the literals refuse what the language has no type for
         self.mill._literals.literal(table=table, column=column, value=value)
         # convert the value to the type of the column
         value = column.coerce(value=value)
-        # keep it in the form the bindings take
-        self._values.append(
-            column._pyre_identify(authority=self, table=table, column=column, value=value)
-        )
-        # and leave it to the column to give its placeholder a type
-        return self._placeholder()
+        # and hand over the form the bindings take
+        return column._pyre_identify(authority=self, table=table, column=column, value=value)
+
+    def placeholders(self, count):
+        """
+        Render the placeholders of a statement whose {count} values travel beside it, in order,
+        without keeping any values
+        """
+        # one per value
+        return tuple(self._numbered(index=index) for index in range(1, count + 1))
 
     def value(self, value):
         """
@@ -150,6 +168,13 @@ class Parameters(Visitor):
     def _placeholder(self):
         """
         Render the placeholder of the value kept last
+        """
+        # by its position among the values kept so far
+        return self._numbered(index=len(self._values))
+
+    def _numbered(self, index):
+        """
+        Render the placeholder of the value at {index}, counting from one
         """
         # the language marks every placeholder the same way, and fills them in order
         return "?"
