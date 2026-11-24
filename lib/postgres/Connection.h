@@ -37,9 +37,10 @@
 // of a connection share, as they share the session, so the calls take turns, and {close} waits
 // for the one in progress. {cancel} is the exception, since it interrupts the call in progress
 //
-// a session answers one statement at a time, and a copy, or a statement sent off whose answer has
-// not been collected, keeps it answering. the calls that send a statement refuse it until the
-// answer is over, with an {InterfaceError}, since libpq would otherwise throw the answer away
+// a session answers one statement at a time, and a copy, a stream, or a statement sent off whose
+// answer has not been collected, keeps it answering. the calls that send a statement refuse it
+// until the answer is over, with an {InterfaceError}, since libpq would otherwise throw the answer
+// away
 //
 // every session writes its dates and times the ISO way and its text in utf-8, whatever the server's
 // configuration or the caller's parameters ask for, so that the values it sends always read the
@@ -219,9 +220,11 @@ public:
     // observes this, and refuses to be used afterwards
     inline auto close() -> void;
 
-    // the copies hold my lock for as long as they run, and talk to libpq through my session
+    // the copies and the streams hold my lock for as long as they run, and talk to libpq
+    // through my session
     friend class CopyIn;
     friend class CopyOut;
+    friend class Stream;
 
     // implementation details
 private:

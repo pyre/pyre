@@ -42,6 +42,8 @@ namespace pyre::postgres {
     // the copies of rows into a table and out of the database
     using copyIn_t = CopyIn;
     using copyOut_t = CopyOut;
+    // the rows of a selection, read in batches as the server sends them
+    using stream_t = Stream;
     // and what other sessions have to say
     using notification_t = Notification;
 
