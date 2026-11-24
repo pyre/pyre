@@ -1070,6 +1070,52 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
+    def loadGroups(self, *records):
+        """
+        Sort {records} by their table and by the columns they give values for, and generate each
+        group as its table, the fields of those columns and its records, in the order in which
+        the groups first appear
+        """
+        # the groups, by their table and the names of their columns
+        groups = {}
+        # go through the records
+        for record in records:
+            # get the table of the record
+            table = record.pyre_layout
+            # the fields it gives values for
+            fields = tuple(field for field, _ in self._givenColumns(table=table, record=record))
+            # the group of the records of its table that give values for the same fields
+            group = groups.setdefault(
+                (table, tuple(field.name for field in fields)), (table, fields, [])
+            )
+            # takes it
+            group[2].append(record)
+        # hand the groups over
+        yield from groups.values()
+        # all done
+        return
+
+    def givenValues(self, table, record):
+        """
+        Build the values {record} gives the columns of {table} it does not leave to the server,
+        in the order of the fields {loadGroups} reports for it
+        """
+        # easy enough
+        return tuple(value for _, value in self._givenColumns(table=table, record=record))
+
+    def loadStatement(self, table, fields, parameters):
+        """
+        Build the statement that inserts a row of {table} with a value for each of {fields}, each
+        one a placeholder spelled by {parameters}, so that the statement serves every row of a
+        group
+        """
+        # the names of the columns
+        names = ", ".join(self.identifier(field.name) for field in fields)
+        # and the placeholders of their values
+        marks = ", ".join(parameters.placeholders(count=len(fields)))
+        # put it all together
+        return f"INSERT INTO {self.identifier(table.pyre_name)} ({names}) VALUES ({marks});"
+
     def deleteRecords(self, table, condition, returning=None, parameters=None):
         """
         Remove all {table} records that match {condition}, and return the columns of
