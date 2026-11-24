@@ -240,10 +240,12 @@ of postgres take it without being told.
 keys and the indexes they have in the database of `source`, all in one transaction. A table comes
 before the ones among them that refer to it, as `Table.pyre_referencedTables()` names them, and
 tables that refer to each other in a cycle, and the ones that refer to them, are refused with
-`NotSupportedError`, which names a few of them. Each table is made
-without its indexes, filled `batch` rows at a time by `load(…, generated="keep")`, given its
-indexes, and each of its generated columns is told to go on after its largest value, with
-`ALTER TABLE … ALTER COLUMN … RESTART WITH …`, which sqlite has no need of. With
+`NotSupportedError`, which names a few of them. Each table is made without its indexes and its
+references to itself, filled `batch` rows at a time by `load(…, generated="keep")`, given its
+indexes and, with `ALTER TABLE … ADD FOREIGN KEY …`, its references to itself, so that a row may
+refer to one that comes after it; sqlite, which cannot add them, declares them with the table and
+does not check them. Then each of its generated columns is told to go on after its largest value,
+with `ALTER TABLE … ALTER COLUMN … RESTART WITH …`, which sqlite has no need of. With
 `pyre.db.backup(stream=…, sql=<mill>)` as the server, the reproduction is a file of statements in
 the dialect of the mill, which `psql -1 -f` or `sqlite3` runs as it is.
 
@@ -305,14 +307,14 @@ and again on the first run after the server attaches to a new session; `close()`
 statements it has compiled. `pyre.db.backup` writes the statement anew at every run, with the
 values as literals.
 
-`runMany(rows)` runs a prepared statement once for each of `rows`, the values of its slots for
-each run, as `run` takes them, `batch` runs at a time, each batch all or nothing. Every run is bound
-before anything reaches the database. postgres sends each batch through a pipeline, as one segment;
-the other servers run its statements one at a time, in a block of their own. A run that fails
-raises the exception of its condition, whose `values` are the values of the run; its batch is
-undone, the batches before it are kept, and the ones after it are not run.
-A statement that hands back no rows hands back nothing, and the others hand back the records of
-every run, in order.
+`runMany(rows)` runs a prepared statement once for each of `rows`, the values of its slots for each
+run, as `run` takes them, `batch` runs at a time, each batch all or nothing. Every run is bound
+before anything reaches the database. Each batch runs in a block of its own, a savepoint inside a
+block that is open already: postgres sends it through a pipeline, as one segment, and the other
+servers run its statements one at a time. A run that fails raises the exception of its condition,
+whose `values` are the values of the run; its batch is undone, the batches before it are kept, and
+the ones after it are not run. A statement that hands back no rows hands back nothing, and the
+others hand back the records of every run, in order.
 
 The postgres bindings expose the prepared statements of a session directly:
 `connection.prepare(name, statement)`, `connection.execPrepared(name, *arguments)`,
