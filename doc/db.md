@@ -187,6 +187,16 @@ statements given as text. `select` pages through the rows: `offset` skips that m
 and `limit` keeps at most that many of the rest; both must be integers, or, in a prepared
 statement, slots.
 
+`select` hands back a generator, which reads the rows as it makes their records. postgres
+declares a cursor over the selection, `DECLARE pyre_cursor_<n> NO SCROLL CURSOR WITH HOLD`, and
+fetches `batch` rows at a time; sqlite reads each selection through a cursor of its own, `batch`
+rows at a time. `batch` is a trait of the server, 1000 by default. Other statements may run on the
+server while a selection is read, in a transaction or outside one, and a selection abandoned before
+its last row closes its cursor. A cursor declared in a transaction that rolls back goes with it. A
+selection abandoned while its transaction has failed leaves its cursor to the rollback, which takes
+it when it was declared in that transaction; otherwise the session keeps it until it ends. On
+postgres, a prepared selection receives its whole result when it runs.
+
 postgres and sqlite receive the values of `select`, `insert`, `update` and `delete` beside the
 statement, as parameters, rather than inside it as literals, so nothing a value holds can change
 what the statement does. A value of a column takes a bare placeholder, `$1` on postgres and `?1`
