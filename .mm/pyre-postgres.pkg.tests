@@ -1,0 +1,32 @@
+# -*- makefile -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# the testsuite of {pyre.db} against a postgres server
+pyre-postgres.pkg.tests.stem := postgres.pkg
+pyre-postgres.pkg.tests.prerequisites := pyre-postgres.ext journal.pkg pyre.pkg
+
+
+# skip the whole suite when no server is reachable
+pyre-postgres.pkg.tests.drivers.exclude := \
+    ${if $(postgres.live),,${notdir ${wildcard tests/postgres.pkg/*.py}}}
+
+
+# the following tests pound on the test database; execute them in order
+tests.postgres.pkg.attach.pre := tests.postgres.pkg.database
+tests.postgres.pkg.database_create.pre := tests.postgres.pkg.attach
+tests.postgres.pkg.table.pre := tests.postgres.pkg.database_create
+tests.postgres.pkg.references.pre := tests.postgres.pkg.table
+tests.postgres.pkg.database_drop.pre := tests.postgres.pkg.references
+
+
+# clean up
+tests.postgres.pkg.reproduce_file.clean := reproduce_file.sql
+tests.postgres.pkg.folder_text.clean := folder_text
+tests.postgres.pkg.reproduce_folder.clean := reproduce_folder
+
+
+# end of file
