@@ -158,5 +158,49 @@ class Mill(standard.Mill, family="pyre.db.dialects.postgres"):
         # put it all together
         return f"COPY {self.identifier(table.pyre_name)} ({names}) FROM STDIN;"
 
+    # cursors
+    def declareCursor(self, name, selection):
+        """
+        Generate the SQL statement that declares the cursor {name} over {selection}, the lines of
+        a selection; the cursor reads forward only, and outlasts the transaction it is declared in
+        """
+        # every statement starts at the margin
+        self.margin()
+        # name the cursor
+        yield self.place(f"DECLARE {self.identifier(name)} NO SCROLL CURSOR WITH HOLD FOR")
+        # indent
+        self.indent()
+        # go through the lines of the selection
+        for line in selection:
+            # and place each one under the declaration
+            yield self.place(line)
+        # back out
+        self.outdent()
+        # all done
+        return
+
+    def fetchFromCursor(self, name, count):
+        """
+        Generate the SQL statement that fetches the next {count} rows of the cursor {name}
+        """
+        # every statement starts at the margin
+        self.margin()
+        # simple enough
+        yield self.place(f"FETCH FORWARD {count} FROM {self.identifier(name)};")
+        # all done
+        return
+
+    def closeCursor(self, name):
+        """
+        Generate the SQL statement that closes the cursor {name}, and lets the server forget the
+        rows it kept for it
+        """
+        # every statement starts at the margin
+        self.margin()
+        # simple enough
+        yield self.place(f"CLOSE {self.identifier(name)};")
+        # all done
+        return
+
 
 # end of file
