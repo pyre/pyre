@@ -27,6 +27,14 @@ namespace pyre::postgres::py {
             if (item.second.is_none()) {
                 continue;
             }
+            // a truth value goes as the 1 or 0 that libpq reads for the settings that take one
+            if (py::isinstance<py::bool_>(item.second)) {
+                // spelled out
+                parameters.emplace_back(
+                    item.first.cast<string_t>(), item.second.cast<bool>() ? "1" : "0");
+                // and that's all for it
+                continue;
+            }
             // everything else goes as a name and a value, kept apart: a password with a space
             // in it, spliced into a conninfo string, would silently become a password and a
             // garbage keyword
