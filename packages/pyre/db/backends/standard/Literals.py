@@ -29,6 +29,10 @@ class Literals(Visitor):
     The form of each literal is fixed by the standard, so the literals are built from the values
     themselves; values of types that standard SQL does not support are refused, and dialects
     that support them provide subclasses that override the relevant handlers
+
+    A slot of a prepared statement is written as the literal of the value it is given in
+    {values}, which is how a server that writes literals runs a prepared statement; without
+    {values}, a slot has nothing to stand for, and is refused
     """
 
     # public data
@@ -70,6 +74,46 @@ class Literals(Visitor):
             ) from None
         # let the handler render it
         return handler(schema=None, value=value, usage="a literal of")
+
+    def slot(self, table, column, parameter):
+        """
+        Render the value of {parameter}, a slot for a value of {column} of {table}, as a literal
+        """
+        # look up the value of the slot
+        value = self._slotValue(parameter=parameter)
+        # a missing value
+        if value is None:
+            # is {NULL}
+            return "NULL"
+        # the others are values of the column
+        return self.literal(table=table, column=column, value=value)
+
+    def valueSlot(self, parameter):
+        """
+        Render the value of {parameter}, a slot for a value that belongs to no column, as a literal
+        """
+        # look up the value of the slot
+        value = self._slotValue(parameter=parameter)
+        # a missing value
+        if value is None:
+            # is {NULL}
+            return "NULL"
+        # the others take the type of the slot
+        return self.value(value=parameter.schema.coerce(value=value))
+
+    def countSlot(self, parameter):
+        """
+        Render the value of {parameter}, a slot for the number of rows a bound of a selection
+        counts, as a literal
+        """
+        # look up the value of the slot
+        value = self._slotValue(parameter=parameter)
+        # a missing value
+        if value is None:
+            # is {NULL}
+            return "NULL"
+        # the others take the type my mill gives the bounds, and are written by their digits
+        return str(self.mill.rowCount.coerce(value=value))
 
     # the columns whose values have no type in the language
     def _pyre_onSchema(self, schema, **kwds):
@@ -250,10 +294,32 @@ class Literals(Visitor):
             + "]"
         )
 
+    def _slotValue(self, parameter):
+        """
+        Look up the value of {parameter}, a slot of a prepared statement
+        """
+        # without values
+        if self.values is None:
+            # the slot stands for nothing, which is a mistake of the caller
+            raise exceptions.InterfaceError(
+                diagnostic=(
+                    f"the slot {parameter.name!r} has no value: a statement with slots runs once "
+                    f"it is prepared"
+                )
+            )
+        # a slot that was given no value
+        if parameter.name not in self.values:
+            # is a mistake too
+            raise exceptions.InterfaceError(diagnostic=f"no value for the slot {parameter.name!r}")
+        # the others have one
+        return self.values[parameter.name]
+
     # meta-methods
-    def __init__(self, **kwds):
+    def __init__(self, values=None, **kwds):
         # chain up
         super().__init__(**kwds)
+        # the values of the slots of the statement, by name, if there are any
+        self.values = values
         # the handlers of the values that belong to no column, by the type of the value
         self._handlers = {
             bool: self._pyre_onBoolean,
