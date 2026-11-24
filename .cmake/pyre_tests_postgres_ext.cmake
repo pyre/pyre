@@ -37,6 +37,10 @@ pyre_test_python_testcase(tests/postgres.ext/libpq_arguments_nul.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_arguments_types.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_transaction_failed_commit.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_threads.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_copy_in.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_copy_in_raised.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_copy_out.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_copy_exec.py)
 
 # components
 pyre_test_python_testcase(tests/postgres.ext/postgres_database.py)
@@ -102,6 +106,11 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_conforming_strings.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_literal_backslash.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_parameters_backslash.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_parameters_decimal.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_load.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_load_text.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_load_defaults.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_load_null.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_load_atomic.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,

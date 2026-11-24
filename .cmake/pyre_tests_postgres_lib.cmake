@@ -50,6 +50,18 @@ pyre_test_driver_postgres(tests/postgres.lib/transaction_nested_rollback.cc)
 pyre_test_driver_postgres(tests/postgres.lib/transaction_nested_release.cc)
 pyre_test_driver_postgres(tests/postgres.lib/threads.cc)
 pyre_test_driver_postgres(tests/postgres.lib/async.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_in.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_in_escape.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_in_abort.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_in_abandoned.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_in_refused.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_in_statement.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_out.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_out_abandoned.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_exec.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_exec_out.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_result.cc)
+pyre_test_driver_postgres(tests/postgres.lib/copy_threads.cc)
 
 
 # end of file

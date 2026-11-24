@@ -1281,6 +1281,8 @@ pyre_test_python_testcase(tests/pyre.pkg/db/parameters_isin.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/parameters_like.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/parameters_sqlite.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/parameters_refused.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/load_backup.py)
+pyre_test_python_cleanup(load_backup.sql tests/pyre.pkg/db/load_backup.py)
 
 
 #
