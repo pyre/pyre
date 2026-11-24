@@ -31,6 +31,9 @@ class Text:
     null = "\\N"
     # the characters that would break a line or a row, and their escapes
     escapes = str.maketrans({"\\": "\\\\", "\n": "\\n", "\r": "\\r", "\t": "\\t"})
+    # and the characters that put an entry of an array in quotes: the ones the form of arrays
+    # uses, and white space
+    special = frozenset('{},"\\ \t\n\r\v\f')
 
     # interface
     def row(self, table, values):
@@ -164,14 +167,50 @@ class Text:
         return json.dumps(value, ensure_ascii=False)
 
     # arrays
-    def _pyre_onArray(self, schema, **kwds):
+    def _pyre_onArray(self, schema, value, **kwds):
         """
-        Refuse an array, which a folder has no text for
+        Write an array, as postgres writes its arrays: each level in braces, its entries separated
+        by commas, a null as NULL, and an entry that would be misread in double quotes
         """
-        # complain
-        raise self._refusal(contents="arrays", **kwds)
+
+        # the entries are values of the column type of the entries
+        def entry(item):
+            # a missing entry
+            if item is None:
+                # is a null
+                return "NULL"
+            # the others are written as their type says, and quoted when they need it
+            return self._quoted(
+                text=schema.schema._pyre_identify(authority=self, value=item, **kwds)
+            )
+
+        # write the array, level by level
+        return self._level(level=value, entry=entry)
 
     # implementation details
+    def _level(self, level, entry):
+        """
+        Write {level}, an entry or a level of an array whose entries are written by {entry}
+        """
+        # an entry
+        if not isinstance(level, tuple):
+            # is written as such
+            return entry(level)
+        # a level lists what it holds, in braces
+        return "{" + ",".join(self._level(level=item, entry=entry) for item in level) + "}"
+
+    def _quoted(self, text):
+        """
+        Put {text}, the text of an entry of an array, in double quotes when it would be misread
+        without them: when it is empty, spells NULL, or holds a character the form of arrays uses
+        """
+        # text that reads back as itself
+        if text and text.upper() != "NULL" and not any(c in self.special for c in text):
+            # stays as it is
+            return text
+        # the others are quoted, with their quotes and backslashes escaped
+        return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
     def _refusal(self, contents, table, column, **kwds):
         """
         Build the exception that refuses {column} of {table}, whose {contents} a folder has no
