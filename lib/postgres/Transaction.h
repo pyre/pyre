@@ -21,8 +21,12 @@
 // transaction open behind it: the stack unwinds, the destructor runs, and the server hears about
 // it whether or not the caller remembered to say so
 //
-// a transaction may not be copied, because there is only one of it on the server; it may be
-// moved, because the obligation to close it can be handed on
+// a transaction opened while the session is already in one is a savepoint inside it: committing
+// it keeps its work for the transaction around it to decide on, and rolling it back undoes only
+// its own work
+//
+// a transaction may not be copied, because what it opened on the server can be closed only
+// once; it may be moved, because the obligation to close it can be handed on
 class pyre::postgres::Transaction {
     // types
 public:
@@ -32,9 +36,9 @@ public:
 
     // metamethods
 public:
-    // open a transaction on {connection}
+    // open a transaction on {connection}, or a savepoint when it is in one already
     explicit inline Transaction(connection_type connection);
-    // there is exactly one transaction on the server, so there is exactly one of me
+    // what i opened on the server can be closed only once, so there is exactly one of me
     Transaction(const Transaction &) = delete;
     Transaction & operator=(const Transaction &) = delete;
     // but the duty to close it may be passed along
@@ -65,8 +69,13 @@ private:
 private:
     // the session, and my share of it
     connection_type _connection;
+    // the name of my savepoint, when i was opened inside a transaction; empty otherwise
+    string_t _savepoint;
     // whether the transaction is still open
     bool _live;
+    // the number of savepoints set so far in this process, which names the next one, so that
+    // the names are unique within every session
+    inline static std::atomic<long> _savepoints = 0;
 };
 
 

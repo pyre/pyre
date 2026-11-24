@@ -16,12 +16,25 @@
 // open a transaction on {connection}
 pyre::postgres::Transaction::Transaction(connection_type connection) :
     _connection(std::move(connection)),
+    // a transaction of my own, unless the session is in one already
+    _savepoint(),
     // not yet; the statement below has to succeed first
     _live(false)
 {
-    // tell the server. a failure here throws, and leaves me unbuilt: my destructor will not run,
-    // and there is nothing to roll back, since nothing was ever opened
-    _connection.exec("BEGIN");
+    // a failure below throws, and leaves me unbuilt: my destructor will not run, and there is
+    // nothing to roll back, since nothing was ever opened. a session in the middle of a
+    // transaction
+    if (_connection.transaction() != TransactionStatus::idle) {
+        // gets a savepoint inside it, under a name of its own
+        _savepoint = "pyre_" + std::to_string(++_savepoints);
+        // set it
+        _connection.exec("SAVEPOINT " + _savepoint);
+    }
+    // the others
+    else {
+        // open a transaction
+        _connection.exec("BEGIN");
+    }
     // now there is something to close
     _live = true;
 }
@@ -30,6 +43,7 @@ pyre::postgres::Transaction::Transaction(connection_type connection) :
 // the duty to close it may be passed along
 pyre::postgres::Transaction::Transaction(Transaction && other) noexcept :
     _connection(std::move(other._connection)),
+    _savepoint(std::move(other._savepoint)),
     _live(other._live)
 {
     // whoever we took it from no longer owes anybody a commit or a rollback
@@ -50,6 +64,8 @@ pyre::postgres::Transaction::operator=(Transaction && other) noexcept
     _close();
     // take the session
     _connection = std::move(other._connection);
+    // the savepoint, if there is one
+    _savepoint = std::move(other._savepoint);
     // and the duty
     _live = other._live;
     // which the other one no longer has
@@ -83,6 +99,14 @@ pyre::postgres::Transaction::commit() -> void
     // clear the flag first: whether or not the server accepts the commit, this transaction is
     // over, and my destructor must not go on to try a rollback that would fail just as loudly
     _live = false;
+    // a savepoint
+    if (!_savepoint.empty()) {
+        // keeps its work by letting go of the savepoint, leaving the rest to the transaction
+        // around it
+        _connection.exec("RELEASE SAVEPOINT " + _savepoint);
+        // and that's all
+        return;
+    }
     // tell the server
     const auto result = _connection.exec("COMMIT");
     // a transaction the server had already abandoned answers its commit with a rollback, and
@@ -109,6 +133,15 @@ pyre::postgres::Transaction::rollback() -> void
 
     // as above, the transaction is over the moment we decide to end it
     _live = false;
+    // a savepoint
+    if (!_savepoint.empty()) {
+        // undoes the work done since it was set
+        _connection.exec("ROLLBACK TO SAVEPOINT " + _savepoint);
+        // and lets go of it
+        _connection.exec("RELEASE SAVEPOINT " + _savepoint);
+        // and that's all
+        return;
+    }
     // tell the server
     _connection.exec("ROLLBACK");
 
@@ -152,8 +185,18 @@ pyre::postgres::Transaction::_close() noexcept -> void
     // a rollback on a session that has been closed, or that has died, will throw, and we are
     // very likely already unwinding; a second exception here would end the process
     try {
-        // undo everything
-        _connection.exec("ROLLBACK");
+        // a savepoint
+        if (!_savepoint.empty()) {
+            // undoes the work done since it was set
+            _connection.exec("ROLLBACK TO SAVEPOINT " + _savepoint);
+            // and lets go of it
+            _connection.exec("RELEASE SAVEPOINT " + _savepoint);
+        }
+        // a transaction of my own
+        else {
+            // undoes everything
+            _connection.exec("ROLLBACK");
+        }
     }
     // a rollback that fails is worth knowing about, even though there is nothing to be done.
     // the channel is a warning and not an error on purpose: an error channel throws when it
