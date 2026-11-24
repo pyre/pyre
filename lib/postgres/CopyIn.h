@@ -34,8 +34,8 @@ public:
     using self_type = CopyIn;
     // the session
     using connection_type = Connection;
-    // the hold on its lock
-    using guard_type = Connection::guard_type;
+    // the hold on the session, which carries the guard of its lock
+    using hold_type = Hold;
     // the values of a row, as the text their types read
     using arguments_type = arguments_t;
 
@@ -86,8 +86,8 @@ private:
 private:
     // the session, and my share of it
     connection_type _connection;
-    // the hold on its lock
-    guard_type _guard;
+    // the hold on the session
+    hold_type _hold;
     // the statement that started me
     string_t _statement;
     // whether the copy is under way

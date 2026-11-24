@@ -1,0 +1,185 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "Hold.h"
+// the arrays of the values of a statement
+#include <vector>
+
+
+// metamethods
+// hold {session}, whose lock {guard} holds
+pyre::postgres::Hold::Hold(storage_type session, guard_type guard) :
+    _session(std::move(session)),
+    _guard(std::move(guard))
+{}
+
+
+// interface
+// the raw pointer to the session, checked
+auto
+pyre::postgres::Hold::handle() const -> handle_type
+{
+    // a session that nobody closed is a session we may use
+    if (!_session.valid()) {
+        // and one that somebody did is a bug in the caller
+        throw InterfaceError("the connection is closed");
+    }
+    // hand off the pointer
+    return _session.handle();
+}
+
+
+// whether the session is still open
+auto
+pyre::postgres::Hold::open() const -> bool
+{
+    // easy enough
+    return _session.valid();
+}
+
+
+// whether i still hold the lock
+auto
+pyre::postgres::Hold::held() const -> bool
+{
+    // easy enough
+    return _guard.owns_lock();
+}
+
+
+// let go of the lock
+auto
+pyre::postgres::Hold::release() -> void
+{
+    // a lock i still hold
+    if (_guard.owns_lock()) {
+        // is let go
+        _guard.unlock();
+    }
+    // all done
+    return;
+}
+
+
+// talking to libpq
+// send {statement}, or run the prepared statement it names, without waiting
+auto
+pyre::postgres::Hold::send(view_t statement, const arguments_type & arguments, bool prepared) const
+    -> int
+{
+    // both libpq calls want a terminated string; for a prepared statement this is its name
+    const string_t text(statement);
+    // and the values as an array of pointers, with a null standing for each {NULL}
+    std::vector<const char *> values;
+    values.reserve(arguments.size());
+    // fill it in
+    for (const auto & argument : arguments) {
+        values.push_back(argument.has_value() ? argument->c_str() : nullptr);
+    }
+    // how many there are
+    const int count = static_cast<int>(arguments.size());
+
+    // a statement the server already knows
+    if (prepared) {
+        // every value goes as text, and every answer comes back as text
+        return PQsendQueryPrepared(
+            handle(), text.c_str(), count, values.data(), nullptr, nullptr, 0);
+    }
+
+    // and one it is seeing for the first time, whose placeholders the server gives their types
+    return PQsendQueryParams(
+        handle(), text.c_str(), count, nullptr, values.data(), nullptr, nullptr, 0);
+}
+
+
+// complain that libpq gave up before the server ever heard of {statement}
+auto
+pyre::postgres::Hold::fail(view_t statement) const -> void
+{
+    // whatever libpq has to say
+    string_t explanation(PQerrorMessage(handle()));
+    // which, on the rare paths where it says nothing, is nothing at all
+    if (explanation.empty()) {
+        explanation = "libpq failed, and gave no reason";
+    }
+    // a failure with no SQLSTATE never came from the server's parser, and everything that can
+    // stop libpq on this side of the wire is environmental
+    throw OperationalError(Diagnostic(std::move(explanation), string_t(statement)));
+}
+
+
+// end the copy the server is in, and collect the rest of its answer
+auto
+pyre::postgres::Hold::abandon(ExecStatus status, view_t reason) const noexcept -> void
+{
+    // a session that has been closed has no copy left to end
+    if (!_session.valid()) {
+        // so there is nothing to do
+        return;
+    }
+    // the session
+    const auto session = _session.handle();
+
+    // a copy into the database
+    if (status == ExecStatus::copyIn || status == ExecStatus::copyBoth) {
+        // is told that its rows are not coming, which the server reports as a failure of the
+        // copy; libpq wants the reason as a terminated string
+        const string_t text(reason);
+        // tell it
+        PQputCopyEnd(session, text.c_str());
+    }
+    // a copy out of the database
+    if (status == ExecStatus::copyOut || status == ExecStatus::copyBoth) {
+        // has its rows read and thrown away; a caller that wants the server to stop sending them
+        // asks it to before coming here
+        char * buffer = nullptr;
+        // until the server says there are no more
+        while (PQgetCopyData(session, &buffer, 0) > 0) {
+            // let go of each one
+            PQfreemem(buffer);
+            // and make room for the next
+            buffer = nullptr;
+        }
+    }
+
+    // the rest of the answer says how the copy ended, which the caller already knows
+    while (PGresult * result = PQgetResult(session)) {
+        // the status of this part of it
+        const auto part = PQresultStatus(result);
+        // throw it away
+        PQclear(result);
+        // a copy that did not end leaves libpq handing back its state on every call, and the
+        // session unusable, which the next statement reports
+        if (part == PGRES_COPY_IN || part == PGRES_COPY_OUT || part == PGRES_COPY_BOTH) {
+            // so stop asking
+            break;
+        }
+    }
+
+    // all done
+    return;
+}
+
+
+// refuse a {COPY} sent through a call that cannot move its rows
+auto
+pyre::postgres::Hold::refuse(ExecStatus status, view_t statement) const -> void
+{
+    // end the copy, and collect the rest of its answer, so the session can be used again
+    abandon(status, "the rows of a COPY travel through CopyIn and CopyOut");
+    // and say why
+    throw InterfaceError(Diagnostic(
+        "a COPY that moves rows between the server and the client runs through copyIn or copyOut",
+        string_t(statement)));
+}
+
+
+// end of file

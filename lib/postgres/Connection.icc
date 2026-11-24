@@ -215,7 +215,7 @@ pyre::postgres::Connection::exec(view_t statement) const -> Result
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(statement);
+    const auto held = hold(statement);
     // {PQexec} wants a terminated string
     const string_t text(statement);
     // send it, and wait for the whole answer. note that this is the simple protocol: the
@@ -233,7 +233,7 @@ pyre::postgres::Connection::execParams(view_t statement, const arguments_type & 
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(statement);
+    const auto held = hold(statement);
     // hand the pieces to libpq
     PGresult * result = _exec(statement, arguments, false);
     // adopt what came back, and raise unless the server ran it
@@ -261,7 +261,7 @@ pyre::postgres::Connection::prepare(view_t name, view_t statement) const -> void
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(statement);
+    const auto held = hold(statement);
     // both want terminated strings
     const string_t label(name);
     const string_t text(statement);
@@ -283,7 +283,7 @@ pyre::postgres::Connection::execPrepared(view_t name, const arguments_type & arg
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(name);
+    const auto held = hold(name);
     // hand the pieces to libpq
     PGresult * result = _exec(name, arguments, true);
     // adopt what came back, and raise unless the server ran it; the statement we can name here
@@ -298,7 +298,7 @@ pyre::postgres::Connection::describe(view_t name) const -> Result
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(name);
+    const auto held = hold(name);
     // libpq wants a terminated string
     const string_t label(name);
     // ask the server
@@ -315,7 +315,7 @@ pyre::postgres::Connection::release(view_t name) const -> void
 #if defined(LIBPQ_HAS_CLOSE_PREPARED)
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(name);
+    const auto held = hold(name);
     // libpq wants a terminated string
     const string_t label(name);
     // close the statement, which the server does even in a failed transaction
@@ -340,7 +340,7 @@ pyre::postgres::Connection::send(view_t statement) const -> void
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(statement);
+    const auto held = hold(statement);
     // {PQsendQuery} wants a terminated string
     const string_t text(statement);
     // push it at the server; a zero here means it never went
@@ -361,9 +361,9 @@ pyre::postgres::Connection::sendParams(view_t statement, const arguments_type & 
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(statement);
+    const auto held = hold(statement);
     // push it at the server; a zero means it never went
-    if (_send(statement, arguments, false) == 0) {
+    if (held.send(statement, arguments, false) == 0) {
         // and the session is the only one that knows why
         _fail(statement);
     }
@@ -379,7 +379,7 @@ pyre::postgres::Connection::sendPrepare(view_t name, view_t statement) const -> 
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(statement);
+    const auto held = hold(statement);
     // both want terminated strings
     const string_t label(name);
     const string_t text(statement);
@@ -402,9 +402,9 @@ pyre::postgres::Connection::sendPrepared(view_t name, const arguments_type & arg
 {
     // take turns with the other users of the session, which must not be in the middle of
     // the answer to another statement
-    const auto guard = _free(name);
+    const auto held = hold(name);
     // push it at the server; a zero means it never went
-    if (_send(name, arguments, true) == 0) {
+    if (held.send(name, arguments, true) == 0) {
         // and the session is the only one that knows why
         _fail(name);
     }
@@ -468,7 +468,7 @@ pyre::postgres::Connection::result() const -> std::optional<Result>
     if (status == ExecStatus::copyIn || status == ExecStatus::copyOut
         || status == ExecStatus::copyBoth) {
         // is ended, and refused; the statement is not known here, only its answer
-        _refuse(status, "");
+        Hold(_connection, _guard()).refuse(status, "");
     }
 
     // hand back what arrived, whatever it says. deliberately, and unlike {exec}, this does not
@@ -667,9 +667,9 @@ pyre::postgres::Connection::_guard() const -> guard_type
 }
 
 
-// hold my lock, and refuse {statement} while the session is in the middle of another answer
+// hold the session for {statement}, refusing it while it is in the middle of another answer
 auto
-pyre::postgres::Connection::_free(view_t statement) const -> guard_type
+pyre::postgres::Connection::hold(view_t statement) const -> Hold
 {
     // take turns with the other users of the session
     auto guard = _guard();
@@ -690,8 +690,8 @@ pyre::postgres::Connection::_free(view_t statement) const -> guard_type
         throw InterfaceError(Diagnostic("the session is in a pipeline", string_t(statement)));
     }
 #endif
-    // otherwise, hand over the hold on the session
-    return guard;
+    // otherwise, hand over a hold on the session, which carries the guard of its lock
+    return Hold(_connection, std::move(guard));
 }
 
 
@@ -728,7 +728,7 @@ pyre::postgres::Connection::_harvest(PGresult * result, view_t statement) const 
     if (status == ExecStatus::copyIn || status == ExecStatus::copyOut
         || status == ExecStatus::copyBoth) {
         // is ended, and refused
-        _refuse(status, statement);
+        Hold(_connection, _guard()).refuse(status, statement);
     }
     // and if the server would not run the statement
     if (!harvest.ok()) {
@@ -774,115 +774,12 @@ pyre::postgres::Connection::_exec(
 }
 
 
-// build the arrays libpq wants and hand them to whichever of its sending calls the caller meant
-auto
-pyre::postgres::Connection::_send(
-    view_t statement, const arguments_type & arguments, bool prepared) const -> int
-{
-    // both libpq calls want a terminated string; for a prepared statement this is its name
-    const string_t text(statement);
-    // and the values as an array of pointers, with a null standing for each {NULL}
-    std::vector<const char *> values;
-    values.reserve(arguments.size());
-    // fill it in
-    for (const auto & argument : arguments) {
-        values.push_back(argument.has_value() ? argument->c_str() : nullptr);
-    }
-    // how many there are
-    const int count = static_cast<int>(arguments.size());
-
-    // a statement the server already knows
-    if (prepared) {
-        // every value goes as text, and every answer comes back as text
-        return PQsendQueryPrepared(
-            _handle(), text.c_str(), count, values.data(), nullptr, nullptr, 0);
-    }
-
-    // and one it is seeing for the first time, whose placeholders the server gives their types
-    return PQsendQueryParams(
-        _handle(), text.c_str(), count, nullptr, values.data(), nullptr, nullptr, 0);
-}
-
-
 // complain that libpq gave up before the server ever heard of {statement}
 auto
 pyre::postgres::Connection::_fail(view_t statement) const -> void
 {
-    // whatever libpq has to say
-    string_t explanation(message());
-    // which, on the rare paths where it says nothing, is nothing at all
-    if (explanation.empty()) {
-        explanation = "libpq failed, and gave no reason";
-    }
-    // a failure with no SQLSTATE never came from the server's parser, and everything that can
-    // stop libpq on this side of the wire is environmental
-    throw OperationalError(Diagnostic(std::move(explanation), string_t(statement)));
-}
-
-
-// end the copy the server is in, and collect the rest of its answer
-auto
-pyre::postgres::Connection::_abandon(ExecStatus status, view_t reason) const noexcept -> void
-{
-    // a session that has been closed has no copy left to end
-    if (!_connection.valid()) {
-        // so there is nothing to do
-        return;
-    }
-    // the session
-    const auto handle = _connection.handle();
-
-    // a copy into the database
-    if (status == ExecStatus::copyIn || status == ExecStatus::copyBoth) {
-        // is told that its rows are not coming, which the server reports as a failure of the
-        // copy; libpq wants the reason as a terminated string
-        const string_t text(reason);
-        // tell it
-        PQputCopyEnd(handle, text.c_str());
-    }
-    // a copy out of the database
-    if (status == ExecStatus::copyOut || status == ExecStatus::copyBoth) {
-        // has its rows read and thrown away; a caller that wants the server to stop sending them
-        // asks it to before coming here
-        char * buffer = nullptr;
-        // until the server says there are no more
-        while (PQgetCopyData(handle, &buffer, 0) > 0) {
-            // let go of each one
-            PQfreemem(buffer);
-            // and make room for the next
-            buffer = nullptr;
-        }
-    }
-
-    // the rest of the answer says how the copy ended, which the caller already knows
-    while (PGresult * result = PQgetResult(handle)) {
-        // the status of this part of it
-        const auto part = PQresultStatus(result);
-        // throw it away
-        PQclear(result);
-        // a copy that did not end leaves libpq handing back its state on every call, and the
-        // session unusable, which the next statement reports
-        if (part == PGRES_COPY_IN || part == PGRES_COPY_OUT || part == PGRES_COPY_BOTH) {
-            // so stop asking
-            break;
-        }
-    }
-
-    // all done
-    return;
-}
-
-
-// refuse a {COPY} sent through a call that cannot move its rows
-auto
-pyre::postgres::Connection::_refuse(ExecStatus status, view_t statement) const -> void
-{
-    // end the copy, and collect the rest of its answer, so the session can be used again
-    _abandon(status, "the rows of a COPY travel through CopyIn and CopyOut");
-    // and say why
-    throw InterfaceError(Diagnostic(
-        "a COPY that moves rows between the server and the client runs through copyIn or copyOut",
-        string_t(statement)));
+    // a hold on the session knows how to say what went wrong
+    Hold(_connection, _guard()).fail(statement);
 }
 
 

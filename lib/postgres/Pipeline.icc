@@ -25,7 +25,7 @@ pyre::postgres::Pipeline::Pipeline(connection_type connection) :
     _connection(std::move(connection)),
     // keep the other threads off the session until the pipeline ends, and start only on a
     // session that is not in the middle of an answer
-    _guard(_connection._free("the start of a pipeline")),
+    _hold(_connection.hold("the start of a pipeline")),
     _expected(),
     _unsynced(false),
     _flushed(false),
@@ -37,12 +37,12 @@ pyre::postgres::Pipeline::Pipeline(connection_type connection) :
     // goes away with the rest of what was built, and lets go of the session. enter the pipeline
     if (_enter() == 0) {
         // libpq refuses only a session that is in trouble, and the session knows why
-        _connection._fail("the start of a pipeline");
+        _hold.fail("the start of a pipeline");
     }
     // from here on, the session is in the pipeline
     _live = true;
     // send without waiting for the socket
-    if (PQsetnonblocking(_connection._handle(), 1) != 0) {
+    if (PQsetnonblocking(_hold.handle(), 1) != 0) {
         // libpq refuses only a session that is in trouble; take its explanation
         const string_t explanation(_connection.message());
         // leave the pipeline
@@ -63,7 +63,7 @@ pyre::postgres::Pipeline::Pipeline(connection_type connection) :
 // the duty to end it may be passed along
 pyre::postgres::Pipeline::Pipeline(Pipeline && other) noexcept :
     _connection(std::move(other._connection)),
-    _guard(std::move(other._guard)),
+    _hold(std::move(other._hold)),
     _expected(std::move(other._expected)),
     _unsynced(other._unsynced),
     _flushed(other._flushed),
@@ -88,7 +88,7 @@ pyre::postgres::Pipeline::operator=(Pipeline && other) noexcept
     // take the session
     _connection = std::move(other._connection);
     // the hold on its lock
-    _guard = std::move(other._guard);
+    _hold = std::move(other._hold);
     // the answers expected
     _expected = std::move(other._expected);
     // where the segments stand
@@ -123,7 +123,7 @@ pyre::postgres::Pipeline::execute(view_t statement, const arguments_type & argum
         throw InterfaceError(Diagnostic("the pipeline has ended", string_t(statement)));
     }
     // send it, and record that it went
-    _sent(statement, _connection._send(statement, arguments, false));
+    _sent(statement, _hold.send(statement, arguments, false));
     // all done
     return;
 }
@@ -142,7 +142,7 @@ pyre::postgres::Pipeline::prepare(view_t name, view_t statement) -> void
     const string_t label(name);
     const string_t text(statement);
     // send it, letting the server infer the types of its placeholders, and record that it went
-    _sent(statement, PQsendPrepare(_connection._handle(), label.c_str(), text.c_str(), 0, nullptr));
+    _sent(statement, PQsendPrepare(_hold.handle(), label.c_str(), text.c_str(), 0, nullptr));
     // all done
     return;
 }
@@ -158,7 +158,7 @@ pyre::postgres::Pipeline::execPrepared(view_t name, const arguments_type & argum
         throw InterfaceError(Diagnostic("the pipeline has ended", string_t(name)));
     }
     // send it, and record that it went
-    _sent(name, _connection._send(name, arguments, true));
+    _sent(name, _hold.send(name, arguments, true));
     // all done
     return;
 }
@@ -176,7 +176,7 @@ pyre::postgres::Pipeline::sync() -> void
     // mark the end of the segment
     if (_sync() == 0) {
         // libpq refuses only a session that is in trouble, and the session knows why
-        _connection._fail("a sync");
+        _hold.fail("a sync");
     }
     // its mark answers too, in its turn
     _expected.push_back(std::nullopt);
@@ -227,7 +227,7 @@ pyre::postgres::Pipeline::next() -> std::optional<result_type>
             // so ask, once for all the statements sent since the last sync
             if (_flush() == 0) {
                 // libpq refuses only a session that is in trouble, and the session knows why
-                _connection._fail(*_expected.front());
+                _hold.fail(*_expected.front());
             }
             // and remember it was asked
             _flushed = true;
@@ -293,7 +293,7 @@ pyre::postgres::Pipeline::close() noexcept -> void
         // leave the pipeline
         _exit();
         // and wait for the socket again
-        PQsetnonblocking(_connection._handle(), 0);
+        PQsetnonblocking(_hold.handle(), 0);
     }
     // a session that is gone, or in trouble, cannot be helped; the channel is a warning and not
     // an error on purpose: an error channel throws when it flushes, and a throw from here,
@@ -316,7 +316,7 @@ pyre::postgres::Pipeline::close() noexcept -> void
     // either way, the pipeline is over
     _live = false;
     // and the other threads may use the session again
-    _guard.unlock();
+    _hold.release();
 
     // all done
     return;
@@ -331,7 +331,7 @@ pyre::postgres::Pipeline::_sent(view_t statement, int status) -> void
     // a statement that did not go out
     if (status == 0) {
         // went nowhere because the session is in trouble, and the session knows why
-        _connection._fail(statement);
+        _hold.fail(statement);
     }
     // its answer comes, in its turn
     _expected.push_back(string_t(statement));
@@ -351,16 +351,16 @@ auto
 pyre::postgres::Pipeline::_pump() -> void
 {
     // the session
-    const auto handle = _connection._handle();
+    const auto handle = _hold.handle();
     // push out as much as the socket takes; what it does not take waits for the next time
     if (PQflush(handle) < 0) {
         // the session is in trouble, and knows why
-        _connection._fail("");
+        _hold.fail("");
     }
     // and pull in what has arrived, so the server is never left waiting on me
     if (PQconsumeInput(handle) == 0) {
         // the session is in trouble, and knows why
-        _connection._fail("");
+        _hold.fail("");
     }
     // all done
     return;
@@ -372,7 +372,7 @@ auto
 pyre::postgres::Pipeline::_wait() -> PGresult *
 {
     // the session
-    const auto handle = _connection._handle();
+    const auto handle = _hold.handle();
     // until a part is complete
     while (true) {
         // push out as much as the socket takes
@@ -380,12 +380,12 @@ pyre::postgres::Pipeline::_wait() -> PGresult *
         // a failure
         if (pushed < 0) {
             // means the session is in trouble, and knows why
-            _connection._fail("");
+            _hold.fail("");
         }
         // pull in what has arrived
         if (PQconsumeInput(handle) == 0) {
             // the session is in trouble, and knows why
-            _connection._fail("");
+            _hold.fail("");
         }
         // a part that is complete
         if (PQisBusy(handle) == 0) {
@@ -415,7 +415,7 @@ pyre::postgres::Pipeline::_enter() -> int
 {
 #if defined(LIBPQ_HAS_PIPELINING)
     // enter the pipeline
-    return PQenterPipelineMode(_connection._handle());
+    return PQenterPipelineMode(_hold.handle());
 #else
     // a libpq without pipelines has none to enter
     return 0;
@@ -428,7 +428,7 @@ pyre::postgres::Pipeline::_exit() -> int
 {
 #if defined(LIBPQ_HAS_PIPELINING)
     // leave the pipeline
-    return PQexitPipelineMode(_connection._handle());
+    return PQexitPipelineMode(_hold.handle());
 #else
     // a libpq without pipelines has none to leave
     return 0;
@@ -441,7 +441,7 @@ pyre::postgres::Pipeline::_sync() -> int
 {
 #if defined(LIBPQ_HAS_PIPELINING)
     // mark the end of a segment
-    return PQpipelineSync(_connection._handle());
+    return PQpipelineSync(_hold.handle());
 #else
     // a libpq without pipelines has no segments
     return 0;
@@ -454,7 +454,7 @@ pyre::postgres::Pipeline::_flush() -> int
 {
 #if defined(LIBPQ_HAS_PIPELINING)
     // ask the server for the answers it holds
-    return PQsendFlushRequest(_connection._handle());
+    return PQsendFlushRequest(_hold.handle());
 #else
     // a libpq without pipelines has no answers held
     return 0;
