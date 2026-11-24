@@ -255,6 +255,31 @@ pyre::postgres::py::connection(py::module & m)
         // the docstring
         "run the statement the server was taught under {name}");
 
+    cls.def(
+        // the name
+        "describe",
+        // the implementation
+        &Connection::describe,
+        // the signature
+        "name"_a,
+        // let go of the lock while the server works
+        py::call_guard<py::gil_scoped_release>(),
+        // the docstring
+        "what the server learned about the statement under {name}: its parameters and the "
+        "columns of its rows");
+
+    cls.def(
+        // the name
+        "release",
+        // the implementation
+        &Connection::release,
+        // the signature
+        "name"_a,
+        // let go of the lock while the server works
+        py::call_guard<py::gil_scoped_release>(),
+        // the docstring
+        "make the server forget the statement under {name}, which frees the name for another");
+
     // asynchronous execution
     cls.def(
         // the name

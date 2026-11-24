@@ -109,6 +109,55 @@ pyre::postgres::py::result(py::module & m)
         // the docstring
         "the labels the server gave my columns, as a tuple");
 
+    // the types of the columns, beside their labels
+    cls.def_property_readonly(
+        // the name
+        "types",
+        // the implementation
+        [](const Result & self) -> py::tuple {
+            // how many there are
+            const auto columns = self.columns();
+            // room for them
+            py::tuple types(columns);
+            // fill it in
+            for (Result::index_type column = 0; column < columns; ++column) {
+                types[column] = self.type(column);
+            }
+            // hand it off
+            return types;
+        },
+        // the docstring
+        "the identifiers of the types of my columns, as postgres catalogs them, as a tuple");
+
+    // the parameters, which only the description of a prepared statement carries
+    cls.def_property_readonly(
+        // the name
+        "parameters",
+        // the implementation
+        &Result::parameters,
+        // the docstring
+        "the number of parameters the prepared statement i describe takes");
+
+    cls.def_property_readonly(
+        // the name
+        "parameterTypes",
+        // the implementation
+        [](const Result & self) -> py::tuple {
+            // how many there are
+            const auto parameters = self.parameters();
+            // room for them
+            py::tuple types(parameters);
+            // fill it in
+            for (Result::index_type parameter = 0; parameter < parameters; ++parameter) {
+                types[parameter] = self.parameterType(parameter);
+            }
+            // hand it off
+            return types;
+        },
+        // the docstring
+        "the identifiers of the types of the parameters of the prepared statement i describe, as "
+        "postgres catalogs them, as a tuple");
+
     // the position of a column, by name
     cls.def(
         // the name
