@@ -39,6 +39,10 @@ dependencies:
   - numpy
   # {pyre.platforms} discovers mpi in the environment through its conda engine
   - openmpi
+  # the postgres client library, which the postgres back end of {pyre.db} builds against, and a
+  # server for its tests
+  - libpq
+  - postgresql
 
 
 # end of file
