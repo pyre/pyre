@@ -145,17 +145,19 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         return self._send(statement=statement, arguments=arguments)
 
     # bulk loading
-    def load(self, *records):
+    def load(self, *records, generated=None):
         """
         Insert {records}, many at a time and all or nothing; the records of a table that give
-        values for the same columns share one statement, which runs once for each of them
+        values for the same columns share one statement, which runs once for each of them; a
+        value for a column whose values the server assigns, and takes from no row, is refused
+        unless {generated} is "keep"
         """
         # the place that puts the values in the form the module takes
         parameters = self._parameters()
         # in a block of its own, so that the load keeps all of its records or none of them
         with self:
             # go through the groups of records
-            for table, fields, group in self.sql.loadGroups(*records):
+            for table, fields, group in self.sql.loadGroups(*records, generated=generated):
                 # a group that leaves every column to the server
                 if not fields:
                     # has no values to send, and is inserted as rows made of defaults
