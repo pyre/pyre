@@ -157,7 +157,7 @@ class Server(pyre.component, implements=DataStore):
         # and execute it
         return self.execute(*sql)
 
-    def insert(self, *records, returning=None, existing=None, key=None):
+    def insert(self, *records, returning=None, existing=None, key=None, generated=None):
         """
         Insert {records} into the database; with {returning}, a table, one of its fields or a
         sequence of them, hand back the rows the inserts add, as records
@@ -165,6 +165,9 @@ class Server(pyre.component, implements=DataStore):
         With {existing}, a record whose {key} matches a row that is there already leaves it
         alone, when {existing} is "keep", or writes over it, when it is "replace"; the key is
         the primary key of the table, unless {key} names the fields of another
+
+        A value for a column whose values the server assigns, and takes from no row, is refused,
+        unless {generated} is "keep", which has the server take it over its own
         """
         # if there are no records to insert, bail
         if not records:
@@ -176,7 +179,7 @@ class Server(pyre.component, implements=DataStore):
         if returning is None:
             # build the statements
             sql = self.sql.insertStatements(
-                *records, existing=existing, key=key, parameters=parameters
+                *records, existing=existing, key=key, parameters=parameters, generated=generated
             )
             # and execute them
             return self._runAll(statements=sql, parameters=parameters)
@@ -186,23 +189,50 @@ class Server(pyre.component, implements=DataStore):
         )
         # build the statements
         sql = self.sql.insertStatements(
-            *records, returning=selection, existing=existing, key=key, parameters=parameters
+            *records,
+            returning=selection,
+            existing=existing,
+            key=key,
+            parameters=parameters,
+            generated=generated,
         )
         # and run them, gathering their rows
         return self._gather(statements=sql, selection=selection, parameters=parameters)
 
-    def load(self, *records):
+    def load(self, *records, generated=None):
         """
         Insert {records}, many at a time and all or nothing; the records of a table that give
         values for the same columns travel together
 
         A load hands back no rows, and refuses a record whose key is there already; {insert}
-        offers both
+        offers both. It refuses a value for a column whose values the server assigns, and takes
+        from no row, unless {generated} is "keep", as {insert} does
         """
         # in a block of its own, so that the load keeps all of its records or none of them
         with self:
             # the standard way to put records in a table is to insert them
-            self.insert(*records)
+            self.insert(*records, generated=generated)
+        # all done
+        return self
+
+    def reproduce(self, *, source, tables):
+        """
+        Make {tables} in my database, with the rows, the keys and the indexes they have in the
+        database of {source}; a table comes before the tables that refer to it, and all of them
+        appear together or not at all
+
+        Each table is made without its indexes, filled {batch} rows at a time with the values its
+        rows have, the ones {source} assigned among them, given its indexes, and told to assign
+        the values of its generated columns after the largest it was given
+        """
+        # put the tables in an order that lets each find the rows it refers to
+        ordered = self._dependencyOrder(tables=tables)
+        # in a block of its own, so that the tables appear together or not at all
+        with self:
+            # go through them
+            for table in ordered:
+                # and reproduce each one
+                self._reproduceTable(source=source, table=table)
         # all done
         return self
 
@@ -650,6 +680,100 @@ class Server(pyre.component, implements=DataStore):
                 )
         # hand the rows over
         return rows
+
+    def _dependencyOrder(self, tables):
+        """
+        Put {tables} in an order in which each comes after the ones among them it refers to; the
+        tables it refers to that are not among them are not mine to place, and tables that refer
+        to each other in a cycle are refused
+        """
+        # the tables to place, in the order they were given
+        pending = list(tables)
+        # the order
+        ordered = []
+        # until every table is placed
+        while pending:
+            # the tables whose references among the ones to place are all placed
+            ready = [
+                table
+                for table in pending
+                if all(
+                    other in ordered or other not in pending
+                    for other in table.pyre_referencedTables()
+                )
+            ]
+            # if there are none, the rest refer to each other
+            if not ready:
+                # so no order lets each of them find the rows it refers to
+                raise self.exceptions.NotSupportedError(
+                    diagnostic=(
+                        f"the tables {', '.join(table.pyre_name for table in pending)} refer to"
+                        " each other, so none of them can be made before the others"
+                    )
+                )
+            # place the ones that are ready, in the order they were given
+            ordered.extend(ready)
+            # and look again at the rest
+            pending = [table for table in pending if table not in ready]
+        # hand the order over
+        return ordered
+
+    def _reproduceTable(self, source, table):
+        """
+        Make {table} in my database with the rows, the keys and the indexes it has in the database
+        of {source}
+        """
+        # make the table, without its indexes, which are cheaper to build once the rows are in
+        self.createTable(table, indexes=False)
+        # the columns whose values the server assigns
+        generated = [field for field in table.pyre_fields if field._autogenerated]
+        # and the largest value of each among the rows, by the name of the column
+        largest = {field.name: None for field in generated}
+        # the rows read but not yet written
+        rows = []
+        # go through the rows of the table
+        for row in source.select(query=table):
+            # note the values of its generated columns
+            for field in generated:
+                # one at a time
+                value = getattr(row, field.name)
+                # when it is the largest so far
+                if value is not None and (
+                    largest[field.name] is None or value > largest[field.name]
+                ):
+                    # keep it
+                    largest[field.name] = value
+            # hold on to the row
+            rows.append(row)
+            # and once there are enough of them
+            if len(rows) >= self.batch:
+                # write them, with the values the source assigned
+                self.load(*rows, generated="keep")
+                # and start over
+                rows = []
+        # write the rows that are left
+        if rows:
+            # with the values the source assigned
+            self.load(*rows, generated="keep")
+        # build the indexes, now that the rows are in
+        self.createIndexes(table)
+        # go through the generated columns
+        for field in generated:
+            # a column without values
+            if largest[field.name] is None:
+                # starts where it would have anyway
+                continue
+            # the others start after their largest value; a language that has nothing to say
+            # about it builds no statement
+            statement = tuple(
+                self.sql.restartIdentity(table=table, field=field, start=largest[field.name] + 1)
+            )
+            # so run the ones that are there
+            if statement:
+                # and only those
+                self.execute(*statement)
+        # all done
+        return
 
     def _commit(self):
         """

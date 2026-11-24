@@ -94,6 +94,30 @@ class Table(records.record, metaclass=Schemer):
         # and return
         return cls
 
+    # what i depend on
+    @classmethod
+    def pyre_referencedTables(cls):
+        """
+        Build the tables my foreign keys refer to, once each, in the order of their declaration,
+        those of my columns first; a reference to myself is left out
+        """
+        # the tables my columns refer to
+        columns = (field._foreign.table for field in cls.pyre_fields if field._foreign)
+        # and the ones my own declarations refer to
+        declared = (foreign.table for _, foreign, _ in cls._pyre_foreignKeys)
+        # the tables, in order, once each
+        tables = {}
+        # go through both
+        for table in (*columns, *declared):
+            # leave me out
+            if table is cls:
+                # since i find my own rows
+                continue
+            # and keep the others
+            tables[table] = None
+        # hand them over
+        return tuple(tables)
+
     # implementation details
     # table attributes that generate the table wide declaration statements; initialized by my
     # metaclass at compile time
