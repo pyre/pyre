@@ -20,6 +20,8 @@ pyre::postgres::CopyOut::CopyOut(connection_type connection, view_t statement) :
     // session that is not in the middle of another answer
     _guard(_connection._free(statement)),
     _statement(statement),
+    // where the session stands decides how an abandoned copy is ended
+    _transaction(_connection.transaction() != TransactionStatus::idle),
     // not yet; the server has to accept the statement first
     _live(false)
 {
@@ -67,6 +69,7 @@ pyre::postgres::CopyOut::CopyOut(CopyOut && other) noexcept :
     _connection(std::move(other._connection)),
     _guard(std::move(other._guard)),
     _statement(std::move(other._statement)),
+    _transaction(other._transaction),
     _live(other._live)
 {
     // whoever we took it from no longer owes the server an end
@@ -90,6 +93,8 @@ pyre::postgres::CopyOut::operator=(CopyOut && other) noexcept
     _guard = std::move(other._guard);
     // the statement
     _statement = std::move(other._statement);
+    // where the session stood
+    _transaction = other._transaction;
     // and the duty
     _live = other._live;
     // which the other one no longer has
@@ -100,7 +105,7 @@ pyre::postgres::CopyOut::operator=(CopyOut && other) noexcept
 }
 
 
-// and whoever ends up holding it stops the server, unless all the rows are out
+// and whoever ends up holding it ends the copy, unless all the rows are out
 pyre::postgres::CopyOut::~CopyOut()
 {
     // a copy still under way at the end of my scope is one whose caller wanted no more rows
@@ -211,7 +216,7 @@ pyre::postgres::CopyOut::_finish() -> void
 }
 
 
-// stop the server and swallow whatever goes wrong
+// end the copy and swallow whatever goes wrong
 auto
 pyre::postgres::CopyOut::_close() noexcept -> void
 {
@@ -222,30 +227,35 @@ pyre::postgres::CopyOut::_close() noexcept -> void
     }
     // whatever happens below, the copy is over
     _live = false;
-    // ask the server to stop sending, which may fail when the request cannot reach it
-    try {
-        // ask
-        _connection.cancel();
+    // outside a transaction, the server may stop sending; inside one, stopping the statement
+    // would fail the transaction, so the rows are read to the end instead
+    if (!_transaction) {
+        // ask the server to stop, which may fail when the request cannot reach it
+        try {
+            // ask
+            _connection.cancel();
+        }
+        // in which case the rows are read to the end below, which takes longer and ends the
+        // same; the channel is a warning and not an error on purpose: an error channel throws
+        // when it flushes, and a throw from here, inside a {noexcept} destructor, ends the process
+        catch (const Exception & error) {
+            // make a channel
+            auto channel = pyre::journal::warning_t("pyre.postgres.copy");
+            // and complain
+            channel
+                // where
+                << pyre::journal::here()
+                // what
+                << "could not ask the server to stop a copy whose rows are no longer wanted"
+                << pyre::journal::newline
+                // details
+                << error.what()
+                // flush
+                << pyre::journal::endl;
+        }
     }
-    // in which case the rows are read to the end below, which takes longer and ends the same;
-    // the channel is a warning and not an error on purpose: an error channel throws when it
-    // flushes, and a throw from here, inside a {noexcept} destructor, ends the process
-    catch (const Exception & error) {
-        // make a channel
-        auto channel = pyre::journal::warning_t("pyre.postgres.copy");
-        // and complain
-        channel
-            // where
-            << pyre::journal::here()
-            // what
-            << "could not ask the server to stop a copy whose rows are no longer wanted"
-            << pyre::journal::newline
-            // details
-            << error.what()
-            // flush
-            << pyre::journal::endl;
-    }
-    // read the rows already on their way, and collect the answer; this swallows its own failures
+    // read the rows already on their way, or all of them inside a transaction, and collect the
+    // answer; this swallows its own failures
     _connection._abandon(ExecStatus::copyOut, "");
     // and let go of the session
     _guard.unlock();

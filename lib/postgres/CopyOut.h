@@ -21,7 +21,9 @@
 //
 // a copy holds the lock of its session from the moment it starts until its last row is out, so
 // that no other thread can send a statement that would abandon it; it is used by the thread that
-// started it. a copy that goes away before its last row is out asks the server to stop sending
+// started it. a copy that goes away before its last row is out ends: outside a transaction, it asks
+// the server to stop sending; inside one, where a statement the server stops fails the
+// transaction, it reads the rest of the rows and throws them away
 //
 // a copy may not be copied, because what it started on the server can be ended only once; it
 // may be moved, because the obligation to end it can be handed on
@@ -45,7 +47,7 @@ public:
     // but the duty to end it may be passed along
     inline CopyOut(CopyOut && other) noexcept;
     inline CopyOut & operator=(CopyOut && other) noexcept;
-    // and whoever ends up holding it stops the server, unless all the rows are out
+    // and whoever ends up holding it ends the copy, unless all the rows are out
     inline ~CopyOut();
 
     // interface
@@ -63,7 +65,7 @@ private:
     // the rows are out: collect the answer of the server, let go of the session, and raise when
     // the server failed
     inline auto _finish() -> void;
-    // stop the server and swallow whatever goes wrong; the destructor calls this
+    // end the copy and swallow whatever goes wrong; the destructor calls this
     inline auto _close() noexcept -> void;
 
     // data
@@ -74,6 +76,8 @@ private:
     guard_type _guard;
     // the statement that started me
     string_t _statement;
+    // whether the session was in a transaction when i started
+    bool _transaction;
     // whether there may be rows still to come
     bool _live;
 };
