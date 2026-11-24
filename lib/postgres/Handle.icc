@@ -16,7 +16,9 @@
 // adopt {handle}, boxing it so that every copy of me can watch it go away
 template <class traitsT>
 pyre::postgres::Handle<traitsT>::Handle(handle_type handle) :
-    _handle(new handle_type(handle), &Handle::_reclaim)
+    // once the box exists, the shared pointer owns it, and releases it through {_reclaim} even
+    // when there is no room for the count of its owners
+    _handle(_box(handle), &Handle::_reclaim)
 {}
 
 
@@ -71,6 +73,26 @@ pyre::postgres::Handle<traitsT>::release() -> void
 
 
 // implementation details
+// put {handle} in a box of its own
+template <class traitsT>
+auto
+pyre::postgres::Handle<traitsT>::_box(handle_type handle) -> handle_type *
+{
+    // attempt to
+    try {
+        // make the box
+        return new handle_type(handle);
+    }
+    // a heap with no room for it leaves the object without an owner
+    catch (const std::bad_alloc &) {
+        // so give it back
+        traits_type::free(handle);
+        // and let the caller know
+        throw;
+    }
+}
+
+
 // release the object, if it is still there, and destroy its box
 template <class traitsT>
 auto
