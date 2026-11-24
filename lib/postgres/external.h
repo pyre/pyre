@@ -11,6 +11,7 @@
 // externals
 // STL
 #include <charconv>
+#include <atomic>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
