@@ -43,8 +43,15 @@ class Server(pyre.component, implements=DataStore):
     from . import exceptions
 
     # traits
+    # the generator of my statements
     sql = pyre.weaver.language(default=Mill)
     sql.doc = "the generator of the SQL statements"
+
+    # how many rows a selection reads at a time, when the back end hands them over as it reads
+    batch = pyre.properties.int()
+    batch.default = 1000
+    batch.validators = pyre.constraints.isPositive()
+    batch.doc = "the number of rows a selection fetches from the back end at a time"
 
     # required interface
     @pyre.export
@@ -282,8 +289,9 @@ class Server(pyre.component, implements=DataStore):
 
     def select(self, query, limit=None, offset=None):
         """
-        Execute the given {query} and return the retrieved data; {offset} skips that many of
-        the first rows, and {limit} keeps at most that many of the rest
+        Execute the given {query} and generate the records of the rows it retrieves, as the back
+        end hands them over; {offset} skips that many of the first rows, and {limit} keeps at
+        most that many of the rest
         """
         # the place for the values of the statement, if they travel beside it
         parameters = self._parameters()
@@ -292,9 +300,9 @@ class Server(pyre.component, implements=DataStore):
         # and pair it with its values
         ((lines, values),) = self._paired(statements=(sql,), parameters=parameters)
 
-        # walk the rows the back end sent, which are data rows and nothing else, as records
+        # walk the rows the back end hands over, which are data rows and nothing else, as records
         yield from self._records(
-            rows=self._run(lines=lines, values=values, parameters=parameters), selection=query
+            rows=self._fetch(lines=lines, values=values, parameters=parameters), selection=query
         )
         # all done
         return
@@ -580,6 +588,15 @@ class Server(pyre.component, implements=DataStore):
             return self.execute(*lines)
         # the others are run with their values
         return self.run("\n".join(lines), *values)
+
+    def _fetch(self, lines, values, parameters):
+        """
+        Run the selection whose lines are {lines}, with its {values} beside it when there is a
+        place for them, and hand back its rows; a back end that hands them over as they are
+        read fetches {batch} of them at a time
+        """
+        # the standard way is to run the statement, which hands back all of its rows at once
+        return self._run(lines=lines, values=values, parameters=parameters)
 
     def _runAll(self, statements, parameters):
         """

@@ -188,8 +188,14 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         hand back the rows it makes; the module keeps the statements it has compiled, by their
         text, so a statement that comes back is not compiled again
         """
-        # send the text as it was rendered, with the values
-        return self.run("\n".join(prepared.lines), *arguments)
+        # the text, as it was rendered
+        statement = "\n".join(prepared.lines)
+        # a statement that hands back no rows
+        if prepared.selection is None:
+            # runs as any other
+            return self.run(statement, *arguments)
+        # the others are read through a cursor of their own
+        return self._read(statement=statement, arguments=arguments)
 
     # the values that travel beside my statements
     def _parameters(self):
@@ -236,6 +242,66 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         return datetime.datetime.fromisoformat(value)
 
     # implementation details
+    def _fetch(self, lines, values, parameters):
+        """
+        Run the selection whose lines are {lines}, with {values} beside it, and hand back its
+        rows, {batch} at a time, as they are read; other statements may run in the meantime
+        """
+        # read the rows through a cursor of their own
+        return self._read(statement="\n".join(lines), arguments=values)
+
+    def _read(self, statement, arguments):
+        """
+        Execute {statement}, with the values in {arguments}, through a cursor of its own, and
+        hand back the rows it makes, as they are read
+        """
+        # while listening for complaints
+        with self._complaints(statement=statement):
+            # make a cursor for the statement
+            cursor = self.connection.cursor()
+        # carefully
+        try:
+            # while listening for complaints
+            with self._complaints(statement=statement):
+                # execute the statement
+                cursor.execute(statement, arguments)
+        # a statement that fails
+        except exceptions.DatabaseError:
+            # has no rows to read, so its cursor goes now
+            cursor.close()
+            # and the failure is reported
+            raise
+        # hand over its rows
+        return self._rows(cursor=cursor, statement=statement)
+
+    def _rows(self, cursor, statement):
+        """
+        Generate the rows of {statement} that {cursor} reads, {batch} at a time, and close it
+        when they run out or the reading is abandoned
+        """
+        # the number of rows in a batch
+        batch = self.batch
+        # carefully
+        try:
+            # until the rows run out
+            while True:
+                # while listening for complaints
+                with self._complaints(statement=statement):
+                    # fetch the next batch
+                    rows = cursor.fetchmany(batch)
+                # an empty batch
+                if not rows:
+                    # means there are no more
+                    break
+                # hand over the rows of the others
+                yield from rows
+        # however the reading ends
+        finally:
+            # the cursor is no longer needed
+            cursor.close()
+        # all done
+        return
+
     def _send(self, statement, arguments=()):
         """
         Hand {statement} to my cursor, with the values in {arguments}, and report what sqlite
@@ -291,7 +357,7 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         return
 
     # private data
-    cursor = None  # the cursor that executes my statements
+    cursor = None  # the cursor that executes my statements; each selection reads through its own
     connection = None  # my connection to the database
 
 
