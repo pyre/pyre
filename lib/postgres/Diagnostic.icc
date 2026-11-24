@@ -16,14 +16,10 @@
 // harvest everything {result} knows about the failure of {command}
 pyre::postgres::Diagnostic::Diagnostic(const PGresult * result, string_type command) :
     _command(std::move(command)),
-// the severity, in english; a server that speaks another language localizes {PG_DIAG_SEVERITY},
-// so the nonlocalized spelling is the only one a program may compare against. it arrived in
-// postgres 9.6, and the localized one is the fallback for anything older
-#if defined(PG_DIAG_SEVERITY_NONLOCALIZED)
+    // the severity, in english; a server that speaks another language localizes
+    // {PG_DIAG_SEVERITY}, so the nonlocalized spelling is the only one a program may compare
+    // against
     _severity(_field(result, PG_DIAG_SEVERITY_NONLOCALIZED)),
-#else
-    _severity(_field(result, PG_DIAG_SEVERITY)),
-#endif
     // the five character code that names the condition
     _sqlstate(_field(result, PG_DIAG_SQLSTATE)),
     // the one line explanation

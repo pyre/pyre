@@ -48,6 +48,11 @@ namespace pyre::postgres::py {
         kwds["detail"] = diagnostic.detail();
         kwds["hint"] = diagnostic.hint();
         kwds["position"] = diagnostic.position();
+        // the statement a function on the server ran, when the failure happened inside one, and
+        // where on the server that was
+        kwds["internalQuery"] = diagnostic.internalQuery();
+        kwds["internalPosition"] = diagnostic.internalPosition();
+        kwds["context"] = diagnostic.context();
         // together with the object it is about, which is how a caller with two unique indices
         // tells them apart without reading english
         kwds["schema"] = diagnostic.schema();
@@ -83,10 +88,14 @@ namespace pyre::postgres::py {
 // mint new python classes, which must not happen: {pyre.db.exceptions} already publishes this
 // hierarchy, client code already catches it, and the classes there derive from {FrameworkError},
 // which a freshly minted class would not
+//
+// the translator is shared by every extension module built against the same pybind11, not kept to
+// this one: the library is public, and the bindings of other projects that call into it must
+// raise the same hierarchy
 void
 pyre::postgres::py::exceptions(py::module &)
 {
-    // one translator does the lot
+    // one translator does the lot, for every extension module that throws these exceptions
     py::register_exception_translator([](std::exception_ptr raised) {
         // rethrow whatever we were handed, so that the clauses below may sort it
         try {
