@@ -8,6 +8,7 @@
 # externals
 import contextlib
 import hashlib
+import itertools
 import pyre
 
 # superclass
@@ -338,6 +339,43 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # all done
         return
 
+    # prepared statements
+    def _runPrepared(self, prepared, values, arguments):
+        """
+        Run the statement of {prepared}, with its placeholders filled in by {arguments}, and
+        hand back the rows it makes; the statement reaches the session on its first run, and
+        again on the first run after i attach to a new session, which knows none of the old one's
+        """
+        # a statement sent through a session that was never opened
+        if self.connection is None:
+            # is worth naming
+            raise exceptions.InterfaceError(diagnostic="this server is not attached")
+        # a statement my session has not been taught
+        if prepared.session is not self.connection:
+            # gets a name of its own
+            name = f"pyre_prepared_{next(self._prepared)}"
+            # and is taught to the session under it
+            self.connection.prepare(name, "\n".join(prepared.lines))
+            # remember where it is
+            prepared.name = name
+            prepared.session = self.connection
+        # run it
+        return self.connection.execPrepared(prepared.name, *arguments)
+
+    def _releasePrepared(self, prepared):
+        """
+        Make my session forget the statement of {prepared}, if it was taught it
+        """
+        # a statement taught to my current session
+        if prepared.session is not None and prepared.session is self.connection:
+            # is forgotten
+            self.connection.release(prepared.name)
+        # either way, the statement is taught nowhere now
+        prepared.name = None
+        prepared.session = None
+        # all done
+        return self
+
     # the values that travel beside my statements
     def _parameters(self):
         """
@@ -387,6 +425,8 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         super().__init__(**kwds)
         # my session with the back end, which does not exist until somebody attaches
         self.connection = None
+        # the numbers that tell apart the names of the statements i prepare
+        self._prepared = itertools.count(start=1)
         # all done
         return
 

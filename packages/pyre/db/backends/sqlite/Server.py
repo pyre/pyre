@@ -181,6 +181,16 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         # all done
         return self
 
+    # prepared statements
+    def _runPrepared(self, prepared, values, arguments):
+        """
+        Run the statement of {prepared}, with its placeholders filled in by {arguments}, and
+        hand back the rows it makes; the module keeps the statements it has compiled, by their
+        text, so a statement that comes back is not compiled again
+        """
+        # send the text as it was rendered, with the values
+        return self.run("\n".join(prepared.lines), *arguments)
+
     # the values that travel beside my statements
     def _parameters(self):
         """
