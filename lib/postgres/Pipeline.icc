@@ -32,10 +32,9 @@ pyre::postgres::Pipeline::Pipeline(connection_type connection) :
     // not yet; the session has to enter the pipeline first
     _live(false)
 {
-#if defined(LIBPQ_HAS_PIPELINING)
     // a failure below throws, and leaves me unbuilt: my destructor will not run, but my guard
     // goes away with the rest of what was built, and lets go of the session. enter the pipeline
-    if (_enter() == 0) {
+    if (PQenterPipelineMode(_hold.handle()) == 0) {
         // libpq refuses only a session that is in trouble, and the session knows why
         _hold.fail("the start of a pipeline");
     }
@@ -50,11 +49,6 @@ pyre::postgres::Pipeline::Pipeline(connection_type connection) :
         // and say why
         throw OperationalError(Diagnostic(explanation, "the start of a pipeline"));
     }
-#else
-    // a libpq without pipelines cannot start one
-    throw NotSupportedError(Diagnostic(
-        "this libpq has no pipelines, which arrived in libpq 14", "the start of a pipeline"));
-#endif
     // all done
     return;
 }
@@ -174,7 +168,7 @@ pyre::postgres::Pipeline::sync() -> void
         throw InterfaceError(Diagnostic("the pipeline has ended", "a sync"));
     }
     // mark the end of the segment
-    if (_sync() == 0) {
+    if (PQpipelineSync(_hold.handle()) == 0) {
         // libpq refuses only a session that is in trouble, and the session knows why
         _hold.fail("a sync");
     }
@@ -225,7 +219,7 @@ pyre::postgres::Pipeline::next() -> std::optional<result_type>
         if (_unsynced && !_flushed
             && std::find(_expected.begin(), _expected.end(), std::nullopt) == _expected.end()) {
             // so ask, once for all the statements sent since the last sync
-            if (_flush() == 0) {
+            if (PQsendFlushRequest(_hold.handle()) == 0) {
                 // libpq refuses only a session that is in trouble, and the session knows why
                 _hold.fail(*_expected.front());
             }
@@ -291,7 +285,7 @@ pyre::postgres::Pipeline::close() noexcept -> void
             next();
         }
         // leave the pipeline
-        _exit();
+        PQexitPipelineMode(_hold.handle());
         // and wait for the socket again
         PQsetnonblocking(_hold.handle(), 0);
     }
@@ -406,59 +400,6 @@ pyre::postgres::Pipeline::_wait() -> PGresult *
             throw OperationalError(Diagnostic(std::strerror(errno), ""));
         }
     }
-}
-
-
-// the calls into libpq that only a libpq with pipelines has
-auto
-pyre::postgres::Pipeline::_enter() -> int
-{
-#if defined(LIBPQ_HAS_PIPELINING)
-    // enter the pipeline
-    return PQenterPipelineMode(_hold.handle());
-#else
-    // a libpq without pipelines has none to enter
-    return 0;
-#endif
-}
-
-
-auto
-pyre::postgres::Pipeline::_exit() -> int
-{
-#if defined(LIBPQ_HAS_PIPELINING)
-    // leave the pipeline
-    return PQexitPipelineMode(_hold.handle());
-#else
-    // a libpq without pipelines has none to leave
-    return 0;
-#endif
-}
-
-
-auto
-pyre::postgres::Pipeline::_sync() -> int
-{
-#if defined(LIBPQ_HAS_PIPELINING)
-    // mark the end of a segment
-    return PQpipelineSync(_hold.handle());
-#else
-    // a libpq without pipelines has no segments
-    return 0;
-#endif
-}
-
-
-auto
-pyre::postgres::Pipeline::_flush() -> int
-{
-#if defined(LIBPQ_HAS_PIPELINING)
-    // ask the server for the answers it holds
-    return PQsendFlushRequest(_hold.handle());
-#else
-    // a libpq without pipelines has no answers held
-    return 0;
-#endif
 }
 
 

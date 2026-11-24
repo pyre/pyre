@@ -18,10 +18,10 @@
 // the rows of a selection, read in batches as the server sends them
 //
 // the server sends the rows as it makes them, and libpq hands them over in batches of the size
-// the stream asks for; a libpq older than 17 hands them over one at a time. the batches are
-// results whose rows are the next few of the selection. the answer is over when {next} hands
-// back nothing, which is when a failure of the server is reported, as the condition it named;
-// the rows that came before the failure have been handed back already
+// the stream asks for. the batches are results whose rows are the next few of the selection. the
+// answer is over when {next} hands back nothing, which is when a failure of the server is
+// reported, as the condition it named; the rows that came before the failure have been handed
+// back already
 //
 // a stream holds the lock of its session from the moment it starts until its last row is read,
 // so that no other thread can send a statement in the meantime, and the session refuses the

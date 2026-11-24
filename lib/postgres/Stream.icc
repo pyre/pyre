@@ -40,12 +40,7 @@ pyre::postgres::Stream::Stream(
     // from here on, the answer is under way
     _live = true;
     // ask libpq to hand the rows over in batches
-#if defined(LIBPQ_HAS_CHUNK_MODE)
     const auto batches = PQsetChunkedRowsMode(_hold.handle(), _batch);
-    // or, before libpq 17, one at a time
-#else
-    const auto batches = PQsetSingleRowMode(_hold.handle());
-#endif
     // libpq refuses only when the statement did not just go out, which cannot happen here
     if (batches == 0) {
         // but if it does, the answer is stopped
