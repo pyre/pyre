@@ -127,6 +127,23 @@ namespace pyre::postgres {
     // text, which postgres and c++ spell the same way
     template <>
     struct Codec<string_t> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // a copy of the value, which the caller then owns
         static inline auto decode(view_t value) -> string_t { return string_t(value); }
         // and back the other way
@@ -136,6 +153,23 @@ namespace pyre::postgres {
     // a borrowed look at the text, for a caller that will read it and move on
     template <>
     struct Codec<view_t> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // note the lifetime: the characters belong to the result set the field came from, and
         // they go away with it. a caller that wants them to outlive it asks for a {string_t}
         static inline auto decode(view_t value) -> view_t { return value; }
@@ -147,6 +181,23 @@ namespace pyre::postgres {
     // to the server, and nothing ever comes back as one
     template <typename charT>
     struct Codec<charT *, std::enable_if_t<std::is_same_v<std::remove_cv_t<charT>, char>>> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // take a copy of whatever the pointer is pointing at
         static inline auto encode(const charT * value) -> argument_t { return string_t(value); }
     };
@@ -154,6 +205,23 @@ namespace pyre::postgres {
     // truth, which postgres writes as a single letter
     template <>
     struct Codec<bool> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // read it
         static inline auto decode(view_t value) -> bool
         {
@@ -187,6 +255,23 @@ namespace pyre::postgres {
     template <typename valueT>
     struct Codec<
         valueT, std::enable_if_t<std::is_integral_v<valueT> && !std::is_same_v<valueT, bool>>> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // read it
         static inline auto decode(view_t value) -> valueT
         {
@@ -199,6 +284,23 @@ namespace pyre::postgres {
     // every real number, likewise
     template <typename valueT>
     struct Codec<valueT, std::enable_if_t<std::is_floating_point_v<valueT>>> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // read it
         static inline auto decode(view_t value) -> valueT
         {
@@ -212,6 +314,23 @@ namespace pyre::postgres {
     // string can say and no number can mean
     template <typename valueT>
     struct Codec<std::optional<valueT>> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // a value that arrived is a value that is there
         static inline auto decode(view_t value) -> std::optional<valueT>
         {
@@ -232,6 +351,23 @@ namespace pyre::postgres {
     // raw octets, as they live in a {bytea} column
     template <>
     struct Codec<bytes_t> {
+        // types
+    public:
+        // me
+        using self_type = Codec;
+
+        // metamethods
+    public:
+        // the full set, so the copy and move behavior is never left to inference
+        Codec() = default;
+        Codec(const Codec &) = default;
+        Codec(Codec &&) noexcept = default;
+        Codec & operator=(const Codec &) = default;
+        Codec & operator=(Codec &&) noexcept = default;
+        ~Codec() = default;
+
+        // interface
+    public:
         // postgres writes these in one of two escapings, and libpq knows both; it wants a
         // terminated string, and it hands back a buffer that only it may free
         static inline auto decode(view_t value) -> bytes_t
