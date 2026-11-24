@@ -297,8 +297,24 @@ pyre::postgres::Result::message() const -> view_t
 auto
 pyre::postgres::Result::raise(string_t statement) const -> void
 {
-    // hand the report to the classifier; the qualification is not optional, since my own name
-    // for this call would otherwise find itself
+    // what happened to the statement
+    const auto status = this->status();
+    // a statement that a pipeline skipped never reached the server, which has nothing to say
+    // about it
+    if (status == ExecStatus::pipelineAborted) {
+        // so say it here
+        throw OperationalError(Diagnostic(
+            "the statement never ran, because one ahead of it in its pipeline failed",
+            std::move(statement)));
+    }
+    // a statement that ran, without a warning to report, has no condition to raise
+    if (ok() && status != ExecStatus::nonfatalError) {
+        // so asking for one is a mistake of the caller
+        throw InterfaceError(
+            Diagnostic("the statement ran, and has no failure to report", std::move(statement)));
+    }
+    // everything else goes to the classifier; the qualification is not optional, since my own
+    // name for this call would otherwise find itself
     postgres::raise(diagnostic(std::move(statement)));
 }
 
