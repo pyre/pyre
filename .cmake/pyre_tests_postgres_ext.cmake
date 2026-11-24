@@ -100,6 +100,8 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_reserved_names.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_keywords.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_conforming_strings.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_literal_backslash.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_parameters_backslash.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_parameters_decimal.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,

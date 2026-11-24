@@ -1272,6 +1272,15 @@ pyre_test_python_testcase(tests/pyre.pkg/db/identifier_capitals.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/identifier_quote.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/identifier_dialect.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/identifier_injection.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_select.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_insert.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_statements.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_null.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_update.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_isin.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_like.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_sqlite.py)
+pyre_test_python_testcase(tests/pyre.pkg/db/parameters_refused.py)
 
 
 #
