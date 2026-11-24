@@ -359,10 +359,10 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
     def _runPreparedMany(self, prepared, runs):
         """
         Run the statement of {prepared} once for each of {runs}, pairs of the values of its slots
-        and their bound form, through a pipeline, {batch} runs to a segment, each segment all or
-        nothing, and hand back the rows of each run, or {None} for each when the statement hands
-        back none; a run that fails is reported with its values, and the segments after it are not
-        sent
+        and their bound form, through a pipeline, a batch of runs to a segment, each segment in a
+        block of its own, and hand back the rows of each run, or {None} for each when the
+        statement hands back none; a run that fails is reported with its values, its segment is
+        undone, and the segments after it are not sent
         """
         # make sure my session knows the statement
         self._teach(prepared=prepared)
@@ -374,30 +374,33 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         for start in range(0, len(runs), self.batch):
             # the runs of the batch
             batch = runs[start : start + self.batch]
-            # in a pipeline of their own
-            with self.connection.pipeline() as pipeline:
-                # send each run
-                for _, arguments in batch:
-                    # with its values
-                    pipeline.execPrepared(prepared.name, *arguments)
-                # in one segment
-                pipeline.sync()
-                # and collect their results, in order
-                results = list(pipeline)
-            # go through the runs and their results
-            for (values, _), result in zip(batch, results):
-                # the first whose result is not ok is the one that failed, and undid its segment
-                if not result.ok:
-                    # carefully
-                    try:
-                        # report it as the condition the server named
-                        result.check(statement)
-                    # and say which run it was
-                    except exceptions.DatabaseError as error:
-                        # by its values
-                        error.values = values
-                        # and send it on its way
-                        raise
+            # are all or nothing, in a transaction of their own, or under a savepoint of the block
+            # they are in, which a failure rolls back to without touching the work before it
+            with self:
+                # in a pipeline of their own
+                with self.connection.pipeline() as pipeline:
+                    # send each run
+                    for _, arguments in batch:
+                        # with its values
+                        pipeline.execPrepared(prepared.name, *arguments)
+                    # in one segment
+                    pipeline.sync()
+                    # and collect their results, in order
+                    results = list(pipeline)
+                # go through the runs and their results
+                for (values, _), result in zip(batch, results):
+                    # the first whose result is not ok is the one that failed
+                    if not result.ok:
+                        # carefully
+                        try:
+                            # report it as the condition the server named
+                            result.check(statement)
+                        # and say which run it was
+                        except exceptions.DatabaseError as error:
+                            # by its values
+                            error.values = values
+                            # and send it on its way, through the block, which undoes the segment
+                            raise
             # a statement that hands back no rows has none to keep
             answers.extend([None] * len(batch) if prepared.selection is None else results)
         # hand the rows over
