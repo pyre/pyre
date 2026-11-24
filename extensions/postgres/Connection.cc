@@ -396,6 +396,38 @@ pyre::postgres::py::connection(py::module & m)
         // the docstring
         "hand the session back now; every copy of me observes this and refuses to be used after");
 
+    // the copies of rows, which move them in bulk
+    cls.def(
+        // the name
+        "copyIn",
+        // the implementation
+        [](const Connection & self, view_t statement) -> CopyIn {
+            // start the copy
+            return CopyIn(self, statement);
+        },
+        // the signature
+        "statement"_a,
+        // let go of the lock while the server starts it
+        py::call_guard<py::gil_scoped_release>(),
+        // the docstring
+        "start the copy {statement}, a COPY ... FROM STDIN, and hand back a context manager");
+
+    cls.def(
+        // the name
+        "copyOut",
+        // the implementation
+        [](const Connection & self, view_t statement) -> CopyOut {
+            // start the copy
+            return CopyOut(self, statement);
+        },
+        // the signature
+        "statement"_a,
+        // let go of the lock while the server starts it
+        py::call_guard<py::gil_scoped_release>(),
+        // the docstring
+        "start the copy {statement}, a COPY ... TO STDOUT, and hand back an iterator over its "
+        "rows");
+
     // contextual conversion to {bool}, true when the session is up
     cls.def(
         // the name

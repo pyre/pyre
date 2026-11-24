@@ -33,6 +33,9 @@ namespace pyre::postgres::py {
     // the session, and the scope of the work done over it
     void connection(py::module & m);
     void transaction(py::module & m);
+    // and the copies of rows into a table and out of the database
+    void copyIn(py::module & m);
+    void copyOut(py::module & m);
 
     // loose functions: the module metadata, and the rendering of python values as the text
     // postgres reads
