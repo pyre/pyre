@@ -281,8 +281,8 @@ rows that came before it. A stream holds its session as a copy does. One abandon
 batch ends as an abandoned copy out does. A session in the middle of an answer, whether a copy, a
 stream, or a statement sent with `send` whose results have not been collected, refuses the
 statements its own thread sends, through `exec`, `execute`, `prepare`, `execPrepared`, `describe`,
-`release`, `send`, `sendParams`, `copyIn`, `copyOut` or `stream`, with `InterfaceError`, since libpq
-would throw the answer away to make room for them.
+`release`, `send`, `sendParams`, `sendPrepare`, `sendPrepared`, `copyIn`, `copyOut`, `stream` or
+`pipeline`, with `InterfaceError`, since libpq would throw the answer away to make room for them.
 
 A prepared statement is rendered once and runs many times. `pyre.db.parameter(name, schema=None)`
 is a slot for a value given when the statement runs; it stands where a value stands, in a
@@ -304,13 +304,37 @@ and again on the first run after the server attaches to a new session; `close()`
 statements it has compiled. `pyre.db.backup` writes the statement anew at every run, with the
 values as literals.
 
+`runMany(rows)` runs a prepared statement once for each of `rows`, the values of its slots for
+each run, as `run` takes them, `batch` runs at a time, each batch all or nothing. Every run is bound
+before anything reaches the database. postgres sends each batch through a pipeline, as one segment;
+the other servers run its statements one at a time, in a block of their own. A run that fails is
+reported at the end of its batch, as the exception of its condition, whose `values` are the values
+of the run; its batch is undone, the batches before it are kept, and the ones after it are not run.
+A statement that hands back no rows hands back nothing, and the others hand back the records of
+every run, in order.
+
 The postgres bindings expose the prepared statements of a session directly:
 `connection.prepare(name, statement)`, `connection.execPrepared(name, *arguments)`,
 `connection.describe(name)`, whose result reports the types of the parameters in `parameterTypes`
 and of the columns in `types`, and `connection.release(name)`. With libpq 17 or later, a release
 works even in a failed transaction, and finds nothing wrong with a name that holds nothing; an
 older libpq releases with `DEALLOCATE`, which a failed transaction refuses until it ends, and which
-refuses a name that holds nothing.
+refuses a name that holds nothing. `connection.sendPrepare(name, statement)` and
+`connection.sendPrepared(name, *arguments)` do the same without waiting, and their answers are
+collected with `result`, as those of `send`.
+
+`connection.pipeline()` starts a pipeline: a context manager whose `execute(statement, *arguments)`,
+`prepare(name, statement)` and `execPrepared(name, *arguments)` send statements without waiting for
+the answers to the ones before them, and whose `sync()` ends a segment. Iterating over it hands back
+the result of each statement, in the order they were sent; a statement that failed answers with a
+result whose `check()` raises the exception of its condition, and the statements after it in its
+segment with results whose status is `pipelineAborted`. The statements of a segment run in a
+transaction of their own, unless they are inside one already, so a failure undoes its segment, and
+the next segment runs. The result of a statement may be read before its segment ends. A pipeline
+sends without waiting for the socket, and reads the answers that arrive while it waits for the one
+it was asked for; it holds its session as a copy does, and the session refuses the statements sent
+around it. The end of the block syncs what was sent, reads the answers that are left, and leaves the
+pipeline. Pipelines need libpq 14 or later.
 
 Creating and dropping make it so: after `createTable(table)` the table exists, and after
 `dropTable(table)` it is gone. By default, finding it that way already is an error; with
@@ -350,8 +374,9 @@ session. Each carries the statement in `command` and the explanation of the data
 schema, table, column and constraint at fault. sqlite names it with its extended result code, such
 as `SQLITE_CONSTRAINT_PRIMARYKEY`, in `code`, and reports nothing else; a statement that python's
 `sqlite3` module refuses before sqlite sees it, such as one given too few values, raises
-`ProgrammingError` with an empty `code`. A statement sent through a server that is not attached
-raises `InterfaceError`.
+`ProgrammingError` with an empty `code`. A run of a prepared statement among many carries the
+values of its slots in `values`. A statement sent through a server that is not attached raises
+`InterfaceError`.
 
 A postgres session may be shared by threads: its calls take turns.
 
