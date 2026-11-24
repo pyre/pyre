@@ -506,10 +506,10 @@ pyre::tensor::rows(const vectorT & v, const vectorTs &... vs)
     constexpr int n_rows = 1 + sizeof...(vectorTs);
     // the number of columns in the result matrix
     constexpr int n_cols = vectorT::size;
-    // the scalar type of the result matrix
+    // the scalar type of the result matrix
     using scalar_t =
         std::common_type_t<typename vectorT::scalar_type, typename vectorTs::scalar_type...>;
-    // the type type of the result matrix
+    // the type of the result matrix
     using matrix_result_t = pyre::tensor::matrix_t<n_rows, n_cols, scalar_t, packingT>;
 
     // create the result matrix
@@ -546,10 +546,10 @@ pyre::tensor::columns(const vectorT & v, const vectorTs &... vs)
     constexpr int n_rows = vectorT::size;
     // the number of columns in the result matrix
     constexpr int n_cols = 1 + sizeof...(vectorTs);
-    // the scalar type of the result matrix
+    // the scalar type of the result matrix
     using scalar_t =
         std::common_type_t<typename vectorT::scalar_type, typename vectorTs::scalar_type...>;
-    // the type type of the result matrix
+    // the type of the result matrix
     using matrix_result_t = pyre::tensor::matrix_t<n_rows, n_cols, scalar_t, packingT>;
 
     // create the result matrix

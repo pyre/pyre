@@ -37,7 +37,7 @@ namespace pyre::tensor {
         if (index.size() == 1)
             return false;
 
-        // otherwise check if all the indices are equal
+        // otherwise check if all the indices are equal
         return _entries_all_equal(make_integer_sequence<sizeof...(I) - 1> {});
     }
 
@@ -107,7 +107,7 @@ namespace pyre::tensor {
         }
     } // namespace
 
-    // make the element of the tensor basis that has a one at the index given by {I...}
+    // make the element of the tensor basis that has a one at the index given by {I...}
     template <class tensorT, int... I>
     constexpr auto make_basis_element() -> tensorT
         requires(
@@ -123,7 +123,7 @@ namespace pyre::tensor {
         return make_basis_element_implementation<tensorT, I...>();
     }
 
-    // make the element of the tensor basis that has a one at the index given by {I...}
+    // make the element of the tensor basis that has a one at the index given by {I...}
     //  (diagonal version: index is on diagonal and tensor is square)
     template <class tensorT, int... I>
     constexpr auto make_basis_element() -> typename tensorT::diagonal_tensor_t
