@@ -240,6 +240,18 @@ BLAKE2b digest; an integer is a key already. By default the block waits for the 
 seconds, raising `pyre.db.exceptions.LockError`. The other servers have no such locks, and refuse
 them.
 
+A failure raises one of the exceptions in `pyre.db.exceptions`, classified as the DB API has it:
+`IntegrityError` for a violated constraint, `ProgrammingError` for a statement the database
+cannot make sense of or about an object it does not have, `DataError` for a value that does not
+fit, and `OperationalError` for the circumstances of the database, such as a lock held by another
+session. Each carries the statement in `command` and the explanation of the database in
+`diagnostic`. postgres names the condition with its five character `sqlstate`, and reports the
+schema, table, column and constraint at fault. sqlite names it with its extended result code, such
+as `SQLITE_CONSTRAINT_PRIMARYKEY`, in `code`, and reports nothing else; a statement that python's
+`sqlite3` module refuses before sqlite sees it, such as one given too few values, raises
+`ProgrammingError` with an empty `code`. A statement sent through a server that is not attached
+raises `InterfaceError`.
+
 A postgres session may be shared by threads: its calls take turns.
 
 ## Dialects
