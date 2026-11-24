@@ -453,6 +453,24 @@ pyre::postgres::py::connection(py::module & m)
         "start the copy {statement}, a COPY ... TO STDOUT, and hand back an iterator over its "
         "rows");
 
+    cls.def(
+        // the name
+        "stream",
+        // the implementation
+        [](const Connection & self, view_t statement, const py::args & args, int batch) -> Stream {
+            // render the arguments while we still hold the lock
+            const auto rendered = arguments(args);
+            // and let go of it while the statement goes out
+            py::gil_scoped_release release;
+            // start the stream
+            return Stream(self, statement, rendered, batch);
+        },
+        // the signature
+        "statement"_a, "batch"_a = 1000,
+        // the docstring
+        "run {statement}, with its $1, $2, ... placeholders filled in from the {arguments}, and "
+        "hand back an iterator over its rows, in results of {batch} rows at a time");
+
     // contextual conversion to {bool}, true when the session is up
     cls.def(
         // the name
