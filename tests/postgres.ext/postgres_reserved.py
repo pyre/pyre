@@ -7,54 +7,72 @@
 
 
 """
-Check that the table attributes we use to specify query parameters are treated reserved
-keywords by the back end, which makes it unnecessary to place them in the {pyre_} namespace.
+Check that a table may have columns named after the clauses of queries, which postgres reserves,
+and that a query over it still uses those words for its clauses
 """
-
-import pyre.db
 
 
 def test():
+    """
+    Make a table with columns named order, where and group, write rows, and select them with a
+    query whose clauses go by the same names
+    """
+    # access the package
+    import pyre.db
 
-    # connect to the test database
-    db = pyre.db.postgres(name="test").attach()
+    # a table whose columns are named after reserved words
+    class Clauses(pyre.db.table, id="pyre_reserved"):
+        """
+        Columns named after the clauses of queries
+        """
 
-    # order
-    class invalid(pyre.db.table):
-        order = pyre.db.str()
-
-    try:
-        db.createTable(invalid)
-        assert False
-    except db.exceptions.ProgrammingError:
-        pass
-
-    # where
-    class invalid(pyre.db.table):
+        # the order of a row
+        order = pyre.db.int().primary()
+        # where it is
         where = pyre.db.str()
-
-    try:
-        db.createTable(invalid)
-        assert False
-    except db.exceptions.ProgrammingError:
-        pass
-
-    # group
-    class invalid(pyre.db.table):
+        # and its group
         group = pyre.db.str()
 
-    try:
-        db.createTable(invalid)
-        assert False
-    except db.exceptions.ProgrammingError:
-        pass
+    # a query over it, whose fields have names of their own and whose clauses keep theirs
+    class Selected(pyre.db.query, row=Clauses):
+        # the order of the row
+        position = row.order
+        # and its place
+        place = row.where
+        # the rows of one group
+        where = row.group == "first"
+        # in order
+        order = (position,)
 
-    # and return the connection
-    return db
+    # connect
+    db = pyre.db.postgres(name="reserved").attach()
+    # in a transaction that leaves nothing behind
+    db.execute("BEGIN")
+    # carefully
+    try:
+        # make the table, which postgres accepts now that the names are quoted
+        db.createTable(Clauses)
+        # write two rows of one group and one of another
+        db.insert(
+            Clauses.pyre_immutable(order=2, where="there", group="first"),
+            Clauses.pyre_immutable(order=1, where="here", group="first"),
+            Clauses.pyre_immutable(order=3, where="elsewhere", group="second"),
+        )
+        # select the rows of the first group, in order
+        rows = [(row.position, row.place) for row in db.select(Selected)]
+        # they are the two of that group
+        assert rows == [(1, "here"), (2, "there")], rows
+    # either way
+    finally:
+        # leave nothing behind
+        db.execute("ROLLBACK")
+    # all done
+    return
 
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
