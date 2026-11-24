@@ -24,6 +24,9 @@ from .schema.FieldReference import FieldReference
 # and the base of queries, for those over the rows a statement hands back
 from .queries.Query import Query
 
+# the statements that are rendered once and run many times
+from .Prepared import Prepared
+
 
 # declaration
 class Server(pyre.component, implements=DataStore):
@@ -289,20 +292,81 @@ class Server(pyre.component, implements=DataStore):
         # and pair it with its values
         ((lines, values),) = self._paired(statements=(sql,), parameters=parameters)
 
-        # the columns of the selection, one for each field of the query
-        columns = query.pyre_fields
-        # walk the rows the back end sent, which are data rows and nothing else
-        for row in self._run(lines=lines, values=values, parameters=parameters):
-            # turn each value into the type of its column
-            values = (
-                self.interpret(column=column, value=value, selection=query)
-                for column, value in zip(columns, row)
-            )
-            # and build the row out of them, as they are
-            yield query.pyre_storedTuple(record=query, data=values)
-
+        # walk the rows the back end sent, which are data rows and nothing else, as records
+        yield from self._records(
+            rows=self._run(lines=lines, values=values, parameters=parameters), selection=query
+        )
         # all done
         return
+
+    # prepared statements
+    def prepareSelect(self, query, limit=None, offset=None):
+        """
+        Prepare the selection {select} makes of {query}, with its bounds {limit} and {offset};
+        the slots in its restriction and its bounds are filled in at each run, which hands back
+        the rows one at a time
+        """
+
+        # the recipe of the statement
+        def build(parameters):
+            """
+            Write the selection into {parameters}
+            """
+            # as {select} does
+            return self.sql.select(query=query, limit=limit, offset=offset, parameters=parameters)
+
+        # make one
+        return Prepared(server=self, build=build, selection=query, stream=True)
+
+    def prepareUpdate(self, template, condition, returning=None):
+        """
+        Prepare the update {update} makes of the rows that match {condition} with the values of
+        {template}; the slots in either are filled in at each run, which hands back the rows the
+        update changes, as records, with {returning}, and nothing otherwise
+        """
+        # the selection of the rows the update changes, when they are wanted back
+        selection = (
+            None
+            if returning is None
+            else self._returned(returning=returning, tables={template.pyre_layout})
+        )
+
+        # the recipe of the statement
+        def build(parameters):
+            """
+            Write the update into {parameters}
+            """
+            # as {update} does
+            return self.sql.updateRecords(
+                template=template, condition=condition, returning=selection, parameters=parameters
+            )
+
+        # make one
+        return Prepared(server=self, build=build, selection=selection)
+
+    def prepareDelete(self, table, condition, returning=None):
+        """
+        Prepare the deletion {delete} makes of the rows of {table} that match {condition}; the
+        slots in the condition are filled in at each run, which hands back the rows the deletion
+        removes, as records, with {returning}, and nothing otherwise
+        """
+        # the selection of the rows the deletion removes, when they are wanted back
+        selection = (
+            None if returning is None else self._returned(returning=returning, tables={table})
+        )
+
+        # the recipe of the statement
+        def build(parameters):
+            """
+            Write the deletion into {parameters}
+            """
+            # as {delete} does
+            return self.sql.deleteRecords(
+                table=table, condition=condition, returning=selection, parameters=parameters
+            )
+
+        # make one
+        return Prepared(server=self, build=build, selection=selection)
 
     # reading
     def interpret(self, column, value, selection):
@@ -440,10 +504,70 @@ class Server(pyre.component, implements=DataStore):
         pairs = []
         # go through the statements, each of which is whole when it arrives
         for lines in statements:
-            # and take its values before the next one is built
+            # a statement with slots
+            if parameters is not None:
+                # has values only once it is prepared
+                self._refuseSlots(parameters=parameters)
+            # take its values before the next one is built
             pairs.append((lines, () if parameters is None else parameters.drain()))
         # hand them over
         return pairs
+
+    def _refuseSlots(self, parameters):
+        """
+        Refuse a statement whose {parameters} kept slots, which have values only when a prepared
+        statement runs
+        """
+        # the names of the slots
+        names = [name for name, _ in parameters.slots()]
+        # a statement with none
+        if not names:
+            # is fine
+            return
+        # the others are a mistake of the caller
+        raise self.exceptions.InterfaceError(
+            diagnostic=(
+                f"no values for the slots {', '.join(map(repr, names))}: a statement with slots "
+                f"runs once it is prepared"
+            )
+        )
+
+    def _records(self, rows, selection):
+        """
+        Generate the records of {selection} that {rows}, as the back end sent them, hold
+        """
+        # the columns of the selection, one for each field
+        columns = selection.pyre_fields
+        # go through the rows
+        for row in rows:
+            # turn each value into the type of its column
+            values = (
+                self.interpret(column=column, value=value, selection=selection)
+                for column, value in zip(columns, row)
+            )
+            # and build the record out of them
+            yield selection.pyre_storedTuple(record=selection, data=values)
+        # all done
+        return
+
+    def _runPrepared(self, prepared, values, arguments):
+        """
+        Run the statement of {prepared}, with its slots filled in from {values}, and hand back
+        the rows the back end sent; a server that writes its values as literals writes the
+        statement anew, with the literals of {values}, and ignores the bound {arguments}
+        """
+        # make a writer of literals that knows the values of the slots
+        literals = self.sql.literals(mill=self.sql, values=values)
+        # write the statement with it, and execute it
+        return self.execute(*prepared.build(literals))
+
+    def _releasePrepared(self, prepared):
+        """
+        Release what the back end keeps on behalf of {prepared}; a server that writes its values
+        as literals keeps nothing there
+        """
+        # so there is nothing to do
+        return self
 
     def _run(self, lines, values, parameters):
         """
@@ -500,15 +624,13 @@ class Server(pyre.component, implements=DataStore):
         with self if len(pairs) > 1 else contextlib.nullcontext():
             # run each statement
             for lines, values in pairs:
-                # and go through the rows it hands back
-                for row in self._run(lines=lines, values=values, parameters=parameters):
-                    # turn each value into the type of its column
-                    values = (
-                        self.interpret(column=column, value=value, selection=selection)
-                        for column, value in zip(selection.pyre_fields, row)
+                # and keep the records of the rows it hands back
+                rows.extend(
+                    self._records(
+                        rows=self._run(lines=lines, values=values, parameters=parameters),
+                        selection=selection,
                     )
-                    # and build the record
-                    rows.append(selection.pyre_storedTuple(record=selection, data=values))
+                )
         # hand the rows over
         return rows
 
