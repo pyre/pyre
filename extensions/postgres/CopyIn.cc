@@ -26,7 +26,10 @@ pyre::postgres::py::copyIn(py::module & m)
         // the name
         "CopyIn",
         // the docstring
-        "a copy of rows into a table, as a context manager");
+        "a copy of rows into a table, as a context manager",
+        // my destructor may wait for the session and for the server, so let go of the lock while
+        // it runs
+        py::release_gil_before_calling_cpp_dtor());
 
     // start one on a session
     cls.def(

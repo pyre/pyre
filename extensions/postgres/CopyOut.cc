@@ -25,7 +25,10 @@ pyre::postgres::py::copyOut(py::module & m)
         // the name
         "CopyOut",
         // the docstring
-        "a copy of rows out of the database, as an iterator over its lines");
+        "a copy of rows out of the database, as an iterator over its lines",
+        // my destructor may wait for the session and for the server, so let go of the lock while
+        // it runs
+        py::release_gil_before_calling_cpp_dtor());
 
     // start one on a session
     cls.def(

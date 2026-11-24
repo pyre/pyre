@@ -27,7 +27,10 @@ pyre::postgres::py::transaction(py::module & m)
         // the name
         "Transaction",
         // the docstring
-        "the scope of a transaction, as a context manager");
+        "the scope of a transaction, as a context manager",
+        // my destructor may wait for the session and for the server, so let go of the lock while
+        // it runs
+        py::release_gil_before_calling_cpp_dtor());
 
     // open one on a session
     cls.def(
@@ -92,8 +95,12 @@ pyre::postgres::py::transaction(py::module & m)
                 // so there is nothing left to do
                 return false;
             }
+            // whether the block ran to the end, read while we still hold the lock
+            const auto finished = type.is_none();
+            // let go of the lock while the server works
+            py::gil_scoped_release release;
             // the block ran to the end
-            if (type.is_none()) {
+            if (finished) {
                 // so keep what it did
                 self.commit();
             }

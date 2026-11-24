@@ -26,7 +26,10 @@ pyre::postgres::py::stream(py::module & m)
         // the name
         "Stream",
         // the docstring
-        "the rows of a selection, as an iterator over batches of them");
+        "the rows of a selection, as an iterator over batches of them",
+        // my destructor may wait for the session and for the server, so let go of the lock while
+        // it runs
+        py::release_gil_before_calling_cpp_dtor());
 
     // whether there may be rows still to come
     cls.def_property_readonly(

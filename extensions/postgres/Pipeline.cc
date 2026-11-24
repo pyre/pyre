@@ -26,7 +26,10 @@ pyre::postgres::py::pipeline(py::module & m)
         // the name
         "Pipeline",
         // the docstring
-        "a pipeline of statements, and an iterator over their results");
+        "a pipeline of statements, and an iterator over their results",
+        // my destructor may wait for the session and for the server, so let go of the lock while
+        // it runs
+        py::release_gil_before_calling_cpp_dtor());
 
     // send a statement
     cls.def(
