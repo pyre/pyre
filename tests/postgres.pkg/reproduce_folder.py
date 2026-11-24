@@ -66,7 +66,7 @@ def test():
     )
 
     # the folder, named after this driver and kept for inspection
-    folder = "postgres_reproduce_folder"
+    folder = "reproduce_folder"
     # starts out missing
     shutil.rmtree(folder, ignore_errors=True)
     # reproduce the table into it
