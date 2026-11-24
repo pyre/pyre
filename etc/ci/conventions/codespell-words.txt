@@ -1,12 +1,14 @@
 aïvázis
 brin
 checkin
+copyin
 dataspace
 graphene
 hyperslab
 implementor
 implementors
 injective
+inout
 interferograms
 interprocess
 loner
