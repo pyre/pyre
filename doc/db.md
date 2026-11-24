@@ -39,6 +39,14 @@ postgres, both are also recorded in the catalog of the server, with `COMMENT ON 
 `COMMENT ON COLUMN`, where `psql`'s `\d+` shows them; sqlite keeps the statement as it was written,
 comments and all.
 
+The names of tables, columns, indexes, constraints and databases are written as they are when they
+are made of lower case letters, digits and underscores, start with a letter or an underscore, and
+are not words the dialect reserves. Every other name is quoted, so a table may have a column named
+`order` or `date`, and a name keeps its capitals: a table declared with `id="Readings"` is
+`"Readings"` in the database, and postgres does not fold it to `readings`. Each dialect knows its
+own reserved words: standard SQL those of SQL:2016, postgres those its `pg_get_keywords()` marks
+reserved, sqlite all of its keywords. The mill's `identifier(name)` shows how a name is written.
+
 ### Column types
 
 | type | holds |
