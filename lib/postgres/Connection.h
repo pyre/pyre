@@ -37,6 +37,10 @@
 // of a connection share, as they share the session, so the calls take turns, and {close} waits
 // for the one in progress. {cancel} is the exception, since it interrupts the call in progress
 //
+// a session answers one statement at a time, and a copy, or a statement sent off whose answer has
+// not been collected, keeps it answering. the calls that send a statement refuse it until the
+// answer is over, with an {InterfaceError}, since libpq would otherwise throw the answer away
+//
 // every session writes its dates and times the ISO way and its text in utf-8, whatever the server's
 // configuration or the caller's parameters ask for, so that the values it sends always read the
 // same way
@@ -226,6 +230,9 @@ private:
     // hold my lock for the length of a call; every call that talks to libpq starts here, except
     // {cancel}, whose whole purpose is to interrupt a call that holds it
     inline auto _guard() const -> guard_type;
+    // hold my lock for the length of a call that sends {statement}, which a session in the middle
+    // of the answer to another statement refuses
+    inline auto _free(view_t statement) const -> guard_type;
     // adopt the result libpq produced for {statement}, and raise unless the server ran it
     inline auto _harvest(PGresult * result, view_t statement) const -> Result;
     // build the arrays libpq wants and hand them to whichever of its calls the caller meant

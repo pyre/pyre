@@ -213,8 +213,9 @@ pyre::postgres::Connection::setting(view_t name) const -> view_t
 auto
 pyre::postgres::Connection::exec(view_t statement) const -> Result
 {
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(statement);
     // {PQexec} wants a terminated string
     const string_t text(statement);
     // send it, and wait for the whole answer. note that this is the simple protocol: the
@@ -230,8 +231,9 @@ auto
 pyre::postgres::Connection::execParams(view_t statement, const arguments_type & arguments) const
     -> Result
 {
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(statement);
     // hand the pieces to libpq
     PGresult * result = _exec(statement, arguments, false);
     // adopt what came back, and raise unless the server ran it
@@ -257,8 +259,9 @@ pyre::postgres::Connection::execute(view_t statement, const argsT &... arguments
 auto
 pyre::postgres::Connection::prepare(view_t name, view_t statement) const -> void
 {
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(statement);
     // both want terminated strings
     const string_t label(name);
     const string_t text(statement);
@@ -278,8 +281,9 @@ auto
 pyre::postgres::Connection::execPrepared(view_t name, const arguments_type & arguments) const
     -> Result
 {
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(name);
     // hand the pieces to libpq
     PGresult * result = _exec(name, arguments, true);
     // adopt what came back, and raise unless the server ran it; the statement we can name here
@@ -292,8 +296,9 @@ pyre::postgres::Connection::execPrepared(view_t name, const arguments_type & arg
 auto
 pyre::postgres::Connection::describe(view_t name) const -> Result
 {
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(name);
     // libpq wants a terminated string
     const string_t label(name);
     // ask the server
@@ -308,8 +313,9 @@ auto
 pyre::postgres::Connection::release(view_t name) const -> void
 {
 #if defined(LIBPQ_HAS_CLOSE_PREPARED)
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(name);
     // libpq wants a terminated string
     const string_t label(name);
     // close the statement, which the server does even in a failed transaction
@@ -332,8 +338,9 @@ pyre::postgres::Connection::release(view_t name) const -> void
 auto
 pyre::postgres::Connection::send(view_t statement) const -> void
 {
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(statement);
     // {PQsendQuery} wants a terminated string
     const string_t text(statement);
     // push it at the server; a zero here means it never went
@@ -352,8 +359,9 @@ auto
 pyre::postgres::Connection::sendParams(view_t statement, const arguments_type & arguments) const
     -> void
 {
-    // take turns with the other users of the session
-    const auto guard = _guard();
+    // take turns with the other users of the session, which must not be in the middle of
+    // the answer to another statement
+    const auto guard = _free(statement);
     // both libpq calls want a terminated string
     const string_t text(statement);
     // and the values as an array of pointers, with a null standing for each {NULL}
@@ -629,6 +637,26 @@ pyre::postgres::Connection::_guard() const -> guard_type
 {
     // lock it; the lock is recursive, so a call that makes other calls does not wait on itself
     return guard_type(*_lock);
+}
+
+
+// hold my lock, and refuse {statement} while the session is in the middle of another answer
+auto
+pyre::postgres::Connection::_free(view_t statement) const -> guard_type
+{
+    // take turns with the other users of the session
+    auto guard = _guard();
+    // the lock keeps the other threads out, but not the one holding it; a session that thread
+    // left in the middle of an answer, a copy, a stream, or a statement it sent and has not
+    // collected, would have the answer thrown away by libpq to make room for {statement}
+    if (PQtransactionStatus(_handle()) == PQTRANS_ACTIVE) {
+        // so the statement is a mistake of the caller
+        throw InterfaceError(Diagnostic(
+            "the session is in the middle of the answer to another statement",
+            string_t(statement)));
+    }
+    // otherwise, hand over the hold on the session
+    return guard;
 }
 
 
