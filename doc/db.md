@@ -176,7 +176,7 @@ with joins they are crossed with `CROSS JOIN`, so that the joins read from left 
 
 | server | talks to |
 |---|---|
-| `pyre.db.postgres(name=...)` | a postgres server, through libpq |
+| `pyre.db.postgres(name=...)` | a postgres server, through libpq 17 or later |
 | `pyre.db.sqlite(name=..., database=path)` | a sqlite database, `:memory:` unless given a path |
 | `pyre.db.backup(name=..., stream=...)` | a stream, to which it writes the statements |
 | `pyre.db.folder(name=..., path=...)` | a folder, with a file of rows for each table |
@@ -275,8 +275,7 @@ rows between the server and the client, sent through `exec`, `execute` or `send`
 
 `connection.stream(statement, *arguments, batch=1000)` runs a selection, with its arguments rendered
 as `execute` renders them, and hands back an iterator over its rows in batches, each one a result of
-at most `batch` rows: libpq 17 and later deliver them in chunks of that size, and an older libpq one
-row at a time. A failure of the server partway is raised when the iteration reaches it, after the
+at most `batch` rows, which libpq delivers in chunks of that size. A failure of the server partway is raised when the iteration reaches it, after the
 rows that came before it. A stream holds its session as a copy does. One abandoned before its last
 batch ends as an abandoned copy out does. A session in the middle of an answer, whether a copy, a
 stream, or a statement sent with `send` whose results have not been collected, refuses the
@@ -316,12 +315,10 @@ every run, in order.
 The postgres bindings expose the prepared statements of a session directly:
 `connection.prepare(name, statement)`, `connection.execPrepared(name, *arguments)`,
 `connection.describe(name)`, whose result reports the types of the parameters in `parameterTypes`
-and of the columns in `types`, and `connection.release(name)`. With libpq 17 or later, a release
-works even in a failed transaction, and finds nothing wrong with a name that holds nothing; an
-older libpq releases with `DEALLOCATE`, which a failed transaction refuses until it ends, and which
-refuses a name that holds nothing. `connection.sendPrepare(name, statement)` and
-`connection.sendPrepared(name, *arguments)` do the same without waiting, and their answers are
-collected with `result`, as those of `send`.
+and of the columns in `types`, and `connection.release(name)`. A release works even in a failed
+transaction, and finds nothing wrong with a name that holds nothing.
+`connection.sendPrepare(name, statement)` and `connection.sendPrepared(name, *arguments)` do the
+same without waiting, and their answers are collected with `result`, as those of `send`.
 
 `connection.pipeline()` starts a pipeline: a context manager whose `execute(statement, *arguments)`,
 `prepare(name, statement)` and `execPrepared(name, *arguments)` send statements without waiting for
@@ -334,7 +331,7 @@ the next segment runs. The result of a statement may be read before its segment 
 sends without waiting for the socket, and reads the answers that arrive while it waits for the one
 it was asked for; it holds its session as a copy does, and the session refuses the statements sent
 around it. The end of the block syncs what was sent, reads the answers that are left, and leaves the
-pipeline. Pipelines need libpq 14 or later.
+pipeline.
 
 Creating and dropping make it so: after `createTable(table)` the table exists, and after
 `dropTable(table)` it is gone. By default, finding it that way already is an error; with
