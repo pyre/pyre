@@ -18,18 +18,19 @@ import subprocess
 import sys
 import tokenize
 import tomllib
+import unicodedata
 
 # the description of the program, for the help screen
 DESCRIPTION = """
-Check a checkout against the conventions of the repository: spelling, the formatting of python
-and c++ sources, file preambles and closing markers, and, given the branch the work is based on,
-the commits on top of it, the copyright year of the files they touch, and the comment above every
-statement of the python sources they touch. The same checks run on every pull request; running
-them before pushing saves a round trip
+Check a checkout against the conventions of the repository: spelling, characters that do not
+show, the formatting of python and c++ sources, file preambles and closing markers, and, given the
+branch the work is based on, the commits on top of it, the copyright year of the files they touch,
+and the comment above every statement of the python sources they touch. The same checks run on
+every pull request; running them before pushing saves a round trip
 """
 
 # the checks, in the order they run
-CHECKS = ("spelling", "python", "cxx", "preambles", "narrative", "commits")
+CHECKS = ("spelling", "characters", "python", "cxx", "preambles", "narrative", "commits")
 
 # the files whose preambles and closing markers are not checked, by extension, unless they carry
 # a preamble anyway: binaries, and formats that cannot carry comments
@@ -213,6 +214,67 @@ def spelling(*, root: str, base: str | None) -> list:
         )
     # hand off the complaints
     return problems
+
+
+def characters(*, root: str, base: str | None) -> list:
+    """
+    Check that no tracked text file holds a character that does not show: the format characters,
+    such as the zero-width spaces and joiners, the byte order mark, the soft hyphen and the
+    controls of the direction of text, every space but the plain one, and the separators of lines
+    and paragraphs
+    """
+    # the complaints
+    problems = []
+    # go through the files
+    for name in tracked(root=root):
+        # attempt to
+        try:
+            # read the file
+            with open(os.path.join(root, name), encoding="utf-8") as stream:
+                # all of it
+                text = stream.read()
+        # a file that is not text
+        except UnicodeDecodeError:
+            # has no characters to check
+            continue
+        # go through its lines, counting from one, as editors do
+        for number, line in enumerate(text.split("\n"), start=1):
+            # and through the characters of each, also counting from one
+            for column, character in enumerate(line, start=1):
+                # the ones that show, and the controls, which editors mark, are fine
+                if not invisible(character=character):
+                    # so move on
+                    continue
+                # the others are named, where they stand
+                problems.append(
+                    f"{name}:{number}:{column}: U+{ord(character):04X} "
+                    f"{unicodedata.name(character, 'UNNAMED')}"
+                )
+    # add the advice, if there is anything to advise about
+    if problems:
+        # a character that does not show either stands in for one that does, or belongs in the
+        # text, where an escape spells it visibly
+        problems.append(
+            "replace each with the character it stands in for; text that needs one spells it with "
+            "an escape, such as \\u200b"
+        )
+    # hand off the complaints
+    return problems
+
+
+def invisible(*, character: str) -> bool:
+    """
+    Check whether {character} does not show: a format character, a space other than the plain one,
+    or a separator of lines or paragraphs
+    """
+    # its category
+    category = unicodedata.category(character)
+    # the format characters, and the separators
+    if category in ("Cf", "Zl", "Zp"):
+        # show nothing
+        return True
+    # and the spaces other than the plain one show as the plain one
+    return category == "Zs" and character != " "
 
 
 def python(*, root: str, base: str | None) -> list:
