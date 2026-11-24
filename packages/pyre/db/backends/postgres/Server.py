@@ -174,20 +174,6 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # hand it to the session
         return self.connection.execute(statement, *arguments)
 
-    def transaction(self):
-        """
-        Build a context manager that opens a transaction on my connection
-
-        The transaction commits when its block exits normally, and rolls back when the block
-        raises
-        """
-        # transaction on a session that was never opened
-        if self.connection is None:
-            # are a problem
-            raise exceptions.InterfaceError(diagnostic="this server is not attached")
-        # build one on my session
-        return pyre.extensions.libpq.Transaction(self.connection)
-
     # convenience
     def createDatabase(self, name, existOk=False):
         """
