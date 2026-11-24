@@ -148,6 +148,8 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         self.connection.close()
         # invalidate the member
         self.connection = None
+        # the cursors waiting to be closed went with the session
+        self._abandoned = []
 
         # all done
         return
@@ -431,6 +433,8 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         self._prepared = itertools.count(start=1)
         # and of the cursors my selections read through
         self._cursors = itertools.count(start=1)
+        # the cursors abandoned while their session could not close them, each with its session
+        self._abandoned = []
         # all done
         return
 
@@ -440,7 +444,7 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         Run the selection whose lines are {lines}, with {values} beside it, through a cursor of my
         session, and generate its rows, {batch} at a time, as they are read; other statements may
         run in the meantime, and the cursor is closed when the rows run out or the reading is
-        abandoned
+        abandoned; the cursors earlier selections had to leave behind are closed first
         """
         # a selection sent through a session that was never opened
         if self.connection is None:
@@ -448,7 +452,13 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
             raise exceptions.InterfaceError(diagnostic="this server is not attached")
         # the session that holds the cursor
         session = self.connection
-        # the cursor gets a name of its own
+        # the cursors abandoned while the session could not close them
+        abandoned, self._abandoned = self._abandoned, []
+        # get closed now, if the session can and still has them
+        for owner, cursor in abandoned:
+            # one at a time
+            self._closeCursor(session=owner, name=cursor)
+        # the new cursor gets a name of its own
         name = f"pyre_cursor_{next(self._cursors)}"
         # and is declared over the selection, with its values
         session.execute("\n".join(self.sql.declareCursor(name=name, selection=lines)), *values)
@@ -485,10 +495,12 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
             # so there is nothing to close
             return
         # a session whose transaction has failed runs nothing until the transaction rolls back;
-        # the rollback takes a cursor that was declared in the transaction, and the session keeps
-        # one declared before it until it hangs up
+        # the rollback takes a cursor that was declared in the transaction, and leaves one
+        # declared before it to the session
         if session.transaction == pyre.extensions.libpq.TransactionStatus.inError:
-            # either way, there is nothing to do now
+            # so the cursor waits for my next selection, which closes it if it is still there
+            self._abandoned.append((session, name))
+            # and that is all for now
             return
         # carefully
         try:
