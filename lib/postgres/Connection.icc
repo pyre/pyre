@@ -682,6 +682,14 @@ pyre::postgres::Connection::_free(view_t statement) const -> guard_type
             "the session is in the middle of the answer to another statement",
             string_t(statement)));
     }
+#if defined(LIBPQ_HAS_PIPELINING)
+    // a session in a pipeline takes its statements through the pipeline, and libpq refuses the
+    // ones sent around it
+    if (PQpipelineStatus(_handle()) != PQ_PIPELINE_OFF) {
+        // so the statement is a mistake of the caller
+        throw InterfaceError(Diagnostic("the session is in a pipeline", string_t(statement)));
+    }
+#endif
     // otherwise, hand over the hold on the session
     return guard;
 }

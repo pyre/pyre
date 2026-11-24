@@ -44,6 +44,8 @@ namespace pyre::postgres {
     using copyOut_t = CopyOut;
     // the rows of a selection, read in batches as the server sends them
     using stream_t = Stream;
+    // a pipeline of statements, sent without waiting for the answers to the ones before them
+    using pipeline_t = Pipeline;
     // and what other sessions have to say
     using notification_t = Notification;
 

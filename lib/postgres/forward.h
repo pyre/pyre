@@ -65,6 +65,8 @@ namespace pyre::postgres {
     class CopyOut;
     // the rows of a selection, read in batches as the server sends them
     class Stream;
+    // a pipeline of statements, sent without waiting for the answers to the ones before them
+    class Pipeline;
     // an asynchronous message from another session
     struct Notification;
 } // namespace pyre::postgres

@@ -43,6 +43,8 @@
 #include "CopyOut.h"
 // the rows of a selection, read in batches as the server sends them
 #include "Stream.h"
+// a pipeline of statements, sent without waiting for the answers to the ones before them
+#include "Pipeline.h"
 
 
 // end of file
