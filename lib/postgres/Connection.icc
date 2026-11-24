@@ -386,11 +386,22 @@ pyre::postgres::Connection::result() const -> std::optional<Result>
         return std::optional<Result>();
     }
 
+    // take ownership, so that whatever happens next the result gets freed
+    const Result harvest(result);
+    // the status of the answer
+    const auto status = harvest.status();
+    // a copy, which libpq would hand back on every call until somebody moved its rows
+    if (status == ExecStatus::copyIn || status == ExecStatus::copyOut
+        || status == ExecStatus::copyBoth) {
+        // is ended, and refused; the statement is not known here, only its answer
+        _refuse(status, "");
+    }
+
     // hand back what arrived, whatever it says. deliberately, and unlike {exec}, this does not
     // raise on a failed result: the session is mid-answer, and a caller that is thrown out of
     // its collection loop leaves it that way. it is on them to ask the result whether it is
     // {ok}, and to call {raise} on it once the loop has run dry
-    return std::optional<Result>(std::in_place, result);
+    return std::optional<Result>(harvest);
 }
 
 
@@ -608,6 +619,15 @@ pyre::postgres::Connection::_harvest(PGresult * result, view_t statement) const 
 
     // take ownership, so that whatever happens next the result gets freed
     const Result harvest(result);
+    // the status of the answer
+    const auto status = harvest.status();
+    // a copy, which waits for rows that cannot travel through this call, or sends rows it
+    // cannot carry
+    if (status == ExecStatus::copyIn || status == ExecStatus::copyOut
+        || status == ExecStatus::copyBoth) {
+        // is ended, and refused
+        _refuse(status, statement);
+    }
     // and if the server would not run the statement
     if (!harvest.ok()) {
         // hand its own account of why to the classifier, which throws the exception that names
@@ -665,6 +685,72 @@ pyre::postgres::Connection::_fail(view_t statement) const -> void
     // a failure with no SQLSTATE never came from the server's parser, and everything that can
     // stop libpq on this side of the wire is environmental
     throw OperationalError(Diagnostic(std::move(explanation), string_t(statement)));
+}
+
+
+// end the copy the server is in, and collect the rest of its answer
+auto
+pyre::postgres::Connection::_abandon(ExecStatus status, view_t reason) const noexcept -> void
+{
+    // a session that has been closed has no copy left to end
+    if (!_connection.valid()) {
+        // so there is nothing to do
+        return;
+    }
+    // the session
+    const auto handle = _connection.handle();
+
+    // a copy into the database
+    if (status == ExecStatus::copyIn || status == ExecStatus::copyBoth) {
+        // is told that its rows are not coming, which the server reports as a failure of the
+        // copy; libpq wants the reason as a terminated string
+        const string_t text(reason);
+        // tell it
+        PQputCopyEnd(handle, text.c_str());
+    }
+    // a copy out of the database
+    if (status == ExecStatus::copyOut || status == ExecStatus::copyBoth) {
+        // has its rows read and thrown away; a caller that wants the server to stop sending them
+        // asks it to before coming here
+        char * buffer = nullptr;
+        // until the server says there are no more
+        while (PQgetCopyData(handle, &buffer, 0) > 0) {
+            // let go of each one
+            PQfreemem(buffer);
+            // and make room for the next
+            buffer = nullptr;
+        }
+    }
+
+    // the rest of the answer says how the copy ended, which the caller already knows
+    while (PGresult * result = PQgetResult(handle)) {
+        // the status of this part of it
+        const auto part = PQresultStatus(result);
+        // throw it away
+        PQclear(result);
+        // a copy that did not end leaves libpq handing back its state on every call, and the
+        // session unusable, which the next statement reports
+        if (part == PGRES_COPY_IN || part == PGRES_COPY_OUT || part == PGRES_COPY_BOTH) {
+            // so stop asking
+            break;
+        }
+    }
+
+    // all done
+    return;
+}
+
+
+// refuse a {COPY} sent through a call that cannot move its rows
+auto
+pyre::postgres::Connection::_refuse(ExecStatus status, view_t statement) const -> void
+{
+    // end the copy, and collect the rest of its answer, so the session can be used again
+    _abandon(status, "the rows of a COPY travel through CopyIn and CopyOut");
+    // and say why
+    throw InterfaceError(Diagnostic(
+        "a COPY that moves rows between the server and the client runs through copyIn or copyOut",
+        string_t(statement)));
 }
 
 

@@ -38,6 +38,9 @@
 // the session, and the scope of the work done over it
 #include "Connection.h"
 #include "Transaction.h"
+// the copies of rows into a table and out of the database
+#include "CopyIn.h"
+#include "CopyOut.h"
 
 
 // end of file

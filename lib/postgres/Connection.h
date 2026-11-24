@@ -120,7 +120,8 @@ public:
     // this is the one call that accepts more than one statement at a time, separated by
     // semicolons, and it is therefore the one call that must never be handed text a user
     // supplied. the server runs the lot in a single implicit transaction and reports on the
-    // last of them
+    // last of them. here, as in the calls below, a {COPY} that moves rows between the server and
+    // the client is refused, since its rows travel through {CopyIn} and {CopyOut}
     inline auto exec(view_t statement) const -> Result;
 
     // run {statement}, with its placeholders filled in from {arguments}
@@ -158,7 +159,9 @@ public:
     // whether the answer to the statement in flight is still incomplete
     inline auto busy() const -> bool;
     // the next result the server produced, or nothing when it has produced them all; a caller
-    // that stops before this hands back nothing has left the session mid-answer
+    // that stops before this hands back nothing has left the session mid-answer. a {COPY} that
+    // moves rows between the server and the client runs through {CopyIn} and {CopyOut}, so one
+    // sent here is ended on the spot, the rest of its answer collected, and refused
     inline auto result() const -> std::optional<Result>;
 
     // ask the server to give up on the statement in flight
@@ -196,6 +199,10 @@ public:
     // observes this, and refuses to be used afterwards
     inline auto close() -> void;
 
+    // the copies hold my lock for as long as they run, and talk to libpq through my session
+    friend class CopyIn;
+    friend class CopyOut;
+
     // implementation details
 private:
     // the raw pointer, checked; everything that talks to libpq goes through here
@@ -210,6 +217,13 @@ private:
         -> PGresult *;
     // complain that libpq gave up before the server ever heard of {statement}
     [[noreturn]] inline auto _fail(view_t statement) const -> void;
+    // end the copy the server is in, as {status} says, giving {reason} for rows that will not
+    // come, and collect the rest of its answer; this cleans up after a failure, so it swallows
+    // whatever goes wrong
+    inline auto _abandon(ExecStatus status, view_t reason) const noexcept -> void;
+    // refuse {statement}, a {COPY} sent through a call that cannot move its rows, once the copy
+    // it started is ended
+    [[noreturn]] inline auto _refuse(ExecStatus status, view_t statement) const -> void;
     // open a session; a failure here has no session to hang a diagnostic off, so it is the one
     // place that must clean up after itself before it throws
     static inline auto _connect(const parameters_type & parameters) -> handle_type;
