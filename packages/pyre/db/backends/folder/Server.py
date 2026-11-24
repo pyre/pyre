@@ -362,19 +362,19 @@ class Server(base.Server, family="pyre.db.servers.folder"):
         # the others hold documents
         return json.loads(value)
 
-    def _pyre_onArray(self, schema, value, column, selection, **kwds):
+    def _pyre_onArray(self, schema, value, **kwds):
         """
-        Refuse an array, which a folder has no text for
+        Read an array, as postgres writes its arrays: each level in braces, its entries
+        separated by commas, a null as NULL, and an entry in double quotes when it needs them
         """
-        # complain
-        raise exceptions.NotSupportedError(
-            diagnostic=(
-                f"the column {selection.pyre_name}.{column.name} holds arrays,"
-                " which a folder has no text for"
-            ),
-            table=selection.pyre_name,
-            column=column.name,
-        )
+        # read its levels, down to the texts of its entries
+        level, position = self._arrayLevel(text=value, position=0)
+        # the array must be the whole text
+        if position != len(value):
+            # or the text is not an array
+            raise ValueError(value)
+        # read the entries as the column type of the entries says
+        return self._arrayEntries(level=level, schema=schema.schema, **kwds)
 
     # meta methods
     def __init__(self, **kwds):
@@ -503,6 +503,138 @@ class Server(base.Server, family="pyre.db.servers.folder"):
             return chr(int(code, 8))
         # the others stand for a control character, or for themselves
         return self.controls.get(code, code)
+
+    def _arrayLevel(self, text, position):
+        """
+        Read the level of an array that starts at {position} of {text}, and hand back its items,
+        each a level, the text of an entry, or {None} for a null, and the position after it
+        """
+        # a level opens with a brace
+        if text[position : position + 1] != "{":
+            # or it is not a level
+            raise ValueError(text)
+        # step inside
+        position += 1
+        # a level that closes right away
+        if text[position : position + 1] == "}":
+            # is empty
+            return (), position + 1
+        # the items
+        items = []
+        # until the level closes
+        while True:
+            # the character that starts the next item
+            start = text[position : position + 1]
+            # a level below this one
+            if start == "{":
+                # is read the same way
+                item, position = self._arrayLevel(text=text, position=position)
+            # an entry in quotes
+            elif start == '"':
+                # is read up to its closing quote
+                item, position = self._arrayQuoted(text=text, position=position)
+            # and any other
+            else:
+                # is read up to the comma or the brace after it
+                item, position = self._arrayBare(text=text, position=position)
+            # keep the item
+            items.append(item)
+            # the character after it
+            after = text[position : position + 1]
+            # a comma
+            if after == ",":
+                # leads to another item
+                position += 1
+                # so read it
+                continue
+            # a brace
+            if after == "}":
+                # closes the level
+                return tuple(items), position + 1
+            # and anything else is not part of an array
+            raise ValueError(text)
+
+    def _arrayQuoted(self, text, position):
+        """
+        Read the entry in double quotes that starts at {position} of {text}, and hand back its
+        text and the position after its closing quote
+        """
+        # the characters of the entry
+        characters = []
+        # step past the opening quote
+        position += 1
+        # until the closing quote
+        while position < len(text):
+            # the next character
+            character = text[position]
+            # a backslash
+            if character == "\\":
+                # stands for the character after it
+                characters.append(text[position + 1 : position + 2])
+                # so step past both
+                position += 2
+                # and move on
+                continue
+            # a quote
+            if character == '"':
+                # closes the entry
+                return "".join(characters), position + 1
+            # the others stand for themselves
+            characters.append(character)
+            # so step past it
+            position += 1
+        # an entry whose quote never closes is not part of an array
+        raise ValueError(text)
+
+    def _arrayBare(self, text, position):
+        """
+        Read the entry without quotes that starts at {position} of {text}, and hand back its text,
+        or {None} for a null, and the position of the comma or the brace after it
+        """
+        # the characters of the entry
+        characters = []
+        # until a comma or a brace
+        while position < len(text) and text[position] not in ",}":
+            # a backslash
+            if text[position] == "\\":
+                # stands for the character after it
+                characters.append(text[position + 1 : position + 2])
+                # so step past both
+                position += 2
+                # and move on
+                continue
+            # the others stand for themselves
+            characters.append(text[position])
+            # so step past it
+            position += 1
+        # the text of the entry, without the white space around it
+        entry = "".join(characters).strip()
+        # an entry without text
+        if not entry:
+            # is not part of an array
+            raise ValueError(text)
+        # a null is spelled out
+        if entry.upper() == "NULL":
+            # and stands for {None}
+            return None, position
+        # the others stand for their text
+        return entry, position
+
+    def _arrayEntries(self, level, schema, **kwds):
+        """
+        Read the entries of {level}, a level of an array, as {schema}, the column type of its
+        entries, says
+        """
+        # a level
+        if isinstance(level, tuple):
+            # has its items read the same way
+            return tuple(self._arrayEntries(level=item, schema=schema, **kwds) for item in level)
+        # a null
+        if level is None:
+            # stays as it is
+            return None
+        # and the others are read as their type says
+        return schema._pyre_identify(authority=self, value=level, **kwds)
 
     def _sizes(self):
         """
