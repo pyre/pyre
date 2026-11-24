@@ -625,6 +625,41 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
+    def savepoint(self, name):
+        """
+        Generate the SQL statement that marks the work done so far in a transaction with the
+        savepoint {name}
+        """
+        # every statement starts at the margin
+        self.margin()
+        # simple enough
+        yield self.place(f"SAVEPOINT {name};")
+        # all done
+        return
+
+    def releaseSavepoint(self, name):
+        """
+        Generate the SQL statement that keeps the work done since the savepoint {name}, and
+        forgets the savepoint
+        """
+        # every statement starts at the margin
+        self.margin()
+        # simple enough
+        yield self.place(f"RELEASE SAVEPOINT {name};")
+        # all done
+        return
+
+    def rollbackToSavepoint(self, name):
+        """
+        Generate the SQL statement that undoes the work done since the savepoint {name}
+        """
+        # every statement starts at the margin
+        self.margin()
+        # simple enough
+        yield self.place(f"ROLLBACK TO SAVEPOINT {name};")
+        # all done
+        return
+
     # database management
     def createDatabase(self, name, existOk=False):
         """
