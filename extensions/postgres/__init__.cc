@@ -45,8 +45,10 @@ PYBIND11_MODULE(postgres, m)
     // the copies of rows into a table and out of the database, which are too
     pyre::postgres::py::copyIn(m);
     pyre::postgres::py::copyOut(m);
-    // and the rows of a selection read in batches, which are as well
+    // the rows of a selection read in batches, which are as well
     pyre::postgres::py::stream(m);
+    // and the pipelines of statements, which are as well
+    pyre::postgres::py::pipeline(m);
 
     // the loose functions, last
     pyre::postgres::py::utilities(m);
