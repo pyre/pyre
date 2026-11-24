@@ -136,9 +136,25 @@ public:
     inline auto execute(view_t statement, const argsT &... arguments) const -> Result;
 
     // teach the server {statement} under the given {name}, so that it need only plan it once
+    //
+    // the server infers the type of each placeholder from where it stands, and a statement that
+    // wants a particular type says so with a cast. a name holds one statement until it is
+    // released, and the server keeps it for the length of the session, whatever becomes of the
+    // transaction it was prepared in; a {reset} forgets them all
     inline auto prepare(view_t name, view_t statement) const -> void;
     // and run what it was taught
     inline auto execPrepared(view_t name, const arguments_type & arguments) const -> Result;
+    // what the server learned about the statement under {name}: the number and the types of the
+    // parameters it takes, and the labels and the types of the columns of its rows, of which the
+    // description carries none
+    inline auto describe(view_t name) const -> Result;
+    // make the server forget the statement under {name}, which frees the name for another
+    //
+    // a libpq that can close a prepared statement does so even in a transaction that has failed,
+    // and finds nothing wrong with a name that holds nothing. an older one asks the server to
+    // {DEALLOCATE} the statement instead, which a failed transaction refuses until it ends, and
+    // which refuses a name that holds nothing
+    inline auto release(view_t name) const -> void;
 
     // asynchronous execution
     //

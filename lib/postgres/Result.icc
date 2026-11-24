@@ -132,6 +132,25 @@ pyre::postgres::Result::format(index_type column) const -> Format
 }
 
 
+// the parameters
+// how many the statement takes
+auto
+pyre::postgres::Result::parameters() const -> index_type
+{
+    // ask libpq; a result that describes no prepared statement says there are none
+    return PQnparams(handle());
+}
+
+
+// the identifier of the type of the given {parameter}
+auto
+pyre::postgres::Result::parameterType(index_type parameter) const -> oid_t
+{
+    // ask libpq; a parameter out of range answers with the type that is no type
+    return PQparamtype(handle(), parameter);
+}
+
+
 // the values, reached directly
 // whether the server sent nothing for the given {row} and {column}
 auto

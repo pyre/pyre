@@ -88,6 +88,13 @@ public:
     // whether the values in it are text or the internal representation of that type
     inline auto format(index_type column) const -> Format;
 
+    // the parameters, which only the description of a prepared statement carries
+public:
+    // how many the statement takes
+    inline auto parameters() const -> index_type;
+    // the identifier of the type of the given {parameter}, as postgres catalogs it
+    inline auto parameterType(index_type parameter) const -> oid_t;
+
     // the values, reached directly; the rows and fields below are the pleasant way to do this,
     // and these are the way that allocates nothing at all
 public:

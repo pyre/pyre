@@ -288,6 +288,45 @@ pyre::postgres::Connection::execPrepared(view_t name, const arguments_type & arg
 }
 
 
+// what the server learned about the statement under {name}
+auto
+pyre::postgres::Connection::describe(view_t name) const -> Result
+{
+    // take turns with the other users of the session
+    const auto guard = _guard();
+    // libpq wants a terminated string
+    const string_t label(name);
+    // ask the server
+    PGresult * result = PQdescribePrepared(_handle(), label.c_str());
+    // adopt what came back, and raise unless the server knows the name
+    return _harvest(result, name);
+}
+
+
+// make the server forget the statement under {name}
+auto
+pyre::postgres::Connection::release(view_t name) const -> void
+{
+#if defined(LIBPQ_HAS_CLOSE_PREPARED)
+    // take turns with the other users of the session
+    const auto guard = _guard();
+    // libpq wants a terminated string
+    const string_t label(name);
+    // close the statement, which the server does even in a failed transaction
+    PGresult * result = PQclosePrepared(_handle(), label.c_str());
+    // adopt what came back long enough to learn whether the server did it, and raise if not
+    _harvest(result, name);
+#else
+    // ask the server to deallocate it, under its name quoted as an identifier; both calls take
+    // their own turns with the other users of the session
+    exec("DEALLOCATE " + escapeIdentifier(name));
+#endif
+
+    // all done
+    return;
+}
+
+
 // asynchronous execution
 // send {statement} off, and do not wait for it
 auto
