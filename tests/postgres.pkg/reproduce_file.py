@@ -38,7 +38,7 @@ def test():
     # and three granules, whose keys sqlite assigns
     source.insert(*(Granule.pyre_immutable(name=name) for name in "abc"))
     # the file of statements, named after this driver and kept for inspection
-    path = "postgres_reproduce_file.sql"
+    path = "reproduce_file.sql"
     # written for postgres
     backup = pyre.db.backup(
         name="reproduce_file_backup",
