@@ -184,7 +184,8 @@ Each server has `attach()`, which hands back the server, and `detach()`, and bui
 statements through `createTable`, `dropTable`, `insert(*rows)`, `update(*(template, condition))`,
 `delete(table, condition)` and `select(query, limit=None, offset=None)`; `execute(*lines)` runs
 statements given as text. `select` pages through the rows: `offset` skips that many of the first,
-and `limit` keeps at most that many of the rest; both must be integers.
+and `limit` keeps at most that many of the rest; both must be integers, or, in a prepared
+statement, slots.
 
 postgres and sqlite receive the values of `select`, `insert`, `update` and `delete` beside the
 statement, as parameters, rather than inside it as literals, so nothing a value holds can change
@@ -226,6 +227,34 @@ hands back an iterator over the lines of text the server sends. A copy holds its
 it ends, so the other threads that share the session wait for it. A `COPY` that moves rows between
 the server and the client, sent through `exec`, `execute` or `send`, is refused with
 `InterfaceError`.
+
+A prepared statement is rendered once and runs many times. `pyre.db.parameter(name, schema=None)`
+is a slot for a value given when the statement runs; it stands where a value stands, in a
+restriction, in the template of an update, or as a bound of a selection. In a template, the column
+it fills gives it a type; in a restriction, `schema` says what it holds, as in
+`Granule.name == pyre.db.parameter(name="name", schema=pyre.db.str())`, and a slot without one is
+a mistake in the code that declared it; a bound is a number of rows. A slot that appears twice
+takes one placeholder, and a constant next to a slot keeps its value at every run.
+`prepareSelect(query, limit, offset)`, `prepareUpdate(template, condition, returning)` and
+`prepareDelete(table, condition, returning)` take the arguments of `select`, `update` and `delete`,
+and hand back a statement whose `run(**values)` fills in its slots, each value converted to the
+type of its slot, and hands back what the call it mirrors hands back: the rows of a selection, one
+at a time, the rows an update or a deletion changes, with `returning`, and nothing otherwise. A
+slot without a value, or a value without a slot, raises `InterfaceError` before anything reaches
+the database, and so does a statement with slots that runs without being prepared. postgres
+teaches the session the statement on its first run, under a name of the form `pyre_prepared_<n>`,
+and again on the first run after the server attaches to a new session; `close()`, or the end of a
+`with` block, makes the session forget it. sqlite keeps the text, and its module keeps the
+statements it has compiled. `pyre.db.backup` writes the statement anew at every run, with the
+values as literals.
+
+The postgres bindings expose the prepared statements of a session directly:
+`connection.prepare(name, statement)`, `connection.execPrepared(name, *arguments)`,
+`connection.describe(name)`, whose result reports the types of the parameters in `parameterTypes`
+and of the columns in `types`, and `connection.release(name)`. With libpq 17 or later, a release
+works even in a failed transaction, and finds nothing wrong with a name that holds nothing; an
+older libpq releases with `DEALLOCATE`, which a failed transaction refuses until it ends, and which
+refuses a name that holds nothing.
 
 Creating and dropping make it so: after `createTable(table)` the table exists, and after
 `dropTable(table)` it is gone. By default, finding it that way already is an error; with
