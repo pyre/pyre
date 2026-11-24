@@ -250,12 +250,14 @@ the dialect of the mill, which `psql -1 -f` or `sqlite3` runs as it is.
 which it makes when it attaches: `<table>.tsv` for each table, a line for each row, its values in
 the order the table declares its columns, in the text format of postgres's copies. Values are
 separated by tabs, a null is `\N`, a backslash escapes the characters that would break a line or a
-row, a truth value is `t` or `f`, octets are `\\x` and their hexadecimal digits, and dates and times
-take the form of the standard; postgres reads such a file with `COPY … FROM` or psql's `\copy`,
-and the folder reads every escape postgres writes. A folder makes and removes tables, loads rows and
-reads whole tables back in the order they were loaded; it keeps no indexes, assigns no values, so a
-record that leaves a value to the server is refused, has no text for arrays, and runs no statements,
-so everything else is refused with `NotSupportedError`. A transaction block that raises leaves the
+row, a truth value is `t` or `f`, octets are `\\x` and their hexadecimal digits, dates and times
+take the form of the standard, and an array is written as postgres writes one, `{{1,2},{3,NULL}}`,
+with an entry in double quotes when it would be misread without them. These are the lines postgres
+writes when it copies the same rows out, and postgres reads such a file with `COPY … FROM` or psql's
+`\copy`; the folder reads every escape postgres writes. A folder makes and removes tables, loads
+rows and reads whole tables back in the order they were loaded; it keeps no indexes, assigns no
+values, so a record that leaves a value to the server is refused, and runs no statements, so
+everything else is refused with `NotSupportedError`. A transaction block that raises leaves the
 files as it found them, and a folder removes tables only outside a block. Reproducing a database
 into a folder and the folder into another database moves the database between back ends, in a form
 neither of them owns.
