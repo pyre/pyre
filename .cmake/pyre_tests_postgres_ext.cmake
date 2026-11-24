@@ -43,7 +43,6 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_database.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_attach.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_database_create.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_table.py)
-pyre_test_python_testcase(tests/postgres.ext/postgres_reserved.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_references.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_database_drop.py)
 
@@ -96,6 +95,9 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_lock_released.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_lock_raised.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_lock_timeout.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_lock_key.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_reserved.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_reserved_names.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_keywords.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
@@ -107,9 +109,6 @@ set_property(TEST tests.postgres.ext.postgres_database_drop.py PROPERTY
 
 # set up the dependencies
 set_property(TEST tests.postgres.ext.postgres_table.py PROPERTY
-  FIXTURES_REQUIRED POSTGRES)
-
-set_property(TEST tests.postgres.ext.postgres_reserved.py PROPERTY
   FIXTURES_REQUIRED POSTGRES)
 
 set_property(TEST tests.postgres.ext.postgres_references.py PROPERTY
