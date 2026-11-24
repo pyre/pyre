@@ -58,17 +58,17 @@ def test():
     assert statement == (
         "CREATE TABLE defaults (",
         "  flag BOOLEAN DEFAULT TRUE,",
-        "  count INTEGER DEFAULT 7,",
+        '  "count" INTEGER DEFAULT 7,',
         "  ratio DOUBLE PRECISION DEFAULT 0.5,",
         "  price DECIMAL(4, 2) DEFAULT 12.50,",
         "  name VARCHAR(16) DEFAULT 'O''Hara',",
         "  payload BLOB DEFAULT X'00FF',",
-        "  day DATE DEFAULT DATE '2026-11-22',",
-        "  hour TIME DEFAULT TIME '08:30:00',",
+        "  \"day\" DATE DEFAULT DATE '2026-11-22',",
+        "  \"hour\" TIME DEFAULT TIME '08:30:00',",
         "  moment TIMESTAMP DEFAULT TIMESTAMP '2026-11-22 08:30:00',",
-        "  row INTEGER ARRAY DEFAULT ARRAY[1, 2],",
+        '  "row" INTEGER ARRAY DEFAULT ARRAY[1, 2],',
         "  grid INTEGER ARRAY ARRAY DEFAULT ARRAY[ARRAY[1, 2], ARRAY[3, 4]],",
-        "  empty INTEGER ARRAY DEFAULT ARRAY[]",
+        '  "empty" INTEGER ARRAY DEFAULT ARRAY[]',
         ");",
     ), statement
 

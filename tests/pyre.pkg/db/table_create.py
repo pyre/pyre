@@ -65,7 +65,7 @@ def test():
         "    PRIMARY KEY,",
         "  state VARCHAR(2) -- a string with maximum length 2",
         "    NOT NULL,",
-        "  when DATE -- a date",
+        '  "when" DATE -- a date',
         "    UNIQUE,",
         "  price DECIMAL(6, 2), -- a decimal",
         "  pi DOUBLE PRECISION -- a floating point number",

@@ -50,15 +50,15 @@ def test():
     assert statement == (
         "CREATE TABLE plain (",
         "  flag BOOLEAN,",
-        "  count INTEGER,",
+        '  "count" INTEGER,',
         "  ratio DOUBLE PRECISION,",
         "  price DECIMAL(4, 2),",
         "  name VARCHAR(16),",
         "  payload BLOB,",
-        "  day DATE,",
-        "  hour TIME,",
+        '  "day" DATE,',
+        '  "hour" TIME,',
         "  moment TIMESTAMP,",
-        "  row INTEGER ARRAY",
+        '  "row" INTEGER ARRAY',
         ");",
     ), statement
 

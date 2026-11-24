@@ -68,7 +68,7 @@ def test():
     # and check it
     assert statement == (
         "INSERT INTO things",
-        "    (flag, count, ratio, price, name, payload, day, hour, moment, row, missing)",
+        '    (flag, "count", ratio, price, name, payload, "day", "hour", moment, "row", missing)',
         "  VALUES",
         "    ("
         "TRUE, 7, 0.5, 12.50, 'O''Hara', X'00FF', "

@@ -48,7 +48,7 @@ def test():
     # generate the statement
     statement = tuple(mill.select(Selected))
     # the restriction is the last line
-    assert statement[-1] == "    ((reading.day) = (NULL));", statement[-1]
+    assert statement[-1] == '    ((reading."day") = (NULL));', statement[-1]
     # all done
     return
 
