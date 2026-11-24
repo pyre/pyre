@@ -66,6 +66,11 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     hasConflict = False
     # what may happen to the rows that are there already
     existingRows = ("keep", "replace")
+    # whether an insert may take the values a row brings for a column whose values the server
+    # assigns over its own, which it may, by saying so
+    hasOverriding = True
+    # what may happen to those values, which are refused unless they are kept
+    generatedValues = ("keep",)
     # and the type of the bounds of a selection, which are numbers of rows; the value of a slot
     # that stands for one takes it
     rowCount = schemata.int()
@@ -386,12 +391,13 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # hand them over
         return names
 
-    def _merge(self, records, existing, key, parameters=None):
+    def _merge(self, records, existing, key, parameters=None, generated=None):
         """
         Merge {records} into their tables, keeping or replacing the rows that are there already,
         as {existing} asks; the consecutive records of a table that give the same columns share a
         statement, and each statement is handed over whole; their values go to {parameters},
-        when it is given
+        when it is given, and the values they bring for the columns the server assigns are kept
+        when {generated} asks for it
         """
         # the groups of records of the same shape
         groups = []
@@ -401,8 +407,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             table = record.pyre_layout
             # the columns it gives values for, with their values
             columns = tuple(self._givenColumns(table=table, record=record))
+            # whether the insert must take the values the record brings over the server's own
+            overriding = self._overriding(table=table, columns=columns, generated=generated)
             # and its shape
-            shape = (table, tuple(field for field, _ in columns))
+            shape = (table, tuple(field for field, _ in columns), overriding)
             # a record of the same shape as the last group
             if groups and groups[-1][0] == shape:
                 # joins it
@@ -412,7 +420,7 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 # it starts a group of its own
                 groups.append((shape, [columns]))
         # each group
-        for (table, fields), rows in groups:
+        for (table, fields, overriding), rows in groups:
             # is merged by a statement of its own
             yield tuple(
                 self._mergeStatement(
@@ -422,14 +430,19 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                     existing=existing,
                     key=key,
                     parameters=parameters,
+                    overriding=overriding,
                 )
             )
         # all done
         return
 
-    def _mergeStatement(self, table, fields, rows, existing, key, parameters=None):
+    def _mergeStatement(
+        self, table, fields, rows, existing, key, parameters=None, overriding=False
+    ):
         """
-        Build the statement that merges {rows} into {table}, each giving values for {fields}
+        Build the statement that merges {rows} into {table}, each giving values for {fields};
+        with {overriding}, the rows that are inserted keep the values they bring for the columns
+        the server assigns
         """
         # the names of the columns
         names = [field.name for field in fields]
@@ -503,6 +516,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         )
         # indent
         self.indent()
+        # rows that bring values for the columns the server assigns
+        if overriding:
+            # have them taken over the server's own
+            yield self.place("OVERRIDING SYSTEM VALUE")
         # with the values of the incoming row
         sources = ", ".join(f"incoming.{self.identifier(name)}" for name in names)
         # which ends the statement
@@ -511,6 +528,54 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         self.outdent(decrement=2)
         # all done
         return
+
+    def _generatedRequest(self, generated):
+        """
+        Make sure {generated}, a request about the values of the columns the server assigns, is
+        one the language knows
+        """
+        # a request that is not one of them
+        if generated is not None and generated not in self.generatedValues:
+            # is a mistake in the code that made it
+            import journal
+
+            # so complain
+            raise journal.firewall("pyre.db").log(
+                f"the values of the columns the server assigns may be kept, not {generated!r}"
+            )
+        # all done
+        return
+
+    def _overriding(self, table, columns, generated):
+        """
+        Decide whether an insert of {columns}, fields of {table} with their values, must take the
+        values they bring for columns whose values the server assigns over its own; such a value
+        is refused unless {generated} asks to keep it
+        """
+        # the columns whose values the server assigns, takes from no row, and are given one
+        assigned = [
+            field
+            for field, value in columns
+            if field._autogenerated
+            and not field._supplied
+            and value is not None
+            and value is not table.default
+        ]
+        # without any
+        if not assigned:
+            # the server's own values stand
+            return False
+        # values that are not to be kept
+        if generated != "keep":
+            # are a mistake of the caller
+            raise exceptions.InterfaceError(
+                diagnostic=(
+                    f"a value was given for the column {table.pyre_name}.{assigned[0].name},"
+                    " whose values the server assigns"
+                )
+            )
+        # the others are kept, which a language that has the words for it must say
+        return self.hasOverriding
 
     def _givenColumns(self, table, record):
         """
@@ -964,8 +1029,24 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
+    def restartIdentity(self, table, field, start):
+        """
+        Generate the SQL statement that makes the server assign the values of {field}, a column of
+        {table} whose values it assigns, from {start} on
+        """
+        # every statement starts at the margin
+        self.margin()
+        # the table and the column
+        target = f"{self.identifier(table.pyre_name)} ALTER COLUMN {self.identifier(field.name)}"
+        # build the statement
+        yield self.place(f"ALTER TABLE {target} RESTART WITH {int(start)};")
+        # all done
+        return
+
     # record management
-    def insertRecords(self, *records, returning=None, existing=None, key=None, parameters=None):
+    def insertRecords(
+        self, *records, returning=None, existing=None, key=None, parameters=None, generated=None
+    ):
         """
         Insert {records}, an iterable of table records, into their corresponding table; the
         consecutive records of a table that name the same columns share a statement; each
@@ -974,17 +1055,27 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         With {existing}, a row whose {key} matches one that is there already is either left
         alone, when {existing} is "keep", or written over it, when it is "replace"; the key is
         the primary key of the table, unless {key} names the fields of another
+
+        A value for a column whose values the server assigns, and takes from no row, is refused,
+        unless {generated} is "keep", which has the server take it over its own
         """
         # go through the statements
         for statement in self.insertStatements(
-            *records, returning=returning, existing=existing, key=key, parameters=parameters
+            *records,
+            returning=returning,
+            existing=existing,
+            key=key,
+            parameters=parameters,
+            generated=generated,
         ):
             # and hand over their lines
             yield from statement
         # all done
         return
 
-    def insertStatements(self, *records, returning=None, existing=None, key=None, parameters=None):
+    def insertStatements(
+        self, *records, returning=None, existing=None, key=None, parameters=None, generated=None
+    ):
         """
         Generate the statements that insert {records}, as {insertRecords} describes them, each
         one whole, as a tuple of its lines; with {parameters}, the values of each statement are
@@ -1001,11 +1092,17 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             raise journal.firewall("pyre.db").log(
                 f"existing rows may be kept or replaced, not {existing!r}"
             )
+        # make sure the request about the values of the columns the server assigns is one
+        self._generatedRequest(generated=generated)
         # a language whose inserts cannot meet the rows that are there already
         if existing is not None and not self.hasConflict:
             # merges the records instead
             yield from self._merge(
-                records=records, existing=existing, key=key, parameters=parameters
+                records=records,
+                existing=existing,
+                key=key,
+                parameters=parameters,
+                generated=generated,
             )
             # and that's all
             return
@@ -1018,6 +1115,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         dangling = ""
         # the shape of the statement in progress, if any: its table and its columns
         shape = None
+        # and whether it takes the values its rows bring for the columns the server assigns
+        overrides = False
         # iterate over the records
         for record in records:
             # get the table of the record
@@ -1026,8 +1125,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
             columns = tuple(self._insertColumns(table=table, record=record))
             # and its shape
             recordShape = (table, tuple(field.name for field, _ in columns))
-            # a record of the same shape as the statement in progress
-            if recordShape == shape:
+            # whether it brings values for the columns the server assigns, which are kept
+            overriding = self._overriding(table=table, columns=columns, generated=generated)
+            # a record of the same shape as the statement in progress, that overrides as it does
+            if recordShape == shape and overriding == overrides:
                 # joins it, so render the dangling values, followed by a comma
                 lines.append(self.place(dangling + ","))
             # the others
@@ -1065,6 +1166,8 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                     continue
                 # the others start a statement of their shape
                 shape = recordShape
+                # that overrides as they do
+                overrides = overriding
                 # initiate it
                 lines.append(self.place(f"INSERT INTO {self.identifier(table.pyre_name)}"))
                 # indent
@@ -1077,6 +1180,10 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
                 )
                 # push out
                 self.outdent()
+                # a statement whose rows bring values for the columns the server assigns
+                if overrides:
+                    # has them taken over the server's own
+                    lines.append(self.place("OVERRIDING SYSTEM VALUE"))
                 # start the section with the record values
                 lines.append(self.place("VALUES"))
                 # further in
@@ -1107,20 +1214,28 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # all done
         return
 
-    def loadGroups(self, *records):
+    def loadGroups(self, *records, generated=None):
         """
         Sort {records} by their table and by the columns they give values for, and generate each
         group as its table, the fields of those columns and its records, in the order in which
-        the groups first appear
+        the groups first appear; a value for a column whose values the server assigns, and takes
+        from no row, is refused, unless {generated} is "keep"
         """
+        # make sure the request about the values of the columns the server assigns is one
+        self._generatedRequest(generated=generated)
         # the groups, by their table and the names of their columns
         groups = {}
         # go through the records
         for record in records:
             # get the table of the record
             table = record.pyre_layout
+            # the columns it gives values for, with their values
+            columns = tuple(self._givenColumns(table=table, record=record))
+            # which may bring values for the columns the server assigns only when they are kept;
+            # the loaders take them without being told
+            self._overriding(table=table, columns=columns, generated=generated)
             # the fields it gives values for
-            fields = tuple(field for field, _ in self._givenColumns(table=table, record=record))
+            fields = tuple(field for field, _ in columns)
             # the group of the records of its table that give values for the same fields
             group = groups.setdefault(
                 (table, tuple(field.name for field in fields)), (table, fields, [])

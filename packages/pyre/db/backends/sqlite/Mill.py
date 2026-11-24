@@ -44,6 +44,8 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
     ifPresent = "IF EXISTS"
     # sqlite has indexes
     hasIndexes = True
+    # and takes the id a row brings without being told to, so it has no words for it
+    hasOverriding = False
     # the version of the library python talks to, which decides what else it has
     version = sqlite3.sqlite_version_info
     # the versions that bring the features that came late: statements that return the rows they
@@ -85,6 +87,17 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
         self.margin()
         # sqlite begins its transactions its own way
         yield self.place("BEGIN TRANSACTION;")
+        # all done
+        return
+
+    # identities
+    def restartIdentity(self, table, field, start):
+        """
+        Generate the SQL statements that make sqlite assign the values of {field}, the id of the
+        rows of {table}, from {start} on: none, since the next id follows the largest there is
+        """
+        # there is nothing to say
+        yield from ()
         # all done
         return
 
@@ -154,7 +167,7 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
         # the others write it as standard SQL would
         return super()._returning(returning=returning)
 
-    def _merge(self, records, existing, key, parameters=None):
+    def _merge(self, records, existing, key, parameters=None, generated=None):
         """
         Refuse to merge {records}: sqlite has no {MERGE}, and a library that gets here has no
         {ON CONFLICT} either

@@ -189,10 +189,11 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         return self.connection.execute(statement, *arguments)
 
     # bulk loading
-    def load(self, *records):
+    def load(self, *records, generated=None):
         """
         Insert {records}, many at a time and all or nothing; the records of a table that give
-        values for the same columns are copied into it together
+        values for the same columns are copied into it together; a value for a column whose
+        values the server assigns, and takes from no row, is refused unless {generated} is "keep"
         """
         # a load through a session that was never opened
         if self.connection is None:
@@ -203,7 +204,7 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # in a block of its own, so that the load keeps all of its records or none of them
         with self:
             # go through the groups of records
-            for table, fields, group in self.sql.loadGroups(*records):
+            for table, fields, group in self.sql.loadGroups(*records, generated=generated):
                 # a group that leaves every column to the server
                 if not fields:
                     # has no values to copy, and is inserted as rows made of defaults
