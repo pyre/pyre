@@ -36,6 +36,33 @@ class Prepared:
         # one at a time, or all at once
         return records if self.stream else list(records)
 
+    def runMany(self, rows):
+        """
+        Run the statement once for each of {rows}, the values of its slots for each run, as
+        {run} takes them; the runs go to the server {batch} at a time, and each batch is all or
+        nothing
+
+        A run that fails is reported at the end of its batch, with its values; its batch is
+        undone, the batches before it are kept, and the ones after it are not run. The runs of a
+        statement that hands back no rows hand back nothing, and the others hand back the records
+        of every run, in order
+        """
+        # fill in the slots of every run, refusing a slot without a value, and a value without a
+        # slot, before anything reaches the database
+        runs = [(values, self.parameters.bind(values=values)) for values in rows]
+        # let my server run them, gathering the rows of each
+        answers = self.server._runPreparedMany(prepared=self, runs=runs)
+        # a statement that hands back no rows
+        if self.selection is None:
+            # hands back nothing
+            return None
+        # the others hand back the records of every run, in order
+        return [
+            record
+            for rows in answers
+            for record in self.server._records(rows=rows, selection=self.selection)
+        ]
+
     def close(self):
         """
         Release whatever my server keeps on the back end on my behalf

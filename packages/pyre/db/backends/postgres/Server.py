@@ -351,21 +351,80 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         hand back the rows it makes; the statement reaches the session on its first run, and
         again on the first run after i attach to a new session, which knows none of the old one's
         """
+        # make sure my session knows the statement
+        self._teach(prepared=prepared)
+        # run it
+        return self.connection.execPrepared(prepared.name, *arguments)
+
+    def _runPreparedMany(self, prepared, runs):
+        """
+        Run the statement of {prepared} once for each of {runs}, pairs of the values of its slots
+        and their bound form, through a pipeline, {batch} runs to a segment, each segment all or
+        nothing, and hand back the rows of each run, or {None} for each when the statement hands
+        back none; a run that fails is reported with its values, and the segments after it are not
+        sent
+        """
+        # make sure my session knows the statement
+        self._teach(prepared=prepared)
+        # its text, which names it in the reports of its failures
+        statement = "\n".join(prepared.lines)
+        # the rows of each run
+        answers = []
+        # go through the runs, a batch at a time
+        for start in range(0, len(runs), self.batch):
+            # the runs of the batch
+            batch = runs[start : start + self.batch]
+            # in a pipeline of their own
+            with self.connection.pipeline() as pipeline:
+                # send each run
+                for _, arguments in batch:
+                    # with its values
+                    pipeline.execPrepared(prepared.name, *arguments)
+                # in one segment
+                pipeline.sync()
+                # and collect their results, in order
+                results = list(pipeline)
+            # go through the runs and their results
+            for (values, _), result in zip(batch, results):
+                # the first that did not run is the one that failed, and undid the segment
+                if not result.ok:
+                    # carefully
+                    try:
+                        # report it as the condition the server named
+                        result.check(statement)
+                    # and say which run it was
+                    except exceptions.DatabaseError as error:
+                        # by its values
+                        error.values = values
+                        # and send it on its way
+                        raise
+            # a statement that hands back no rows has none to keep
+            answers.extend([None] * len(batch) if prepared.selection is None else results)
+        # hand the rows over
+        return answers
+
+    def _teach(self, prepared):
+        """
+        Teach my session the statement of {prepared}, on its first run, and again on the first run
+        after i attach to a new session, which knows none of the old one's
+        """
         # a statement sent through a session that was never opened
         if self.connection is None:
             # is worth naming
             raise exceptions.InterfaceError(diagnostic="this server is not attached")
-        # a statement my session has not been taught
-        if prepared.session is not self.connection:
-            # gets a name of its own
-            name = f"pyre_prepared_{next(self._prepared)}"
-            # and is taught to the session under it
-            self.connection.prepare(name, "\n".join(prepared.lines))
-            # remember where it is
-            prepared.name = name
-            prepared.session = self.connection
-        # run it
-        return self.connection.execPrepared(prepared.name, *arguments)
+        # a statement my session knows
+        if prepared.session is self.connection:
+            # needs nothing more
+            return self
+        # the others get a name of their own
+        name = f"pyre_prepared_{next(self._prepared)}"
+        # and are taught to the session under it
+        self.connection.prepare(name, "\n".join(prepared.lines))
+        # remember where it is
+        prepared.name = name
+        prepared.session = self.connection
+        # and hand me back
+        return self
 
     def _releasePrepared(self, prepared):
         """
