@@ -239,7 +239,8 @@ of postgres take it without being told.
 `reproduce(source=…, tables=…)` makes the tables in the database of the server with the rows, the
 keys and the indexes they have in the database of `source`, all in one transaction. A table comes
 before the ones among them that refer to it, as `Table.pyre_referencedTables()` names them, and
-tables that refer to each other in a cycle are refused with `NotSupportedError`. Each table is made
+tables that refer to each other in a cycle, and the ones that refer to them, are refused with
+`NotSupportedError`, which names a few of them. Each table is made
 without its indexes, filled `batch` rows at a time by `load(…, generated="keep")`, given its
 indexes, and each of its generated columns is told to go on after its largest value, with
 `ALTER TABLE … ALTER COLUMN … RESTART WITH …`, which sqlite has no need of. With
@@ -249,15 +250,15 @@ the dialect of the mill, which `psql -1 -f` or `sqlite3` runs as it is.
 `pyre.db.folder(name=…, path=…)` keeps the tables of a database as files of rows in a folder,
 which it makes when it attaches: `<table>.tsv` for each table, a line for each row, its values in
 the order the table declares its columns, in the text format of postgres's copies. Values are
-separated by tabs, a null is `\N`, a backslash escapes the characters that would break a line or a
-row, a truth value is `t` or `f`, octets are `\\x` and their hexadecimal digits, dates and times
-take the form of the standard, and an array is written as postgres writes one, `{{1,2},{3,NULL}}`,
-with an entry in double quotes when it would be misread without them. These are the lines postgres
-writes when it copies the same rows out, and postgres reads such a file with `COPY … FROM` or psql's
-`\copy`; the folder reads every escape postgres writes. A folder makes and removes tables, loads
-rows and reads whole tables back in the order they were loaded; it keeps no indexes, assigns no
-values, so a record that leaves a value to the server is refused, and runs no statements, so
-everything else is refused with `NotSupportedError`. A transaction block that raises leaves the
+separated by tabs, a null is `\N`, a backslash escapes itself and the characters that would break
+a line or a row, a truth value is `t` or `f`, octets are `\\x` and their hexadecimal digits, dates
+and times take the form of the standard, and an array is written as postgres writes one,
+`{{1,2},{3,NULL}}`, with an entry in double quotes when it would be misread without them. postgres
+reads such a file with `COPY … FROM` or psql's `\copy`, and the folder reads every escape postgres
+writes. A folder makes and removes tables, loads rows and reads whole tables back in the order they
+were loaded. Its tables are read whole, so the requests about indexes and identities do nothing; a
+record that leaves a value to the server is refused, and so is every statement, with
+`NotSupportedError`. A transaction block that raises leaves the
 files as it found them, and a folder removes tables only outside a block. Reproducing a database
 into a folder and the folder into another database moves the database between back ends, in a form
 neither of them owns.
@@ -275,13 +276,14 @@ rows between the server and the client, sent through `exec`, `execute` or `send`
 
 `connection.stream(statement, *arguments, batch=1000)` runs a selection, with its arguments rendered
 as `execute` renders them, and hands back an iterator over its rows in batches, each one a result of
-at most `batch` rows, which libpq delivers in chunks of that size. A failure of the server partway is raised when the iteration reaches it, after the
-rows that came before it. A stream holds its session as a copy does. One abandoned before its last
-batch ends as an abandoned copy out does. A session in the middle of an answer, whether a copy, a
-stream, or a statement sent with `send` whose results have not been collected, refuses the
-statements its own thread sends, through `exec`, `execute`, `prepare`, `execPrepared`, `describe`,
-`release`, `send`, `sendParams`, `sendPrepare`, `sendPrepared`, `copyIn`, `copyOut`, `stream` or
-`pipeline`, with `InterfaceError`, since libpq would throw the answer away to make room for them.
+at most `batch` rows, which libpq delivers in chunks of that size. A failure of the server partway
+is raised when the iteration reaches it, after the rows that came before it. A stream holds its
+session as a copy does. One abandoned before its last batch ends as an abandoned copy out does. A
+session in the middle of an answer, whether a copy, a stream, or a statement sent with `send` whose
+results have not been collected, refuses the statements its own thread sends, through `exec`,
+`execute`, `prepare`, `execPrepared`, `describe`, `release`, `send`, `sendParams`, `sendPrepare`,
+`sendPrepared`, `copyIn`, `copyOut`, `stream` or `pipeline`, with `InterfaceError`, since libpq
+would throw the answer away to make room for them.
 
 A prepared statement is rendered once and runs many times. `pyre.db.parameter(name, schema=None)`
 is a slot for a value given when the statement runs; it stands where a value stands, in a
@@ -306,9 +308,9 @@ values as literals.
 `runMany(rows)` runs a prepared statement once for each of `rows`, the values of its slots for
 each run, as `run` takes them, `batch` runs at a time, each batch all or nothing. Every run is bound
 before anything reaches the database. postgres sends each batch through a pipeline, as one segment;
-the other servers run its statements one at a time, in a block of their own. A run that fails is
-reported at the end of its batch, as the exception of its condition, whose `values` are the values
-of the run; its batch is undone, the batches before it are kept, and the ones after it are not run.
+the other servers run its statements one at a time, in a block of their own. A run that fails
+raises the exception of its condition, whose `values` are the values of the run; its batch is
+undone, the batches before it are kept, and the ones after it are not run.
 A statement that hands back no rows hands back nothing, and the others hand back the records of
 every run, in order.
 
@@ -371,10 +373,10 @@ session. Each carries the statement in `command` and the explanation of the data
 schema, table, column and constraint at fault. A failure inside a function on the server also
 carries where it happened, the function and the statement in it, in `context`; when the function
 ran a statement of its own, that statement is in `internalQuery`, and the place in it where the
-server gave up is in `internalPosition`. sqlite names the condition with its extended result code, such
-as `SQLITE_CONSTRAINT_PRIMARYKEY`, in `code`, and reports nothing else; a statement that python's
-`sqlite3` module refuses before sqlite sees it, such as one given too few values, raises
-`ProgrammingError` with an empty `code`. A run of a prepared statement among many carries the
+server gave up is in `internalPosition`. sqlite names the condition with its extended result
+code, such as `SQLITE_CONSTRAINT_PRIMARYKEY`, in `code`, and reports nothing else; a statement
+that python's `sqlite3` module refuses before sqlite sees it, such as one given too few values,
+raises `ProgrammingError` with an empty `code`. A run of a prepared statement among many carries the
 values of its slots in `values`. A statement sent through a server that is not attached raises
 `InterfaceError`.
 
