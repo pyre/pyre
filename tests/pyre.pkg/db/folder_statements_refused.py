@@ -7,8 +7,8 @@
 
 
 """
-Check that a folder server refuses the statements of SQL, since a folder runs none, and with them
-the operations that are made of statements, such as an update
+Check that a folder server refuses the statements of SQL, since a folder only holds rows, and with
+them the operations that are made of statements, such as an update
 """
 
 
