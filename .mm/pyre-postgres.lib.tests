@@ -35,6 +35,7 @@ tests.postgres.lib.threads.pre := tests.postgres.lib.transaction_aborted
 
 # the threads that share a session need the thread library, which older linux systems keep apart
 tests.postgres.lib.threads.libraries := pthread
+tests.postgres.lib.copy_threads.libraries := pthread
 
 
 # end of file
