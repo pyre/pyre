@@ -30,6 +30,7 @@ tests.pyre.pkg.db.folder_statements_refused.clean := folder_statements_refused
 tests.pyre.pkg.db.load_backup.clean := load_backup.sql
 tests.pyre.pkg.db.reproduce_backup.clean := reproduce_backup.sql
 tests.pyre.pkg.db.reproduce_cycle.clean := reproduce_cycle.sql
+tests.pyre.pkg.db.reproduce_cycle_long.clean := reproduce_cycle_long.sql
 tests.pyre.pkg.db.sqlite_commit.clean := sqlite_commit.db
 tests.pyre.pkg.descriptors.ostreams.clean := output.cfg
 tests.pyre.pkg.filesystem.local_make.clean := local-make
