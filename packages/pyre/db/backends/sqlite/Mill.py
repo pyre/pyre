@@ -116,23 +116,26 @@ class Mill(standard.Mill, family="pyre.db.dialects.sqlite"):
         # the others are declared as standard SQL declares them
         return super()._default(table=table, column=column)
 
-    def _paging(self, limit, offset):
+    def _paging(self, limit, offset, parameters=None):
         """
-        Build the clause that skips the first {offset} rows of a selection and keeps at most
-        {limit} of the rest; sqlite knows only {LIMIT} and {OFFSET}
+        Generate the clause that skips the first {offset} rows of a selection and keeps at most
+        {limit} of the rest; sqlite knows only {LIMIT} and {OFFSET}; a bound that is a slot goes
+        to {parameters}, when it is given
         """
         # a selection without bounds
         if limit is None and offset is None:
             # needs no clause
-            return []
+            return
         # sqlite has no offset without a limit, and takes a negative one for no limit at all
-        clause = f"LIMIT {-1 if limit is None else limit}"
+        clause = f"LIMIT {-1 if limit is None else self._count(value=limit, parameters=parameters)}"
         # skipping rows
         if offset is not None:
             # says how many
-            clause += f" OFFSET {offset}"
+            clause += f" OFFSET {self._count(value=offset, parameters=parameters)}"
         # hand it over
-        return [clause]
+        yield clause
+        # all done
+        return
 
     def _returning(self, returning):
         """

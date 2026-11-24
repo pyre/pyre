@@ -14,8 +14,14 @@ import re
 # my base class
 from pyre.weaver.SQL import SQL
 
+# the types of values
+from pyre import schemata
+
 # the local exceptions
 from ... import exceptions
+
+# the slots for the values of prepared statements
+from ...schema.Parameter import Parameter
 
 # the words the language reserves
 from . import keywords
@@ -60,6 +66,9 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     hasConflict = False
     # what may happen to the rows that are there already
     existingRows = ("keep", "replace")
+    # and the type of the bounds of a selection, which are numbers of rows; the value of a slot
+    # that stands for one takes it
+    rowCount = schemata.int()
 
     # the visitor that builds the type declarators of my columns, which each dialect replaces
     # with its own
@@ -97,17 +106,20 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
     def select(self, query, limit=None, offset=None, parameters=None):
         """
         Generate the SELECT statement described by {query}; {offset} skips that many of the
-        first rows, and {limit} keeps at most that many of the rest; with {parameters}, the
-        values in the statement are kept there, and placeholders take their place
+        first rows, and {limit} keeps at most that many of the rest, and either may be a slot of
+        a prepared statement; with {parameters}, the values in the statement are kept there, and
+        placeholders take their place
         """
-        # only integers may reach the statement as the bounds of the selection: the limit
-        limit = None if limit is None else operator.index(limit)
+        # only integers and slots may reach the statement as the bounds of the selection: the
+        # limit
+        limit = self._bound(value=limit)
         # and the offset
-        offset = None if offset is None else operator.index(offset)
+        offset = self._bound(value=offset)
         # every statement starts at the margin
         self.margin()
-        # the clauses that page through the rows, as the dialect writes them
-        paging = self._paging(limit=limit, offset=offset)
+        # the clauses that page through the rows, as the dialect writes them, rendered after the
+        # rest of the selection, so that their values are kept in the order of the text
+        paging = self._paging(limit=limit, offset=offset, parameters=parameters)
         # build the statement
         lines = list(self._selection(query=query, paging=paging, parameters=parameters))
         # end its last line
@@ -581,23 +593,48 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # the others get a local alias
         return f"{self.identifier(table.pyre_name)} AS {self.identifier(name)}"
 
-    def _paging(self, limit, offset):
+    def _paging(self, limit, offset, parameters=None):
         """
-        Build the clauses that skip the first {offset} rows of a selection and keep at most
-        {limit} of the rest, as the language writes them
+        Generate the clauses that skip the first {offset} rows of a selection and keep at most
+        {limit} of the rest, as the language writes them; a bound that is a slot goes to
+        {parameters}, when it is given
         """
-        # the clauses, in the order the language puts them
-        clauses = []
-        # skipping rows
+        # skipping rows, which comes first
         if offset is not None:
             # says how many
-            clauses.append(f"OFFSET {offset} ROWS")
+            yield f"OFFSET {self._count(value=offset, parameters=parameters)} ROWS"
         # and keeping some
         if limit is not None:
             # says how many
-            clauses.append(f"FETCH FIRST {limit} ROWS ONLY")
-        # hand them over
-        return clauses
+            yield f"FETCH FIRST {self._count(value=limit, parameters=parameters)} ROWS ONLY"
+        # all done
+        return
+
+    def _bound(self, value):
+        """
+        Check {value}, a bound of a selection, which is a number of rows, a slot that stands for
+        one, or missing
+        """
+        # a missing bound, and a slot, whose value is checked when the statement runs
+        if value is None or isinstance(value, Parameter):
+            # are left as they are
+            return value
+        # anything else must be an integer
+        return operator.index(value)
+
+    def _count(self, value, parameters=None):
+        """
+        Render {value}, a bound of a selection, which is a number of rows or a slot that stands
+        for one; a slot goes to {parameters}, when it is given
+        """
+        # a slot
+        if isinstance(value, Parameter):
+            # is rendered by whoever keeps the values of the statement
+            writer = self._literals if parameters is None else parameters
+            # as a number of rows
+            return writer.countSlot(parameter=value)
+        # a number is written by its digits
+        return str(value)
 
     # the reading of the columns of a selection
     def _read(self, column, text):
@@ -1492,7 +1529,11 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         """
         # the value travels beside the statement when there is a place for it
         writer = self._literals if parameters is None else parameters
-        # and its rendering depends only on its type
+        # a slot of a prepared statement
+        if isinstance(node._value, Parameter):
+            # stands for a value that is given when the statement runs
+            return writer.valueSlot(parameter=node._value)
+        # the rendering of the others depends only on their type
         return writer.value(value=node._value)
 
     def _insertColumns(self, table, record):
@@ -1520,7 +1561,11 @@ class Mill(SQL, family="pyre.db.dialects.standard"):
         # everything else is a value of its column, which travels beside the statement when
         # there is a place for it, and is a literal otherwise
         writer = self._literals if parameters is None else parameters
-        # render it
+        # a slot of a prepared statement
+        if isinstance(value, Parameter):
+            # stands for a value of its column that is given when the statement runs
+            return writer.slot(table=table, column=field, parameter=value)
+        # the others are rendered as they are
         return writer.literal(table=table, column=field, value=value)
 
     def _default(self, table, column):
