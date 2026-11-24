@@ -68,6 +68,14 @@ class Server(pyre.component, implements=DataStore):
         # executing is the job of the back end specific subclasses
         raise NotImplementedError(f"class '{type(self).__name__}' must override 'execute'")
 
+    def run(self, statement, *arguments):
+        """
+        Execute a single {statement}, with its placeholders filled in by {arguments}, which
+        travel beside it
+        """
+        # running is the job of the back end specific subclasses that take parameters
+        raise NotImplementedError(f"class '{type(self).__name__}' must override 'run'")
+
     # convenience
     def createDatabase(self, name, existOk=False):
         """
@@ -152,20 +160,26 @@ class Server(pyre.component, implements=DataStore):
         if not records:
             # with nothing to show for it
             return None if returning is None else []
+        # the place for the values of the statements, if they travel beside them
+        parameters = self._parameters()
         # without rows to hand back
         if returning is None:
-            # build the sql statements
-            sql = self.sql.insertRecords(*records, existing=existing, key=key)
+            # build the statements
+            sql = self.sql.insertStatements(
+                *records, existing=existing, key=key, parameters=parameters
+            )
             # and execute them
-            return self.execute(*sql)
+            return self._runAll(statements=sql, parameters=parameters)
         # otherwise, build the selection of the rows the inserts add
         selection = self._returned(
             returning=returning, tables={record.pyre_layout for record in records}
         )
         # build the statements
-        sql = self.sql.insertRecords(*records, returning=selection, existing=existing, key=key)
+        sql = self.sql.insertStatements(
+            *records, returning=selection, existing=existing, key=key, parameters=parameters
+        )
         # and run them, gathering their rows
-        return self._gather(lines=sql, selection=selection)
+        return self._gather(statements=sql, selection=selection, parameters=parameters)
 
     def update(self, *specifications, returning=None):
         """
@@ -186,52 +200,57 @@ class Server(pyre.component, implements=DataStore):
                 tables={template.pyre_layout for template, _ in specifications},
             )
         )
+        # the place for the values of the statements, if they travel beside them
+        parameters = self._parameters()
         # the statements, one for each specification that sets something
-        statements = [
-            sql
-            for template, condition in specifications
-            if (
-                sql := tuple(
-                    self.sql.updateRecords(
-                        template=template, condition=condition, returning=selection
-                    )
-                )
+        statements = (
+            self.sql.updateRecords(
+                template=template, condition=condition, returning=selection, parameters=parameters
             )
+            for template, condition in specifications
+        )
+        # each one whole, with its values
+        pairs = [
+            (lines, values)
+            for lines, values in self._paired(
+                statements=(tuple(sql) for sql in statements), parameters=parameters
+            )
+            if lines
         ]
-        # the rows the updates hand back
-        rows = []
-        # several statements are all or nothing
-        with self if len(statements) > 1 else contextlib.nullcontext():
-            # go through them
-            for sql in statements:
-                # a statement whose rows are not wanted
-                if selection is None:
-                    # is just executed
-                    self.execute(*sql)
-                    # and that's all
-                    continue
-                # the others hand their rows back
-                rows.extend(self._gather(lines=sql, selection=selection))
-        # all done
-        return None if returning is None else rows
+        # without rows to hand back
+        if selection is None:
+            # several statements are all or nothing
+            with self if len(pairs) > 1 else contextlib.nullcontext():
+                # go through them
+                for lines, values in pairs:
+                    # and execute each one
+                    self._run(lines=lines, values=values, parameters=parameters)
+            # all done
+            return None
+        # otherwise, run them, gathering their rows
+        return self._gatherPairs(pairs=pairs, selection=selection, parameters=parameters)
 
     def delete(self, table, condition, returning=None):
         """
         Delete all {table} records that match {condition}; with {returning}, the table, one of
         its fields or a sequence of them, hand back the rows the deletion removes, as records
         """
-        # without rows to hand back
-        if returning is None:
-            # build the sql statements
-            sql = self.sql.deleteRecords(table=table, condition=condition)
-            # and execute
-            return self.execute(*sql)
-        # otherwise, build the selection of the rows the deletion removes
-        selection = self._returned(returning=returning, tables={table})
+        # the place for the values of the statement, if they travel beside it
+        parameters = self._parameters()
+        # the selection of the rows the deletion removes, when they are wanted back
+        selection = (
+            None if returning is None else self._returned(returning=returning, tables={table})
+        )
         # build the statement
-        sql = self.sql.deleteRecords(table=table, condition=condition, returning=selection)
-        # and run it, gathering its rows
-        return self._gather(lines=sql, selection=selection)
+        sql = self.sql.deleteRecords(
+            table=table, condition=condition, returning=selection, parameters=parameters
+        )
+        # without rows to hand back
+        if selection is None:
+            # execute it
+            return self._runAll(statements=(tuple(sql),), parameters=parameters)
+        # otherwise, run it, gathering its rows
+        return self._gather(statements=(tuple(sql),), selection=selection, parameters=parameters)
 
     def lock(self, name, wait=True, timeout=None):
         """
@@ -248,13 +267,17 @@ class Server(pyre.component, implements=DataStore):
         Execute the given {query} and return the retrieved data; {offset} skips that many of
         the first rows, and {limit} keeps at most that many of the rest
         """
-        # build the sql statements
-        sql = self.sql.select(query=query, limit=limit, offset=offset)
+        # the place for the values of the statement, if they travel beside it
+        parameters = self._parameters()
+        # build the statement
+        sql = tuple(self.sql.select(query=query, limit=limit, offset=offset, parameters=parameters))
+        # and pair it with its values
+        ((lines, values),) = self._paired(statements=(sql,), parameters=parameters)
 
         # the columns of the selection, one for each field of the query
         columns = query.pyre_fields
         # walk the rows the back end sent, which are data rows and nothing else
-        for row in self.execute(*sql):
+        for row in self._run(lines=lines, values=values, parameters=parameters):
             # turn each value into the type of its column
             values = (
                 self.interpret(column=column, value=value, selection=query)
@@ -385,33 +408,85 @@ class Server(pyre.component, implements=DataStore):
         # and hand it over
         return query
 
-    def _gather(self, lines, selection):
+    def _parameters(self):
         """
-        Run the statements in {lines} one at a time, and gather the rows they hand back as
-        records of {selection}
+        Make a place for the values of a statement, which travel beside it; a server that writes
+        them into its statements as literals has none
         """
-        # the statements, each a list of its lines
-        statements = []
-        # the lines of the statement in progress
-        statement = []
-        # go through the lines
-        for line in lines:
-            # add each one to the statement
-            statement.append(line)
-            # and at the line that ends it
-            if line.endswith(";"):
-                # put it aside
-                statements.append(statement)
-                # and start the next one
-                statement = []
+        # i write literals
+        return None
+
+    def _paired(self, statements, parameters):
+        """
+        Pair each of {statements}, each a tuple of its lines, with the values {parameters} kept
+        while it was built, or with none when there is no place for them
+        """
+        # the pairs
+        pairs = []
+        # go through the statements, each of which is whole when it arrives
+        for lines in statements:
+            # and take its values before the next one is built
+            pairs.append((lines, () if parameters is None else parameters.drain()))
+        # hand them over
+        return pairs
+
+    def _run(self, lines, values, parameters):
+        """
+        Execute the statement whose lines are {lines}, with its {values} beside it when there is
+        a place for them
+        """
+        # a statement whose values are literals
+        if parameters is None:
+            # is executed as it is
+            return self.execute(*lines)
+        # the others are run with their values
+        return self.run("\n".join(lines), *values)
+
+    def _runAll(self, statements, parameters):
+        """
+        Execute {statements}, each a tuple of its lines, all or nothing, and hand back the result
+        of the last one
+        """
+        # statements whose values are literals
+        if parameters is None:
+            # go to the back end as a single command, which is all or nothing on its own
+            return self.execute(*(line for lines in statements for line in lines))
+        # the others are paired with their values
+        pairs = self._paired(statements=statements, parameters=parameters)
+        # the result of the last one
+        result = None
+        # several statements are all or nothing
+        with self if len(pairs) > 1 else contextlib.nullcontext():
+            # go through them
+            for lines, values in pairs:
+                # and run each one
+                result = self._run(lines=lines, values=values, parameters=parameters)
+        # all done
+        return result
+
+    def _gather(self, statements, selection, parameters):
+        """
+        Run {statements}, each a tuple of its lines, one at a time, and gather the rows they
+        hand back as records of {selection}
+        """
+        # pair them with their values
+        pairs = self._paired(statements=statements, parameters=parameters)
+        # and run them
+        return self._gatherPairs(pairs=pairs, selection=selection, parameters=parameters)
+
+    def _gatherPairs(self, pairs, selection, parameters):
+        """
+        Run the statements in {pairs}, each a tuple of its lines and its values, one at a time,
+        and gather the rows they hand back as records of {selection}
+        """
         # the rows
         rows = []
         # several statements are all or nothing
-        with self if len(statements) > 1 else contextlib.nullcontext():
+        with self if len(pairs) > 1 else contextlib.nullcontext():
             # run each statement
-            for statement in statements:
+            for lines, values in pairs:
                 # and go through the rows it hands back
-                for row in self.execute(*statement):
+                for row in self._run(lines=lines, values=values, parameters=parameters):
                     # turn each value into the type of its column
                     values = (
                         self.interpret(column=column, value=value, selection=selection)
