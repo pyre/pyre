@@ -186,6 +186,18 @@ statements through `createTable`, `dropTable`, `insert(*rows)`, `update(*(templa
 statements given as text. `select` pages through the rows: `offset` skips that many of the first,
 and `limit` keeps at most that many of the rest; both must be integers.
 
+postgres and sqlite receive the values of `select`, `insert`, `update` and `delete` beside the
+statement, as parameters, rather than inside it as literals, so nothing a value holds can change
+what the statement does. A value of a column takes a bare placeholder, `$1` on postgres and `?1`
+on sqlite, which the column gives a type; on postgres, a value that belongs to no column, such as
+the right side of a comparison or the pattern of `like`, is cast to the type its literal would
+have, `CAST($1 AS DATE)`, since nothing else says what it is. The mill's `parameters()` makes the
+place that keeps them, the statement methods take it as `parameters=`, and its `drain()` hands
+them over; `insertStatements` builds the statements of an insert one at a time, so each can run
+with its own values. Statements built without it, the ones `pyre.db.backup` records among them,
+hold their values as literals. On postgres, a session reads backslashes in text as ordinary
+characters whatever the server was set up to do, which the literals rely on.
+
 `insert`, `update` and `delete` take `returning`, and then hand back the rows they add, change or
 remove: `returning=Granule` gives records of the table, as `select` does, and a field or a
 sequence of fields, such as `returning=Granule.id`, gives records of those fields, read as
