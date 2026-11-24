@@ -91,6 +91,10 @@ pyre_test_driver_postgres(tests/postgres.lib/pipeline_flush.cc)
 pyre_test_driver_postgres(tests/postgres.lib/pipeline_exec_refused.cc)
 pyre_test_driver_postgres(tests/postgres.lib/pipeline_abandoned.cc)
 pyre_test_driver_postgres(tests/postgres.lib/pipeline_large.cc)
+pyre_test_driver_postgres(tests/postgres.lib/hold.cc)
+pyre_test_driver_postgres(tests/postgres.lib/hold_refused.cc)
+pyre_test_driver_postgres(tests/postgres.lib/hold_threads.cc)
+pyre_test_driver_postgres(tests/postgres.lib/hold_closed.cc)
 
 
 # end of file
