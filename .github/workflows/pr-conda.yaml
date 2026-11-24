@@ -100,6 +100,15 @@ jobs:
             ${{matrix.toolchain}}
             ${{matrix.cuda == 'cuda' && 'cuda-nvcc cuda-cudart-dev' || ''}}
 
+      - name: postgres server
+        run: |
+          echo " -- create a cluster, which the runner owns, so it needs no other role"
+          initdb --username=${USER} -D ${RUNNER_TEMP}/pgdata
+          echo " -- start the server"
+          pg_ctl --wait -D ${RUNNER_TEMP}/pgdata --log=${RUNNER_TEMP}/postgres.log start
+          echo " -- make sure it answers"
+          pg_isready
+
       - name: versions
         run: |
           echo " -- conda prefix"
