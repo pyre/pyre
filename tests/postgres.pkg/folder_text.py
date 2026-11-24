@@ -82,7 +82,7 @@ def test():
     ]
 
     # the folder, named after this driver and kept for inspection
-    folder = "postgres_folder_text"
+    folder = "folder_text"
     # starts out missing
     shutil.rmtree(folder, ignore_errors=True)
     # attach a server to it
