@@ -14,6 +14,9 @@ import sqlite3
 # superclass
 from ... import Server as base
 
+# my exceptions
+from ... import exceptions
+
 # the mill that speaks my dialect
 from .Mill import Mill
 
@@ -23,6 +26,41 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
     """
     Component that manages the connection to a sqlite database
     """
+
+    # the exceptions that report the conditions sqlite names, by its primary result code
+    conditions = {
+        # a statement sqlite could not make sense of, or one about an object it does not have
+        sqlite3.SQLITE_ERROR: exceptions.ProgrammingError,
+        # a constraint the data violate
+        sqlite3.SQLITE_CONSTRAINT: exceptions.IntegrityError,
+        # values that do not fit
+        sqlite3.SQLITE_MISMATCH: exceptions.DataError,
+        sqlite3.SQLITE_TOOBIG: exceptions.DataError,
+        # the circumstances of the database: its locks, its file, its permissions
+        sqlite3.SQLITE_BUSY: exceptions.OperationalError,
+        sqlite3.SQLITE_LOCKED: exceptions.OperationalError,
+        sqlite3.SQLITE_READONLY: exceptions.OperationalError,
+        sqlite3.SQLITE_IOERR: exceptions.OperationalError,
+        sqlite3.SQLITE_FULL: exceptions.OperationalError,
+        sqlite3.SQLITE_CANTOPEN: exceptions.OperationalError,
+        sqlite3.SQLITE_PERM: exceptions.OperationalError,
+        sqlite3.SQLITE_ABORT: exceptions.OperationalError,
+        sqlite3.SQLITE_INTERRUPT: exceptions.OperationalError,
+        sqlite3.SQLITE_PROTOCOL: exceptions.OperationalError,
+        sqlite3.SQLITE_EMPTY: exceptions.OperationalError,
+        sqlite3.SQLITE_SCHEMA: exceptions.OperationalError,
+        sqlite3.SQLITE_NOLFS: exceptions.OperationalError,
+        sqlite3.SQLITE_AUTH: exceptions.OperationalError,
+        # damage to the database, or a failure of sqlite itself
+        sqlite3.SQLITE_INTERNAL: exceptions.InternalError,
+        sqlite3.SQLITE_CORRUPT: exceptions.InternalError,
+        sqlite3.SQLITE_NOTADB: exceptions.InternalError,
+        sqlite3.SQLITE_NOTFOUND: exceptions.InternalError,
+        sqlite3.SQLITE_FORMAT: exceptions.InternalError,
+        # a misuse of the interface of sqlite
+        sqlite3.SQLITE_MISUSE: exceptions.InterfaceError,
+        sqlite3.SQLITE_RANGE: exceptions.InterfaceError,
+    }
 
     # the generator of my statements speaks the dialect of sqlite
     sql = pyre.weaver.language()
@@ -87,13 +125,13 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
             # and once sqlite says the statement is whole
             if sqlite3.complete_statement(text):
                 # execute it
-                self.cursor.execute(text)
+                self._send(statement=text)
                 # and start the next one
                 statement = []
         # lines that do not make a whole statement, such as a query without its terminator
         if statement:
             # are handed over as they are, so sqlite can say what it thinks of them
-            self.cursor.execute("\n".join(statement))
+            self._send(statement="\n".join(statement))
         # return the cursor
         return self.cursor
 
@@ -103,9 +141,7 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         travel beside it, so nothing they contain can change what the statement does
         """
         # hand it to the cursor, which holds the rows it makes
-        self.cursor.execute(statement, arguments)
-        # and return it
-        return self.cursor
+        return self._send(statement=statement, arguments=arguments)
 
     # the values that travel beside my statements
     def _parameters(self):
@@ -152,6 +188,36 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         return datetime.datetime.fromisoformat(value)
 
     # implementation details
+    def _send(self, statement, arguments=()):
+        """
+        Hand {statement} to my cursor, with the values in {arguments}, and report what sqlite
+        thinks of it with the exceptions of the package
+        """
+        # a statement sent through a connection that was never opened
+        if self.cursor is None:
+            # is worth naming
+            raise exceptions.InterfaceError(diagnostic="this server is not attached")
+        # attempt to
+        try:
+            # execute the statement
+            self.cursor.execute(statement, arguments)
+        # the module that binds sqlite complains about the use of its interface on its own, with
+        # no result code, since sqlite never saw the statement
+        except sqlite3.ProgrammingError as error:
+            # so its complaint is reported as it is
+            raise exceptions.ProgrammingError(diagnostic=str(error), command=statement) from None
+        # every other complaint comes from sqlite, and its primary result code names the condition
+        except sqlite3.Error as error:
+            # look up the exception that reports it
+            kind = self.conditions.get(error.sqlite_errorcode & 0xFF, exceptions.DatabaseError)
+            # and raise it, with the name sqlite gives the condition in full
+            raise kind(
+                diagnostic=str(error), command=statement, code=error.sqlite_errorname
+            ) from None
+        # the cursor holds the rows the statement makes
+        return self.cursor
+
+    # private data
     cursor = None  # the cursor that executes my statements
     connection = None  # my connection to the database
 
