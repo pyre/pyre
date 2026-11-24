@@ -15,18 +15,4 @@ pyre-postgres.ext.tests.drivers.exclude := \
     ${if $(postgres.live),,${notdir ${wildcard tests/postgres.ext/*.py}}}
 
 
-# the following tests pound on the test database; execute them in order
-tests.postgres.ext.postgres_attach.pre := tests.postgres.ext.postgres_database
-tests.postgres.ext.postgres_database_create.pre := tests.postgres.ext.postgres_attach
-tests.postgres.ext.postgres_table.pre := tests.postgres.ext.postgres_database_create
-tests.postgres.ext.postgres_references.pre := tests.postgres.ext.postgres_table
-tests.postgres.ext.postgres_database_drop.pre := tests.postgres.ext.postgres_references
-
-
-# clean up
-tests.postgres.ext.postgres_reproduce_file.clean := postgres_reproduce_file.sql
-tests.postgres.ext.postgres_folder_text.clean := postgres_folder_text
-tests.postgres.ext.postgres_reproduce_folder.clean := postgres_reproduce_folder
-
-
 # end of file

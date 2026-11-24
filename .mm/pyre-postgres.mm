@@ -21,8 +21,9 @@ pyre-postgres.libraries := pyre-postgres.lib
 # a python extension, deposited into the {pyre} package that hosts it
 pyre-postgres.extensions := pyre-postgres.ext
 # the library stands on its own, so it gets a c++ suite of its own; the extension suite exercises
-# the bindings. both are skipped whole when no server answers
-pyre-postgres.tests := pyre-postgres.lib.tests pyre-postgres.ext.tests
+# the bindings, and the package suite exercises {pyre.db} against the server. all three are
+# skipped whole when no server answers
+pyre-postgres.tests := pyre-postgres.lib.tests pyre-postgres.ext.tests pyre-postgres.pkg.tests
 
 
 # the postgres library meta-data; it is header only, and it knows nothing about python
@@ -56,7 +57,7 @@ pyre-postgres.ext.lib.prerequisites += pyre-postgres.lib journal.lib # pyre.lib 
 # is quiet; the suites below exclude all their drivers when this is empty
 postgres.live := ${shell command -v pg_isready > /dev/null 2>&1 && pg_isready -q && echo live}
 
-include pyre-postgres.lib.tests pyre-postgres.ext.tests
+include pyre-postgres.lib.tests pyre-postgres.ext.tests pyre-postgres.pkg.tests
 
 
 endif
