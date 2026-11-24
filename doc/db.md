@@ -368,7 +368,10 @@ cannot make sense of or about an object it does not have, `DataError` for a valu
 fit, and `OperationalError` for the circumstances of the database, such as a lock held by another
 session. Each carries the statement in `command` and the explanation of the database in
 `diagnostic`. postgres names the condition with its five character `sqlstate`, and reports the
-schema, table, column and constraint at fault. sqlite names it with its extended result code, such
+schema, table, column and constraint at fault. A failure inside a function on the server also
+carries where it happened, the function and the statement in it, in `context`; when the function
+ran a statement of its own, that statement is in `internalQuery`, and the place in it where the
+server gave up is in `internalPosition`. sqlite names the condition with its extended result code, such
 as `SQLITE_CONSTRAINT_PRIMARYKEY`, in `code`, and reports nothing else; a statement that python's
 `sqlite3` module refuses before sqlite sees it, such as one given too few values, raises
 `ProgrammingError` with an empty `code`. A run of a prepared statement among many carries the
