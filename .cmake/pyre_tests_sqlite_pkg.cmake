@@ -43,6 +43,23 @@ pyre_test_python_testcase(tests/sqlite.pkg/sqlite_update_atomic.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_lock_refused.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_reserved_names.py)
 pyre_test_python_testcase(tests/sqlite.pkg/sqlite_parameters.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_error_constraint.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_error_check.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_error_syntax.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_error_missing.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_error_busy.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_error_module.py)
+pyre_test_python_testcase(tests/sqlite.pkg/sqlite_error_detached.py)
+
+# {sqlite_error_busy} keeps the database it locks
+set(sqlite_error_busy_cleanup
+  "rm -f sqlite_error_busy.sql"
+  )
+pyre_test_testcase_shell_fixture(
+  "" "${sqlite_error_busy_cleanup}"
+  tests/sqlite.pkg/sqlite_error_busy.py
+  )
+
 # cleanup
 add_test(NAME tests.sqlite.clean
   WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests/sqlite.pkg"
