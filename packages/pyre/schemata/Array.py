@@ -293,8 +293,10 @@ class Array(Sequence):
         """
         Check whether {entry} is a container, rather than a value an array can hold
         """
-        # anything iterable other than text is
-        return isinstance(entry, collections.abc.Iterable) and not isinstance(entry, str)
+        # anything iterable other than text and strings of octets, which are values, is
+        return isinstance(entry, collections.abc.Iterable) and not isinstance(
+            entry, (str, bytes, bytearray)
+        )
 
     def _extent(self, extent):
         """
