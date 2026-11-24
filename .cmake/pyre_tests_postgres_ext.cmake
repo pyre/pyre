@@ -124,6 +124,13 @@ pyre_test_python_testcase(tests/postgres.ext/postgres_prepare_close.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_prepare_with.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_prepare_reattach.py)
 pyre_test_python_testcase(tests/postgres.ext/postgres_projection_derived.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_cursor.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_nested.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_batches.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_abandoned.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_rollback.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_failed.py)
+pyre_test_python_testcase(tests/postgres.ext/postgres_select_detached.py)
 
 # the component tests pound on a database they create and drop; the create is a setup fixture,
 # the drop a cleanup one, and everything in between requires it
