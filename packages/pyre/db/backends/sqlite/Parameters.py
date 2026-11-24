@@ -53,12 +53,12 @@ class Parameters(standard.Parameters):
         return value.isoformat(sep=" ")
 
     # implementation details
-    def _placeholder(self):
+    def _numbered(self, index):
         """
-        Render the placeholder of the value kept last
+        Render the placeholder of the value at {index}, counting from one
         """
         # by its number, so the values may be kept in any order
-        return f"?{len(self._values)}"
+        return f"?{index}"
 
     def _typed(self, placeholder, cast):
         """
