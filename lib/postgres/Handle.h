@@ -63,6 +63,8 @@ public:
 
     // implementation details
 private:
+    // put {handle} in a box of its own, releasing it if there is no room for one
+    static inline auto _box(handle_type handle) -> handle_type *;
     // release the object, if it is still there, and destroy its box
     static inline auto _reclaim(handle_type * box) noexcept -> void;
 
