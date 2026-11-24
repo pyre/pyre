@@ -75,6 +75,8 @@ function(pyre_postgresModule)
     target_sources(postgresmodule PRIVATE
       extensions/postgres/__init__.cc
       extensions/postgres/Connection.cc
+      extensions/postgres/CopyIn.cc
+      extensions/postgres/CopyOut.cc
       extensions/postgres/Diagnostic.cc
       extensions/postgres/Field.cc
       extensions/postgres/Notification.cc
