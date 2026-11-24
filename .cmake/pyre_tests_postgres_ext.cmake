@@ -61,6 +61,9 @@ pyre_test_python_testcase(tests/postgres.ext/libpq_stream_collected_waits.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_copy_in_collected_waits.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_copy_out_collected_waits.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_pipeline_collected_waits.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_error_context.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_error_internal_query.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_diagnostic_internal_query.py)
 
 # components
 pyre_test_python_testcase(tests/postgres.ext/postgres_database.py)
