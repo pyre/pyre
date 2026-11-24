@@ -39,6 +39,9 @@ namespace pyre::postgres {
     // the session, and the scope of the work done over it
     using connection_t = Connection;
     using transaction_t = Transaction;
+    // the copies of rows into a table and out of the database
+    using copyIn_t = CopyIn;
+    using copyOut_t = CopyOut;
     // and what other sessions have to say
     using notification_t = Notification;
 

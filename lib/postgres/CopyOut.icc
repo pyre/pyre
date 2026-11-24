@@ -1,0 +1,257 @@
+// -*- c++ -*-
+// -*- coding: utf-8 -*-
+//
+// michael a.g. aïvázis <michael.aivazis@para-sim.com>
+// (c) 1998-2026 all rights reserved
+
+// code guard
+#pragma once
+
+
+// my declarations
+#include "CopyOut.h"
+
+
+// metamethods
+// start the copy {statement} on {connection}
+pyre::postgres::CopyOut::CopyOut(connection_type connection, view_t statement) :
+    _connection(std::move(connection)),
+    // keep the other threads off the session until the last row is out
+    _guard(_connection._guard()),
+    _statement(statement),
+    // not yet; the server has to accept the statement first
+    _live(false)
+{
+    // a failure below throws, and leaves me unbuilt: my destructor will not run, but my guard
+    // goes away with the rest of what was built, and lets go of the session. send the statement,
+    // and wait for the server to say whether it is sending rows
+    PGresult * result = PQexec(_connection._handle(), _statement.c_str());
+    // libpq gives up before the server answers only when the session is in trouble
+    if (result == nullptr) {
+        // and the session knows why
+        _connection._fail(_statement);
+    }
+    // take ownership, so that whatever happens next the result gets freed
+    const Result answer(result);
+    // the status of the answer
+    const auto status = answer.status();
+    // a server that is sending rows
+    if (status == ExecStatus::copyOut) {
+        // has started the copy
+        _live = true;
+        // and that's all
+        return;
+    }
+    // a copy the other way
+    if (status == ExecStatus::copyIn || status == ExecStatus::copyBoth) {
+        // is ended, so that the session can be used again
+        _connection._abandon(status, "this copy was started as one out of the database");
+        // and refused
+        throw InterfaceError(
+            Diagnostic("a copy out of the database runs a COPY ... TO STDOUT", _statement));
+    }
+    // a statement the server would not run
+    if (!answer.ok()) {
+        // is reported as the condition the server named
+        answer.raise(_statement);
+    }
+    // and any other statement ran as an ordinary one, which is not what the caller asked for
+    throw InterfaceError(
+        Diagnostic("a copy out of the database runs a COPY ... TO STDOUT", _statement));
+}
+
+
+// the duty to end it may be passed along
+pyre::postgres::CopyOut::CopyOut(CopyOut && other) noexcept :
+    _connection(std::move(other._connection)),
+    _guard(std::move(other._guard)),
+    _statement(std::move(other._statement)),
+    _live(other._live)
+{
+    // whoever we took it from no longer owes the server an end
+    other._live = false;
+}
+
+
+pyre::postgres::CopyOut &
+pyre::postgres::CopyOut::operator=(CopyOut && other) noexcept
+{
+    // guard against a self assignment, which would end the copy and then adopt what is left of it
+    if (this == &other) {
+        return *this;
+    }
+
+    // whatever i am holding has to be ended before i let go of it
+    _close();
+    // take the session
+    _connection = std::move(other._connection);
+    // the hold on its lock
+    _guard = std::move(other._guard);
+    // the statement
+    _statement = std::move(other._statement);
+    // and the duty
+    _live = other._live;
+    // which the other one no longer has
+    other._live = false;
+
+    // all done
+    return *this;
+}
+
+
+// and whoever ends up holding it stops the server, unless all the rows are out
+pyre::postgres::CopyOut::~CopyOut()
+{
+    // a copy still under way at the end of my scope is one whose caller wanted no more rows
+    _close();
+}
+
+
+// interface
+// the next row, or nothing once they are all out
+auto
+pyre::postgres::CopyOut::next() -> std::optional<string_t>
+{
+    // a copy that has ended
+    if (!_live) {
+        // has no more rows
+        return std::optional<string_t>();
+    }
+
+    // room for the row
+    char * buffer = nullptr;
+    // wait for it
+    const int size = PQgetCopyData(_connection._handle(), &buffer, 0);
+    // a row
+    if (size > 0) {
+        // take a copy of it
+        string_t line(buffer, static_cast<std::size_t>(size));
+        // let go of libpq's
+        PQfreemem(buffer);
+        // and hand it off
+        return std::optional<string_t>(std::move(line));
+    }
+
+    // anything else means the rows are over
+    _live = false;
+    // a failure of the session, which libpq explains before the answer of the server replaces
+    // its explanation
+    const string_t explanation(size == -2 ? string_t(_connection.message()) : string_t());
+    // collect the answer, which says whether the server sent every row
+    _finish();
+    // a session that failed with a server that said nothing
+    if (size == -2) {
+        // is in trouble
+        throw OperationalError(Diagnostic(explanation, _statement));
+    }
+    // and otherwise, the rows are all out
+    return std::optional<string_t>();
+}
+
+
+// whether there may be rows still to come
+auto
+pyre::postgres::CopyOut::live() const -> bool
+{
+    // easy enough
+    return _live;
+}
+
+
+// the statement that started me
+auto
+pyre::postgres::CopyOut::statement() const -> view_t
+{
+    // easy enough
+    return _statement;
+}
+
+
+// implementation details
+// the rows are out: collect the answer of the server
+auto
+pyre::postgres::CopyOut::_finish() -> void
+{
+    // the session
+    const auto handle = _connection._handle();
+    // the first part of the answer says how the copy ended
+    PGresult * result = PQgetResult(handle);
+    // the rest, which a copy does not have, is collected so that the session can be used again
+    while (PGresult * extra = PQgetResult(handle)) {
+        // the status of this part of it
+        const auto part = PQresultStatus(extra);
+        // throw it away
+        PQclear(extra);
+        // a copy that did not end leaves libpq handing back its state on every call, and the
+        // session unusable, which the next statement reports
+        if (part == PGRES_COPY_IN || part == PGRES_COPY_OUT || part == PGRES_COPY_BOTH) {
+            // so stop asking
+            break;
+        }
+    }
+    // the other threads may use the session again
+    _guard.unlock();
+
+    // no answer at all means libpq lost the session
+    if (result == nullptr) {
+        // which the session explains
+        _connection._fail(_statement);
+    }
+    // take ownership, so that whatever happens next the result gets freed
+    const Result answer(result);
+    // a server that failed to send every row
+    if (!answer.ok()) {
+        // says why, as the condition it named
+        answer.raise(_statement);
+    }
+
+    // all done
+    return;
+}
+
+
+// stop the server and swallow whatever goes wrong
+auto
+pyre::postgres::CopyOut::_close() noexcept -> void
+{
+    // a copy whose rows are all out
+    if (!_live) {
+        // needs nothing more
+        return;
+    }
+    // whatever happens below, the copy is over
+    _live = false;
+    // ask the server to stop sending, which may fail when the request cannot reach it
+    try {
+        // ask
+        _connection.cancel();
+    }
+    // in which case the rows are read to the end below, which takes longer and ends the same;
+    // the channel is a warning and not an error on purpose: an error channel throws when it
+    // flushes, and a throw from here, inside a {noexcept} destructor, ends the process
+    catch (const Exception & error) {
+        // make a channel
+        auto channel = pyre::journal::warning_t("pyre.postgres.copy");
+        // and complain
+        channel
+            // where
+            << pyre::journal::here()
+            // what
+            << "could not ask the server to stop a copy whose rows are no longer wanted"
+            << pyre::journal::newline
+            // details
+            << error.what()
+            // flush
+            << pyre::journal::endl;
+    }
+    // read the rows already on their way, and collect the answer; this swallows its own failures
+    _connection._abandon(ExecStatus::copyOut, "");
+    // and let go of the session
+    _guard.unlock();
+
+    // all done
+    return;
+}
+
+
+// end of file

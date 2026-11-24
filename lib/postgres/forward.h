@@ -60,6 +60,9 @@ namespace pyre::postgres {
     class Connection;
     // the scope of a transaction, tied to the lifetime of an object
     class Transaction;
+    // the copies of rows into a table and out of the database
+    class CopyIn;
+    class CopyOut;
     // an asynchronous message from another session
     struct Notification;
 } // namespace pyre::postgres
