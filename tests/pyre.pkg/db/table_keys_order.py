@@ -47,7 +47,7 @@ def test():
     # generate the statement that makes the table
     statement = "\n".join(server.sql.createTable(Visit))
     # the key lists its columns in the order they were declared
-    assert "PRIMARY KEY (year,month,city,person)" in statement, statement
+    assert 'PRIMARY KEY ("year","month",city,person)' in statement, statement
     # all done
     return
 

@@ -61,7 +61,7 @@ def test():
         "(",
         "  city INTEGER",
         "    REFERENCES cities (id),",
-        "  date DATE,",
+        '  "date" DATE,',
         "  low INTEGER,",
         "  high INTEGER,",
         "  precipitation DOUBLE PRECISION",

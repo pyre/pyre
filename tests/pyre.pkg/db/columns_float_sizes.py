@@ -36,7 +36,7 @@ def test():
         "CREATE TABLE ratios (",
         "  plain DOUBLE PRECISION,",
         "  single REAL,",
-        "  double DOUBLE PRECISION",
+        '  "double" DOUBLE PRECISION',
         ");",
     ), statement
     # all done

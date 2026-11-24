@@ -42,7 +42,7 @@ def test():
     assert statement == (
         "SELECT",
         "    city,",
-        "    date",
+        '    "date"',
         "  FROM weather",
         "  FETCH FIRST 5 ROWS ONLY;",
     ), statement

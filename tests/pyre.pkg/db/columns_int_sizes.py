@@ -39,7 +39,7 @@ def test():
         "  plain INTEGER,",
         "  small SMALLINT,",
         "  medium INTEGER,",
-        "  large BIGINT",
+        '  "large" BIGINT',
         ");",
     ), statement
     # all done

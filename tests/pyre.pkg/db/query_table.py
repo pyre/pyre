@@ -43,7 +43,7 @@ def test():
     assert statement == (
         "SELECT",
         "    city,",
-        "    date,",
+        '    "date",',
         "    low,",
         "    high,",
         "    precipitation",

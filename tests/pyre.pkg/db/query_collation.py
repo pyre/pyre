@@ -7,11 +7,14 @@
 
 
 """
-Exercise table declaration
+Check the statement of a query whose rows are sorted by one of its fields
 """
 
 
 def test():
+    """
+    Declare a table and a query sorted by the day of its readings, and check its statement
+    """
     # access to the package
     import pyre.db
 
@@ -21,17 +24,22 @@ def test():
         The sample table from the postgres tutorial
         """
 
-        # the fields
+        # the city
         city = pyre.db.str()
+        # the day of the reading, a name the language reserves
         date = pyre.db.date()
+        # the lowest temperature of the day
         low = pyre.db.int()
+        # the highest
         high = pyre.db.int()
+        # and the precipitation
         precipitation = pyre.db.float()
 
     # and a simple query
     class measurements(pyre.db.query, weather=Weather):
-        # the fields
+        # the city
         city = Weather.city
+        # and the day
         date = Weather.date
         # the collation
         order = (date,)
@@ -40,15 +48,15 @@ def test():
     server = pyre.db.server()
     # generate the SQL statement
     stmt = tuple(server.sql.select(measurements))
-    # print('\n'.join(stmt))
+    # and check it
     assert stmt == (
         "SELECT",
         "    weather.city AS city,",
-        "    weather.date AS date",
+        '    weather."date" AS "date"',
         "  FROM",
         "    weather",
         "  ORDER BY",
-        "    weather.date;",
+        '    weather."date";',
     )
 
     # all done
@@ -57,6 +65,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

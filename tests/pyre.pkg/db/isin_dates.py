@@ -43,7 +43,7 @@ def test():
     # render it as a check of the table would
     text = mill.expression(root=predicate, context=Granule)
     # and check it
-    assert text == "day IN (DATE '2026-11-22', DATE '2026-11-23')", text
+    assert text == "\"day\" IN (DATE '2026-11-22', DATE '2026-11-23')", text
     # all done
     return
 

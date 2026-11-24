@@ -42,11 +42,11 @@ def test():
     assert statement == (
         "SELECT",
         "    weather.city AS city,",
-        "    weather.date AS date",
+        '    weather."date" AS "date"',
         "  FROM",
         "    weather",
         "  ORDER BY",
-        "    weather.date",
+        '    weather."date"',
         "  FETCH FIRST 10 ROWS ONLY;",
     ), statement
     # all done
