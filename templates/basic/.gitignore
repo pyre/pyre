@@ -11,7 +11,7 @@
 # the default build locations (cmake)
 /build
 
-# mac folder attributes 
+# mac folder attributes
 **.DS_Store
 
 # python cache

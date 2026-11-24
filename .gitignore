@@ -36,7 +36,7 @@
 # but not those that are figures
 !doc/**/figures/*.pdf
 
-# mac folder attributes 
+# mac folder attributes
 **.DS_Store
 
 # python cache
