@@ -62,6 +62,14 @@ pyre_test_driver_postgres(tests/postgres.lib/copy_exec.cc)
 pyre_test_driver_postgres(tests/postgres.lib/copy_exec_out.cc)
 pyre_test_driver_postgres(tests/postgres.lib/copy_result.cc)
 pyre_test_driver_postgres(tests/postgres.lib/copy_threads.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_exec.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_duplicate.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_unknown.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_describe.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_describe_unknown.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_release.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_release_aborted.cc)
+pyre_test_driver_postgres(tests/postgres.lib/prepare_release_unknown.cc)
 
 
 # end of file

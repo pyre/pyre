@@ -41,6 +41,9 @@ pyre_test_python_testcase(tests/postgres.ext/libpq_copy_in.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_copy_in_raised.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_copy_out.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_copy_exec.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_prepare.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_describe.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_release.py)
 
 # components
 pyre_test_python_testcase(tests/postgres.ext/postgres_database.py)
