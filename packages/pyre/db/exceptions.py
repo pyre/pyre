@@ -22,7 +22,9 @@ class Diagnosed(FrameworkError):
 
     Postgres names every condition it raises with a five character SQLSTATE, and reports the
     object at fault alongside it. All of that arrives here, so that a caller need never read
-    english to find out which constraint was violated, or whether a failure is worth retrying
+    english to find out which constraint was violated, or whether a failure is worth retrying.
+    A back end that names its conditions in a vocabulary of its own, as sqlite does with its
+    result codes, puts that name in {code}
     """
 
     # public data
@@ -45,6 +47,7 @@ class Diagnosed(FrameworkError):
         column="",
         datatype="",
         constraint="",
+        code="",
         **kwds,
     ):
         # chain up
@@ -68,6 +71,8 @@ class Diagnosed(FrameworkError):
         self.column = column
         self.datatype = datatype
         self.constraint = constraint
+        # the name the back end gives the condition in its own vocabulary, when it has one
+        self.code = code
 
         # all done
         return
