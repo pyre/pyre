@@ -297,6 +297,14 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # all done
         return
 
+    # the values that travel beside my statements
+    def _parameters(self):
+        """
+        Make a place for the values of a statement, which travel beside it
+        """
+        # my mill knows what they look like
+        return self.sql.parameters()
+
     # the handlers of the columns whose values my bindings send in another form
     def _pyre_onJSON(self, schema, value, column, selection, **kwds):
         """

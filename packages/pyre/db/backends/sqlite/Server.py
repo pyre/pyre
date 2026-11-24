@@ -97,6 +97,24 @@ class Server(base.Server, family="pyre.db.servers.sqlite"):
         # return the cursor
         return self.cursor
 
+    def run(self, statement, *arguments):
+        """
+        Execute a single {statement}, with its placeholders filled in by {arguments}, which
+        travel beside it, so nothing they contain can change what the statement does
+        """
+        # hand it to the cursor, which holds the rows it makes
+        self.cursor.execute(statement, arguments)
+        # and return it
+        return self.cursor
+
+    # the values that travel beside my statements
+    def _parameters(self):
+        """
+        Make a place for the values of a statement, which travel beside it
+        """
+        # my mill knows what they look like
+        return self.sql.parameters()
+
     # the handlers of the columns whose values sqlite keeps in a form of its own
     def _pyre_onBoolean(self, schema, value, **kwds):
         """
