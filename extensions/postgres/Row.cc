@@ -40,8 +40,8 @@ namespace pyre::postgres::py {
         const Row::index_type index = column < 0 ? column + columns : column;
         // and one that lands outside the row is an {IndexError}, and not one of ours
         if (index < 0 || index >= columns) {
-            // this is the exception the iteration protocol and the slicing machinery both look for
-            throw py::index_error("row index out of range");
+            // this is the exception the iteration protocol looks for
+            throw py::index_error("column index out of range");
         }
         // hand it off
         return index;
