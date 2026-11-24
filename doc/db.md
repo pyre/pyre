@@ -212,6 +212,14 @@ An `update` of several rows and an `insert` with `returning`, which run several 
 them in a block of their own, so they keep all of their work or none of it. The postgres
 bindings' `Transaction` nests the same way.
 
+On postgres, `with db.lock("catalog.update"):` holds an advisory lock from the start of the block to
+its end, whatever the transactions inside it do, so that one process at a time does what the lock
+guards. The name becomes a key every process computes the same way, the first eight bytes of its
+BLAKE2b digest; an integer is a key already. By default the block waits for the lock;
+`wait=False` gives up at once when another session holds it, and `timeout=` after that many
+seconds, raising `pyre.db.exceptions.LockError`. The other servers have no such locks, and refuse
+them.
+
 A postgres session may be shared by threads: its calls take turns.
 
 ## Dialects
