@@ -92,6 +92,7 @@ from .backends.standard import mill as sql
 from .Backup import Backup as backup
 from .backends.sqlite import server as sqlite
 from .backends.postgres import server as postgres
+from .backends.folder import server as folder
 
 
 # templates: table rows with all fields set to None; used to update table entries
