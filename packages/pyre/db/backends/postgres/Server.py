@@ -32,8 +32,10 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
 
     # the condition postgres raises when a database it is asked to create exists already
     duplicateDatabase = "42P04"
-    # and the one it raises when a lock is not granted in time
+    # the one it raises when a lock is not granted in time
     lockNotAvailable = "55P03"
+    # and the one it raises when a cursor is not there
+    invalidCursorName = "34000"
 
     # the generator of my statements speaks the dialect of postgres
     sql = pyre.weaver.language()
@@ -427,10 +429,81 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         self.connection = None
         # the numbers that tell apart the names of the statements i prepare
         self._prepared = itertools.count(start=1)
+        # and of the cursors my selections read through
+        self._cursors = itertools.count(start=1)
         # all done
         return
 
     # implementation details
+    def _fetch(self, lines, values, parameters):
+        """
+        Run the selection whose lines are {lines}, with {values} beside it, through a cursor of my
+        session, and generate its rows, {batch} at a time, as they are read; other statements may
+        run in the meantime, and the cursor is closed when the rows run out or the reading is
+        abandoned
+        """
+        # a selection sent through a session that was never opened
+        if self.connection is None:
+            # is worth naming
+            raise exceptions.InterfaceError(diagnostic="this server is not attached")
+        # the session that holds the cursor
+        session = self.connection
+        # the cursor gets a name of its own
+        name = f"pyre_cursor_{next(self._cursors)}"
+        # and is declared over the selection, with its values
+        session.execute("\n".join(self.sql.declareCursor(name=name, selection=lines)), *values)
+        # the number of rows in a batch
+        batch = self.batch
+        # and the statement that fetches them
+        fetch = "\n".join(self.sql.fetchFromCursor(name=name, count=batch))
+        # carefully
+        try:
+            # until the rows run out
+            while True:
+                # fetch the next batch
+                rows = session.exec(fetch)
+                # hand over its rows
+                yield from rows
+                # and if it fell short
+                if len(rows) < batch:
+                    # it was the last
+                    break
+        # however the reading ends
+        finally:
+            # the cursor is no longer needed
+            self._closeCursor(session=session, name=name)
+        # all done
+        return
+
+    def _closeCursor(self, session, name):
+        """
+        Close the cursor {name} of {session}, when the session can run the statement and still
+        has the cursor
+        """
+        # a session that is no longer mine has hung up, which closed its cursors
+        if session is not self.connection:
+            # so there is nothing to close
+            return
+        # a session whose transaction has failed runs nothing until the transaction rolls back;
+        # the rollback takes a cursor that was declared in the transaction, and the session keeps
+        # one declared before it until it hangs up
+        if session.transaction == pyre.extensions.libpq.TransactionStatus.inError:
+            # either way, there is nothing to do now
+            return
+        # carefully
+        try:
+            # close the cursor
+            session.exec("\n".join(self.sql.closeCursor(name=name)))
+        # if the session no longer has it
+        except exceptions.OperationalError as error:
+            # because it was declared in a transaction that rolled back and took it, all is well;
+            # anything else is a failure
+            if error.sqlstate != self.invalidCursorName:
+                # so report it
+                raise
+        # all done
+        return
+
     def _commit(self):
         """
         Make the work of the transaction of a transaction block permanent, and say so when the
