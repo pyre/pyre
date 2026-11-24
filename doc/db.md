@@ -238,6 +238,19 @@ it ends, so the other threads that share the session wait for it. A `COPY` that 
 the server and the client, sent through `exec`, `execute` or `send`, is refused with
 `InterfaceError`.
 
+`connection.stream(statement, *arguments, batch=1000)` runs a selection, with its arguments
+rendered as `execute` renders them, and hands back an iterator over its rows in batches, each one
+a result of at most `batch` rows: libpq 17 and later deliver them in chunks of that size, and an
+older libpq one row at a time. A failure of the server partway is raised when the iteration
+reaches it, after the rows that came before it. A stream holds its session as a copy does. One
+abandoned before its last batch stops the answer: outside a transaction, it asks the server to
+stop sending; inside one, where a statement the server stops would fail the transaction, it reads
+the remaining rows and throws them away. A session in the middle of an answer, whether a copy, a
+stream, or a statement sent with `send` whose results have not been collected, refuses the
+statements its own thread sends, through `exec`, `execute`, `prepare`, `execPrepared`, `describe`,
+`release`, `send`, `sendParams`, `copyIn`, `copyOut` or `stream`, with `InterfaceError`, since libpq would throw
+the answer away to make room for them.
+
 A prepared statement is rendered once and runs many times. `pyre.db.parameter(name, schema=None)`
 is a slot for a value given when the statement runs; it stands where a value stands, in a
 restriction, in the template of an update, or as a bound of a selection. In a template, the column
