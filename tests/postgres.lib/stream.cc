@@ -61,13 +61,8 @@ main()
         return 1;
     }
 
-    // a libpq that delivers rows in chunks fills each batch
-#if defined(LIBPQ_HAS_CHUNK_MODE)
+    // the rows arrive in chunks, each batch full but the last
     const std::vector<int> expected { 2, 2, 1 };
-    // and an older one delivers them one at a time
-#else
-    const std::vector<int> expected { 1, 1, 1, 1, 1 };
-#endif
     // check
     if (sizes != expected) {
         std::cerr << "the stream handed back " << sizes.size() << " batches of other sizes"

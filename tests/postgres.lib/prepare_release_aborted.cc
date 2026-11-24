@@ -25,9 +25,7 @@ specification() -> pyre::postgres::parameters_t
 }
 
 
-// verify what releasing a statement does inside a transaction that has failed: a libpq that can
-// close a prepared statement does so even there, and an older one, which has to ask the server to
-// {DEALLOCATE} it, is refused until the transaction ends
+// verify that releasing a statement inside a transaction that has failed closes it even there
 int
 main()
 {
@@ -58,8 +56,7 @@ main()
         }
     }
 
-#if defined(LIBPQ_HAS_CLOSE_PREPARED)
-    // release the statement; this one closes it even in a failed transaction
+    // release the statement
     session.release("pyre_one");
     // end the transaction
     session.exec("ROLLBACK");
@@ -79,31 +76,6 @@ main()
             return 1;
         }
     }
-#else
-    // attempt to
-    try {
-        // release the statement, which this libpq does with a {DEALLOCATE}
-        session.release("pyre_one");
-        // which must fail in a failed transaction
-        std::cerr << "a statement was deallocated in a failed transaction" << std::endl;
-        return 1;
-    }
-    // the way the server reports a statement sent to a failed transaction
-    catch (const InternalError & error) {
-        // with its own code for it
-        if (error.diagnostic().sqlstate() != "25P02") {
-            std::cerr << "the refusal carried " << error.diagnostic().sqlstate() << std::endl;
-            return 1;
-        }
-    }
-    // end the transaction
-    session.exec("ROLLBACK");
-    // and the statement is still there
-    if (session.execPrepared("pyre_one", {}).value(0, 0) != "1") {
-        std::cerr << "the refused release removed the statement" << std::endl;
-        return 1;
-    }
-#endif
 
     // all done
     return 0;
