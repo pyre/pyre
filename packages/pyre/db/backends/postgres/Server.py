@@ -113,6 +113,11 @@ class Server(base.Server, family="pyre.db.servers.postgres"):
         # establish the connection
         self.connection = libpq.Connection(spec)
 
+        # the literals my mill writes double their quotes and leave backslashes alone, which is
+        # how the language reads text; make sure the session reads it that way, whatever the
+        # server, the database or the role was set up to do
+        self.execute("SET standard_conforming_strings = on;")
+
         # if the user asked for {quiet} operation
         if self.quiet:
             # set the minimum diagnostic level to {warning}
