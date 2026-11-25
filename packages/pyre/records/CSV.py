@@ -53,8 +53,9 @@ class CSV:
         if uri:
             # build the associated stream
             stream = open(uri, newline="")
-        # look for a valid stream
+        # without a stream to read from
         if not stream:
+            # there is nothing to read
             raise self.SourceSpecificationError()
         # access the package
         import csv
@@ -63,14 +64,16 @@ class CSV:
         reader = csv.reader(stream, **kwds)
         # get the headers
         headers = next(reader)
-        # build the name map
-        index = {name: offset for offset, name in enumerate(headers)}
-        # adjust the column specification
-        columns = tuple(layout.pyre_selectColumns(headers=index))
+        # find the column of each measure of the layout, if the source has one
+        columns = tuple(layout.pyre_selectColumns(headers=headers))
+        # pair each measure with its column
+        sources = tuple(zip(layout.pyre_measures, columns))
         # start reading lines from the input source
         for row in reader:
-            # assemble the requested data tuple and yield it
-            yield (row[column] for column in columns)
+            # assemble a value for each measure, from its column or its default, and yield them
+            yield tuple(
+                measure.default if column is None else row[column] for measure, column in sources
+            )
         # all done
         return
 
