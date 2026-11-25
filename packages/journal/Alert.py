@@ -30,17 +30,25 @@ class Alert(Renderer):
 
         # get the notes
         notes = entry.notes
-        # get the metadata
+        # get the channel metadata
         channel = notes["channel"]
+        # get the severity metadata
         severity = notes["severity"]
+        # get the application metadata
         application = notes["application"]
 
-        # get the colors
+        # get the reset color
         resetColor = palette["reset"]
+        # get the severity color
         severityColor = palette[severity]
 
-        # tag using either the app name or the channel severity
-        tag = application or severity
+        # reach the sentinel that marks the application note as not yet set
+        from .Chronicler import Chronicler
+
+        # the application is unset while the note is empty or still carries the sentinel default
+        unset = application in ("", Chronicler.unregistered)
+        # tag with the application name when one is registered, otherwise the channel severity
+        tag = severity if unset else application
         # generate
         buffer = [
             severityColor,
@@ -76,9 +84,11 @@ class Alert(Renderer):
         # get the metadata
         severity = notes["severity"]
 
-        # get the colors
+        # get the reset color
         resetColor = palette["reset"]
+        # get the body color
         bodyColor = palette["body"]
+        # get the severity color
         severityColor = palette[severity]
 
         # otherwise, go through the page contents
@@ -107,8 +117,9 @@ class Alert(Renderer):
         # and the name of the channel
         channel = notes["channel"]
 
-        # get the colors
+        # get reset color
         resetColor = palette["reset"]
+        # get severity color
         severityColor = palette[severity]
 
         # set up the marker
@@ -232,9 +243,13 @@ class Alert(Renderer):
         return
 
     # implementation details
+    # maximum length
     maxlen = 80
+    # header marker
     headerMarker = " >> "
+    # body marker
     bodyMarker = " -- "
+    # footer marker
     footerMarker = " .. "
 
 
