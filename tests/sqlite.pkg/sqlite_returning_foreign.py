@@ -18,15 +18,15 @@ def test():
     # access the package
     import pyre.db
 
+    # and the journal
+    import journal
+
     # a table of granules
     class Granule(pyre.db.table, id="granules"):
         # the key
         id = pyre.db.int().primary()
         # and the name
         name = pyre.db.str()
-
-    # and the journal
-    import journal
 
     # another table
     class Product(pyre.db.table, id="products"):
@@ -37,6 +37,8 @@ def test():
     db = pyre.db.sqlite(name="returning").attach()
     # make the table of granules
     db.createTable(Granule)
+    # the refusal is expected, so its report goes nowhere
+    journal.firewall("pyre.db").device = journal.trash()
     # attempt to
     try:
         # insert a granule, asking for the key of a product
