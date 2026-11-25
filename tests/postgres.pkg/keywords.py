@@ -19,13 +19,13 @@ def test():
     import pyre.db
 
     # connect
-    db = pyre.db.postgres(name="keywords").attach()
+    db = pyre.db.postgres(name="keywords_server").attach()
     # ask the server for the words a name must be quoted to use
     rows = db.execute("SELECT word FROM pg_get_keywords() WHERE catcode IN ('R', 'T')")
     # collect them
     words = {word for (word,) in rows}
     # the dialect's own list
-    reserved = pyre.db.backends.postgres.mill(name="keywords").reserved
+    reserved = pyre.db.backends.postgres.mill(name="keywords_mill").reserved
     # must hold every one of them
     missing = sorted(words - reserved)
     # or names made of them would not be quoted

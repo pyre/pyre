@@ -31,9 +31,9 @@ def test():
         name = pyre.db.str()
 
     # make a mill that speaks standard SQL
-    mill = pyre.db.backends.standard.mill(name="merge")
+    mill = pyre.db.backends.standard.mill(name="merge_mill")
     # connect
-    db = pyre.db.postgres(name="merge").attach()
+    db = pyre.db.postgres(name="merge_server").attach()
     # in a transaction that leaves nothing behind
     db.execute("BEGIN")
     # carefully
