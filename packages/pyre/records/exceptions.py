@@ -41,6 +41,35 @@ class SourceSpecificationError(RecordError):
     description = "invalid input source specification"
 
 
+# a field that matches more than one column of a source
+class AmbiguousColumnError(RecordError):
+    """
+    Exception raised when a field of a record matches more than one column of a source
+    """
+
+    # public data
+    description = "field '{0.field}' of '{0.name}' matches {0.columns}"
+
+    # meta-methods
+    def __init__(self, record, field, columns, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store the record
+        self.record = record
+        # by name
+        self.name = record.pyre_name
+        # the field, by name
+        self.field = field.name
+        # and the columns it matches, as pairs of their offsets and names
+        self.matches = tuple(columns)
+        # phrased for the description, counting the columns from one
+        self.columns = "more than one column: " + ", ".join(
+            f"'{header}' (column {offset + 1})" for offset, header in self.matches
+        )
+        # all done
+        return
+
+
 # a row with too few or too many values
 class RowLengthError(RecordError):
     """

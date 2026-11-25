@@ -49,6 +49,7 @@ class Record(Dashboard, metaclass=Templater):
     # types
     # exceptions
     from ..constraints.exceptions import ConstraintViolationError
+    from .exceptions import AmbiguousColumnError
 
     # public data; patched by the metaclass
     pyre_name = None  # the name of the record
@@ -82,39 +83,47 @@ class Record(Dashboard, metaclass=Templater):
     @classmethod
     def pyre_selectColumns(cls, headers):
         """
-        Prepare a tuple of the column numbers needed to populate my instances, given a map
-        (column name) -> (column index).
+        Find the column of each of my measures among {headers}, the names of the columns of a
+        source in order, and yield its offset, or {None} for an optional measure the source
+        lacks
 
-        This enables the managers of the various persistent stores to build record instances
-        from a subset of the information they have access to. It is also designed to perform
-        column name translations from whatever meta data is available in the store to the
-        canonical record field names
+        Each measure matches the columns named after any of its aliases, so a source can name
+        its columns differently than my fields are named; a measure that matches more than one
+        column is an error
         """
-        # iterate over my measures
+        # go through my measures
         for measure in cls.pyre_measures:
-            # and over its aliases
-            for alias in measure.aliases:
-                # if this alias appears in the headers
-                try:
-                    # compute the column index and return it
-                    yield headers[alias]
-                    # get the next field
-                    break
-                # if it doesn't
-                except KeyError:
-                    # try the next one
-                    continue
-            # error: unable to find a source for this field
-            else:
-                # if it is not an optional field
-                if not measure.optional:
-                    # get the journal
-                    import journal
+            # find the columns named after any of its aliases
+            columns = [
+                (offset, header)
+                for offset, header in enumerate(headers)
+                if header in measure.aliases
+            ]
+            # a measure that matches more than one
+            if len(columns) > 1:
+                # cannot tell which one holds its values
+                raise cls.AmbiguousColumnError(record=cls, field=measure, columns=columns)
+            # a measure that matches exactly one
+            if columns:
+                # reads from it
+                ((offset, _),) = columns
+                # so hand its offset over
+                yield offset
+                # and move on
+                continue
+            # an optional measure that matches none
+            if measure.optional:
+                # takes its default, which the reader supplies
+                yield None
+                # and move on
+                continue
+            # a required measure that matches none is an error; get the journal
+            import journal
 
-                    # and complain
-                    raise journal.error("pyre.records").log(
-                        f"unable to find a source for field {measure.name!r}"
-                    )
+            # and complain
+            raise journal.error("pyre.records").log(
+                f"unable to find a source for field {measure.name!r}"
+            )
         # all done
         return
 
