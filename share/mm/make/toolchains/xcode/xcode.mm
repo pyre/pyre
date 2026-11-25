@@ -45,6 +45,18 @@ toolchain.xcode.sdk.version = \
 # the developer directory
 toolchain.xcode.devicehub = \
     ${abspath $(shell $(toolchain.xcode.env) xcode-select -p 2>/dev/null)/../Applications/DeviceHub.app}
+# swift's test library: it is a framework of the macOS platform rather than of the sdk, so a
+# program that uses it is told where to find it when it is compiled and again when it runs, and
+# its macros are a plugin of the compiler, kept beside it
+toolchain.xcode.testing.frameworks = \
+    $(shell $(toolchain.xcode.env) $(toolchain.xcode.cli) --sdk macosx --show-sdk-platform-path 2>/dev/null)/Developer/Library/Frameworks
+toolchain.xcode.testing.plugins = \
+    ${abspath ${dir $(shell $(toolchain.xcode.env) $(toolchain.xcode.cli) --find swiftc 2>/dev/null)}../lib/swift/host/plugins/testing}
+# the compiler options that bring all three in
+toolchain.xcode.testing = \
+    -F $(toolchain.xcode.testing.frameworks) \
+    -Xlinker -rpath -Xlinker $(toolchain.xcode.testing.frameworks) \
+    -plugin-path $(toolchain.xcode.testing.plugins)
 
 
 # report the developer directory, the device window and the sdk of each platform, beside the
