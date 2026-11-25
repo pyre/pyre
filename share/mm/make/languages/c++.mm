@@ -36,7 +36,7 @@ languages.c++.dll = ${call compiler.dll,c++,$(compiler.c++),$(1),$(2),$(3)}
 #  usage: languages.c++.ext {source-file} {ext} {dependencies}
 languages.c++.ext = ${call compiler.ext,c++,$(compiler.c++),$(1),$(2),$(3)}
 
-# check whether a language standard is greater than a threshold
+# check whether a language standard is at least a threshold
 languages.c++.std.ge = ${shell [ "${call $(compiler.c++).std,$(2)}" -ge "$(1)" ] && echo "$(1)"}
 # specialize to specific values
 languages.c++.has_c++17 = ${call languages.c++.std.ge,17,$(1)}
