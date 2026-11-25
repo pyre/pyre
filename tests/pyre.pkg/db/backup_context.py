@@ -22,11 +22,14 @@ def test():
     """
     Enter the context of a backup server, and raise an exception inside it
     """
+    # support
+    import io
+
     # access the package
     import pyre.db
 
-    # make a backup server
-    server = pyre.db.backup(name="test")
+    # make a backup server that writes its statements into a stream of its own
+    server = pyre.db.backup(name="test", stream=io.StringIO())
 
     # check that the context
     try:
