@@ -13,6 +13,7 @@ pyre_test_python_testcase(tests/postgres.pkg/attach.py)
 pyre_test_python_testcase(tests/postgres.pkg/database_create.py)
 pyre_test_python_testcase(tests/postgres.pkg/table.py)
 pyre_test_python_testcase(tests/postgres.pkg/references.py)
+pyre_test_python_testcase(tests/postgres.pkg/references_actions.py)
 pyre_test_python_testcase(tests/postgres.pkg/database_drop.py)
 
 # pyre.db against the default database, each in a transaction it rolls back
