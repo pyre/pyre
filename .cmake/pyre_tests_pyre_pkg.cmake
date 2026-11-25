@@ -558,6 +558,8 @@ pyre_test_python_testcase(tests/pyre.pkg/records/csv_read_missing_optional.py)
 pyre_test_python_testcase(tests/pyre.pkg/records/csv_read_missing_column.py)
 pyre_test_python_testcase(tests/pyre.pkg/records/csv_read_repeated_column.py)
 pyre_test_python_testcase(tests/pyre.pkg/records/csv_read_alias_ambiguous.py)
+pyre_test_python_testcase(tests/pyre.pkg/records/csv_read_uri_closes.py)
+pyre_test_python_testcase(tests/pyre.pkg/records/csv_read_uri_closes_early.py)
 pyre_test_python_testcase(tests/pyre.pkg/records/csv_bad_source.py)
 
 
@@ -589,6 +591,9 @@ pyre_test_python_testcase(tests/pyre.pkg/tabular/chart_sales.py)
 pyre_test_python_testcase(tests/pyre.pkg/tabular/pivot.py)
 pyre_test_python_testcase(tests/pyre.pkg/tabular/csv_instance.py)
 pyre_test_python_testcase(tests/pyre.pkg/tabular/csv_read.py)
+pyre_test_python_testcase(tests/pyre.pkg/tabular/csv_write.py)
+pyre_test_python_testcase(tests/pyre.pkg/tabular/csv_write_uri_closes.py)
+pyre_test_python_cleanup(csv_write_uri_closes.csv tests/pyre.pkg/tabular/csv_write_uri_closes.py)
 
 
 #
