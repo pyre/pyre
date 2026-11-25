@@ -121,6 +121,23 @@ $(3): $(4) $($(1).prerequisites)
 endef
 
 
+# compile a {module} runner suite into one program: its tests, the sources they test, and the
+# runner's entry point, which mm writes into the staging area; the tests are the files in the
+# suite's directories whose suffixes the runner names, and the module is named after the suite
+#   usage: test.runner.module {testsuite} {runner} {stageroot} {binary}
+define test.runner.module =
+    ${eval _tests := ${foreach _d,$($(1).directories),${wildcard ${addprefix $(_d)*,$(runner.$(2).suffixes)}}}}
+    ${eval _main := $(3)main${firstword $(runner.$(2).suffixes)}}
+$(_main):
+	@$(mkdirp) $(3)
+	@printf '$(runner.$(2).main)\n' > $$@
+$(4): $(_main) $(_tests) $($(1).sources) | $($(1).prerequisites) ${foreach _t,$($(1).toolchain),$(_t).verify}
+	@${call log.action,$(2),$(1)}
+	${call runner.$(2).compile,$(_main) $(_tests) $($(1).sources),$(4),${subst -,_,${subst .,_,$(1)}}}
+# all done
+endef
+
+
 # build targets
 # target factory for a runner suite: rather than enumerating per-file drivers, mm prepares the
 # environment a self-discovering test runner needs and invokes it once, treating the process exit
@@ -130,6 +147,9 @@ endef
 #               (playwright, vitest); run the launch command from there
 #   compiled -- compile the suite's sources into one binary and run it (catch2); the binary is
 #               the launch command
+#   module   -- compile the suite's sources, the sources they test and an entry point into one
+#               program in a single step, as languages that build whole modules do, and run it
+#               (swift-testing); the program is the launch command
 #   plain    -- nothing; run the launch command in the suite directory (pytest)
 #   usage: test.workflows.runner {testsuite}
 define test.workflows.runner =
@@ -146,10 +166,10 @@ define test.workflows.runner =
     ${eval _stageroot := $($(1).stage.prefix)}
     ${eval _binary := $(_stageroot)$($(1).name)}
     ${eval _objects := ${foreach _s,$($(1).drivers),$(_stageroot)${basename ${subst $($(1).prefix),,$(_s)}}$(builder.ext.obj)}}
-    # the launch command: for {compiled} it is the built binary; otherwise a per-suite override
-    # wins over the runner default, then the args
+    # the launch command: for {compiled} and {module} it is the built binary; otherwise a
+    # per-suite override wins over the runner default, then the args
     ${eval _base := ${if $($(1).runner.launch),$($(1).runner.launch),$(runner.$(_runner).launch)}}
-    ${eval _launch := ${if ${filter compiled,$(_prepare)},$(_binary) $($(1).argv),${strip $(_base) $(runner.$(_runner).argv) $($(1).argv)}}}
+    ${eval _launch := ${if ${filter compiled module,$(_prepare)},$(_binary) $($(1).argv),${strip $(_base) $(runner.$(_runner).argv) $($(1).argv)}}}
     # the toolchains this suite opted into, if any; fold each one's consumer interface into the
     # runner environment: {node} tools contribute their {node_modules} to a single {NODE_PATH} -- a
     # list, so several tools coexist without colliding -- plus whatever extra environment each tool
@@ -171,6 +191,10 @@ ${if ${filter compiled,$(_prepare)}, \
     ${foreach _s,$($(1).drivers),${eval ${call test.runner.object,$(1),$(_s),$(_lang),$(_stageroot)}}} \
     ${eval ${call test.runner.binary,$(1),$(_lang),$(_binary),$(_objects)}} \
 ,}
+# for a {module} runner, build one program from the suite, the sources it tests, and an entry point
+${if ${filter module,$(_prepare)}, \
+    ${eval ${call test.runner.module,$(1),$(_runner),$(_stageroot),$(_binary)}} \
+,}
 
 # the suite runs its runner once, after preparing the environment and before tearing it down
 $(1): $(1).post
@@ -180,10 +204,10 @@ $(1): $(1).post
 $(1).pre: $($(1).pre)
 
 # prepare the environment; for {staged}, mirror the suite into the staging area and link the
-# modules in as node_modules; for {compiled}, depend on the built binary. before anything, verify
-# every toolchain the suite opted into is installed, so a missing tool fails here with an
-# actionable message rather than partway through the runner
-$(1).prepare: $($(1).prerequisites) $(1).pre ${foreach _t,$(_tools),$(_t).verify} ${if ${filter compiled,$(_prepare)},$(_binary),}
+# modules in as node_modules; for {compiled} and {module}, depend on the built binary. before
+# anything, verify every toolchain the suite opted into is installed, so a missing tool fails here
+# with an actionable message rather than partway through the runner
+$(1).prepare: $($(1).prerequisites) $(1).pre ${foreach _t,$(_tools),$(_t).verify} ${if ${filter compiled module,$(_prepare)},$(_binary),}
 	@${call log.action,prepare,$(1)}
 	${if ${filter staged,$(_prepare)},@$(mkdirp) $(_stageroot) && $(cp.fr) $($(1).prefix). $(_stageroot)${if $($(1).stage.modules), && $(ln) -sfn $($(1).stage.modules) $(_stageroot)node_modules,},@true}
 

@@ -6,7 +6,7 @@
 
 
 # the registry of known test runners
-runners := playwright vitest pytest catch2 gtest
+runners := playwright vitest pytest catch2 gtest swift-testing
 
 # load each runner's description
 include $(runners:%=make/runners/%.mm)
@@ -21,6 +21,9 @@ ${foreach runner,$(runners), \
     ${eval runner.$(runner).libraries ?=} \
     ${eval runner.$(runner).doc ?=} \
     ${eval runner.$(runner).suite ?=} \
+    ${eval runner.$(runner).suffixes ?=} \
+    ${eval runner.$(runner).main ?=} \
+    ${eval runner.$(runner).compile ?=} \
 }
 
 # build the per-runner info recipes
