@@ -60,6 +60,9 @@ define tests.init =
     # exclusions
     ${eval $(2).drivers.exclude ?=}
     ${eval $(2).directories.exclude ?=}
+    # the sources a suite tests by compiling them together with its tests, for runners that build
+    # a whole module at once
+    ${eval $(2).sources ?=}
     # the leftovers in the suite's source tree that cleaning it removes, e.g. the reports of a tool
     # that was run by hand
     ${eval $(2).clean ?=}
