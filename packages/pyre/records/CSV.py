@@ -40,23 +40,36 @@ class CSV:
     # support
     def read(self, layout, uri=None, stream=None, **kwds):
         """
-        Read lines from a csv formatted input source
+        Read the values of the measures of {layout}, a subclass of {pyre.records.Record}, from a
+        csv formatted source, one tuple per row
 
-        The argument {layout} is expected to be a subclass of {pyre.records.Record}. It will be
-        inspected to extract the names of the columns to ingest.
-
-        If {uri} is not None, it will be opened for reading in the manner recommended by the
-        {csv} package; if {stream} is given instead, it will be passed directly to the {csv}
-        package. The first record is assumed to be headers that name the columns of the data.
+        If {uri} is given, it is opened for reading in the manner recommended by the {csv}
+        package, and closed when the rows run out or the caller stops reading; otherwise the
+        rows come from {stream}, which is left open for its owner. The first row holds the
+        headers that name the columns.
         """
-        # check whether {uri} was provided
-        if uri:
-            # build the associated stream
-            stream = open(uri, newline="")
+        # a {uri} names a file that is ours to open
+        if uri is not None:
+            # so open it, and close it when the reading is done
+            with open(uri, newline="") as stream:
+                # pull the values from it
+                yield from self.parse(layout=layout, stream=stream, **kwds)
+            # and stop
+            return
         # without a stream to read from
-        if not stream:
+        if stream is None:
             # there is nothing to read
             raise self.SourceSpecificationError()
+        # otherwise, pull the values from the stream
+        yield from self.parse(layout=layout, stream=stream, **kwds)
+        # all done
+        return
+
+    def parse(self, layout, stream, **kwds):
+        """
+        Read the values of the measures of {layout} from the csv formatted {stream}, one tuple
+        per row, after a first row of headers that name the columns
+        """
         # access the package
         import csv
 
@@ -84,19 +97,33 @@ class CSV:
         The argument {sheet} is a {pyre.tabular} sheet: its fields name the columns, and each of
         its records fills a row, after a first row of headers.
 
-        If {stream} is given, the rows are written to it; otherwise {uri} is opened for writing
-        in the manner recommended by the {csv} package, and it defaults to the name of the sheet
-        with a {.csv} extension
+        If {stream} is given, the rows are written to it, and it is left open for its owner;
+        otherwise {uri} is opened for writing in the manner recommended by the {csv} package, and
+        closed once the rows are written, and it defaults to the name of the sheet with a {.csv}
+        extension
         """
-        # if the user did not explicitly specify an output stream
-        if stream is None:
-            # if no {uri} was provided
-            if uri is None:
-                # form one from the name of the sheet
-                uri = sheet.pyre_name + ".csv"
-            # build the associated stream
-            stream = open(uri, "w", newline="")
+        # a {stream} belongs to the caller
+        if stream is not None:
+            # so write the rows to it, and leave it open
+            self.save(sheet=sheet, stream=stream, **kwds)
+            # and stop
+            return
+        # without a {uri}
+        if uri is None:
+            # form one from the name of the sheet
+            uri = sheet.pyre_name + ".csv"
+        # open the file, which is ours to close
+        with open(uri, "w", newline="") as stream:
+            # and write the rows to it
+            self.save(sheet=sheet, stream=stream, **kwds)
+        # all done
+        return
 
+    def save(self, sheet, stream, **kwds):
+        """
+        Write the records of {sheet} to the csv formatted {stream}, after a first row of headers
+        that name the columns
+        """
         # access the package
         import csv
 
