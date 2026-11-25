@@ -27,6 +27,10 @@ def test():
 
     # create the pyre database
     db.createDatabase(name="pyre")
+    # and find it in the catalog of databases
+    found = db.execute("SELECT datname FROM pg_database WHERE datname = 'pyre'")
+    # once
+    assert [tuple(row) for row in found] == [("pyre",)], list(found)
 
     # and return the component
     return db
