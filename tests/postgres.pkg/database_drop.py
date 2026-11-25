@@ -7,11 +7,14 @@
 
 
 """
-Instantiate the postgres component
+Check that a postgres server removes the database the other component tests use
 """
 
 
 def test():
+    """
+    Attach to the default database, and remove the test database
+    """
     # access the package
     import pyre.db
 
@@ -22,7 +25,7 @@ def test():
     # attach
     db.attach()
 
-    # create the pyre database
+    # remove the pyre database
     db.dropDatabase(name="pyre")
 
     # and return the component
@@ -31,6 +34,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

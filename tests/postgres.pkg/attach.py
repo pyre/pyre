@@ -7,15 +7,14 @@
 
 
 """
-Instantiate the postgres component
+Check that a postgres server component attaches to its default database
 """
 
 
 def test():
-    # import journal
-    # journal.debug("postgres.init").active = True
-    # journal.debug("postgres.execute").active = True
-    # journal.debug("postgres.connection").active = True
+    """
+    Make a server component and attach it
+    """
 
     # access the postgres package
     import pyre.db
@@ -31,6 +30,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
