@@ -7,11 +7,14 @@
 
 
 """
-Instantiate the postgres component
+Check that a postgres server component can be made
 """
 
 
 def test():
+    """
+    Make a server component
+    """
     # access the package
     import pyre.db
 
@@ -24,6 +27,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 

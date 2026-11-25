@@ -7,11 +7,14 @@
 
 
 """
-Instantiate the postgres component
+Check that a postgres server makes the database the other component tests use
 """
 
 
 def test():
+    """
+    Attach to the default database, and make the test database
+    """
     # access the package
     import pyre.db
 
@@ -31,6 +34,7 @@ def test():
 
 # main
 if __name__ == "__main__":
+    # run the test
     test()
 
 
