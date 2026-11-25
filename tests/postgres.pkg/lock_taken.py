@@ -26,17 +26,17 @@ def test():
     # and another
     second = pyre.db.postgres(name="lock_taker").attach()
     # the first session takes the lock
-    with first.lock("pyre.tests.lock"):
+    with first.lock("tests.postgres.pkg.lock_taken"):
         # attempt to
         try:
             # take it from the other session
-            with second.lock("pyre.tests.lock", wait=False):
+            with second.lock("tests.postgres.pkg.lock_taken", wait=False):
                 # which must not happen
                 assert False, "two sessions held the same lock"
         # it fails
         except exceptions.LockError as error:
             # naming the lock
-            assert "pyre.tests.lock" in str(error), str(error)
+            assert "tests.postgres.pkg.lock_taken" in str(error), str(error)
     # all done
     return
 

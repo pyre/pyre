@@ -24,13 +24,13 @@ def test():
     # connect
     db = pyre.db.postgres(name="lock_key").attach()
     # the key, as pyre.db computes it
-    digest = hashlib.blake2b("pyre.tests.lock".encode("utf-8"), digest_size=8).digest()
+    digest = hashlib.blake2b("tests.postgres.pkg.lock_key".encode("utf-8"), digest_size=8).digest()
     # and as a signed integer of 64 bits
     key = int.from_bytes(digest, "big", signed=True)
     # postgres splits it into its two halves
     high, low = (key >> 32) & 0xFFFFFFFF, key & 0xFFFFFFFF
     # take the lock
-    with db.lock("pyre.tests.lock"):
+    with db.lock("tests.postgres.pkg.lock_key"):
         # and look for it among the advisory locks of this session
         rows = db.execute(
             "SELECT classid, objid FROM pg_locks"

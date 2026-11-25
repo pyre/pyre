@@ -26,7 +26,7 @@ def test():
     # attempt to
     try:
         # take a lock
-        with db.lock("pyre.tests.lock"):
+        with db.lock("tests.sqlite.pkg.sqlite_lock_refused"):
             # which must not happen
             assert False, "sqlite took a lock"
     # it fails

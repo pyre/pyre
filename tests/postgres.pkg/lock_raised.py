@@ -28,7 +28,7 @@ def test():
     # attempt to
     try:
         # hold the lock
-        with first.lock("pyre.tests.lock"):
+        with first.lock("tests.postgres.pkg.lock_raised"):
             # in a block that fails
             raise ValueError("give up")
     # absorb the failure
@@ -36,7 +36,7 @@ def test():
         # and move on
         pass
     # the second session takes the lock without waiting
-    with second.lock("pyre.tests.lock", wait=False):
+    with second.lock("tests.postgres.pkg.lock_raised", wait=False):
         # which it does
         pass
     # all done

@@ -26,11 +26,11 @@ def test():
     # and another
     second = pyre.db.postgres(name="lock_second").attach()
     # the first session takes the lock, and lets go of it
-    with first.lock("pyre.tests.lock"):
+    with first.lock("tests.postgres.pkg.lock_released"):
         # with nothing in between
         pass
     # the second session takes it without waiting
-    with second.lock("pyre.tests.lock", wait=False):
+    with second.lock("tests.postgres.pkg.lock_released", wait=False):
         # which it does
         pass
     # all done
