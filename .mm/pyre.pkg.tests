@@ -38,6 +38,7 @@ tests.pyre.pkg.filesystem.local_make.clean := local-make
 tests.pyre.pkg.filesystem.zip.clean := sample.zip
 tests.pyre.pkg.filesystem.local_vanish.clean := local_vanish
 tests.pyre.pkg.schemata.ostreams.clean := output.cfg
+tests.pyre.pkg.tabular.csv_write_uri_closes.clean := csv_write_uri_closes.csv
 tests.pyre.pkg.primitives.path_resolution.clean := scratch
 tests.pyre.pkg.primitives.path_touch.clean := path_touch.txt
 tests.pyre.pkg.pyre.clean := __pycache__
