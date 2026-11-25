@@ -14,6 +14,14 @@ class Verbatim:
     per field, as it is: the server computed the derivations, and turned each value into its type
     """
 
+    # interface
+    def arity(self, record) -> int:
+        """
+        The number of values a row of {record} holds: one for each of its fields, derived or not
+        """
+        # easy enough
+        return len(record.pyre_fields)
+
     # meta-methods
     def __call__(self, record, source, **kwds):
         """
