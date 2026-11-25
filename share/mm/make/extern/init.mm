@@ -61,6 +61,66 @@ define extern.if.available =
 endef
 
 
+# the name of {package} when it is available and its version is at least {floor}, and nothing
+# otherwise. a package whose version is not known is taken at its word, since mm cannot yet read
+# the version of every package from its install location; one that is older is reported at the
+# severity of the other configuration complaints, so that a build that requires it can stop
+#   usage: extern.is.atLeast {package} {floor}
+extern.is.atLeast = \
+    ${strip \
+        ${if ${strip ${call extern.is.available,$(1)}}, \
+            ${if ${strip ${call extern.version.atLeast,${call extern.version.of,$(1)},$(2)}}, \
+                $(1), \
+                ${call extern.complain,extern $(1): version $($(1).version) is older than $(2); leaving it out} \
+            } \
+        } \
+    }
+
+
+# the version of {package} as its package database recorded it, or empty when it did not; the
+# {flavor} probe asks about the name without referencing it, so -warn-undefined stays quiet
+#   usage: extern.version.of {package}
+extern.version.of = ${if ${filter-out undefined,${flavor $(1).version}},$($(1).version)}
+
+
+# whether {version} is at least {floor}: a version with no leading numbers is not known, and passes
+#   usage: extern.version.atLeast {version} {floor}
+extern.version.atLeast = ${if ${strip ${call extern.version.numbers,$(1)}},${call extern.version.ge,${call extern.version.numbers,$(1)},${call extern.version.numbers,$(2)}},unknown}
+
+
+# the leading numbers of a version, as a list: a dpkg epoch goes, and so does the packaging suffix
+# after a dash, a plus or a tilde, and every component from the first that is not a whole number;
+# so {1:18.6-0ubuntu0.26.04.1} reads as {18 6}, and {18beta1} reads as nothing
+#   usage: extern.version.numbers {version}
+extern.version.numbers = ${call extern.version.leading,${subst ., ,${call extern.version.upstream,$(1)}}}
+
+# the version as its authors gave it, without the epoch and the suffix a packager adds
+#   usage: extern.version.upstream {version}
+extern.version.upstream = ${firstword ${subst -, ,${subst +, ,${subst ~, ,${lastword ${subst :, ,$(1)}}}}}}
+
+# the whole numbers at the head of a list of words, up to the first word that is not one
+#   usage: extern.version.leading {words}
+extern.version.leading = ${if ${call extern.version.isNumber,${firstword $(1)}},${firstword $(1)} ${call extern.version.leading,${call extern.version.rest,$(1)}}}
+
+# {word} when it is made of digits alone, which it is when removing them leaves nothing
+#   usage: extern.version.isNumber {word}
+extern.version.isNumber = ${if $(1),${if ${subst 0,,${subst 1,,${subst 2,,${subst 3,,${subst 4,,${subst 5,,${subst 6,,${subst 7,,${subst 8,,${subst 9,,$(1)}}}}}}}}}},,$(1)}}
+
+# every word of a list but the first
+#   usage: extern.version.rest {words}
+extern.version.rest = ${wordlist 2,${words $(1)},$(1)}
+
+
+# compare two lists of numbers piece by piece, a missing piece counting as zero; {ge} when the
+# first is at least the second, and nothing when it is less
+#   usage: extern.version.ge {numbers} {numbers}
+extern.version.ge = ${if ${or $(1),$(2)},${call extern.version.ge.step,${or ${firstword $(1)},0},${or ${firstword $(2)},0},$(1),$(2)},ge}
+
+# one step of the comparison: settle it on the leading pieces, or move on when they are equal
+#   usage: extern.version.ge.step {piece} {piece} {numbers} {numbers}
+extern.version.ge.step = ${intcmp $(1),$(2),,${call extern.version.ge,${call extern.version.rest,$(3)},${call extern.version.rest,$(4)}},ge}
+
+
 # a token's {.dependencies}, or empty when the variable was never defined; the {flavor} probe lets
 # the closure walk a heterogeneous {.extern} (internal libraries, externals that never set the field)
 # without tripping -warn-undefined, since {flavor} reports on a name without referencing it
