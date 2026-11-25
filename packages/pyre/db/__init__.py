@@ -98,10 +98,10 @@ from .backends.folder import server as folder
 # templates: table rows with all fields set to None; used to update table entries
 def template(table):
     """
-    Build a row of {table} with all its fields set to {None}.
+    Build a mutable row of {table} with all its measures set to {None}
     """
-    # build an instance, bypassing the constructor
-    row = table.pyre_mutable(data=(None,) * len(table.pyre_fields))
+    # build a row that holds {None} for each of the values a row takes
+    row = table.pyre_mutable(data=(None,) * len(table.pyre_measures))
     # and return it
     return row
 
