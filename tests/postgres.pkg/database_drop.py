@@ -27,6 +27,10 @@ def test():
 
     # remove the pyre database
     db.dropDatabase(name="pyre")
+    # and look for it in the catalog of databases
+    found = db.execute("SELECT datname FROM pg_database WHERE datname = 'pyre'")
+    # in vain
+    assert tuple(found) == (), list(found)
 
     # and return the component
     return db

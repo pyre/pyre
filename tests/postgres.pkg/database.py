@@ -20,6 +20,10 @@ def test():
 
     # build a database component
     db = pyre.db.postgres()
+    # it names the default database, which every server has
+    assert db.database == "postgres", db.database
+    # and holds no session until it attaches
+    assert db.connection is None
 
     # and return it
     return db

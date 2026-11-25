@@ -24,6 +24,13 @@ def test():
     # connect to the default database
     db.attach()
 
+    # the session is up
+    assert db.connection.ok
+    # on the default database
+    ((name,),) = db.execute("SELECT current_database()")
+    # which is the one the component names
+    assert name == "postgres", name
+
     # and return the component
     return db
 
