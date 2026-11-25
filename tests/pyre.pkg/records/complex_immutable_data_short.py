@@ -35,8 +35,9 @@ def test():
         # and the price, which depends on the cost
         price = 1.25 * cost + 0.25
 
-    # build a record from a row with fewer values than it has measures
+    # attempt to
     try:
+        # build a record from a row with fewer values than it has measures
         record.pyre_immutable(data=("9-4013",))
         # which should be refused
         assert False, "unreachable"

@@ -35,8 +35,9 @@ def test():
         # and the price, which depends on the cost
         price = 1.25 * cost + 0.25
 
-    # build a record with a price of its own
+    # attempt to
     try:
+        # build a record with a price of its own
         record.pyre_mutable(sku="9-4013", cost=1.0, price=2.0)
         # which should be refused
         assert False, "unreachable"

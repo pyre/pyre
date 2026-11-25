@@ -33,8 +33,9 @@ def test():
         # and the cost
         cost = pyre.records.measure()
 
-    # build a record from a row with fewer values than it has measures
+    # attempt to
     try:
+        # build a record from a row with fewer values than it has measures
         record.pyre_mutable(data=("9-4013",))
         # which should be refused
         assert False, "unreachable"
