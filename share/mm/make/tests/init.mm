@@ -60,6 +60,9 @@ define tests.init =
     # exclusions
     ${eval $(2).drivers.exclude ?=}
     ${eval $(2).directories.exclude ?=}
+    # the leftovers in the suite's source tree that cleaning it removes, e.g. the reports of a tool
+    # that was run by hand
+    ${eval $(2).clean ?=}
 
     # the directory structure
     ${eval $(2).directories ?= ${call test.directories,$(2)}}
