@@ -250,9 +250,24 @@ if(PYRE_BUILD_TESTING)
 
   # if we have postgres support
   if(PostgreSQL_FOUND)
-    include(pyre_tests_postgres_lib)
-    include(pyre_tests_postgres_ext)
-    include(pyre_tests_postgres_pkg)
+    # the tests talk to a server, so ask whether one answers, as mm does
+    find_program(PYRE_PG_ISREADY pg_isready)
+    # with the tool that asks, when there is one
+    if(PYRE_PG_ISREADY)
+      # quietly
+      execute_process(COMMAND ${PYRE_PG_ISREADY} -q RESULT_VARIABLE PYRE_PG_STATUS)
+    endif()
+    # when one answers
+    if(PYRE_PG_ISREADY AND PYRE_PG_STATUS EQUAL 0)
+      # register the tests that need it
+      include(pyre_tests_postgres_lib)
+      include(pyre_tests_postgres_ext)
+      include(pyre_tests_postgres_pkg)
+    # otherwise
+    else()
+      # leave them out, and say why
+      message(STATUS "no postgres server answers, so the postgres tests are not registered")
+    endif()
   endif()
 
   # if we have hdf5 support
