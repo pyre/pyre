@@ -114,17 +114,20 @@ main()
     }
 
     // this is the reason the arguments travel beside the statement rather than inside it. the
-    // text below closes a quote, ends the statement, drops a table and comments out whatever
-    // followed; spliced into sql it would do all of that, and here it is just a value
-    const string_t mischief = "'); DROP TABLE pg_class; --";
+    // text below closes a quote, ends the statement, drops a table of this session and comments
+    // out whatever followed; spliced into sql it would do all of that, and here it is just a value
+    // so make the table
+    session.exec("CREATE TEMPORARY TABLE pyre_codecs_mischief (id integer)");
+    // and aim the value at it
+    const string_t mischief = "'); DROP TABLE pyre_codecs_mischief; --";
     const auto echoed = session.execute("SELECT $1::text", mischief)[0][0].as<string_t>();
     // it comes back exactly as it went
     if (echoed != mischief) {
         std::cerr << "a value with sql in it did not come back intact" << std::endl;
         return 1;
     }
-    // and the catalog it named is still there
-    if (session.exec("SELECT count(*) FROM pg_class")[0][0].as<long>() <= 0) {
+    // and the table it named is still there
+    if (session.exec("SELECT to_regclass('pyre_codecs_mischief') IS NULL")[0][0].as<bool>()) {
         std::cerr << "the argument was executed rather than bound" << std::endl;
         return 1;
     }

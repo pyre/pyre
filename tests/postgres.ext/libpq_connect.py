@@ -9,7 +9,7 @@
 def test():
     """
     Open a session with the back end through the low level interface, and verify that a session
-    that has been closed stays closed, however many copies of it are still lying around
+    that has been closed stays closed
     """
     # access the bindings
     from pyre.extensions import libpq
@@ -28,22 +28,18 @@ def test():
     # to a server that told us its version
     assert connection.server > 0
 
-    # take a copy; the two now share one session with the server
-    alias = connection
-    # which the copy can use
-    assert alias.exec("SELECT 1")[0][0] == 1
+    # which runs statements
+    assert connection.exec("SELECT 1")[0][0] == 1
 
-    # close the session through one of them
+    # close the session
     connection.close()
-    # the one that closed it knows
+    # it knows, so nothing hands libpq a session it has already freed
     assert not connection.ok
-    # and so does the copy, so nothing hands libpq a session it has already freed
-    assert not alias.ok
 
-    # a statement sent through the copy is a mistake on this side of the wire
+    # a statement sent through a closed session is a mistake on this side of the wire
     try:
         # send one
-        alias.exec("SELECT 1")
+        connection.exec("SELECT 1")
         # and complain if it ran
         assert False, "a closed session ran a statement"
     # the refusal
