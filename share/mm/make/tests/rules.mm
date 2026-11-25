@@ -597,9 +597,11 @@ define test.workflows.aliases =
         } \
     }}
 
-    # if the driver is non-empty, make rule aliases
+    # if the driver is non-empty, make rule aliases; the one named after the driver alone starts
+    # with a reference to it, so that a driver named after a directive of make, such as {load} or
+    # {include}, still makes a rule
     ${if $(_driver),\
-        ${eval $(_alias) : $(_case);} \
+        ${eval $$(_alias) : $(_case);} \
         ${eval $(_alias).cases : $(_case).cases;} \
         ${eval $(_alias).driver : $(_case).driver;} \
         ${eval $(_alias).clean : $(_case).clean;} \
