@@ -117,12 +117,6 @@
 
 - docker:
 
-  - teach the cmake side the trick mm already knows: {.mm/pyre-postgres.mm} sets
-    {postgres.live} from {pg_isready} and excludes the drivers only when no server answers,
-    so a developer with one gets the suites for free; the cmake build has no such detection,
-    so {ctest} on a machine with {libpq} and no server fails the postgres drivers instead of
-    skipping them; the workflows start a server in the job, and no longer exclude them
-
   - {pyre::postgres} is exported and announced as a component, and {etc/cmake/consumer} has a
     driver for it, which runs only where {libpq} is present; the workflows install {libpq}
     since branch {db}, so the first ci runs of the branch should show the driver running;
