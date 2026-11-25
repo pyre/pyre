@@ -29,19 +29,19 @@ def test():
     import time
 
     # the first session takes the lock
-    with first.lock("pyre.tests.lock"):
+    with first.lock("tests.postgres.pkg.lock_timeout"):
         # note the time
         start = time.monotonic()
         # attempt to
         try:
             # take it from the other session
-            with second.lock("pyre.tests.lock", timeout=0.2):
+            with second.lock("tests.postgres.pkg.lock_timeout", timeout=0.2):
                 # which must not happen
                 assert False, "two sessions held the same lock"
         # it fails
         except exceptions.LockError as error:
             # naming the lock
-            assert "pyre.tests.lock" in str(error), str(error)
+            assert "tests.postgres.pkg.lock_timeout" in str(error), str(error)
         # and the wait was the timeout, not forever
         assert time.monotonic() - start < 5, time.monotonic() - start
     # all done
