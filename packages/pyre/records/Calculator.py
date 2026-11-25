@@ -26,7 +26,8 @@ class Calculator:
     # meta-methods
     def __call__(self, record, source, **kwds):
         """
-        Pull values from {source}, convert and yield them
+        Pull values from {source}, and yield a {pyre.calc} variable for each one that converts
+        its value whenever it is read
         """
         # make {pyre.calc} variables so record fields are mutable
         variable = self.node.variable

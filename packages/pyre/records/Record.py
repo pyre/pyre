@@ -28,7 +28,8 @@ class Record(Dashboard, metaclass=Templater):
 
     Inheritance among {Record} subclasses is interpreted as composition: the set of fields that
     define a record is built out of the descriptors declared both locally and by all of its
-    ancestors. Descriptor composition is subject to name shadowing.
+    ancestors. A field that a subclass redeclares shadows the inherited one, and takes its slot
+    in the layout.
 
     Records support {derivations}: fields whose value is computed using other record
     fields. Such fields are built automatically whenever a field declaration contains any sort

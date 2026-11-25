@@ -8,31 +8,30 @@
 # externals
 from .. import descriptors
 
-# access to the descriptor parts
-field = descriptors.stem
-measure = field.variable
-derivation = field.operator
-literal = field.literal
+# the kinds of fields
+field = descriptors.stem  # the base of every field
+measure = field.variable  # fields whose values are given
+derivation = field.operator  # fields whose values are computed from other fields
+literal = field.literal  # constants in the expressions of derivations
 
-# access to the typed field declarators
-# basic
-bool = descriptors.bool
-decimal = descriptors.decimal
-float = descriptors.float
-inet = descriptors.inet
-int = descriptors.int
-identity = descriptors.identity
-str = descriptors.str
-# complex
-date = descriptors.date
-dimensional = descriptors.dimensional
-time = descriptors.time
-uri = descriptors.uri
+# the typed field declarators, for the basic types
+bool = descriptors.bool  # truth values
+decimal = descriptors.decimal  # fixed point numbers
+float = descriptors.float  # floating point numbers
+inet = descriptors.inet  # internet addresses
+int = descriptors.int  # integers
+identity = descriptors.identity  # values taken as they are
+str = descriptors.str  # strings
+# and for the more complex ones
+date = descriptors.date  # dates
+dimensional = descriptors.dimensional  # quantities with units
+time = descriptors.time  # times of day
+uri = descriptors.uri  # resource identifiers
 
-# the decorators
-converter = descriptors.converter
-normalizer = descriptors.normalizer
-validator = descriptors.validator
+# the decorators that attach processing steps to fields
+converter = descriptors.converter  # turn a raw value into one of the field's type
+normalizer = descriptors.normalizer  # bring a value to its canonical form
+validator = descriptors.validator  # check that a value is acceptable
 
 # the base class for field selectors
 from .Selector import Selector as selector

@@ -16,10 +16,14 @@ class Selector:
 
     # meta-methods
     def __init__(self, index, field, **kwds):
+        """
+        Give named access to {field}, whose values sit at {index} in the tuples of records
+        """
         # chain up
         super().__init__(**kwds)
         # save my spot
         self.index = index
+        # and my field
         self.field = field
         # all done
         return
