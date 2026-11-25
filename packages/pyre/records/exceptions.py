@@ -52,6 +52,9 @@ class MissingColumnError(RecordError):
 
     # meta-methods
     def __init__(self, record, field, headers, **kwds):
+        """
+        Record that {field} of {record} matches none of the columns named in {headers}
+        """
         # chain up
         super().__init__(**kwds)
         # store the record
@@ -77,6 +80,10 @@ class AmbiguousColumnError(RecordError):
 
     # meta-methods
     def __init__(self, record, field, columns, **kwds):
+        """
+        Record that {field} of {record} matches each of {columns}, pairs of the offsets and
+        names of columns of a source
+        """
         # chain up
         super().__init__(**kwds)
         # store the record
@@ -106,6 +113,9 @@ class RowLengthError(RecordError):
 
     # meta-methods
     def __init__(self, record, expected: int, given: int, **kwds):
+        """
+        Record that a row of {record} holds {given} values, instead of the {expected} ones
+        """
         # chain up
         super().__init__(**kwds)
         # store the record
@@ -139,6 +149,9 @@ class UnknownFieldError(RecordError):
 
     # meta-methods
     def __init__(self, record, names, **kwds):
+        """
+        Record the {names} that match none of the fields of {record}
+        """
         # chain up
         super().__init__(**kwds)
         # store the record
@@ -165,6 +178,9 @@ class ComputedFieldError(RecordError):
 
     # meta-methods
     def __init__(self, record, names, **kwds):
+        """
+        Record the {names} of the fields of {record} whose values are computed
+        """
         # chain up
         super().__init__(**kwds)
         # store the record
