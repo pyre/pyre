@@ -24,67 +24,70 @@ class Evaluator:
     # meta methods
     def __call__(self, record, source, **kwds):
         """
-        Pull values from {source}, perform the calculation encoded in the derivation expression
-        graphs, walk values through coercions, and make the results available to the caller
+        Pull the values of the measures of {record} from {source}, compute its derivations, walk
+        every value through its coercions, and make the results available to the caller
         """
-        # in the presence of derivations, we must cache the values of fields that have been
-        # converted previously; set up a cache
-        cache = {}
-        # go through the fields in {record}
+        # the row holds the values of the measures, in the order of the layout; convert them, and
+        # keep them where the derivations can find them
+        cache = {
+            measure: measure.process(value) for measure, value in zip(record.pyre_measures, source)
+        }
+        # the fields the record shadows stand for the fields that replace them
+        shadows = record.pyre_shadows
+        # go through the fields of the record
         for field in record.pyre_fields:
-            # and ask it to dispatch to the appropriate field handler, which will perform all
-            # necessary evaluations and conversions
-            value = field.identify(authority=self, cache=cache, source=source)
-            # update the cache (only for descriptors that actually appear in the record)
-            cache[field] = value
+            # and ask each one to dispatch to its handler, which knows how to find its value
+            value = field.identify(authority=self, cache=cache, shadows=shadows)
             # make the value available
             yield value
         # all done
         return
 
     # implementation details
-    def onDescriptor(self, source, cache, descriptor):
+    def onDescriptor(self, descriptor, cache, shadows, **kwds):
         """
         Handler for measures
         """
-        # if i have been asked for the value of this {descriptor} before
-        try:
-            # get it
-            value = cache[descriptor]
-        # if not
-        except KeyError:
-            # grab one from the data stream
-            value = next(source)
-            # coerce
-            value = descriptor.process(value)
-        # and make it available
-        return value
+        # a measure the record shadows
+        replacement = shadows.get(descriptor)
+        # stands for the field that replaces it
+        if replacement is not None:
+            # whose value is the one we want
+            return replacement.identify(authority=self, cache=cache, shadows=shadows)
+        # every other measure has its value from the row
+        return cache[descriptor]
 
-    def onOperator(self, source, cache, operator):
+    def onOperator(self, operator, cache, shadows, **kwds):
         """
         Handler for operators
         """
-        # if I have been asked for the value of this {operator} before
+        # a derivation the record shadows
+        replacement = shadows.get(operator)
+        # stands for the field that replaces it
+        if replacement is not None:
+            # whose value is the one we want
+            return replacement.identify(authority=self, cache=cache, shadows=shadows)
+        # if the value of this {operator} is known already
         try:
-            # get it
-            value = cache[operator]
+            # use it
+            return cache[operator]
         # if not
         except KeyError:
-            # compute the values of each of its operands
-            values = tuple(
-                # by converting
-                op.identify(authority=self, cache=cache, source=source)
-                # each operand
-                for op in operator.operands
-            )
-            # compute the raw value of this descriptor by applying its evaluator
-            value = operator.evaluator(*values)
-            # coerce the value
-            value = operator.process(value)
+            # compute it
+            pass
+        # find the values of its operands
+        values = tuple(
+            operand.identify(authority=self, cache=cache, shadows=shadows)
+            for operand in operator.operands
+        )
+        # apply its evaluator to them, and coerce the result
+        value = operator.process(operator.evaluator(*values))
+        # remember it, since other derivations may use it
+        cache[operator] = value
         # and make it available
         return value
 
-    def onLiteral(self, source, cache, literal):
+    def onLiteral(self, literal, **kwds):
         """
         Handler for descriptors that encapsulate foreign values
         """
