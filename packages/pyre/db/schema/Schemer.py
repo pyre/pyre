@@ -21,6 +21,8 @@ class Schemer(records.templater):
 
     # types
     from .FieldSelector import FieldSelector as pyre_selector
+    from .FieldReference import FieldReference as pyre_reference
+    from .Index import Index as pyre_index
 
     # meta methods
     def __new__(cls, name, bases, attributes, id=None, **kwds):
@@ -60,6 +62,43 @@ class Schemer(records.templater):
             cls._pyre_merge(target=constraints, entries=base._pyre_constraints)
             # and the indexes
             cls._pyre_merge(target=indexes, entries=base._pyre_indexes)
+
+        # what my bases declared about the fields i shadow applies to the fields that replace
+        # them; the checks, and the predicates of the indexes, name their fields by name, so they
+        # apply as they are
+        shadows = table.pyre_shadows
+        # if i shadow any fields
+        if shadows:
+            # move the fields of the primary key
+            primary = [shadows.get(field, field) for field in primary]
+            # those of the unique groups
+            unique = [
+                (tuple(shadows.get(field, field) for field in fields), name)
+                for fields, name in unique
+            ]
+            # the fields that refer to other tables
+            foreign = [
+                (
+                    (
+                        cls.pyre_reference(table=table, field=shadows[local.field])
+                        if local.field in shadows
+                        else local
+                    ),
+                    reference,
+                    name,
+                )
+                for local, reference, name in foreign
+            ]
+            # and the fields of the indexes
+            indexes = [
+                cls.pyre_index(
+                    fields=tuple(shadows.get(field, field) for field in index.fields),
+                    unique=index.unique,
+                    where=index.where,
+                    name=index.name,
+                )
+                for index in indexes
+            ]
 
         # save my primary keys
         table._pyre_primaryKeys = primary
