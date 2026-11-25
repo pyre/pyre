@@ -49,7 +49,7 @@ class Record(Dashboard, metaclass=Templater):
     # types
     # exceptions
     from ..constraints.exceptions import ConstraintViolationError
-    from .exceptions import AmbiguousColumnError
+    from .exceptions import AmbiguousColumnError, MissingColumnError
 
     # public data; patched by the metaclass
     pyre_name = None  # the name of the record
@@ -91,7 +91,7 @@ class Record(Dashboard, metaclass=Templater):
 
         Each measure matches the columns named after any of its aliases, so a source can name
         its columns differently than my fields are named; a measure that matches more than one
-        column is an error
+        column is an error, and so is a required measure that matches none
         """
         # go through my measures
         for measure in cls.pyre_measures:
@@ -119,13 +119,8 @@ class Record(Dashboard, metaclass=Templater):
                 yield None
                 # and move on
                 continue
-            # a required measure that matches none is an error; get the journal
-            import journal
-
-            # and complain
-            raise journal.error("pyre.records").log(
-                f"unable to find a source for field {measure.name!r}"
-            )
+            # a required measure that matches none has nowhere to read its values from
+            raise cls.MissingColumnError(record=cls, field=measure, headers=headers)
         # all done
         return
 

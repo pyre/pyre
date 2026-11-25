@@ -41,6 +41,31 @@ class SourceSpecificationError(RecordError):
     description = "invalid input source specification"
 
 
+# a required field that matches no column of a source
+class MissingColumnError(RecordError):
+    """
+    Exception raised when a required field of a record matches no column of a source
+    """
+
+    # public data
+    description = "field '{0.field}' of '{0.name}' matches no column"
+
+    # meta-methods
+    def __init__(self, record, field, headers, **kwds):
+        # chain up
+        super().__init__(**kwds)
+        # store the record
+        self.record = record
+        # by name
+        self.name = record.pyre_name
+        # the field, by name
+        self.field = field.name
+        # and the names of the columns of the source
+        self.headers = tuple(headers)
+        # all done
+        return
+
+
 # a field that matches more than one column of a source
 class AmbiguousColumnError(RecordError):
     """
