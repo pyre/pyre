@@ -8,7 +8,7 @@
 
 """
 Check that text with a backslash before a quote stays text, even on a server set up to read
-backslashes as escapes
+backslashes as escapes, where the server can still be set up that way
 """
 
 
@@ -23,10 +23,16 @@ def test():
     # access the package
     import pyre.db
 
-    # start the session with backslashes as escapes, the way a server or a role may be set up
-    os.environ["PGOPTIONS"] = "-c standard_conforming_strings=off"
     # connect
     db = pyre.db.postgres(name="backslash").attach()
+    # a server before postgres 19 may be set up to read backslashes as escapes
+    if db.connection.server < 190000:
+        # so disconnect
+        db.detach()
+        # and start the session again that way, as a server or a role may be set up
+        os.environ["PGOPTIONS"] = "-c standard_conforming_strings=off"
+        # by connecting anew
+        db.attach()
     # a value that carries a statement of its own past an escaped quote
     value = "\\'; SELECT 42 AS injected; --"
     # select it as a literal
