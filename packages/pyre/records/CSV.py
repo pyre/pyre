@@ -17,7 +17,7 @@ class CSV:
     # record factories
     def immutable(self, layout, uri=None, stream=None, **kwds):
         """
-        Build mutable record instances from a csv formatted source
+        Build immutable record instances from a csv formatted source
         """
         # for each record in the input stream
         for data in self.read(layout=layout, uri=uri, stream=stream, **kwds):
@@ -79,14 +79,14 @@ class CSV:
 
     def write(self, sheet, uri=None, stream=None, **kwds):
         """
-        Read lines from a csv formatted input source
+        Write the records of {sheet} to a csv formatted destination
 
-        The argument {sheet} is expected to be a subclass of {pyre.records.Record}. It will be
-        inspected to extract the names of the columns to save.
+        The argument {sheet} is a {pyre.tabular} sheet: its fields name the columns, and each of
+        its records fills a row, after a first row of headers.
 
-        If {uri} is not None, it will be opened for writing in the manner recommended by the
-        {csv} package; if {stream} is given instead, it will be passed directly to the {csv}
-        package
+        If {stream} is given, the rows are written to it; otherwise {uri} is opened for writing
+        in the manner recommended by the {csv} package, and it defaults to the name of the sheet
+        with a {.csv} extension
         """
         # if the user did not explicitly specify an output stream
         if stream is None:
