@@ -12,6 +12,8 @@
 #include <pyre/postgres.h>
 // support
 #include <pyre/journal.h>
+// so it can wait on the socket of the session
+#include <poll.h>
 // so a failing test can say why
 #include <iostream>
 // and so it can hold the results it drains
@@ -35,14 +37,21 @@ specification() -> pyre::postgres::parameters_t
 static auto
 settle(const pyre::postgres::Connection & session) -> bool
 {
-    // a real client waits on the socket; a test may spin, as long as it gives up eventually
-    for (long spins = 0; spins < 100000000L; ++spins) {
+    // wait on the socket, as a real client does, and give up after ten seconds of silence
+    for (int waits = 0; waits < 100; ++waits) {
         // pull whatever the server has sent into libpq's buffer; a socket that has died raises
         session.consume();
         // and if the answer is complete
         if (!session.busy()) {
             // we are done waiting
             return true;
+        }
+        // otherwise, wait for the server to send more, a tenth of a second at a time
+        auto watch = pollfd { session.socket(), POLLIN, 0 };
+        // a failure to wait is a failure to settle
+        if (::poll(&watch, 1, 100) < 0) {
+            // so say so
+            return false;
         }
     }
 
