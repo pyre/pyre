@@ -64,6 +64,13 @@ pyre_test_python_testcase(tests/postgres.ext/libpq_pipeline_collected_waits.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_error_context.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_error_internal_query.py)
 pyre_test_python_testcase(tests/postgres.ext/libpq_diagnostic_internal_query.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_send_params.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_field_bytes.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_row_negative.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_cancel.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_reset.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_flush.py)
+pyre_test_python_testcase(tests/postgres.ext/libpq_notify_other.py)
 
 
 # end of file
