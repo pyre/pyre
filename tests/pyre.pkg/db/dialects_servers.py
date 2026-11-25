@@ -18,19 +18,19 @@ def test():
     # access the package
     import pyre.db
 
-    # each server, and the mill it speaks
+    # each server, by the name of its back end, and the mill it speaks
     expectations = [
         # postgres speaks its own dialect
-        (pyre.db.postgres, pyre.db.backends.postgres.mill),
+        ("postgres", pyre.db.postgres, pyre.db.backends.postgres.mill),
         # and so does sqlite
-        (pyre.db.sqlite, pyre.db.backends.sqlite.mill),
+        ("sqlite", pyre.db.sqlite, pyre.db.backends.sqlite.mill),
         # the backup server records statements for any back end, so it speaks the standard
-        (pyre.db.backup, pyre.db.backends.standard.mill),
+        ("backup", pyre.db.backup, pyre.db.backends.standard.mill),
     ]
     # go through them
-    for server, mill in expectations:
-        # make one
-        instance = server(name=f"dialects.{server.__name__.lower()}")
+    for name, server, mill in expectations:
+        # make one, named after its back end
+        instance = server(name=f"dialects_{name}")
         # and check its mill
         assert type(instance.sql) is mill, (server, type(instance.sql))
     # all done
