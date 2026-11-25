@@ -28,6 +28,8 @@ def test():
     # and the journal
     import journal
 
+    # the refusal is expected, so its report goes nowhere
+    journal.firewall("pyre.db").device = journal.trash()
     # make a mill that speaks the dialect of postgres
     mill = pyre.db.backends.postgres.mill(name="upserts")
     # attempt to

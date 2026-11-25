@@ -49,6 +49,9 @@ def test():
     # and the journal
     import journal
 
+    # the refusal is expected, so its report goes nowhere
+    journal.firewall("pyre.db").device = journal.trash()
+
     # the products of one kind, with two columns
     class Both(pyre.db.query, product=Product):
         # the key

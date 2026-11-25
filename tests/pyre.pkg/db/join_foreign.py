@@ -35,6 +35,9 @@ def test():
     # and the journal
     import journal
 
+    # the refusal is expected, so its report goes nowhere
+    journal.firewall("pyre.db").device = journal.trash()
+
     # the granules, with a join of a table the query does not name
     class Kinds(pyre.db.query, granule=Granule):
         # the name of the granule
