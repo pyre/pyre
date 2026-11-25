@@ -15,6 +15,15 @@ class Compiler:
     # types
     from ..calc.Node import Node as node
 
+    # interface
+    def arity(self, record) -> int:
+        """
+        The number of values a row of {record} holds: one for each of its measures, since its
+        derivations are computed
+        """
+        # easy enough
+        return len(record.pyre_measures)
+
     # meta-methods
     def __call__(self, record, source, **kwds):
         """

@@ -12,6 +12,14 @@ class Extractor:
     field descriptors
     """
 
+    # interface
+    def arity(self, record) -> int:
+        """
+        The number of values a row of {record} holds: one for each of its fields
+        """
+        # easy enough
+        return len(record.pyre_fields)
+
     # meta-methods
     def __call__(self, record, source, **kwds):
         """
