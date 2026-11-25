@@ -14,8 +14,8 @@ change what they say
 
 def test():
     """
-    Turn backslashes into escapes after attaching, write a value that would end its literal
-    early, and read it back
+    Turn backslashes into escapes after attaching, on a server that still can, write a value that
+    would end its literal early, and read it back
     """
     # access the package
     import pyre.db
@@ -31,8 +31,10 @@ def test():
     db.execute("BEGIN")
     # carefully
     try:
-        # read backslashes as escapes from now on
-        db.execute("SET LOCAL standard_conforming_strings = off")
+        # a server before postgres 19 may be told to read backslashes as escapes
+        if db.connection.server < 190000:
+            # so tell it to, from now on
+            db.execute("SET LOCAL standard_conforming_strings = off")
         # make the table
         db.createTable(Note)
         # a value that carries a statement of its own past an escaped quote
