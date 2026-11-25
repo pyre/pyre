@@ -61,6 +61,8 @@ class Record(Dashboard, metaclass=Templater):
     pyre_derivations = None  # the tuple of fields whose values are computed on the fly
     # a map from field descriptors to their column index
     pyre_columns = None
+    # a map from each inherited field a redeclaration shadows to the field that replaces it
+    pyre_shadows = None
 
     # interface; patched by the metaclass
     @classmethod

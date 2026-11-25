@@ -27,64 +27,75 @@ class Compiler:
     # meta-methods
     def __call__(self, record, source, **kwds):
         """
-        Pull values from {source} and build the associated nodes
+        Pull the values of the measures of {record} from {source}, and build the nodes of its
+        fields
         """
-        # build a cache
-        cache = {}
-        # go through the fields in {record}
+        # make {pyre.calc} variables so the measures are mutable
+        variable = self.node.variable
+        # the row holds the values of the measures, in the order of the layout; make a node for
+        # each, and keep them where the derivations can find them
+        cache = {
+            measure: variable(value=value, postprocessor=measure.process)
+            for measure, value in zip(record.pyre_measures, source)
+        }
+        # the fields the record shadows stand for the fields that replace them
+        shadows = record.pyre_shadows
+        # go through the fields of the record
         for field in record.pyre_fields:
-            # ask each one to dispatch to the appropriate handler to build the node
-            node = field.identify(authority=self, cache=cache, source=source)
-            # update the cache
-            cache[field] = node
+            # ask each one to dispatch to its handler, which knows how to find its node
+            node = field.identify(authority=self, cache=cache, shadows=shadows)
             # and make the node available
             yield node
         # all done
         return
 
     # implementation details
-    def onDescriptor(self, source, cache, descriptor):
+    def onDescriptor(self, descriptor, cache, shadows, **kwds):
         """
         Handler for measures
         """
-        # if i have been asked for the value of this {descriptor} before
-        try:
-            # get it
-            node = cache[descriptor]
-        # if not
-        except KeyError:
-            # grab one from the data stream
-            value = next(source)
-            # build a node for it
-            node = self.node.variable(value=value, postprocessor=descriptor.process)
-        # and make it available
-        return node
+        # a measure the record shadows
+        replacement = shadows.get(descriptor)
+        # stands for the field that replaces it
+        if replacement is not None:
+            # whose node is the one we want
+            return replacement.identify(authority=self, cache=cache, shadows=shadows)
+        # every other measure has its node from the row
+        return cache[descriptor]
 
-    def onOperator(self, source, cache, operator):
+    def onOperator(self, operator, cache, shadows, **kwds):
         """
         Handler for derivations
         """
-        # if I have visited this descriptor before
+        # a derivation the record shadows
+        replacement = shadows.get(operator)
+        # stands for the field that replaces it
+        if replacement is not None:
+            # whose node is the one we want
+            return replacement.identify(authority=self, cache=cache, shadows=shadows)
+        # if the node of this {operator} is built already
         try:
-            # get the previously built node
-            node = cache[operator]
+            # use it
+            return cache[operator]
         # if not
         except KeyError:
-            # build a node for its operands
-            operands = tuple(
-                # by processing
-                op.identify(authority=self, cache=cache, source=source)
-                # each operand
-                for op in operator.operands
-            )
-            # make an operator node
-            node = self.node.operator(
-                evaluator=operator.evaluator, postprocessor=operator.process, operands=operands
-            )
+            # build it
+            pass
+        # find the nodes of its operands
+        operands = tuple(
+            operand.identify(authority=self, cache=cache, shadows=shadows)
+            for operand in operator.operands
+        )
+        # make an operator node
+        node = self.node.operator(
+            evaluator=operator.evaluator, postprocessor=operator.process, operands=operands
+        )
+        # remember it, since other derivations may use it
+        cache[operator] = node
         # and make it available
         return node
 
-    def onLiteral(self, source, cache, literal):
+    def onLiteral(self, literal, **kwds):
         """
         Handler for literals
         """
