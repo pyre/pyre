@@ -33,8 +33,9 @@ def test():
         # and the cost
         cost = pyre.records.measure()
 
-    # build a record with a misspelled cost
+    # attempt to
     try:
+        # build a record with a misspelled cost
         record.pyre_mutable(sku="9-4013", cots=1.0)
         # which should be refused
         assert False, "unreachable"
