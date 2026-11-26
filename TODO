@@ -354,10 +354,6 @@
     retained. what effect should this have on the design/implementation of Sheet, Chart and
     Pivot?
 
-  - sheet inheritance is "broken" because derived classes rearrange the order of measures and
-    derivations. this means that instances of a class are not compatible with instances of its
-    direct ancestor, even in single inheritance
-
   - resolve the uri argument to cvs.read through the pyre fileserver
 
   - indexed columns must support iteration over their contents, like non-indexed ones. should
