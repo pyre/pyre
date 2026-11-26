@@ -93,10 +93,12 @@ class Sheet(records.record, metaclass=Tabulator):
     @classmethod
     def pyre_offset(cls, measure):
         """
-        Return the column number of {measure}
+        Return the column number of the field whose name is {measure}
         """
-        # easy enough
-        getattr(cls, measure).index
+        # find the field
+        field = getattr(cls, measure)
+        # and look up its column
+        return cls.pyre_columns[field]
 
     # meta-methods
     def __init__(self, name, **kwds):
