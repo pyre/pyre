@@ -384,6 +384,102 @@ values of its slots in `values`. A statement sent through a server that is not a
 
 A postgres session may be shared by threads: its calls take turns.
 
+## Clusters
+
+`pyre.db.backends.postgres.cluster` manages a postgres cluster: the data directory of a server,
+and the server that runs on it. It implements the protocol `pyre.db.cluster`, and is its default.
+It makes the cluster with `initdb` and starts and stops its server with `pg_ctl`, which it runs as
+programs of their own, so it needs neither libpq nor a connection to the server. Its settings are
+traits:
+
+| trait | what it is | unset or default |
+|---|---|---|
+| `programs` | the directory with `initdb` and `pg_ctl` | found on the `PATH` |
+| `data` | the data directory of the cluster | required |
+| `socket` | the directory of the unix socket of the server | the data directory |
+| `port` | the port, which also names the socket, `.s.PGSQL.<port>` | 5432 |
+| `user` | the superuser `initdb` makes | the user who runs it |
+| `authentication` | how the server authenticates its clients | `trust` |
+| `encoding` | the encoding of the databases | `UTF8` |
+| `locale` | the locale of the databases | the one of the environment |
+| `addresses` | the network addresses the server listens on | none: the socket only |
+| `durable` | whether the server makes sure its writes reach the disk | yes |
+| `log` | the log file of the server | `<data>.log`, beside the data directory |
+
+`authentication` applies to the socket and to the network alike. With `durable` off, `initdb` runs
+with `--no-sync` and the server with `fsync=off`.
+
+`init()` makes the cluster, unless the data directory holds one already; a data directory holds a
+cluster when it has a `PG_VERSION`. `start()` starts the server and waits until it accepts
+connections; it makes the socket directory, private to the user, if it is not there. `stop()`
+stops the server, ending the sessions that are open, and waits until it is gone. `status()` says
+whether the server runs. `remove()` stops the server and deletes the data directory, and, when the
+socket has a directory of its own, the socket and lock a server leaves there, and then the
+directory, unless something else lives in it. `restart()` removes the cluster, makes a new one, and
+starts its server. Each one but `status()` hands back the cluster, and each one but `restart()`
+leaves alone what is done already.
+
+Failures go to the error channel `pyre.db.cluster`: a missing data directory setting, a server
+program that is not where the cluster looks, and a program that fails, along with what it said.
+`remove()` refuses to delete a data directory that holds no cluster, and leaves a cluster alone
+when its server does not stop. The log survives `remove()`.
+
+`bin/pyre-postgres` carries out one of these on the command line, and its exit status says
+whether the server is left in the state the action promises: running after `start` and
+`restart`, stopped after `stop` and `remove`, a cluster after `init`. `status` reports on the
+server, and succeeds when it runs.
+
+```
+pyre-postgres restart --cluster.data=$HOME/db/catalog --cluster.user=catalog
+pyre-postgres status --cluster.data=$HOME/db/catalog
+```
+
+An application that needs a cluster declares a facility of the protocol, `pyre.db.cluster()`, and
+configures it like any other component.
+
+### The clusters of the test suites
+
+The suites `pyre-postgres.lib.tests`, `pyre-postgres.ext.tests` and `pyre-postgres.pkg.tests`
+each run on a cluster of their own:
+
+| setting | value |
+|---|---|
+| server programs | `postgres.bin` |
+| data directory | `<staging>/pyre-postgres/<suite>/cluster`, under the staging area of the build |
+| log | `<staging>/pyre-postgres/<suite>/cluster.log` |
+| socket directory | `/tmp/pyre-<checksum>`, eight hex digits of a checksum of the data directory |
+| port | 5432, which names the socket only; the server listens on no network address |
+| superuser | `pyre`, trusted on the socket |
+| encoding and locale | `UTF8` and `C` |
+| durability | off |
+
+The socket gets a short directory of its own, since a path to a socket holds about a hundred
+characters, which a staging area can exceed. The checksum keeps the clusters of different suites
+and builds apart.
+
+The drivers find the server through libpq's environment: `PGHOST` names the socket directory,
+`PGPORT` is 5432 and `PGUSER` is `pyre`, and `PGDATABASE`, `PGPASSWORD`, `PGSERVICE` and
+`PGHOSTADDR` are removed, so that nothing left in the shell sends a driver to another server.
+Before the first driver, once the prerequisites of the suite are built, the suite runs
+`pyre-postgres restart`, which replaces whatever an earlier run left behind with a fresh cluster.
+After the last driver, it runs `pyre-postgres remove`. A run of some of the drivers, or one that
+fails, leaves the cluster up until the next run of the suite or a clean, `mm tests.clean` or
+`mm <suite>.clean`, which removes it along with its log.
+
+The fixture is configured by two make variables, given on the command line of `mm` or in the
+user's mm configuration:
+
+- `postgres.bin` is the directory with `initdb` and `pg_ctl`. The `--pkgdb` backends set it when
+  they find a postgres server installed; otherwise it is the directory where the `PATH` finds
+  `initdb`. The suites run when both programs are there, and skip their drivers when not.
+- `postgres.fixture`, `yes` unless set, says whether the suites make clusters of their own. With
+  `postgres.fixture=no`, they use the server that libpq's environment names, and run when `psql`
+  can log in to its database `postgres`; when it cannot, the suites skip their drivers, with a
+  warning that names the server, the port and the user that failed.
+
+The drivers of the cluster itself are in `tests/pyre.pkg/db`, named `cluster_*`; the ones that
+start a server run where the programs are, and are told `postgres.bin` on their command line.
+
 ## Dialects
 
 Each server writes its statements with a mill, its `sql` facility. Postgres and sqlite default
