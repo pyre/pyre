@@ -5,6 +5,9 @@
 # (c) 1998-2026 all rights reserved
 
 
+# externals
+import math
+
 # superclass
 from .Dimension import Dimension
 
@@ -18,6 +21,9 @@ class Interval(Dimension):
 
     # meta-methods
     def __get__(self, chart, cls):
+        """
+        Bin my measure over the sheet of {chart}, or return myself when accessed through its class
+        """
         # if I am being accessed through an instance
         if chart:
             # bin my measure over the chart and return it
@@ -27,19 +33,29 @@ class Interval(Dimension):
 
     # meta-methods
     def __init__(self, interval, subdivisions, **kwds):
+        """
+        Split {interval}, a pair of its start and end, into {subdivisions} bins of equal width
+        """
         # chain up
         super().__init__(**kwds)
-        # save my layout
+        # save my range
         self.interval = interval
+        # and the number of my bins
         self.subdivisions = subdivisions
         # all done
         return
 
     # implementation details
     class axis:
+        """
+        The bins of an interval over the sheet of a chart, and the rows that fall outside it
+        """
 
         # meta-methods
         def __init__(self, chart, dimension, **kwds):
+            """
+            Bin the values of the measure of {dimension} over the sheet of {chart}
+            """
             # chain up
             super().__init__(**kwds)
 
@@ -50,9 +66,11 @@ class Interval(Dimension):
             # and my column number
             column = sheet.pyre_columns[measure]
 
-            # the geometry of my bins
+            # the range of my bins
             start, end = dimension.interval
+            # their number
             subdivisions = dimension.subdivisions
+            # and their width
             width = (end - start) / subdivisions
 
             # build my bins
@@ -64,8 +82,8 @@ class Interval(Dimension):
             for row, record in enumerate(sheet.pyre_data):
                 # get the value of my measure
                 value = record[column]
-                # bin it
-                rank = int((value - start) / width)
+                # find its bin; values below the start rank below the first bin
+                rank = math.floor((value - start) / width)
                 # check whether it falls within my bounds
                 if 0 <= rank < subdivisions:
                     # place it in its bin
@@ -79,14 +97,23 @@ class Interval(Dimension):
             return
 
         def __len__(self):
+            """
+            Count my bins
+            """
             # easy enough
             return len(self.bins)
 
         def __iter__(self):
+            """
+            Build an iterator over my bins
+            """
             # also easy
             return iter(self.bins)
 
         def __getitem__(self, bin):
+            """
+            Retrieve the set of rows in {bin}
+            """
             # also easy
             return self.bins[bin]
 
