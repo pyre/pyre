@@ -36,15 +36,22 @@ class Chart(metaclass=Surveyor):
         """
         Create an iterable over those facts that satisfy the criteria specified in {kwds},
         which is assumed to be a value specification for each dimension that is to be used to
-        restrict the data set
+        restrict the data set; with no criteria, every row of my sheet qualifies
         """
-        # identify the relevant bins
-        bins = (getattr(self, name)[value] for name, value in kwds.items())
-        # build and return the restriction
-        return set.intersection(*bins)
+        # start with every row of my sheet
+        rows = set(range(len(self.sheet)))
+        # go through the criteria
+        for name, value in kwds.items():
+            # and keep only the rows in the bin of {value} along that dimension
+            rows &= getattr(self, name)[value]
+        # all done
+        return rows
 
     # meta-methods
     def __init__(self, sheet, **kwds):
+        """
+        Impose my dimensions on {sheet}
+        """
         # chain up
         super().__init__(**kwds)
         # save the sheet i am bound to
