@@ -20,10 +20,12 @@ class Measure(records.measure):
     # interface
     def primary(self):
         """
-        Mark this measure as a primary key
+        Mark this measure as a primary key, whose value is unset until a row is given one
         """
         # mark me
         self._primary = True
+        # keys are unset by default, so that blank rows hold no key
+        self.default = None
         # and return me so I chain properly
         return self
 

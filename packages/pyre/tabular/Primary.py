@@ -12,53 +12,21 @@ from .Column import Column
 # declaration
 class Primary(Column):
     """
-    A selector that serves a column of primary keys, i.e. a column all of whose vales are
+    A selector that serves a column of primary keys, i.e. a column all of whose values are
     distinct and can be used as an index into the sheet
     """
 
-    # interface
-    def refresh(self):
-        """
-        Rebuild my row map
-        """
-        # easy enough
-        self.rowmap = self.prime()
-        # all done
-        return self
-
     # meta-methods
-    def __init__(self, **kwds):
-        # chain up
-        super().__init__(**kwds)
-        # initialize my row map
-        self.rowmap = self.prime()
-        # all done
-        return
-
     def __getitem__(self, value):
         """
         Retrieve the sheet row that contains {value} in my column
         """
-        # get the row number
-        row = self.rowmap[value]
+        # get my sheet
+        sheet = self.sheet
+        # ask the map of my key for the row number
+        row = sheet.pyre_keys[self.field].locate(key=value)
         # and return the associated record
-        return self.sheet.pyre_data[row]
-
-    # implementation details
-    def prime(self):
-        """
-        Build my value index
-        """
-        # initialize the index
-        index = {}
-        # go through all the rows in my sheet
-        for row, record in enumerate(self.sheet.pyre_data):
-            # get the value of my field
-            value = record[self.index]
-            # map the value to the row number
-            index[value] = row
-        # all done
-        return index
+        return sheet.pyre_data[row]
 
 
 # end of file

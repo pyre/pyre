@@ -33,22 +33,28 @@ class Tabulator(records.templater):
 
     def __init__(self, name, bases, attributes, **kwds):
         """
-        Give the columns of my primary keys the selectors that index them
+        Record my primary keys, and give their columns the selectors that index them
         """
         # chain up to attach a selector to each of my columns
         super().__init__(name, bases, attributes, **kwds)
+        # make a pile for my primary keys
+        keys = []
         # go through my measures
         for measure in self.pyre_measures:
             # the ones that are not primary keys
             if not measure._primary:
                 # keep their plain selectors
                 continue
-            # find the column of this key
+            # add this one to the pile
+            keys.append(measure)
+            # find its column
             index = self.pyre_columns[measure]
             # build a selector that indexes the sheet by its values
             selector = self.pyre_primarySelector(field=measure, index=index)
             # and attach it in place of the plain one
             setattr(self, measure.name, selector)
+        # record my primary keys
+        self.pyre_primaryKeys = tuple(keys)
         # all done
         return
 
