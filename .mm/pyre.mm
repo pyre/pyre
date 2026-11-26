@@ -27,7 +27,7 @@ pyre.boot.main := etc/boot/main.py
 # the pyre package meta-data
 pyre.pkg.root := packages/pyre/
 pyre.pkg.stem := pyre
-pyre.pkg.drivers := pyre pyre-config pyre-externals smith.pyre
+pyre.pkg.drivers := pyre pyre-config pyre-externals pyre-postgres smith.pyre
 pyre.pkg.config := pyre
 pyre.pkg.ext := extensions/
 
