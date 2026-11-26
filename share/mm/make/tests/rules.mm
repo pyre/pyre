@@ -239,10 +239,11 @@ $(1).run: $(1).prepare
 	@${call log.action,$(_runner),$(1)}
 	@$(cd) $(_workdir) ; ${if $(_toolbin),PATH="$(_toolbin):$(PATH)" ,}$(_env) $(_launch)
 
-# teardown
+# teardown, after the runner; the hooks wait for it themselves, since a recipe runs only after
+# the prerequisites of its own rule, so they must be ordinary single colon rules
 $(1).post: $(1).run $($(1).post)
 ${if $($(1).post),\
-    ${eval $($(1).post) :: $(1).run} \
+    ${eval $($(1).post): $(1).run} \
 }
 
 # clean up the staging area (objects and the binary live here too), plus any leftovers the
