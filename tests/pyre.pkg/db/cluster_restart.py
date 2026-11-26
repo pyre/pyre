@@ -30,26 +30,32 @@ def test():
     # and it need not survive a crash
     cluster.durable = False
 
-    # make a cluster and start its server, as an earlier run that never finished would have
-    cluster.init().start()
-    # mark it, so the one that replaces it can be told apart
-    marker = cluster.data / "leftover"
-    # by leaving a file in its data directory
-    marker.touch()
+    # replace a cluster left behind
+    try:
+        # make a cluster and start its server, as an earlier run that never finished would have
+        cluster.init().start()
+        # mark it, so the one that replaces it can be told apart
+        marker = cluster.data / "leftover"
+        # by leaving a file in its data directory
+        marker.touch()
 
-    # restart it
-    cluster.restart()
-    # check that its server runs
-    assert cluster.status()
-    # on a cluster other than the one left behind
-    assert not marker.exists()
+        # restart it
+        cluster.restart()
+        # check that its server runs
+        assert cluster.status()
+        # on a cluster other than the one left behind
+        assert not marker.exists()
 
-    # clean up
-    cluster.remove()
-    # and check that its data are gone
-    assert not cluster.data.exists()
-    # and so is the directory of its socket
-    assert not cluster.socket.exists()
+        # clean up
+        cluster.remove()
+        # and check that its data are gone
+        assert not cluster.data.exists()
+        # and so is the directory of its socket
+        assert not cluster.socket.exists()
+    # and whatever the outcome of the checks
+    finally:
+        # leave no server running; a cluster that failed a check stays for inspection
+        cluster.stop()
 
     # all done
     return cluster
