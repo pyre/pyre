@@ -18,6 +18,15 @@ class Immutable(NamedTuple):
     # exceptions
     from .exceptions import ImmutableFieldError
 
+    # interface
+    def pyre_observe(self, index, observer):
+        """
+        Let {observer} know of changes to the value at {index}; mine never change, so it will
+        never hear from me
+        """
+        # all done
+        return self
+
     # meta-methods
     def __setitem__(self, index, value):
         """
