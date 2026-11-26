@@ -102,6 +102,32 @@ class AmbiguousColumnError(RecordError):
         return
 
 
+# an attempt to change a field of an immutable record
+class ImmutableFieldError(RecordError):
+    """
+    Exception raised when a field of an immutable record is assigned a value
+    """
+
+    # public data
+    description = "field '{0.field}' of '{0.name}' is immutable"
+
+    # meta-methods
+    def __init__(self, record, field, **kwds):
+        """
+        Record that {field} of an immutable instance of {record} was assigned a value
+        """
+        # chain up
+        super().__init__(**kwds)
+        # store the record
+        self.record = record
+        # by name
+        self.name = record.pyre_name
+        # and the field, by name
+        self.field = field.name
+        # all done
+        return
+
+
 # a row with too few or too many values
 class RowLengthError(RecordError):
     """
