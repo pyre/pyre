@@ -7,7 +7,8 @@
 
 # the postgres library testsuite
 pyre-postgres.lib.tests.stem := postgres.lib
-pyre-postgres.lib.tests.prerequisites := pyre-postgres.lib
+# the library, and pyre, whose command manages the cluster of the suite
+pyre-postgres.lib.tests.prerequisites := pyre-postgres.lib pyre.pkg
 pyre-postgres.lib.tests.extern := pyre-postgres.lib journal.lib libpq
 
 # c++ compiler arguments
@@ -19,7 +20,7 @@ pyre-postgres.lib.tests.c++.flags += -Wall $(pyre.lib.c++.flags)
 # that create objects do so in the temporary schema of their own session, so they do not collide
 # with each other and they leave nothing behind. they run in order, the simplest first, so that
 # the first failure points at the most basic thing that is broken
-# skip the whole suite when no server is reachable
+# skip the whole suite when there is no server for it
 pyre-postgres.lib.tests.drivers.exclude := \
     ${if $(postgres.live),,${notdir ${wildcard tests/postgres.lib/*.cc}}}
 

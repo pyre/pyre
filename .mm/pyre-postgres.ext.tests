@@ -10,7 +10,7 @@ pyre-postgres.ext.tests.stem := postgres.ext
 pyre-postgres.ext.tests.prerequisites := pyre-postgres.ext journal.pkg pyre.pkg
 
 
-# skip the whole suite when no server is reachable
+# skip the whole suite when there is no server for it
 pyre-postgres.ext.tests.drivers.exclude := \
     ${if $(postgres.live),,${notdir ${wildcard tests/postgres.ext/*.py}}}
 
