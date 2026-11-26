@@ -5,10 +5,6 @@
 # (c) 1998-2026 all rights reserved
 
 
-# superclass
-from . import measure
-
-
 # declaration
 class Dimension:
     """
