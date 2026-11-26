@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+# -*- python -*-
+# -*- coding: utf-8 -*-
+#
+# michael a.g. aïvázis <michael.aivazis@para-sim.com>
+# (c) 1998-2026 all rights reserved
+
+
+# support
+import journal
+import pyre
+import pyre.db
+
+
+# the app
+class Postgres(pyre.application):
+    """
+    Manage a postgres cluster: make it, start and stop its server, and remove it
+    """
+
+    # user configurable state
+    cluster = pyre.db.cluster()
+    cluster.doc = "the cluster to manage"
+
+    # the actions, and the state of the server each one leaves behind
+    actions = {
+        "init": None,
+        "start": True,
+        "stop": False,
+        "status": None,
+        "remove": False,
+        "restart": True,
+    }
+
+    # the main entry point
+    @pyre.export
+    def main(self, *args, **kwds):
+        """
+        Carry out the action named on the command line
+        """
+        # the action is the argument the framework left for me
+        named = tuple(self.argv)
+        # there must be exactly one, and one i know
+        if len(named) != 1 or named[0] not in self.actions:
+            # if not, complain
+            channel = journal.error("pyre.postgres")
+            # say what is wrong
+            channel.line(f"expected one of: {', '.join(self.actions)}")
+            # and what was given
+            channel.log(f"got: {' '.join(named) if named else 'nothing'}")
+            # and bail
+            return 1
+        # get the action
+        action = named[0]
+        # get the cluster
+        cluster = self.cluster
+
+        # asking about the server
+        if action == "status":
+            # gets an answer
+            running = cluster.status()
+            # which is shown
+            channel = journal.info("pyre.postgres")
+            # in a sentence
+            channel.log(
+                f"the server of the cluster in '{cluster.data}' is "
+                f"{'running' if running else 'not running'}"
+            )
+            # and is my status too
+            return 0 if running else 1
+
+        # carry out the action
+        getattr(cluster, action)()
+        # the cluster is made by {init}
+        if action == "init":
+            # so it should be there now
+            return 0 if cluster.initialized() else 1
+        # every other action leaves the server running or stopped
+        return 0 if cluster.status() == self.actions[action] else 1
+
+
+# main
+if __name__ == "__main__":
+    # instantiate
+    app = Postgres(name="pyre-postgres")
+    # invoke
+    status = app.run()
+    # and share the status code
+    raise SystemExit(status)
+
+
+# end of file

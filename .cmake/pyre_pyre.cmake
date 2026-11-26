@@ -251,7 +251,8 @@ function(pyre_pyreBin)
   endif()
   # install the scripts
   install(
-    PROGRAMS bin/pyre bin/pyre-config bin/pyre-externals bin/merlin bin/mm bin/smith.pyre
+    PROGRAMS bin/pyre bin/pyre-config bin/pyre-externals bin/pyre-postgres bin/merlin bin/mm
+      bin/smith.pyre
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   # all done
