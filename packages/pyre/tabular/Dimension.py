@@ -20,6 +20,9 @@ class Dimension:
 
     # meta-methods
     def __init__(self, measure, **kwds):
+        """
+        Bin the values of {measure}, a field of the sheet of my chart
+        """
         # chain up
         super().__init__(**kwds)
         # save my measure
@@ -28,17 +31,19 @@ class Dimension:
         return
 
     def __get__(self, chart, cls):
-        # if i am being accessed through an instance
-        if chart:
-            # get the journal
-            import journal
+        """
+        Return myself when accessed through the class of a chart; binning over a chart instance
+        is the job of my subclasses
+        """
+        # if I am being accessed through the class
+        if chart is None:
+            # return myself
+            return self
+        # otherwise, get the journal
+        import journal
 
-            # complain
-            raise journal.firewall("pyre.tabular").log(
-                "dimensions can't operate on chart instances"
-            )
-        # otherwise
-        return self
+        # and complain
+        raise journal.firewall("pyre.tabular").log("dimensions can't operate on chart instances")
 
 
 # end of file
