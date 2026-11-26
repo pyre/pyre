@@ -6,13 +6,16 @@
 
 
 """
-Postgres: its dialect of SQL, and the server that talks to it
+Postgres: its dialect of SQL, the server that talks to it, and the cluster it runs on
 """
 
 # the mill that speaks its dialect
 from .Mill import Mill as mill
 
-# and the server
+# the server
 from .Server import Server as server
+
+# and the cluster
+from .Cluster import Cluster as cluster
 
 # end of file

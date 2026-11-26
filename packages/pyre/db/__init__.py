@@ -77,6 +77,7 @@ from .objects import object
 
 # protocols
 from .DataStore import DataStore as datastore
+from .Cluster import Cluster as cluster
 
 # components: the base of the servers, which brings in the mill of standard SQL
 from .Server import Server as server
