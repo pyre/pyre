@@ -36,7 +36,7 @@ class Accessor(Selector):
         """
         Field modification
         """
-        # try to set the value of this field; this will fail for const records
+        # set the value of this field, which immutable records refuse
         record[self.index] = value
         # all done
         return
