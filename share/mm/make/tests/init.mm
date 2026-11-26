@@ -33,9 +33,10 @@ define tests.init =
     ${eval $(2).runner ?=}
     # an optional override of the runner's launch command, e.g. to select a playwright project
     ${eval $(2).runner.launch ?=}
-    # extra environment to prefix to the runner invocation
+    # extra environment to prefix to the launch of the runner, or of every driver
     ${eval $(2).env ?=}
-    # suite-level startup and teardown hooks (e.g. fixtures), as make prerequisites
+    # suite-level startup and teardown hooks (e.g. fixtures), as make prerequisites: every driver
+    # waits for {pre}, and {post} runs after the last of them
     ${eval $(2).pre ?=}
     ${eval $(2).post ?=}
 
@@ -123,7 +124,7 @@ define tests.init =
     # category documentation
     $(2).meta.general := project stem name toolchain
     $(2).meta.extern := extern.requested extern.supported extern.available
-    $(2).meta.artifacts := root prefix runner cases assertions staged stage.prefix stage.modules
+    $(2).meta.artifacts := root prefix runner cases assertions staged stage.prefix stage.modules pre post env
 
     # document each one
     # general
@@ -144,6 +145,9 @@ define tests.init =
     $(2).metadoc.staged :="whether interpreted drivers run from a staging area (opt-in)"
     $(2).metadoc.stage.prefix := "the staging directory where drivers and node_modules are assembled"
     $(2).metadoc.stage.modules := "an existing node_modules to link into the staging area"
+    $(2).metadoc.pre := "the targets every driver of the suite waits for, e.g. a fixture that starts a server"
+    $(2).metadoc.post := "the targets that run after the last driver of the suite, e.g. a fixture that stops a server"
+    $(2).metadoc.env := "the environment that prefixes the launch of the runner, or of every driver"
 
 endef
 
@@ -248,6 +252,7 @@ define test.staging.target =
         ${eval $(_trgt).assertions ?= $($(1).assertions)}
         ${eval $(_trgt).harness ?= $($(1).harness)}
         ${eval $(_trgt).argv ?= $($(1).argv)}
+        ${eval $(_trgt).env ?= $($(1).env)}
         ${eval $(_trgt).flags ?= $($(1).flags)}
         ${eval $(_trgt).defines ?= $($(1).defines)}
         ${eval $(_trgt).incpath ?= $($(1).incpath)}

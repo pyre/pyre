@@ -45,15 +45,35 @@ endef
 # target factory for building a test suite
 define test.workflows.build =
 
+    # the target named after the root directory of the suite, which runs all of it too
+    ${eval _root := ${patsubst %.,%,${subst /,.,$($(1).root)}}}
+
 # the main recipe
-$(1): $($(1).prerequisites) $(1).testcases
+$(1): $($(1).prerequisites) $(1).testcases $(1).post
 	@${call log.asset,"test suite",$(1)}
 
 # the test cases depend on the individual test targets
 $(1).testcases: $($(1).staging.targets)
 
+# startup: every driver waits for the suite hooks
+$(1).pre: $($(1).pre)
+${foreach target,$($(1).staging.targets),${eval $(target).pre: $(1).pre}}
+
+# teardown, after the last driver; the hooks wait for the drivers themselves, since a recipe runs
+# only after the prerequisites of its own rule, so they must be ordinary single colon rules
+$(1).post: $(1).testcases $($(1).post)
+${if $($(1).post),\
+    ${eval $($(1).post): $(1).testcases} \
+}
+
+# a run of the root directory of the suite tears down too
+$(_root) :: $(1).post
+
 # clean up
 $(1).clean:: ${addsuffix .clean,$($(1).staging.containers) $($(1).staging.targets)}
+
+# just in case...
+.PHONY: $(1).pre $(1).post
 
 # make recipes for the individual test targets
 ${foreach target, $($(1).staging.targets), \
@@ -266,7 +286,7 @@ define test.workflows.target.products =
 # the products, made together by a single run of the driver
 $(_products) &: $(3) | $($(2).prerequisites) $(1).pre
 	@${call log.action,generate,${subst $($(2).home),,$(_products)}}
-	@$(cd) $(_home) ; $($(1).harness) $(4) $($(1).argv)
+	@$(cd) $(_home) ; $($(1).env) $($(1).harness) $(4) $($(1).argv)
 
 # running the test case means bringing its products up to date
 $(1).cases: $(_products)
@@ -345,10 +365,10 @@ $(1).cases: $($($(1).suite).prerequisites) $(1).pre
         ${if $($(1).cases), \
             ${foreach case, $($(1).cases), \
                 ${call log.action,test,$($(case).harness) $(_tag) $($(case).argv)}; \
-                $($(case).harness) $(_launcher) $($(case).argv); \
+                $($(1).env) $($(case).harness) $(_launcher) $($(case).argv); \
                 }, \
 	    ${call log.action,test,$(_tag)}; \
-                $($(1).harness) $(_launcher) $($(1).argv) \
+                $($(1).env) $($(1).harness) $(_launcher) $($(1).argv) \
         }
 # all done
 endef
@@ -417,10 +437,10 @@ $(1).cases: $($($(1).suite).prerequisites) $(1).pre $(1).stage
         ${if $($(1).cases), \
             ${foreach case, $($(1).cases), \
                 ${call log.action,test,$($(case).harness) $(_tag) $($(case).argv)}; \
-                $($(case).harness) $(_launcher) $($(case).argv); \
+                $($(1).env) $($(case).harness) $(_launcher) $($(case).argv); \
                 }, \
 	    ${call log.action,test,$(_tag)}; \
-                $($(1).harness) $(_launcher) $($(1).argv) \
+                $($(1).env) $($(1).harness) $(_launcher) $($(1).argv) \
         }
 
 # clean up; double colon, since it may be used as a {post} rule
@@ -540,10 +560,10 @@ $(1).cases: $(1).driver $(1).pre
 	${if $($(1).cases), \
             ${foreach case, $($(1).cases), \
                 ${call log.action,test,$($(case).harness) $(_base) $($(case).argv)}; \
-                $($(case).harness) $($(1).base) $($(case).argv); \
+                $($(1).env) $($(case).harness) $($(1).base) $($(case).argv); \
                 }, \
 	    ${call log.action,test,$($(1).harness) $(_base) $($(1).argv)}; \
-                $($(1).harness) $($(1).base) $($(1).argv); \
+                $($(1).env) $($(1).harness) $($(1).base) $($(1).argv); \
         }
 # all done
 endef
