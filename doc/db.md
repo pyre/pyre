@@ -477,8 +477,33 @@ user's mm configuration:
   can log in to its database `postgres`; when it cannot, the suites skip their drivers, with a
   warning that names the server, the port and the user that failed.
 
-The drivers of the cluster itself are in `tests/pyre.pkg/db`, named `cluster_*`; the ones that
-start a server run where the programs are, and are told `postgres.bin` on their command line.
+Under CTest, the tests of the same suites, `tests.postgres.lib.*`, `tests.postgres.ext.*` and
+`tests.postgres.pkg.*`, run on clusters of their own too. Each suite has a fixture,
+`pyre-postgres.<suite>`: the test `pyre-postgres.<suite>.start` runs `pyre-postgres restart`
+before the first test of the suite, and `pyre-postgres.<suite>.stop` runs `pyre-postgres remove`
+after the last one, even when some failed. The data directory is
+`<build>/pyre-postgres/<suite>/cluster`, in the build tree, and the socket directory is
+`/tmp/pyre-<digest>`, eight hex digits of the MD5 digest of the data directory; the other settings,
+and the environment of the tests, are the ones above. CTest can remove a variable from the
+environment of a test from version 3.22 on, so an older cmake registers no test that runs a
+cluster, and says so.
+
+The configuration has two cache variables:
+
+- `PYRE_POSTGRES_INITDB` is the `initdb` of the server programs, and `pg_ctl` must be beside it.
+  Configure looks on the `PATH`, and then in the directories where dpkg and MacPorts keep the
+  programs of each major version, `/usr/lib/postgresql/<major>/bin` and
+  `/opt/local/lib/postgresql<major>/bin`, the newest first. Without the programs, the suites are
+  not registered.
+- `PYRE_POSTGRES_FIXTURE`, on unless set, is the counterpart of `postgres.fixture`. With it off,
+  the suites use the server of libpq's environment, and are registered when `psql` can log in to
+  it when cmake configures the build.
+
+The drivers of the cluster itself are in `tests/pyre.pkg/db`, named `cluster_*`. The ones that
+start a server run where the programs are: mm tells them `postgres.bin` on their command line, and
+CTest puts the directory of `PYRE_POSTGRES_INITDB` first on their `PATH`. Whatever the outcome of
+their checks, they stop the server they started; a cluster that failed a check is left for
+inspection.
 
 ## Dialects
 
