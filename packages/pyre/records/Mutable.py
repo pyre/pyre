@@ -17,6 +17,18 @@ class Mutable(NamedTuple):
     This class assumes that its items are {pyre.calc} nodes.
     """
 
+    # interface
+    def pyre_observe(self, index, observer):
+        """
+        Let {observer} know of changes to the value at {index}
+        """
+        # get the node that holds the value
+        node = super().__getitem__(index)
+        # and add {observer} to the ones it notifies
+        node.addObserver(observer)
+        # all done
+        return self
+
     # meta-methods
     def __getitem__(self, index):
         """
