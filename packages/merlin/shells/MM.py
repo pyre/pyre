@@ -1821,8 +1821,43 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     print(line, file=f)
                 # blank line after each entry
                 print(file=f)
+            # the postgres server, for fixtures that run a cluster of their own
+            server = self._condaPostgresServer(index=index)
+            # if one is installed
+            if server is not None:
+                # unpack it
+                version, programs = server
+                # a comment line showing the package that provides it
+                print(f"# postgres server {version}  (conda: postgresql)", file=f)
+                # its programs live with the other programs of the environment
+                print(f"postgres.bin ?= $(conda.prefix)/{programs}", file=f)
+                # blank line after the entry
+                print(file=f)
         # all done
         return 0
+
+    def _condaPostgresServer(self, index):
+        """
+        Find the postgres server programs that conda's {postgresql} package installed, and return
+        its version and the directory of {initdb}, relative to the environment, or {None} when
+        the package is absent; the {libpq} package carries only the client library
+        """
+        # the server comes in the {postgresql} package
+        record = index.get("postgresql")
+        # if it is not installed
+        if record is None:
+            # there is no server
+            return None
+        # unpack the record
+        version, build, path = record
+        # find the program that makes a cluster among the files it installed
+        programs = self._condaManifestDir(path, lambda candidate: candidate.name == "initdb")
+        # if it is not there, the package cannot run a server
+        if programs is None:
+            # so there is none
+            return None
+        # otherwise, hand back what we found
+        return version, programs
 
     def _condaMetaIndex(self, meta):
         """
@@ -2576,8 +2611,53 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     print(f"{name}.dir ?= $(macports.prefix)", file=f)
                 # blank line after each entry
                 print(file=f)
+            # the postgres server, for fixtures that run a cluster of their own
+            server = self._macportsPostgresServer(port=port, installed=installed, prefix=prefix)
+            # if one is installed
+            if server is not None:
+                # a comment line showing the port that provides it
+                print(f"# postgres server  (macports: {server})", file=f)
+                # its programs live in a directory of their own, off the default {PATH}
+                print(f"postgres.bin ?= $(macports.prefix)/lib/{server}/bin", file=f)
+                # blank line after the entry
+                print(file=f)
         # all done
         return 0
+
+    def _macportsPostgresServer(self, port, installed, prefix):
+        """
+        Find the MacPorts port whose postgres server programs a fixture should run: the version
+        that {port select} has chosen, or the newest one installed, provided its directory holds
+        {initdb}; return {None} when there is none
+        """
+        # the server ports are named after their major version, e.g. {postgresql18}
+        servers = sorted(
+            (name for name in installed if re.fullmatch(r"postgresql\d+", name)),
+            key=lambda name: int(name[len("postgresql") :]),
+            reverse=True,
+        )
+        # ask which version is selected
+        result = subprocess.run(
+            [port, "select", "--show", "postgresql"],
+            capture_output=True,
+            text=True,
+        )
+        # the selection is named in quotes, e.g. 'postgresql18'
+        match = re.search(r"'(postgresql\d+)'", result.stdout) if result.returncode == 0 else None
+        # if a version is selected and installed
+        if match and match.group(1) in servers:
+            # it comes first
+            servers.remove(match.group(1))
+            # ahead of the others
+            servers.insert(0, match.group(1))
+        # go through the candidates in order
+        for server in servers:
+            # and pick the first whose directory holds the program that makes a cluster
+            if (prefix / "lib" / server / "bin" / "initdb").exists():
+                # this is the one
+                return server
+        # nothing usable
+        return None
 
     def _buildDpkgPackageDatabase(self, db):
         """
@@ -2937,8 +3017,45 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                     print(line, file=f)
                 # blank line after the block
                 print(file=f)
+            # the postgres server, for fixtures that run a cluster of their own
+            server = self._dpkgPostgresServer(dpkg=dpkg, installed=installed)
+            # if one is installed
+            if server is not None:
+                # unpack it
+                package, programs = server
+                # a comment line showing the package that provides it
+                print(f"# postgres server  (dpkg: {package})", file=f)
+                # its programs live in a directory of their own, off the default {PATH}
+                print(f"postgres.bin ?= {self._dpkgAnchor(programs, prefix)}", file=f)
+                # blank line after the entry
+                print(file=f)
         # all done
         return 0
+
+    def _dpkgPostgresServer(self, dpkg, installed):
+        """
+        Find the newest installed {postgresql-<major>} package and the directory of its
+        {initdb}, or {None} when there is none; debian and ubuntu keep each major version's
+        server programs in a directory of their own
+        """
+        # the server packages are named after their major version, e.g. {postgresql-18}
+        servers = sorted(
+            (name for name in installed if re.fullmatch(r"postgresql-\d+", name)),
+            key=lambda name: int(name[len("postgresql-") :]),
+            reverse=True,
+        )
+        # go through them, newest first
+        for server in servers:
+            # find the program that makes a cluster among the files it installed
+            initdb = next(
+                (path for path in self._dpkgFiles(dpkg, server) if path.name == "initdb"), None
+            )
+            # if it is there
+            if initdb is not None:
+                # this is the one
+                return server, initdb.parent
+        # nothing usable
+        return None
 
     def _dpkgFiles(self, dpkg, package):
         """
@@ -3348,8 +3465,37 @@ class MM(pyre.application, family="pyre.applications.mm", namespace="mm"):
                 print(f"{name}.version ?= {version}", file=f)
                 # blank line after each entry
                 print(file=f)
+            # the postgres server, for fixtures that run a cluster of their own
+            server = self._rpmPostgresServer(rpm=rpm, installed=installed)
+            # if one is installed
+            if server is not None:
+                # a comment line showing the package that provides it
+                print("# postgres server  (rpm: postgresql-server)", file=f)
+                # and the directory of its programs
+                print(f"postgres.bin ?= {self._rpmAnchor(server, prefix)}", file=f)
+                # blank line after the entry
+                print(file=f)
         # all done
         return 0
+
+    def _rpmPostgresServer(self, rpm, installed):
+        """
+        Find the directory of the {initdb} that {postgresql-server} installed, or {None} when the
+        package is absent; fedora puts the server programs in {/usr/bin}
+        """
+        # if the server package is not installed
+        if "postgresql-server" not in installed:
+            # there is no server
+            return None
+        # find the program that makes a cluster among the files it installed, preferring the
+        # one in a {bin} directory, which is on the default {PATH}
+        candidates = [
+            path for path in self._rpmFiles(rpm, "postgresql-server") if path.name == "initdb"
+        ]
+        # put the ones in a {bin} directory first
+        candidates.sort(key=lambda path: path.parent.name != "bin")
+        # and hand back the directory of the first one, if any
+        return candidates[0].parent if candidates else None
 
     def _rpmFiles(self, rpm, package):
         """
