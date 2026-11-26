@@ -18,9 +18,14 @@ class Sheet(records.record, metaclass=Tabulator):
     The base class for pyre worksheets, collections of record instances
     """
 
+    # types
+    from .KeyMap import KeyMap as pyre_keyMap
+
     # public data
     pyre_name = None
     pyre_data = None  # the list of records
+    pyre_keys = None  # the map of each of my primary keys to the rows that hold its values
+    pyre_primaryKeys = ()  # the measures that are primary keys; set by my metaclass
 
     # interface
     def pyre_immutable(self, data):
@@ -30,7 +35,7 @@ class Sheet(records.record, metaclass=Tabulator):
         """
         # iterate over the records in {data}
         for entry in data:
-            # convert the {row} into a mutable tuple
+            # convert the entry into an immutable row
             row = super().pyre_immutable(data=entry)
             # populate the data set
             self.pyre_append(row=row)
@@ -44,7 +49,7 @@ class Sheet(records.record, metaclass=Tabulator):
         """
         # iterate over the records in {data}
         for entry in data:
-            # convert the {row} into a mutable tuple
+            # convert the entry into a mutable row
             row = super().pyre_mutable(data=entry)
             # populate the data set
             self.pyre_append(row=row)
@@ -53,12 +58,24 @@ class Sheet(records.record, metaclass=Tabulator):
 
     def pyre_append(self, row):
         """
-        Add the given {row} to my data set
+        Add the given {row} to my data set, unless it holds a key that is there already
         """
         # get my dataset
         dataset = self.pyre_data
+        # and the maps of my primary keys
+        keys = self.pyre_keys.values()
+        # make sure that none of the keys of {row} is there already
+        for key in keys:
+            # by checking each one
+            key.check(record=row)
         # add the record to the dataset
         dataset.append(row)
+        # find its row number
+        number = len(dataset) - 1
+        # and map its keys to it
+        for key in keys:
+            # one at a time
+            key.add(row=number, record=row)
         # all done
         return self
 
@@ -69,7 +86,7 @@ class Sheet(records.record, metaclass=Tabulator):
         # ask my record to build one
         record = super().pyre_mutable()
         # add it to the pile
-        self.pyre_append(record)
+        self.pyre_append(row=record)
         # and hand it to the caller
         return record
 
@@ -83,12 +100,22 @@ class Sheet(records.record, metaclass=Tabulator):
 
     # meta-methods
     def __init__(self, name, **kwds):
+        """
+        Make an empty sheet called {name}
+        """
         # chain up
         super().__init__(**kwds)
         # set my name
         self.pyre_name = name
         # initialize my data set
         self.pyre_data = []
+        # get the map from my fields to their columns
+        columns = self.pyre_columns
+        # and build a map to the rows of my sheet for each of my primary keys
+        self.pyre_keys = {
+            key: self.pyre_keyMap(sheet=self, field=key, index=columns[key])
+            for key in self.pyre_primaryKeys
+        }
         # all done
         return
 
