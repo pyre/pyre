@@ -1384,6 +1384,22 @@ pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_missing.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/parameters_slot_unknown.py)
 pyre_test_python_testcase(tests/pyre.pkg/db/backup_prepare.py)
 pyre_test_python_cleanup(backup_prepare.sql tests/pyre.pkg/db/backup_prepare.py)
+# the manager of postgres clusters reports a missing program wherever it runs
+pyre_test_python_testcase(tests/pyre.pkg/db/cluster_missing_initdb.py)
+# and runs a cluster where the server programs are
+if(PYRE_POSTGRES_CLUSTERS)
+  # through its life
+  pyre_test_python_testcase(tests/pyre.pkg/db/cluster_lifecycle.py)
+  pyre_test_python_cleanup(cluster_lifecycle.log tests/pyre.pkg/db/cluster_lifecycle.py)
+  # and through a restart
+  pyre_test_python_testcase(tests/pyre.pkg/db/cluster_restart.py)
+  pyre_test_python_cleanup(cluster_restart.log tests/pyre.pkg/db/cluster_restart.py)
+  # both find the server programs on their path
+  set_property(
+    TEST tests.pyre.pkg.db.cluster_lifecycle.py tests.pyre.pkg.db.cluster_restart.py
+    APPEND PROPERTY ENVIRONMENT_MODIFICATION PATH=path_list_prepend:${PYRE_POSTGRES_BIN}
+    )
+endif()
 
 
 #

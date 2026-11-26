@@ -202,6 +202,8 @@ if(PYRE_BUILD_TESTING)
   include(CTest)
   # and my functions
   include(pyre_tests)
+  # and the ones that run postgres clusters, along with the server programs they need
+  include(pyre_tests_postgres)
 
   # pure python
   include(pyre_tests_python)
@@ -250,23 +252,62 @@ if(PYRE_BUILD_TESTING)
 
   # if we have postgres support
   if(PostgreSQL_FOUND)
-    # the tests talk to a server, so ask whether one answers, as mm does
-    find_program(PYRE_PG_ISREADY pg_isready)
-    # with the tool that asks, when there is one
-    if(PYRE_PG_ISREADY)
-      # quietly
-      execute_process(COMMAND ${PYRE_PG_ISREADY} -q RESULT_VARIABLE PYRE_PG_STATUS)
+    # the suites run on clusters of their own, unless asked to use the server that the
+    # environment of libpq names
+    option(PYRE_POSTGRES_FIXTURE "run the postgres tests on clusters of their own" ON)
+    # on clusters of their own
+    if(PYRE_POSTGRES_FIXTURE)
+      # they need the server programs, and the search for them has said why it found none
+      set(PYRE_POSTGRES_LIVE ${PYRE_POSTGRES_CLUSTERS})
+    # on the server of the environment
+    else()
+      # they need a user that can log in to it, so try, as mm does
+      find_program(PYRE_PSQL psql)
+      # with the client, when there is one
+      if(PYRE_PSQL)
+        # quietly
+        execute_process(COMMAND ${PYRE_PSQL} -XAtqc "select 1" --dbname=postgres
+          RESULT_VARIABLE PYRE_PSQL_STATUS OUTPUT_QUIET ERROR_QUIET)
+      endif()
+      # the server is there when the login works
+      if(PYRE_PSQL AND PYRE_PSQL_STATUS EQUAL 0)
+        set(PYRE_POSTGRES_LIVE ON)
+      # otherwise
+      else()
+        # it is not
+        set(PYRE_POSTGRES_LIVE OFF)
+        # say where the login was tried
+        set(host "$ENV{PGHOST}")
+        set(port "$ENV{PGPORT}")
+        set(user "$ENV{PGUSER}")
+        # filling in what libpq assumes
+        if(NOT host)
+          set(host "the default socket")
+        endif()
+        if(NOT port)
+          set(port 5432)
+        endif()
+        if(NOT user)
+          set(user "$ENV{USER}")
+        endif()
+        # and why the tests are left out
+        message(STATUS "the postgres tests are not registered: could not log in to the server "
+          "at ${host}, port ${port}, as ${user}")
+      endif()
     endif()
-    # when one answers
-    if(PYRE_PG_ISREADY AND PYRE_PG_STATUS EQUAL 0)
+    # when there is a server for them
+    if(PYRE_POSTGRES_LIVE)
       # register the tests that need it
       include(pyre_tests_postgres_lib)
       include(pyre_tests_postgres_ext)
       include(pyre_tests_postgres_pkg)
-    # otherwise
-    else()
-      # leave them out, and say why
-      message(STATUS "no postgres server answers, so the postgres tests are not registered")
+      # on clusters of their own
+      if(PYRE_POSTGRES_FIXTURE)
+        # one for each suite
+        pyre_test_postgres_cluster(lib)
+        pyre_test_postgres_cluster(ext)
+        pyre_test_postgres_cluster(pkg)
+      endif()
     endif()
   endif()
 
