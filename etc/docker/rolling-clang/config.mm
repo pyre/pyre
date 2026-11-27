@@ -12,5 +12,9 @@
 # pyre: the libraries of the installed pyre that its clients link against
 pyre.libraries := pyre-h5 pyre journal
 
+# postgres: the image runs as root, which the postgres server refuses, so the suites use the server
+# the image starts
+postgres.fixture := no
+
 
 # end of file
