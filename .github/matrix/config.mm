@@ -27,6 +27,12 @@ mpi.flavor := openmpi
 mpi.dir := ${sys.lib}/$(mpi.flavor)
 mpi.executive := mpiexec
 
+# libpq; ubuntu keeps its headers in a directory of their own
+libpq.version := 18.7
+libpq.dir := ${sys.prefix}
+libpq.incpath := $(libpq.dir)/include/postgresql
+libpq.libpath := ${sys.lib}
+
 # the postgres server programs, which ubuntu keeps in a directory named after the major version of
 # the server, off the PATH; the newest one runs the clusters of the tests
 postgres.bin := $(lastword $(sort $(wildcard /usr/lib/postgresql/*/bin)))
