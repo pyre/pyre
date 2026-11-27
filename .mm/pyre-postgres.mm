@@ -80,6 +80,9 @@ postgres.fixture ?= yes
 ifeq ($(postgres.fixture),yes)
 # with clusters of their own, they run wherever the programs that make and run a cluster are
 postgres.live := ${if $(postgres.programs),live,}
+# and when they cannot run, say why
+${if $(postgres.live),,${warning the postgres suites are skipped: ${strip \
+    there is no initdb and pg_ctl in ${or $(postgres.bin),the PATH}}}}
 else
 # otherwise, they run when they can log in to the server libpq's environment names
 postgres.live := ${shell psql -XAtqc 'select 1' --dbname=postgres > /dev/null 2>&1 && echo live}
