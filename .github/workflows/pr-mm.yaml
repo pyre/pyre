@@ -51,15 +51,6 @@ jobs:
           echo " -- install our dependencies"
           sudo apt install -y openssh-server libgsl-dev libopenmpi-dev libhdf5-dev libpq-dev postgresql
 
-      - name: postgres server
-        run: |
-          echo " -- start the server the package installed"
-          sudo service postgresql start
-          echo " -- give the runner a role of its own"
-          sudo -u postgres createuser --superuser ${USER}
-          echo " -- make sure it answers"
-          pg_isready
-
       - name: python ${{matrix.python}} setup
         uses: actions/setup-python@v7
         with:

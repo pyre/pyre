@@ -27,6 +27,10 @@ mpi.flavor := openmpi
 mpi.dir := ${sys.lib}/$(mpi.flavor)
 mpi.executive := mpiexec
 
+# the postgres server programs, which ubuntu keeps in a directory named after the major version of
+# the server, off the PATH; the newest one runs the clusters of the tests
+postgres.bin := $(lastword $(sort $(wildcard /usr/lib/postgresql/*/bin)))
+
 # python
 python.version := $(pythonVersion)
 python.dir := $(pythonLocation)
