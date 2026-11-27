@@ -471,7 +471,8 @@ user's mm configuration:
 
 - `postgres.bin` is the directory with `initdb` and `pg_ctl`. The `--pkgdb` backends set it when
   they find a postgres server installed; otherwise it is the directory where the `PATH` finds
-  `initdb`. The suites run when both programs are there, and skip their drivers when not.
+  `initdb`. The suites run when both programs are there, and skip their drivers when not, with a
+  warning that says why.
 - `postgres.fixture`, `yes` unless set, says whether the suites make clusters of their own. With
   `postgres.fixture=no`, they use the server that libpq's environment names, and run when `psql`
   can log in to its database `postgres`; when it cannot, the suites skip their drivers, with a
@@ -498,6 +499,11 @@ The configuration has two cache variables:
 - `PYRE_POSTGRES_FIXTURE`, on unless set, is the counterpart of `postgres.fixture`. With it off,
   the suites use the server of libpq's environment, and are registered when `psql` can log in to
   it when cmake configures the build.
+
+The postgres server refuses to run as root, so a build that runs as root, under mm or CTest, has
+no use for the server programs: it runs no test that makes a cluster, and says so. Such a build
+runs the suites on a server of its environment, with `postgres.fixture=no` or
+`PYRE_POSTGRES_FIXTURE` off.
 
 The drivers of the cluster itself are in `tests/pyre.pkg/db`, named `cluster_*`. The ones that
 start a server run where the programs are: mm tells them `postgres.bin` on their command line, and
