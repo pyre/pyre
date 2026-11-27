@@ -10,8 +10,12 @@
 # otherwise it is wherever the PATH finds them
 postgres.bin ?= ${patsubst %/,%,${dir ${shell command -v initdb 2> /dev/null}}}
 # are the programs that make and run a cluster there?
-postgres.programs := \
+postgres.found := \
     ${if ${and ${wildcard $(postgres.bin)/initdb},${wildcard $(postgres.bin)/pg_ctl}},yes,}
+# the server refuses to run as root, so a build that runs as root has no use for them
+postgres.root := ${if ${filter 0,${shell id -u}},yes,}
+# so they can run when they are there and the build does not run as root
+postgres.programs := ${if $(postgres.root),,$(postgres.found)}
 
 # the drivers of the cluster manager in the {pyre.pkg} suite make clusters of their own, so they are
 # told where the programs are
@@ -82,7 +86,8 @@ ifeq ($(postgres.fixture),yes)
 postgres.live := ${if $(postgres.programs),live,}
 # and when they cannot run, say why
 ${if $(postgres.live),,${warning the postgres suites are skipped: ${strip \
-    there is no initdb and pg_ctl in ${or $(postgres.bin),the PATH}}}}
+    ${if $(postgres.root),the postgres server does not run as root,\
+        there is no initdb and pg_ctl in ${or $(postgres.bin),the PATH}}}}}
 else
 # otherwise, they run when they can log in to the server libpq's environment names
 postgres.live := ${shell psql -XAtqc 'select 1' --dbname=postgres > /dev/null 2>&1 && echo live}
