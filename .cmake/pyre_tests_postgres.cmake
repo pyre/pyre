@@ -19,11 +19,18 @@ set(PYRE_POSTGRES_CLUSTERS OFF)
 if(PYRE_POSTGRES_INITDB)
   # its directory holds the server programs
   get_filename_component(PYRE_POSTGRES_BIN ${PYRE_POSTGRES_INITDB} DIRECTORY)
+  # the server refuses to run as root, so find out who is building
+  execute_process(COMMAND id -u OUTPUT_VARIABLE PYRE_POSTGRES_UID OUTPUT_STRIP_TRAILING_WHITESPACE)
   # and when {pg_ctl} is there too
   if(EXISTS ${PYRE_POSTGRES_BIN}/pg_ctl)
+    # a build that runs as root has no use for the programs
+    if(PYRE_POSTGRES_UID STREQUAL "0")
+      # so say why there are no tests that run a cluster
+      message(STATUS "the postgres server does not run as root, "
+        "so the tests that run a postgres cluster are not registered")
     # the tests can make the environment of their cluster only with ctest 3.22 or later, which
     # can remove a variable from it
-    if(CMAKE_VERSION VERSION_LESS 3.22)
+    elseif(CMAKE_VERSION VERSION_LESS 3.22)
       # so say why there are none
       message(STATUS "cmake ${CMAKE_VERSION} cannot remove a variable from the environment of "
         "a test, so the tests that run a postgres cluster are not registered")
