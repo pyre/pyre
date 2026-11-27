@@ -107,8 +107,10 @@ ENV PYBIND11_DIR=${pybind11_dir}
 # go to the source directory; {pyre} is bind-mounted here at run time
 WORKDIR ${srcdir}/pyre
 # start the postgres server, configure with cmake, build and install, then run the test suite;
-# make runs one job per core, since cmake's makefiles offer every object of every target at once,
-# and an unbounded {-j} starts enough compilers to run out of memory
+# the image runs as root, which the postgres server refuses, so the postgres tests use the server
+# the image starts instead of clusters of their own; make runs one job per core, since cmake's
+# makefiles offer every object of every target at once, and an unbounded {-j} starts enough
+# compilers to run out of memory
 CMD service ssh start && service postgresql start && \
         mkdir -p ${BUILDDIR} && cd ${BUILDDIR} && \
         cmake \
@@ -118,6 +120,7 @@ CMD service ssh start && service postgresql start && \
             -DCMAKE_CXX_COMPILER=${CXX} \
             -Dpybind11_DIR=${PYBIND11_DIR} \
             -DPYRE_MPI_OVERSUBSCRIBE=ON \
+            -DPYRE_POSTGRES_FIXTURE=OFF \
             /usr/local/src/pyre && \
         make -j$(nproc) install && \
         ctest --output-on-failure
